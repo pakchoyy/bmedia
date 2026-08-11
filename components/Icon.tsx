@@ -1,0 +1,81 @@
+import {
+  FaFlask,
+  FaPhotoFilm,
+  FaGamepad,
+  FaClipboardQuestion,
+  FaBookOpen,
+  FaLaptopCode,
+  FaBars,
+  FaCheck,
+  FaCompass,
+  FaPlus,
+  FaMagnifyingGlass,
+  FaFire,
+  FaBook,
+  FaGraduationCap,
+  FaWrench,
+  FaUserTie,
+  FaSchool,
+  FaUsers,
+  FaPlay,
+  FaLayerGroup,
+  FaArrowUpRightFromSquare,
+  FaChartSimple,
+  FaShareNodes,
+  FaCloudArrowUp,
+  FaPaperPlane,
+  FaEnvelope,
+  FaWhatsapp,
+  FaCircleCheck,
+  FaArrowLeft,
+  FaChalkboardUser,
+  FaLaptopFile,
+  FaXmark,
+} from "react-icons/fa6";
+import type { IconType } from "react-icons";
+
+const icons: Record<string, IconType> = {
+  flask: FaFlask,
+  "photo-video": FaPhotoFilm,
+  gamepad: FaGamepad,
+  "clipboard-question": FaClipboardQuestion,
+  "book-open": FaBookOpen,
+  "laptop-code": FaLaptopCode,
+  bars: FaBars,
+  check: FaCheck,
+  compass: FaCompass,
+  plus: FaPlus,
+  "magnifying-glass": FaMagnifyingGlass,
+  fire: FaFire,
+  book: FaBook,
+  "graduation-cap": FaGraduationCap,
+  wrench: FaWrench,
+  "user-tie": FaUserTie,
+  school: FaSchool,
+  users: FaUsers,
+  play: FaPlay,
+  "layer-group": FaLayerGroup,
+  "arrow-up-right-from-square": FaArrowUpRightFromSquare,
+  "chart-simple": FaChartSimple,
+  "share-nodes": FaShareNodes,
+  "cloud-arrow-up": FaCloudArrowUp,
+  "paper-plane": FaPaperPlane,
+  envelope: FaEnvelope,
+  whatsapp: FaWhatsapp,
+  "circle-check": FaCircleCheck,
+  "arrow-left": FaArrowLeft,
+  "chalkboard-user": FaChalkboardUser,
+  "laptop-file": FaLaptopFile,
+  xmark: FaXmark,
+};
+
+interface IconProps {
+  name: string;
+  className?: string;
+  style?: React.CSSProperties;
+}
+
+export default function Icon({ name, className, style }: IconProps) {
+  const Cmp = icons[name] ?? FaBookOpen;
+  return <Cmp className={className} style={style} />;
+}

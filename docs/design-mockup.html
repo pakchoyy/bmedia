@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BGY Interactive Learning - Satu Tempat untuk Media Pembelajaran Interaktif Guru Indonesia.">
+    <title>BGY Interactive Learning</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            /* Color Palette BGY */
+            --primary-blue: #0d7a8a; /* BGY Dark Primary */
+            --light-blue: #0ea5a0;   /* BGY Primary */
+            --bg-blue: #e6f6f5;      /* Lighter BG */
+            --white: #FFFFFF;
+            --light-gray: #f8fafc;   /* Cleaner Gray / var(--bg) */
+            --dark-gray: #1e293b;    /* Elegant Dark */
+            --green: #16a34a;        /* BGY Success */
+            --orange: #d97706;       /* BGY Warning */
+            --danger: #dc2626;       /* BGY Danger */
+            --bgy-gradient: linear-gradient(90deg, #0ea5a0 0%, #0d7a8a 50%, #2d6a7f 100%);
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.08);
+            --shadow-header: 0 2px 10px rgba(0,0,0,.18);
+            
+            /* Transitions */
+            --transition: all 0.3s ease;
+        }
+
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+        img { max-width: 100%; height: auto; display: block; }
+        button { cursor: pointer; border: none; outline: none; font-family: inherit; }
+
+        /* Typography */
+        h1, h2, h3, h4 { color: var(--primary-blue); font-weight: 700; }
+        .section-title { font-size: 2rem; margin-bottom: 2rem; text-align: center; position: relative; }
+        .section-title::after {
+            content: '';
+            width: 80px;
+            height: 4px;
+            background-color: var(--orange);
+            display: block;
+            margin: 0.5rem auto 0;
+            border-radius: 2px;
+        }
+
+        /* Layout & Container */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: sticky;
+            top: 0;
+            background: var(--bgy-gradient);
+            box-shadow: var(--shadow-header);
+            z-index: 300;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+            width: 100%;
+        }
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--white);
+            cursor: pointer;
+        }
+        .nav-brand i { color: var(--white); font-size: 1.2rem; }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; height: 100%; }
+        .nav-links a { font-weight: 600; font-size: 0.875rem; color: rgba(255,255,255,0.9); transition: var(--transition); }
+        .nav-links a:hover { color: var(--white); }
+        .btn-nav-submit {
+            background-color: var(--white);
+            color: var(--primary-blue) !important;
+            padding: 4px 16px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        .btn-nav-submit:hover { background-color: var(--bg-blue); transform: translateY(-1px); }
+        .mobile-menu-btn { display: none; font-size: 1.5rem; color: var(--white); background: rgba(0,0,0,0.1); padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.3); transition: var(--transition); }
+        .mobile-menu-btn:hover { background: rgba(0,0,0,0.2); }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #0ea5a0 0%, #0d7a8a 50%, #2d6a7f 100%);
+            color: var(--white);
+            padding: 5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .hero-content { flex: 1; max-width: 800px; display: flex; flex-direction: column; align-items: center; }
+        .hero-content h1 { color: var(--white); font-size: 3rem; line-height: 1.2; margin-bottom: 1rem; }
+        .hero-content p { font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9; }
+        
+        .btn-primary { background-color: var(--orange); color: var(--white); padding: 0.8rem 1.5rem; border-radius: 30px; font-weight: 600; font-size: 1.1rem; transition: var(--transition); display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary:hover { background-color: #e06c0d; transform: scale(1.05); }
+        .btn-secondary { background-color: transparent; border: 2px solid var(--white); color: var(--white); padding: 0.8rem 1.5rem; border-radius: 30px; font-weight: 600; font-size: 1.1rem; transition: var(--transition); display: inline-flex; align-items: center; gap: 8px; margin-left: 10px; }
+        .btn-secondary:hover { background-color: var(--white); color: var(--primary-blue); }
+
+        /* About Section */
+        .about-section { margin-top: -40px; position: relative; z-index: 10; padding: 0 1rem; margin-bottom: 2rem; }
+        .about-card { background: var(--white); border-radius: 12px; padding: 2.5rem 2rem; box-shadow: var(--shadow-md); text-align: center; max-width: 900px; margin: 0 auto; border: 1px solid #f0f0f0; }
+        .about-card h2 { color: var(--primary-blue); margin-bottom: 1rem; font-size: 1.6rem; }
+        .about-card p { color: #555; font-size: 1.05rem; line-height: 1.6; }
+
+        /* Search & Quick Filter */
+        .search-section { padding: 0 1rem; margin-bottom: 3rem; }
+        .search-box {
+            background-color: var(--white);
+            border-radius: 50px;
+            box-shadow: var(--shadow-md);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid #eee;
+        }
+        .search-box i { color: var(--light-blue); font-size: 1.3rem; }
+        .search-box input { border: none; outline: none; width: 100%; font-size: 1rem; }
+        
+        .quick-filters {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .btn-filter {
+            background-color: var(--white);
+            color: var(--dark-gray);
+            border: 1px solid #ddd;
+            padding: 0.5rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-filter:hover, .btn-filter.active {
+            background-color: var(--light-blue);
+            color: var(--white);
+            border-color: var(--light-blue);
+        }
+
+        /* Categories */
+        .categories { padding: 3rem 0; }
+        .category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .category-card {
+            background: var(--white);
+            padding: 2rem 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            cursor: pointer;
+            border: 1px solid #f0f0f0;
+        }
+        .category-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); border-color: var(--light-blue); }
+        .category-card i { font-size: 3rem; color: var(--light-blue); margin-bottom: 15px; }
+        .category-card h3 { font-size: 1.1rem; color: var(--dark-gray); font-weight: 600; }
+
+        /* Game Catalog Grid */
+        .catalog { padding: 3rem 0; background-color: transparent; }
+        .layout-grid { display: grid; grid-template-columns: 1fr 300px; gap: 2rem; }
+        .games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+        
+        /* Game Card */
+        .game-card {
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid #eee;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        .game-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-md); border-color: var(--light-blue); }
+        .game-thumb { position: relative; height: 180px; overflow: hidden; }
+        .game-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+        .game-card:hover .game-thumb img { transform: scale(1.1); }
+        .badge { position: absolute; top: 10px; right: 10px; background-color: var(--green); color: var(--white); padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; z-index: 2;}
+        .game-info { padding: 1.2rem; flex: 1; display: flex; flex-direction: column; }
+        .game-title { font-size: 1.1rem; margin-bottom: 0.5rem; line-height: 1.3;}
+        .game-meta { font-size: 0.8rem; color: #666; margin-bottom: 8px; display: flex; flex-wrap: wrap; gap: 10px;}
+        .game-meta span { display: flex; align-items: center; gap: 5px; }
+        .game-meta i { color: var(--light-blue); }
+        .media-tool { font-size: 0.75rem; background: var(--bg-blue); color: var(--primary-blue); padding: 4px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 5px; font-weight: 600; margin-bottom: 12px; width: fit-content; }
+        .game-author { font-size: 0.85rem; color: var(--primary-blue); font-weight: 500; margin-top: auto; border-top: 1px solid #eee; padding-top: 12px;}
+        .game-stats { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 0.8rem; color: #777;}
+        .btn-play { width: 100%; margin-top: 15px; padding: 0.6rem; background-color: var(--light-blue); color: var(--white); border-radius: 8px; font-weight: 600; transition: var(--transition); font-size: 0.9rem;}
+        .btn-play:hover { background-color: var(--primary-blue); }
+
+        /* Sidebar Trending */
+        .sidebar { background: var(--white); padding: 1.5rem; border-radius: 12px; height: fit-content; box-shadow: var(--shadow-sm); border: 1px solid #eee; }
+        .sidebar h3 { font-size: 1.1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #eee; padding-bottom: 10px;}
+        .trending-item { display: flex; gap: 10px; margin-bottom: 15px; align-items: center; cursor: pointer; transition: var(--transition);}
+        .trending-item:hover { transform: translateX(5px); }
+        .trending-item img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
+        .trending-info h4 { font-size: 0.9rem; margin-bottom: 3px; color: var(--dark-gray); line-height: 1.2;}
+        .trending-info p { font-size: 0.75rem; color: #666; }
+
+        /* Teachers Section */
+        .teachers { padding: 3rem 0; }
+        .teacher-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+        .teacher-card { background: var(--white); padding: 1.5rem; border-radius: 12px; text-align: center; box-shadow: var(--shadow-sm); transition: var(--transition); border: 1px solid #eee;}
+        .teacher-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); border-color: var(--light-blue); }
+        .avatar { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 10px; object-fit: cover; border: 3px solid var(--bg-blue); }
+        .teacher-card h4 { margin-bottom: 2px; font-size: 1rem; }
+        .teacher-card p { font-size: 0.8rem; color: #666; }
+        .teacher-badge { display: inline-block; background: var(--orange); color: var(--white); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; margin-top: 12px;}
+
+        /* Stats Section */
+        .stats { background: linear-gradient(135deg, var(--light-blue) 0%, var(--primary-blue) 100%); color: var(--white); padding: 3rem 0; margin: 2rem 0; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; text-align: center; }
+        .stat-card { opacity: 0; transform: translateY(30px); transition: all 0.6s ease-out; }
+        .stat-card.reveal { opacity: 1; transform: translateY(0); }
+        .stat-card i { font-size: 2.5rem; margin-bottom: 10px; color: var(--orange); }
+        .stat-number { font-size: 2.5rem; font-weight: 800; line-height: 1; margin-bottom: 5px; }
+        .stat-label { font-size: 1rem; opacity: 0.9; }
+
+        /* Form / Submit Game Section */
+        .submit-section { padding: 4rem 0; background: var(--white); }
+        .form-container { max-width: 800px; margin: 0 auto; background: var(--light-gray); padding: 2rem; border-radius: 15px; box-shadow: var(--shadow-sm); }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--primary-blue); }
+        .form-control { width: 100%; padding: 0.8rem 1rem; border: 1px solid #ccc; border-radius: 8px; font-family: inherit; font-size: 1rem; transition: var(--transition); }
+        .form-control:focus { border-color: var(--light-blue); box-shadow: 0 0 0 3px rgba(50, 130, 184, 0.2); outline: none; }
+        textarea.form-control { resize: vertical; min-height: 120px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .file-upload-wrapper { position: relative; width: 100%; height: 150px; border: 2px dashed #ccc; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--white); cursor: pointer; transition: var(--transition);}
+        .file-upload-wrapper:hover { border-color: var(--light-blue); background: #f0f8ff; }
+        .file-upload-wrapper i { font-size: 2rem; color: #999; margin-bottom: 10px; }
+        .file-upload-wrapper input[type="file"] { position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+        .btn-submit { width: 100%; background: var(--green); color: var(--white); padding: 1rem; border-radius: 8px; font-size: 1.2rem; font-weight: 700; margin-top: 1rem; transition: var(--transition); }
+        .btn-submit:hover { background: #218838; }
+
+        /* Game Detail Section */
+        .detail-section { padding: 3rem 0; }
+        .detail-header { background: var(--white); border-radius: 15px; overflow: hidden; box-shadow: var(--shadow-md); margin-bottom: 2rem; }
+        .detail-banner { width: 100%; height: 400px; object-fit: cover; }
+        .detail-content { padding: 2rem; display: flex; justify-content: space-between; align-items: flex-start; gap: 2rem; flex-wrap: wrap; }
+        .detail-info { flex: 1; min-width: 300px; }
+        .detail-info h2 { font-size: 2.5rem; margin-bottom: 10px; }
+        .detail-meta-tags { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+        .tag { background: var(--bg-blue); color: var(--primary-blue); padding: 5px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; }
+        .detail-desc { margin: 20px 0; font-size: 1.1rem; color: #555; }
+        .detail-action { width: 300px; background: var(--light-gray); padding: 1.5rem; border-radius: 12px; }
+        .detail-action .btn-play-lg { width: 100%; background: var(--orange); color: white; padding: 1rem; border-radius: 8px; font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; gap: 10px; transition: var(--transition);}
+        .detail-action .btn-play-lg:hover { background: #e06c0d; transform: scale(1.02); }
+        .creator-info { display: flex; align-items: center; gap: 15px; margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd; }
+        .creator-info img { width: 50px; height: 50px; border-radius: 50%; }
+
+        /* Footer */
+        footer { background: var(--white); color: var(--dark-gray); padding: 3rem 0 0; border-top: 1px solid #e5e7eb; margin-top: 4rem; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem; }
+        .footer-col h3 { color: var(--primary-blue); margin-bottom: 1rem; font-size: 0.95rem; font-weight: 800; position: relative; padding-bottom: 8px; }
+        .footer-col p { color: #4b5563; margin-bottom: 1rem; font-size: 0.875rem; line-height: 1.5; }
+        .footer-links li { margin-bottom: 8px; }
+        .footer-links a { color: #4b5563; font-size: 0.875rem; transition: var(--transition); font-weight: 500; }
+        .footer-links a:hover { color: var(--light-blue); padding-left: 5px; }
+        .social-links { display: flex; gap: 10px; }
+        .social-links a { width: 36px; height: 36px; background: var(--bg-blue); color: var(--light-blue); display: flex; justify-content: center; align-items: center; border-radius: 6px; transition: var(--transition); }
+        .social-links a:hover { background: var(--light-blue); color: var(--white); }
+        .footer-bottom { background: var(--primary-blue); text-align: center; padding: 1.2rem 0; font-size: 0.85rem; color: rgba(255,255,255,0.9); }
+        .footer-bottom a { color: var(--white); transition: var(--transition); }
+        .footer-bottom a:hover { color: var(--orange); }
+
+        /* Utilities & Notification */
+        .page-section { display: none; animation: fadeIn 0.5s ease-in-out; }
+        .page-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .toast-notification {
+            position: fixed; bottom: -100px; right: 20px; background: var(--green); color: white; padding: 1rem 2rem; border-radius: 8px; box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 15px; font-weight: 600; z-index: 9999; transition: bottom 0.5s cubic-bezier(0.68, -0.55, 0.26, 1.55);
+        }
+        .toast-notification.show { bottom: 20px; }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .layout-grid { grid-template-columns: 1fr; }
+            .hero-content h1 { font-size: 2.5rem; }
+            .hero .container { flex-direction: column; text-align: center; }
+            .hero-image img { max-width: 80%; }
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; position: absolute; top: 48px; left: 0; width: 100%; background: var(--white); flex-direction: column; padding: 1rem 0; box-shadow: var(--shadow-md); height: auto; }
+            .nav-links a { color: var(--dark-gray); }
+            .nav-links a:hover { color: var(--light-blue); }
+            .btn-nav-submit { background-color: var(--light-blue); color: var(--white) !important; margin-top: 10px; border-radius: 20px; padding: 8px 20px;}
+            .nav-links.active { display: flex; }
+            .mobile-menu-btn { display: block; }
+            .form-row { grid-template-columns: 1fr; }
+            .detail-content { flex-direction: column; }
+            .detail-action { width: 100%; }
+            .search-box { flex-direction: column; border-radius: 15px; padding: 1rem; }
+            .btn-primary, .btn-secondary { width: 100%; margin-bottom: 10px; margin-left: 0; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="nav-brand" onclick="navigate('home')">
+                <i class="fa-solid fa-laptop-code"></i>
+                Bantu Guru Yuk - Belajar
+            </div>
+            <button class="mobile-menu-btn" id="mobile-menu-btn">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#" onclick="navigate('home')">Home</a></li>
+                <li><a href="#catalog" onclick="navigate('home'); setTimeout(()=>document.getElementById('catalog').scrollIntoView(), 100);">Koleksi Media</a></li>
+                <li><a href="#categories" onclick="navigate('home'); setTimeout(()=>document.getElementById('categories').scrollIntoView(), 100);">Kategori</a></li>
+                <li><a href="#" onclick="navigate('submit')" class="btn-nav-submit">Kirim Karya</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT: HOME PAGE -->
+    <main id="page-home" class="page-section active">
+        <!-- Hero -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <div style="margin-bottom: 1rem; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+                        <span style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.3);"><i class="fa-solid fa-check"></i> Gratis</span>
+                        <span style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.3);"><i class="fa-solid fa-check"></i> Dibuat Guru Indonesia</span>
+                        <span style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.3);"><i class="fa-solid fa-check"></i> Media Interaktif</span>
+                    </div>
+                    <h1>Bantu Guru Yuk - Belajar</h1>
+                    <p>Media Pembelajaran Interaktif Karya Guru Indonesia.</p>
+                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                        <button class="btn-primary" onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})"><i class="fa-solid fa-compass"></i> Jelajahi Media</button>
+                        <button class="btn-secondary" onclick="navigate('submit')"><i class="fa-solid fa-plus"></i> Kirim Karya</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tentang Section -->
+        <section class="about-section">
+            <div class="container">
+                <div class="about-card">
+                    <h2>Tentang Bantu Guru Yuk - Belajar</h2>
+                    <p>
+                        Sebuah wadah berbagi inovasi digital bagi seluruh guru di Indonesia. Kami mengumpulkan berbagai media pembelajaran interaktif yang dibuat langsung oleh guru, untuk guru. Jelajahi karya menarik, gunakan dengan mudah di kelas Anda, atau ikut berkontribusi dengan mengirimkan media pembelajaran buatan Anda sendiri demi mewujudkan merdeka belajar.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search & Quick Filter -->
+        <section class="search-section">
+            <div class="container">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Cari media pembelajaran, guru, mata pelajaran, atau jenjang..." id="search-input">
+                    <button class="btn-primary" style="margin:0; padding: 0.6rem 1.5rem; font-size: 1rem;">Cari</button>
+                </div>
+                <div class="quick-filters">
+                    <button class="btn-filter active">Semua</button>
+                    <button class="btn-filter">TK/PAUD</button>
+                    <button class="btn-filter">SD</button>
+                    <button class="btn-filter">SMP</button>
+                    <button class="btn-filter">SMA/SMK</button>
+                    <button class="btn-filter">Terbaru</button>
+                    <button class="btn-filter">Populer</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories -->
+        <section id="categories" class="categories container">
+            <h2 class="section-title">Kategori Pembelajaran</h2>
+            <div class="category-grid" id="category-container">
+                <!-- Injected via JS -->
+            </div>
+        </section>
+
+        <!-- Catalog & Sidebar Layout -->
+        <section id="catalog" class="catalog">
+            <div class="container layout-grid">
+                <!-- Main Games List -->
+                <div class="main-catalog">
+                    <h2 class="section-title" style="text-align: left;">Koleksi Media Terbaru</h2>
+                    <div class="games-grid" id="games-container">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+                
+                <!-- Sidebar Trending -->
+                <aside class="sidebar">
+                    <h3><i class="fa-solid fa-fire" style="color: var(--orange);"></i> Media Terpopuler</h3>
+                    <div id="trending-container">
+                        <!-- Injected via JS -->
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <!-- Stats Counter -->
+        <section class="stats" id="stats-section">
+            <div class="container stats-grid">
+                <div class="stat-card">
+                    <i class="fa-solid fa-laptop-file"></i>
+                    <div class="stat-number" data-target="1250">0</div>
+                    <div class="stat-label">Total Media</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    <div class="stat-number" data-target="342">0</div>
+                    <div class="stat-label">Guru Kontributor</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-users"></i>
+                    <div class="stat-number" data-target="45800">0</div>
+                    <div class="stat-label">Total Pengunjung</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- PAGE: DETAIL GAME -->
+    <main id="page-detail" class="page-section">
+        <div class="container detail-section">
+            <button class="btn-secondary" style="color: var(--primary-blue); border-color: var(--primary-blue); margin-bottom: 20px; margin-left: 0;" onclick="navigate('home')">
+                <i class="fa-solid fa-arrow-left"></i> Kembali ke Koleksi
+            </button>
+            
+            <div class="detail-header" id="detail-content">
+                <!-- Injected via JS -->
+            </div>
+
+            <h3 style="margin-top: 3rem; margin-bottom: 1.5rem; font-size: 1.8rem;">Rekomendasi Media Serupa</h3>
+            <div class="games-grid" id="recommendation-container">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </main>
+
+    <!-- PAGE: SUBMIT GAME -->
+    <main id="page-submit" class="page-section">
+        <div class="container submit-section">
+            <h2 class="section-title">Kirim Karya Media Pembelajaran</h2>
+            <p style="text-align: center; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto; color: #555;">
+                Bagikan karya inovatif Anda kepada seluruh guru dan siswa di Indonesia. Mohon isi form berikut dengan data yang valid.
+            </p>
+            
+            <div class="form-container">
+                <form id="submit-game-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="media_mapel">Mata Pelajaran (Materi Pembelajaran) *</label>
+                            <input type="text" id="media_mapel" class="form-control" placeholder="Contoh: Matematika, IPA, Pengenalan Warna" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="media_kelas">Kelas *</label>
+                            <select id="media_kelas" class="form-control" required>
+                                <option value="">Pilih Kelas...</option>
+                                <optgroup label="TK/PAUD">
+                                    <option value="TK A">TK A</option>
+                                    <option value="TK B">TK B</option>
+                                    <option value="PAUD">PAUD</option>
+                                </optgroup>
+                                <optgroup label="SD/MI">
+                                    <option value="Kelas 1">Kelas 1</option>
+                                    <option value="Kelas 2">Kelas 2</option>
+                                    <option value="Kelas 3">Kelas 3</option>
+                                    <option value="Kelas 4">Kelas 4</option>
+                                    <option value="Kelas 5">Kelas 5</option>
+                                    <option value="Kelas 6">Kelas 6</option>
+                                </optgroup>
+                                <optgroup label="SMP/MTs">
+                                    <option value="Kelas 7">Kelas 7</option>
+                                    <option value="Kelas 8">Kelas 8</option>
+                                    <option value="Kelas 9">Kelas 9</option>
+                                </optgroup>
+                                <optgroup label="SMA/SMK/MA">
+                                    <option value="Kelas 10">Kelas 10</option>
+                                    <option value="Kelas 11">Kelas 11</option>
+                                    <option value="Kelas 12">Kelas 12</option>
+                                </optgroup>
+                                <option value="Umum">Umum / Semua Kelas</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="media_link">Link Media (URL) *</label>
+                        <input type="url" id="media_link" class="form-control" placeholder="https://... link hosting media interaktif (Scratch, Canva, Genially, dll)" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="media_desc">Deskripsi Singkat *</label>
+                        <textarea id="media_desc" class="form-control" placeholder="Jelaskan cara penggunaan dan tujuan pembelajaran dari media ini..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Upload Thumbnail / Screenshot (Opsional)</label>
+                        <div class="file-upload-wrapper" onclick="document.getElementById('file_upload').click()">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <span style="font-size: 0.9rem;">Klik untuk upload gambar (Maks. 2MB)</span>
+                            <input type="file" id="file_upload" accept="image/*">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        <i class="fa-solid fa-paper-plane"></i> Kirim Media Pembelajaran
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3 style="display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-laptop-code" style="color: var(--light-blue); font-size: 1.2rem;"></i> Bantu Guru Yuk - Belajar
+                    </h3>
+                    <p>Satu Tempat untuk Media Pembelajaran Interaktif Guru Indonesia. BGY (Bantu Guru Yuk) merupakan ekosistem aplikasi pendidikan yang membantu guru bekerja lebih mudah, cepat, dan terorganisir melalui pemanfaatan teknologi.</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Informasi & Kontak Admin</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fa-solid fa-book-open" style="width: 20px; color: var(--light-blue);"></i> Panduan Penggunaan</a></li>
+                        <li><a href="mailto:admin@bgy.id"><i class="fa-solid fa-envelope" style="width: 20px; color: var(--light-blue);"></i> admin@bgy.id</a></li>
+                        <li><a href="#"><i class="fa-brands fa-whatsapp" style="width: 20px; color: var(--light-blue);"></i> 089530713597</a></li>
+                    </ul>
+                </div>
+            </div>
+            <p style="font-size: 0.75rem; color: var(--danger); border-top: 1px solid #e5e7eb; padding-top: 15px; margin-bottom: 20px;">
+                * Apabila terdapat data yang salah atau Anda ingin menghapus media yang telah dipublikasikan, silakan hubungi Admin.
+            </p>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                &copy; 2026 Bantu Guru Yuk by <a href="#" target="_blank" style="font-weight: 800;">@pak.choyy</a> &bull; v1.0.0
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div class="toast-notification" id="toast">
+        <i class="fa-solid fa-circle-check" style="font-size: 1.5rem;"></i>
+        <span id="toast-message">Data berhasil dikirim!</span>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // --- DUMMY DATA ---
+        const categories = [
+            { id: 1, name: "Laboratorium Maya", icon: "fa-flask", color: "#0ea5a0" },
+            { id: 2, name: "Multimedia Interaktif", icon: "fa-photo-video", color: "#f59e0b" },
+            { id: 3, name: "Game Edukasi", icon: "fa-gamepad", color: "#10b981" },
+            { id: 4, name: "Quiz Interaktif", icon: "fa-clipboard-question", color: "#8b5cf6" },
+            { id: 5, name: "Modul Digital", icon: "fa-book-open", color: "#3b82f6" }
+        ];
+
+        const games = [
+            { id: 101, title: "Petualangan Pecahan", mapel: "Matematika", kelas: "Kelas 4-6", jenjang: "SD", category: "Game Edukasi", guru: "Budi Santoso, S.Pd", sekolah: "SDN 1 Nusantara", plays: "1.2k", thumb: "0ea5a0", desc: "Media interaktif untuk memahami konsep pecahan dasar melalui pengumpulan koin dan pemecahan rintangan.", tool: "Scratch" },
+            { id: 102, title: "Simulasi Tata Surya", mapel: "IPA", kelas: "Kelas 7-9", jenjang: "SMP", category: "Laboratorium Maya", guru: "Siti Aminah, M.Pd", sekolah: "SMPN 5 Harapan", plays: "3.4k", thumb: "10b981", desc: "Eksplorasi 3D tata surya kita. Siswa dapat melihat orbit planet, mengukur jarak, dan mempelajari karakteristik masing-masing planet.", tool: "HTML5" },
+            { id: 103, title: "Kuis Pahlawan Nasional", mapel: "IPS", kelas: "Kelas 5-8", jenjang: "SD/SMP", category: "Quiz Interaktif", guru: "Rudi Hermawan", sekolah: "SD Cita Bangsa", plays: "856", thumb: "f59e0b", desc: "Uji pengetahuan sejarahmu! Kuis interaktif dengan fitur skor dan penjelasan singkat sejarah perjuangan pahlawan.", tool: "Canva" },
+            { id: 104, title: "Lab Asam Basa", mapel: "Kimia", kelas: "Kelas 10-12", jenjang: "SMA", category: "Laboratorium Maya", guru: "Dra. Ratna", sekolah: "SMAN 1 Teladan", plays: "2.1k", thumb: "8b5cf6", desc: "Praktikum virtual titrasi asam basa. Dilengkapi dengan indikator pH digital dan alat praktikum 3D.", tool: "HTML5" },
+            { id: 105, title: "English Vocab Builder", mapel: "Bahasa Inggris", kelas: "Semua Kelas", jenjang: "SD/SMP", category: "Game Edukasi", guru: "Mr. Jhonny", sekolah: "Bina English School", plays: "4.5k", thumb: "3b82f6", desc: "Tingkatkan kosa kata Bahasa Inggris dengan media interaktif mencocokkan gambar dan suara yang menyenangkan.", tool: "Genially" },
+            { id: 106, title: "Puzzle Peta Indonesia", mapel: "Geografi", kelas: "Kelas 7-10", jenjang: "SMP/SMA", category: "Multimedia Interaktif", guru: "Anwar, S.Pd", sekolah: "SMP Islam Terpadu", plays: "940", thumb: "0ea5a0", desc: "Susun pulau-pulau di Indonesia pada letak geografis yang tepat. Mengenal provinsi dan ibu kota.", tool: "H5P" },
+            { id: 107, title: "Hukum Newton Interaktif", mapel: "Fisika", kelas: "Kelas 10", jenjang: "SMA", category: "Laboratorium Maya", guru: "Hendra Wijaya", sekolah: "SMK Bisa", plays: "1.8k", thumb: "f59e0b", desc: "Ubah massa dan gaya gesek untuk melihat bagaimana Hukum Newton berlaku pada balok yang ditarik.", tool: "HTML5" },
+            { id: 108, title: "Petualangan Si Kancil", mapel: "B. Indonesia", kelas: "Kelas 1-3", jenjang: "SD", category: "Modul Digital", guru: "Nisa Ayu", sekolah: "SD Pelangi", plays: "5.6k", thumb: "10b981", desc: "Buku cerita interaktif yang dilengkapi suara, animasi, dan pertanyaan pemahaman bacaan di akhir cerita.", tool: "Canva" },
+            { id: 109, title: "Rantai Makanan AR", mapel: "Biologi", kelas: "Kelas 7-9", jenjang: "SMP", category: "Multimedia Interaktif", guru: "Linda Sari", sekolah: "SMPN 2 Kota", plays: "2.3k", thumb: "0d7a8a", desc: "Visualisasi rantai makanan ekosistem hutan dan laut. Kenali produsen, konsumen, dan dekomposer.", tool: "Genially" },
+            { id: 110, title: "Misteri Aljabar", mapel: "Matematika", kelas: "Kelas 7-8", jenjang: "SMP", category: "Game Edukasi", guru: "Budi Santoso, S.Pd", sekolah: "SDN 1 Nusantara", plays: "1.5k", thumb: "0ea5a0", desc: "Pecahkan kode brankas dengan menyelesaikan persamaan aljabar linear satu variabel.", tool: "Scratch" },
+            { id: 111, title: "Simulasi Gempa Bumi", mapel: "Geografi", kelas: "Kelas 10-12", jenjang: "SMA", category: "Laboratorium Maya", guru: "Dr. Aditya", sekolah: "SMA Kebangsaan", plays: "3.1k", thumb: "3b82f6", desc: "Pahami gelombang seismik dan mitigasi bencana gempa bumi melalui simulasi interaktif.", tool: "H5P" },
+            { id: 112, title: "Mengetik 10 Jari", mapel: "TIK", kelas: "Umum", jenjang: "SMP/SMA", category: "Game Edukasi", guru: "Ahmad Zaki", sekolah: "SMK Informatika", plays: "8.9k", thumb: "10b981", desc: "Belajar mengetik 10 jari dengan cepat dan tepat melalui aplikasi interaktif.", tool: "HTML5" }
+        ];
+
+        const teachers = [
+            { name: "Budi Santoso, S.Pd", sekolah: "SDN 1 Nusantara", games: 15, avatar: "0ea5a0" },
+            { name: "Siti Aminah, M.Pd", sekolah: "SMPN 5 Harapan", games: 12, avatar: "10b981" },
+            { name: "Dra. Ratna", sekolah: "SMAN 1 Teladan", games: 8, avatar: "8b5cf6" },
+            { name: "Hendra Wijaya", sekolah: "SMK Bisa", games: 7, avatar: "f59e0b" }
+        ];
+
+        // --- STREAMING_CHUNK:Implementing UI Render Functions ---
+        // UI rendering
+        function renderCategories() {
+            const container = document.getElementById('category-container');
+            container.innerHTML = categories.map(cat => `
+                <div class="category-card" onclick="filterCategory('${cat.name}')">
+                    <i class="fa-solid ${cat.icon}" style="color: ${cat.color};"></i>
+                    <h3>${cat.name}</h3>
+                </div>
+            `).join('');
+        }
+
+        function createGameCard(game) {
+            return `
+                <div class="game-card" onclick="viewGame(${game.id})">
+                    <div class="game-thumb">
+                        <div class="badge">${game.category}</div>
+                        <img src="https://placehold.co/400x250/${game.thumb}/FFFFFF?text=${encodeURIComponent(game.title)}" alt="${game.title}">
+                    </div>
+                    <div class="game-info">
+                        <h3 class="game-title">${game.title}</h3>
+                        <div class="game-meta">
+                            <span><i class="fa-solid fa-book"></i> ${game.mapel}</span>
+                            <span><i class="fa-solid fa-graduation-cap"></i> ${game.kelas}</span>
+                        </div>
+                        <div class="media-tool"><i class="fa-solid fa-wrench" style="font-size:0.7rem;"></i> Dibuat dengan: ${game.tool}</div>
+                        <div class="game-author">
+                            <i class="fa-solid fa-user-tie" style="color: #999; margin-right:5px;"></i> ${game.guru}
+                        </div>
+                        <div class="game-stats">
+                            <span><i class="fa-solid fa-school" style="margin-right:3px;"></i> ${game.sekolah}</span>
+                            <span><i class="fa-solid fa-users" style="color:var(--orange); margin-right:3px;"></i> ${game.plays} digunakan</span>
+                        </div>
+                        <button class="btn-play">Buka Media</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderGames(gamesList, containerId = 'games-container') {
+            const container = document.getElementById(containerId);
+            container.innerHTML = gamesList.map(game => createGameCard(game)).join('');
+        }
+
+        function renderTrending() {
+            const container = document.getElementById('trending-container');
+            const trendingGames = [...games].sort((a,b) => parseFloat(b.plays) - parseFloat(a.plays)).slice(0, 5);
+            container.innerHTML = trendingGames.map((game, index) => `
+                <div class="trending-item" onclick="viewGame(${game.id})">
+                    <div style="font-size: 1.2rem; font-weight: bold; color: #ccc; width: 20px;">${index + 1}</div>
+                    <img src="https://placehold.co/100x100/${game.thumb}/FFFFFF?text=IMG" alt="${game.title}">
+                    <div class="trending-info">
+                        <h4>${game.title}</h4>
+                        <p>${game.mapel} • <i class="fa-solid fa-play" style="font-size:0.7rem;"></i> ${game.plays}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderTeachers() {
+            const container = document.getElementById('teachers-container');
+            container.innerHTML = teachers.map(t => `
+                <div class="teacher-card">
+                    <img src="https://placehold.co/150x150/${t.avatar}/FFFFFF?text=${t.name.charAt(0)}" alt="${t.name}" class="avatar">
+                    <h4>${t.name}</h4>
+                    <p>${t.sekolah}</p>
+                    <div class="teacher-badge">${t.games} Media Karya</div>
+                </div>
+            `).join('');
+        }
+
+        // --- STREAMING_CHUNK:Implementing Navigation and Interactivity ---
+        // Navigation (SPA logic)
+        function navigate(pageId) {
+            document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(`page-${pageId}`).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Close mobile menu if open
+            const navLinks = document.getElementById('nav-links');
+            if(navLinks.classList.contains('active')) {
+                navLinks.classList.remove('active');
+            }
+        }
+
+        function viewGame(id) {
+            const game = games.find(g => g.id === id);
+            if(!game) return;
+
+            const detailContent = document.getElementById('detail-content');
+            detailContent.innerHTML = `
+                <img src="https://placehold.co/1200x400/${game.thumb}/FFFFFF?text=${encodeURIComponent(game.title)}" alt="${game.title}" class="detail-banner">
+                <div class="detail-content">
+                    <div class="detail-info">
+                        <div class="detail-meta-tags">
+                            <span class="tag"><i class="fa-solid fa-layer-group"></i> ${game.category}</span>
+                            <span class="tag"><i class="fa-solid fa-book"></i> ${game.mapel}</span>
+                            <span class="tag"><i class="fa-solid fa-graduation-cap"></i> ${game.jenjang} - ${game.kelas}</span>
+                            <span class="tag" style="background:var(--white); border: 1px solid #ccc; color: #555;"><i class="fa-solid fa-wrench"></i> Dibuat dengan: ${game.tool}</span>
+                        </div>
+                        <h2>${game.title}</h2>
+                        <p class="detail-desc">${game.desc}</p>
+                        
+                        <div class="creator-info">
+                            <img src="https://placehold.co/100x100/333/FFF?text=${game.guru.charAt(0)}" alt="${game.guru}">
+                            <div>
+                                <h4 style="color: var(--primary-blue);">${game.guru}</h4>
+                                <p style="font-size: 0.9rem; color: #666;"><i class="fa-solid fa-school"></i> ${game.sekolah}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-action">
+                        <button class="btn-play-lg" onclick="playMockGame()"><i class="fa-solid fa-arrow-up-right-from-square"></i> Buka Media</button>
+                        <div style="display:flex; justify-content: space-between; font-size: 0.9rem; color: #555; border-top: 1px solid #ddd; padding-top: 10px;">
+                            <span><i class="fa-solid fa-chart-simple"></i> Digunakan: <strong>${game.plays}</strong> kali</span>
+                            <span style="cursor:pointer; color:var(--light-blue);"><i class="fa-solid fa-share-nodes"></i> Bagikan</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Render recommendation (just random 3 games excluding current)
+            const recGames = games.filter(g => g.id !== id).sort(() => 0.5 - Math.random()).slice(0, 3);
+            renderGames(recGames, 'recommendation-container');
+
+            navigate('detail');
+        }
+
+        function filterCategory(catName) {
+            alert(`Fitur Filter Kategori: ${catName} \n(Data difilter secara dinamis, ini adalah fungsi mockup)`);
+            document.getElementById('catalog').scrollIntoView({behavior: 'smooth'});
+        }
+
+        function playMockGame() {
+            showToast("Memuat media interaktif... (Simulasi)");
+        }
+
+        // Toast Notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // --- STREAMING_CHUNK:Implementing Event Listeners and Animations ---
+        // Event Listeners
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            document.getElementById('nav-links').classList.toggle('active');
+        });
+
+        document.getElementById('submit-game-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Mock submission
+            showToast("Berhasil! Media Anda telah dikirim dan menunggu tinjauan Admin.");
+            this.reset();
+            setTimeout(() => { navigate('home'); }, 2000);
+        });
+
+        // Sticky Navbar Style Change on Scroll (Diubah agar background gradient 48px tetap terjaga)
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.style.boxShadow = "0 4px 15px rgba(0,0,0,0.3)";
+            } else {
+                nav.style.boxShadow = "var(--shadow-header)";
+            }
+        });
+
+        // Number Counter Animation
+        const statsSection = document.getElementById('stats-section');
+        let counterAnimated = false;
+
+        const animateCounters = () => {
+            const counters = document.querySelectorAll('.stat-number');
+            const speed = 200; // lower is slower
+
+            counters.forEach(counter => {
+                const updateCount = () => {
+                    const target = +counter.getAttribute('data-target');
+                    const count = +counter.innerText;
+                    const inc = target / speed;
+
+                    if (count < target) {
+                        counter.innerText = Math.ceil(count + inc);
+                        setTimeout(updateCount, 10);
+                    } else {
+                        counter.innerText = target + "+";
+                    }
+                };
+                updateCount();
+            });
+        };
+
+        // Intersection Observer to trigger counter
+        const observer = new IntersectionObserver((entries) => {
+            if(entries[0].isIntersecting && !counterAnimated) {
+                // Animate cards appearance
+                document.querySelectorAll('.stat-card').forEach((card, index) => {
+                    setTimeout(() => { card.classList.add('reveal'); }, index * 100);
+                });
+                
+                animateCounters();
+                counterAnimated = true;
+            }
+        }, { threshold: 0.3 });
+        
+        observer.observe(statsSection);
+
+        // Initialize App
+        window.onload = () => {
+            renderCategories();
+            renderGames(games);
+            renderTrending();
+        };
+
+    </script>
+</body>
+</html>
