@@ -221,6 +221,32 @@ body.dark .prompt-result{background:#0f172a;}
 
 /* DURASI CUSTOM */
 #durasiCustomWrap{margin-top:8px;}
+
+/* TIPE GAME CARDS */
+.tipe-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:8px;}
+@media(max-width:600px){.tipe-grid{grid-template-columns:repeat(2,1fr);}}
+.tipe-card{border:2px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s;background:var(--card-bg);position:relative;}
+.tipe-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:#0ea5a0;}
+.tipe-card.selected{border-color:#0ea5a0;box-shadow:0 0 0 3px rgba(14,165,160,.18);}
+.tipe-card .tc-img{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;padding:14px 8px 10px;}
+.tipe-card .tc-icon{font-size:2rem;}
+.tipe-card .tc-sub{font-size:.58rem;font-weight:700;letter-spacing:.5px;opacity:.85;}
+.tipe-card .tc-label{font-size:.75rem;font-weight:800;padding:6px 8px;text-align:center;color:var(--text);border-top:1px solid var(--border);}
+.tipe-card .tc-check{position:absolute;top:6px;right:6px;width:20px;height:20px;border-radius:50%;background:#0ea5a0;color:#fff;font-size:.7rem;display:none;align-items:center;justify-content:center;font-weight:800;}
+.tipe-card.selected .tc-check{display:flex;}
+.tipe-custom-row{margin-top:10px;display:none;}
+
+/* ACCORDION */
+.accordion{border:1.5px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:12px;}
+.accordion-header{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;cursor:pointer;background:var(--card-bg);font-size:.84rem;font-weight:700;color:var(--text);user-select:none;transition:background .15s;}
+.accordion-header:hover{background:var(--gray-100);}
+body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
+.accordion-header .acc-left{display:flex;align-items:center;gap:8px;}
+.accordion-header .acc-arrow{font-size:.75rem;transition:transform .25s;color:var(--text-light);}
+.accordion-header.open .acc-arrow{transform:rotate(180deg);}
+.accordion-body{display:none;padding:14px 16px;border-top:1px solid var(--border);background:var(--card-bg);}
+.accordion-body.open{display:block;}
+.acc-summary{font-size:.72rem;color:var(--text-light);margin-left:auto;margin-right:8px;font-weight:600;}
 </style>
 </head>
 <body>
@@ -408,144 +434,170 @@ body.dark .prompt-result{background:#0f172a;}
   </div>
 
   <!-- ═══════════════════════════════════ -->
-  <!-- SEKSI 2: DESAIN GAME               -->
+  <!-- SEKSI 2: PILIH TIPE GAME           -->
   <!-- ═══════════════════════════════════ -->
   <div class="card">
-    <div class="card-title">🎮 Desain Game</div>
-
-    <!-- Tipe Game -->
-    <div class="form-group">
-      <div class="section-label">Tipe Game</div>
-      <div style="font-size:.72rem;color:var(--text-light);margin-bottom:8px;">✨ Rekomendasi BGY otomatis terpilih. Bisa diganti sesuai kebutuhan.</div>
-      <div class="chip-grid" id="tipeGrid">
-        <div class="chip" data-val="Quiz Mission" onclick="selectTipe(this)">🧠 Quiz Mission</div>
-        <div class="chip" data-val="Puzzle" onclick="selectTipe(this)">🧩 Puzzle</div>
-        <div class="chip" data-val="Matching" onclick="selectTipe(this)">🔗 Matching</div>
-        <div class="chip" data-val="Adventure" onclick="selectTipe(this)">🗺️ Adventure</div>
-        <div class="chip" data-val="Mystery" onclick="selectTipe(this)">🔍 Mystery</div>
-        <div class="chip" data-val="Challenge" onclick="selectTipe(this)">⚡ Challenge</div>
-        <div class="chip" data-val="Case Challenge" onclick="selectTipe(this)">📋 Case Challenge</div>
-        <div class="chip" data-val="__custom__" onclick="selectTipe(this)">✏️ Lainnya</div>
+    <div class="card-title">🎮 Pilih Tipe Game</div>
+    <div style="font-size:.75rem;color:var(--text-light);margin-bottom:12px;">BGY otomatis merekomendasikan tipe terbaik. Kamu bisa ganti sesuai kebutuhan.</div>
+    <div class="tipe-grid" id="tipeGrid">
+      <div class="tipe-card" data-val="Quiz Mission" onclick="selectTipe(this)">
+        <div class="tc-check">✓</div>
+        <div class="tc-img" style="background:linear-gradient(135deg,#0ea5a0,#0d7a8a);">
+          <div class="tc-icon">🧠</div>
+          <div class="tc-sub" style="color:rgba(255,255,255,.85);">PILIHAN GANDA</div>
+        </div>
+        <div class="tc-label">Quiz Mission</div>
       </div>
-      <div class="form-group" id="tipeCustomWrap" style="display:none;margin-top:10px;">
-        <label>Tipe Game yang Diinginkan</label>
-        <textarea id="tipeCustom" style="min-height:60px;" placeholder="Contoh: Petualangan mencari harta karun sambil menyelesaikan soal matematika."></textarea>
+      <div class="tipe-card" data-val="Puzzle" onclick="selectTipe(this)">
+        <div class="tc-check">✓</div>
+        <div class="tc-img" style="background:linear-gradient(135deg,#d97706,#b45309);">
+          <div class="tc-icon">🧩</div>
+          <div class="tc-sub" style="color:rgba(255,255,255,.85);">SUSUN URUTAN</div>
+        </div>
+        <div class="tc-label">Puzzle</div>
       </div>
-    </div>
-
-    <!-- Jumlah Tantangan -->
-    <div class="form-group">
-      <div class="section-label">Jumlah Tantangan</div>
-      <div class="chip-grid" id="jmlGrid">
-        <div class="chip" data-val="3" onclick="selectJml(this)">3</div>
-        <div class="chip selected" data-val="5" onclick="selectJml(this)">5</div>
-        <div class="chip" data-val="8" onclick="selectJml(this)">8</div>
-        <div class="chip" data-val="10" onclick="selectJml(this)">10</div>
-        <div class="chip" data-val="__custom__" onclick="selectJml(this)">Custom</div>
+      <div class="tipe-card" data-val="Matching" onclick="selectTipe(this)">
+        <div class="tc-check">✓</div>
+        <div class="tc-img" style="background:linear-gradient(135deg,#16a34a,#15803d);">
+          <div class="tc-icon">🔗</div>
+          <div class="tc-sub" style="color:rgba(255,255,255,.85);">COCOKKAN</div>
+        </div>
+        <div class="tc-label">Matching</div>
       </div>
-      <div id="jmlCustomWrap" style="display:none;margin-top:8px;">
-        <input type="number" id="jmlCustom" min="1" max="20" placeholder="Masukkan jumlah (1–20)" oninput="validateJmlCustom(this)"/>
-        <div id="jmlCustomError" style="display:none;font-size:.72rem;color:#dc2626;margin-top:4px;">⚠️ Masukkan angka antara 1–20</div>
+      <div class="tipe-card" data-val="Adventure" onclick="selectTipe(this)">
+        <div class="tc-check">✓</div>
+        <div class="tc-img" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);">
+          <div class="tc-icon">🗺️</div>
+          <div class="tc-sub" style="color:rgba(255,255,255,.85);">JELAJAHI PETA</div>
+        </div>
+        <div class="tc-label">Adventure</div>
       </div>
-    </div>
-
-    <!-- Tingkat Kesulitan -->
-    <div class="form-group">
-      <div class="section-label">🎯 Tingkat Kesulitan</div>
-      <div class="chip-grid" id="diffGrid">
-        <div class="chip difficulty" data-val="🟢 Mudah" onclick="selectDifficulty(this)">🟢 Mudah</div>
-        <div class="chip difficulty" data-val="🟡 Sedang" onclick="selectDifficulty(this)">🟡 Sedang</div>
-        <div class="chip difficulty" data-val="🔴 Sulit" onclick="selectDifficulty(this)">🔴 Sulit</div>
-        <div class="chip difficulty" data-val="🧠 HOTS" onclick="selectDifficulty(this)">🧠 HOTS</div>
-        <div class="chip difficulty selected" data-val="✨ AI Menentukan" onclick="selectDifficulty(this)">✨ AI Menentukan</div>
+      <div class="tipe-card" data-val="Mystery" onclick="selectTipe(this)">
+        <div class="tc-check">✓</div>
+        <div class="tc-img" style="background:linear-gradient(135deg,#0f172a,#1e293b);">
+          <div class="tc-icon">🔍</div>
+          <div class="tc-sub" style="color:rgba(255,255,255,.85);">DETEKTIF</div>
+        </div>
+        <div class="tc-label">Mystery</div>
       </div>
-    </div>
-
-    <!-- Durasi -->
-    <div class="form-group">
-      <div class="section-label">⏱️ Durasi Game</div>
-      <div class="chip-grid" id="durasiGrid">
-        <div class="chip" data-val="3–5 menit" onclick="selectDurasi(this)">⚡ 3–5 mnt</div>
-        <div class="chip" data-val="5–10 menit" onclick="selectDurasi(this)">🕐 5–10 mnt</div>
-        <div class="chip" data-val="10–15 menit" onclick="selectDurasi(this)">🎮 10–15 mnt</div>
-        <div class="chip" data-val="20–30 menit" onclick="selectDurasi(this)">🏫 20–30 mnt</div>
-        <div class="chip" data-val="__custom__" onclick="selectDurasi(this)">✏️ Custom</div>
-        <div class="chip selected" data-val="🤖 AI Menentukan" onclick="selectDurasi(this)">🤖 AI Menentukan</div>
+      <div class="tipe-card" data-val="Challenge" onclick="selectTipe(this)">
+        <div class="tc-check">✓</div>
+        <div class="tc-img" style="background:linear-gradient(135deg,#dc2626,#b91c1c);">
+          <div class="tc-icon">⚡</div>
+          <div class="tc-sub" style="color:rgba(255,255,255,.85);">LEVEL UP</div>
+        </div>
+        <div class="tc-label">Challenge</div>
       </div>
-      <div id="durasiCustomWrap" style="display:none;">
-        <input type="number" id="durasiCustom" min="1" max="120" placeholder="Durasi dalam menit (1–120)"/>
+      <div class="tipe-card" data-val="Case Challenge" onclick="selectTipe(this)">
+        <div class="tc-check">✓</div>
+        <div class="tc-img" style="background:linear-gradient(135deg,#0369a1,#075985);">
+          <div class="tc-icon">📋</div>
+          <div class="tc-sub" style="color:rgba(255,255,255,.85);">ANALISIS KASUS</div>
+        </div>
+        <div class="tc-label">Case Challenge</div>
       </div>
-    </div>
-
-    <!-- Mode Bermain -->
-    <div class="form-group">
-      <div class="section-label">👥 Mode Bermain</div>
-      <div class="chip-grid" id="modeGrid">
-        <div class="chip mode selected" data-val="👤 Individu" onclick="selectMode(this)">👤 Individu</div>
-        <div class="chip mode" data-val="👥 Berpasangan" onclick="selectMode(this)">👥 Berpasangan</div>
-        <div class="chip mode" data-val="👨‍👩‍👧 Kelompok" onclick="selectMode(this)">👨‍👩‍👧 Kelompok</div>
-        <div class="chip mode" data-val="🏫 Klasikal/Proyektor" onclick="selectMode(this)">🏫 Klasikal</div>
-        <div class="chip mode" data-val="🤖 AI Menentukan" onclick="selectMode(this)">🤖 AI Menentukan</div>
+      <div class="tipe-card" data-val="__custom__" onclick="selectTipe(this)">
+        <div class="tc-check">✓</div>
+        <div class="tc-img" style="background:linear-gradient(135deg,#64748b,#475569);">
+          <div class="tc-icon">✏️</div>
+          <div class="tc-sub" style="color:rgba(255,255,255,.85);">KUSTOM</div>
+        </div>
+        <div class="tc-label">Lainnya</div>
       </div>
     </div>
-
-    <!-- Gaya Visual -->
-    <div class="form-group">
-      <div class="section-label">🎨 Gaya Visual</div>
-      <div class="chip-grid" id="gayaGrid">
-        <div class="chip gaya" data-val="🌈 Ceria Anak" onclick="selectGaya(this)">🌈 Ceria Anak</div>
-        <div class="chip gaya" data-val="📚 Storybook" onclick="selectGaya(this)">📚 Storybook</div>
-        <div class="chip gaya" data-val="🎨 Cartoon" onclick="selectGaya(this)">🎨 Cartoon</div>
-        <div class="chip gaya" data-val="🧩 Flat Modern" onclick="selectGaya(this)">🧩 Flat Modern</div>
-        <div class="chip gaya" data-val="✨ AI Memilih" onclick="selectGaya(this)">✨ AI Memilih</div>
-      </div>
+    <div class="tipe-custom-row" id="tipeCustomWrap">
+      <label style="font-size:.72rem;font-weight:700;color:var(--text-light);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Deskripsikan tipe game kamu</label>
+      <textarea id="tipeCustom" style="min-height:60px;width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.83rem;color:var(--text);background:var(--input-bg);font-family:inherit;outline:none;resize:vertical;" placeholder="Contoh: Petualangan mencari harta karun sambil menyelesaikan soal matematika."></textarea>
     </div>
   </div>
 
   <!-- ═══════════════════════════════════ -->
-  <!-- SEKSI 3: PREFERENSI PEMBELAJARAN   -->
+  <!-- SEKSI 3: ACCORDION LANJUTAN        -->
   <!-- ═══════════════════════════════════ -->
-  <div class="card">
-    <div class="card-title">🧠 Preferensi Pembelajaran</div>
-
-    <!-- Jenis Asesmen -->
-    <div class="form-group">
-      <div class="section-label">📝 Jenis Asesmen</div>
-      <div class="chip-grid" id="asesmenGrid">
-        <div class="chip asesmen" data-val="Pilihan Ganda" onclick="selectAsesmen(this)">Pilihan Ganda</div>
-        <div class="chip asesmen" data-val="Benar/Salah" onclick="selectAsesmen(this)">Benar/Salah</div>
-        <div class="chip asesmen" data-val="Matching" onclick="selectAsesmen(this)">Matching</div>
-        <div class="chip asesmen" data-val="Mengurutkan" onclick="selectAsesmen(this)">Mengurutkan</div>
-        <div class="chip asesmen" data-val="Isian Singkat" onclick="selectAsesmen(this)">Isian Singkat</div>
-        <div class="chip asesmen" data-val="Studi Kasus" onclick="selectAsesmen(this)">Studi Kasus</div>
-        <div class="chip asesmen" data-val="Pemecahan Masalah" onclick="selectAsesmen(this)">Pemecahan Masalah</div>
-        <div class="chip asesmen" data-val="Campuran" onclick="selectAsesmen(this)">Campuran</div>
-        <div class="chip asesmen selected" data-val="🤖 AI Menentukan" onclick="selectAsesmen(this)">🤖 AI Menentukan</div>
-      </div>
+  <div class="accordion" id="accLanjutan">
+    <div class="accordion-header" onclick="toggleAccordion()">
+      <div class="acc-left">⚙️ <span>Sesuaikan Lebih Lanjut</span></div>
+      <span class="acc-summary" id="accSummary">5 opsi · semua auto</span>
+      <span class="acc-arrow">▼</span>
     </div>
+    <div class="accordion-body" id="accBody">
 
-    <!-- Kondisi Kelas -->
-    <div class="form-group">
-      <div class="section-label">👨‍🎓 Kondisi Kelas</div>
-      <div class="chip-grid" id="kondisiGrid">
-        <div class="chip kondisi" data-val="🟢 Kemampuan relatif seragam" onclick="selectKondisi(this)">🟢 Seragam</div>
-        <div class="chip kondisi selected" data-val="🟡 Kemampuan beragam" onclick="selectKondisi(this)">🟡 Beragam</div>
-        <div class="chip kondisi" data-val="🟠 Banyak siswa perlu bantuan" onclick="selectKondisi(this)">🟠 Perlu Bantuan</div>
-        <div class="chip kondisi" data-val="🔵 Siswa cepat belajar" onclick="selectKondisi(this)">🔵 Cepat Belajar</div>
-        <div class="chip kondisi" data-val="♿ Perlu perhatian aksesibilitas" onclick="selectKondisi(this)">♿ Aksesibilitas</div>
-        <div class="chip kondisi" data-val="🤖 AI Menentukan" onclick="selectKondisi(this)">🤖 AI Menentukan</div>
+      <!-- Jumlah Tantangan -->
+      <div class="form-group">
+        <div class="section-label">Jumlah Tantangan</div>
+        <div class="chip-grid" id="jmlGrid">
+          <div class="chip" data-val="3" onclick="selectJml(this)">3</div>
+          <div class="chip selected" data-val="5" onclick="selectJml(this)">5</div>
+          <div class="chip" data-val="8" onclick="selectJml(this)">8</div>
+          <div class="chip" data-val="10" onclick="selectJml(this)">10</div>
+          <div class="chip" data-val="__custom__" onclick="selectJml(this)">Custom</div>
+        </div>
+        <div id="jmlCustomWrap" style="display:none;margin-top:8px;">
+          <input type="number" id="jmlCustom" min="1" max="20" placeholder="Masukkan jumlah (1–20)" oninput="validateJmlCustom(this)"/>
+          <div id="jmlCustomError" style="display:none;font-size:.72rem;color:#dc2626;margin-top:4px;">⚠️ Masukkan angka antara 1–20</div>
+        </div>
       </div>
-    </div>
 
-    <!-- Quality Control -->
-    <div class="form-group">
-      <div class="section-label">🛡️ Quality Control</div>
-      <div class="chip-grid" id="qcGrid">
-        <div class="chip qc selected" data-val="🤖 Otomatis" onclick="selectQC(this)">🤖 Otomatis</div>
-        <div class="chip qc" data-val="🔒 Ketat" onclick="selectQC(this)">🔒 Ketat</div>
+      <!-- Tingkat Kesulitan -->
+      <div class="form-group">
+        <div class="section-label">🎯 Tingkat Kesulitan</div>
+        <div class="chip-grid" id="diffGrid">
+          <div class="chip difficulty" data-val="🟢 Mudah" onclick="selectDifficulty(this)">🟢 Mudah</div>
+          <div class="chip difficulty" data-val="🟡 Sedang" onclick="selectDifficulty(this)">🟡 Sedang</div>
+          <div class="chip difficulty" data-val="🔴 Sulit" onclick="selectDifficulty(this)">🔴 Sulit</div>
+          <div class="chip difficulty" data-val="🧠 HOTS" onclick="selectDifficulty(this)">🧠 HOTS</div>
+          <div class="chip difficulty selected" data-val="✨ AI Menentukan" onclick="selectDifficulty(this)">✨ AI Menentukan</div>
+        </div>
       </div>
-      <div style="font-size:.7rem;color:var(--text-light);margin-top:6px;">Mode <b>Ketat</b>: AI diperintahkan melakukan validasi internal menyeluruh sebelum menulis kode game.</div>
+
+      <!-- Durasi -->
+      <div class="form-group">
+        <div class="section-label">⏱️ Durasi Game</div>
+        <div class="chip-grid" id="durasiGrid">
+          <div class="chip" data-val="3–5 menit" onclick="selectDurasi(this)">⚡ 3–5 mnt</div>
+          <div class="chip" data-val="5–10 menit" onclick="selectDurasi(this)">🕐 5–10 mnt</div>
+          <div class="chip" data-val="10–15 menit" onclick="selectDurasi(this)">🎮 10–15 mnt</div>
+          <div class="chip" data-val="20–30 menit" onclick="selectDurasi(this)">🏫 20–30 mnt</div>
+          <div class="chip" data-val="__custom__" onclick="selectDurasi(this)">✏️ Custom</div>
+          <div class="chip selected" data-val="🤖 AI Menentukan" onclick="selectDurasi(this)">🤖 AI Menentukan</div>
+        </div>
+        <div id="durasiCustomWrap" style="display:none;margin-top:8px;">
+          <input type="number" id="durasiCustom" min="1" max="120" placeholder="Durasi dalam menit (1–120)"/>
+        </div>
+      </div>
+
+      <!-- Mode Bermain -->
+      <div class="form-group">
+        <div class="section-label">👥 Mode Bermain</div>
+        <div class="chip-grid" id="modeGrid">
+          <div class="chip mode selected" data-val="👤 Individu" onclick="selectMode(this)">👤 Individu</div>
+          <div class="chip mode" data-val="👥 Berpasangan" onclick="selectMode(this)">👥 Berpasangan</div>
+          <div class="chip mode" data-val="👨‍👩‍👧 Kelompok" onclick="selectMode(this)">👨‍👩‍👧 Kelompok</div>
+          <div class="chip mode" data-val="🏫 Klasikal/Proyektor" onclick="selectMode(this)">🏫 Klasikal</div>
+          <div class="chip mode" data-val="🤖 AI Menentukan" onclick="selectMode(this)">🤖 AI Menentukan</div>
+        </div>
+      </div>
+
+      <!-- Gaya Visual -->
+      <div class="form-group" style="margin-bottom:0;">
+        <div class="section-label">🎨 Gaya Visual</div>
+        <div class="chip-grid" id="gayaGrid">
+          <div class="chip gaya" data-val="🌈 Ceria Anak" onclick="selectGaya(this)">🌈 Ceria Anak</div>
+          <div class="chip gaya" data-val="📚 Storybook" onclick="selectGaya(this)">📚 Storybook</div>
+          <div class="chip gaya" data-val="🎨 Cartoon" onclick="selectGaya(this)">🎨 Cartoon</div>
+          <div class="chip gaya" data-val="🧩 Flat Modern" onclick="selectGaya(this)">🧩 Flat Modern</div>
+          <div class="chip gaya" data-val="✨ AI Memilih" onclick="selectGaya(this)">✨ AI Memilih</div>
+        </div>
+      </div>
+
     </div>
+  </div>
+
+  <!-- hidden state untuk asesmen, kondisi, QC — auto -->
+  <div style="display:none;">
+    <div id="asesmenGrid"><div class="chip asesmen selected" data-val="🤖 AI Menentukan"></div></div>
+    <div id="kondisiGrid"><div class="chip kondisi selected" data-val="🟡 Kemampuan beragam"></div></div>
+    <div id="qcGrid"><div class="chip qc selected" data-val="🤖 Otomatis"></div></div>
   </div>
 
   <!-- GENERATE -->
@@ -554,56 +606,6 @@ body.dark .prompt-result{background:#0f172a;}
     <button class="btn-reset" onclick="resetForm()">🔄 Reset Form</button>
   </div>
 
-  <!-- CONTOH GAME -->
-  <div class="card">
-    <div class="card-title">🎮 Contoh Game yang Bisa Dibuat</div>
-    <p style="font-size:.76rem;color:var(--text-light);margin-bottom:12px;">Game HTML single-file siap dimainkan di browser. <b>Generate Prompt → Paste ke AI → Game jadi dalam menit!</b></p>
-    <div class="contoh-grid">
-      <div class="contoh-card" onclick="selectTabGame('Quiz Mission')">
-        <div class="contoh-img" style="background:linear-gradient(135deg,#0ea5a0,#0d7a8a);">
-          <div style="font-size:2rem;">🧠</div>
-          <div style="font-size:.6rem;color:rgba(255,255,255,.85);font-weight:700;letter-spacing:.5px;">PILIHAN GANDA</div>
-        </div>
-        <div class="contoh-label">Quiz Mission</div>
-      </div>
-      <div class="contoh-card" onclick="selectTabGame('Puzzle')">
-        <div class="contoh-img" style="background:linear-gradient(135deg,#d97706,#b45309);">
-          <div style="font-size:2rem;">🧩</div>
-          <div style="font-size:.6rem;color:rgba(255,255,255,.85);font-weight:700;letter-spacing:.5px;">SUSUN URUTAN</div>
-        </div>
-        <div class="contoh-label">Puzzle</div>
-      </div>
-      <div class="contoh-card" onclick="selectTabGame('Matching')">
-        <div class="contoh-img" style="background:linear-gradient(135deg,#16a34a,#15803d);">
-          <div style="font-size:2rem;">🔗</div>
-          <div style="font-size:.6rem;color:rgba(255,255,255,.85);font-weight:700;letter-spacing:.5px;">COCOKKAN</div>
-        </div>
-        <div class="contoh-label">Matching</div>
-      </div>
-      <div class="contoh-card" onclick="selectTabGame('Adventure')">
-        <div class="contoh-img" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);">
-          <div style="font-size:2rem;">🗺️</div>
-          <div style="font-size:.6rem;color:rgba(255,255,255,.85);font-weight:700;letter-spacing:.5px;">JELAJAHI PETA</div>
-        </div>
-        <div class="contoh-label">Adventure</div>
-      </div>
-      <div class="contoh-card" onclick="selectTabGame('Mystery')">
-        <div class="contoh-img" style="background:linear-gradient(135deg,#0f172a,#1e293b);">
-          <div style="font-size:2rem;">🔍</div>
-          <div style="font-size:.6rem;color:rgba(255,255,255,.85);font-weight:700;letter-spacing:.5px;">DETEKTIF</div>
-        </div>
-        <div class="contoh-label">Mystery</div>
-      </div>
-      <div class="contoh-card" onclick="selectTabGame('Challenge')">
-        <div class="contoh-img" style="background:linear-gradient(135deg,#dc2626,#b91c1c);">
-          <div style="font-size:2rem;">⚡</div>
-          <div style="font-size:.6rem;color:rgba(255,255,255,.85);font-weight:700;letter-spacing:.5px;">LEVEL UP</div>
-        </div>
-        <div class="contoh-label">Challenge</div>
-      </div>
-    </div>
-    <div style="font-size:.72rem;color:var(--blue);margin-top:10px;text-align:center;font-weight:600;cursor:pointer;" onclick="document.getElementById('tipeGrid').scrollIntoView({behavior:'smooth',block:'center'})">👆 Klik kartu untuk pilih tipe game langsung</div>
-  </div>
 
   <!-- OUTPUT -->
   <div class="card" id="outputCard" style="display:none;">
@@ -750,8 +752,8 @@ function updateRekom(){
     <span class="rekom-chip blue">${r.interaksi}</span>
     <span class="rekom-chip orange">${r.tantangan}</span>`;
   if(!selectedTipe){
-    const chip=document.querySelector(`#tipeGrid .chip[data-val="${r.game}"]`);
-    if(chip) selectTipe(chip);
+    const card=document.querySelector(`#tipeGrid .tipe-card[data-val="${r.game}"]`);
+    if(card) selectTipe(card);
   }
 }
 
@@ -765,7 +767,8 @@ function onJenjangChange(){
   document.getElementById('mapelCustomWrap').style.display='none';
   document.getElementById('rekomCard').style.display='none';
   selectedTipe='';
-  document.querySelectorAll('#tipeGrid .chip').forEach(c=>c.classList.remove('selected'));
+  document.querySelectorAll('#tipeGrid .tipe-card').forEach(c=>c.classList.remove('selected'));
+  updateAccSummary();
   if(!j) return;
   (KELAS_DB[j]||[]).forEach(k=>ke.innerHTML+=`<option>${k}</option>`);
   (MAPEL_DB[j]||[]).forEach(m=>ma.innerHTML+=`<option>${m}</option>`);
@@ -791,31 +794,54 @@ function handleMapelChange(){
 
 // ===== CHIP SELECTORS =====
 function selectTipe(el){
-  document.querySelectorAll('#tipeGrid .chip').forEach(c=>c.classList.remove('selected'));
+  document.querySelectorAll('#tipeGrid .tipe-card').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected');selectedTipe=el.dataset.val;
-  document.getElementById('tipeCustomWrap').style.display=selectedTipe==='__custom__'?'block':'none';
+  document.getElementById('tipeCustomWrap').style.display=selectedTipe==='__custom__'?'flex':'none';
+  if(selectedTipe==='__custom__') document.getElementById('tipeCustomWrap').style.flexDirection='column';
+}
+function toggleAccordion(){
+  const h=document.querySelector('.accordion-header');
+  const b=document.getElementById('accBody');
+  h.classList.toggle('open');
+  b.classList.toggle('open');
+}
+function updateAccSummary(){
+  const parts=[];
+  if(selectedJml!=='5'&&selectedJml!=='__custom__') parts.push(selectedJml+' tantangan');
+  else if(selectedJml==='__custom__'){const v=document.getElementById('jmlCustom').value;if(v)parts.push(v+' tantangan');}
+  if(selectedDifficulty!=='✨ AI Menentukan') parts.push(selectedDifficulty.replace(/[^\w\s]/gu,'').trim());
+  if(selectedDurasi!=='🤖 AI Menentukan') parts.push(selectedDurasi);
+  if(selectedMode!=='👤 Individu') parts.push(selectedMode.replace(/[^\w\s]/gu,'').trim());
+  if(selectedGaya&&selectedGaya!=='✨ AI Memilih') parts.push(selectedGaya.replace(/[^\w\s]/gu,'').trim());
+  const el=document.getElementById('accSummary');
+  el.textContent=parts.length?parts.join(' · '):'5 opsi · semua auto';
 }
 function selectJml(el){
   document.querySelectorAll('#jmlGrid .chip').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected');selectedJml=el.dataset.val;
   document.getElementById('jmlCustomWrap').style.display=selectedJml==='__custom__'?'block':'none';
+  updateAccSummary();
 }
 function selectGaya(el){
   document.querySelectorAll('.chip.gaya').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected');selectedGaya=el.dataset.val;
+  updateAccSummary();
 }
 function selectDifficulty(el){
   document.querySelectorAll('.chip.difficulty').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected');selectedDifficulty=el.dataset.val;
+  updateAccSummary();
 }
 function selectDurasi(el){
   document.querySelectorAll('#durasiGrid .chip').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected');selectedDurasi=el.dataset.val;
   document.getElementById('durasiCustomWrap').style.display=selectedDurasi==='__custom__'?'block':'none';
+  updateAccSummary();
 }
 function selectMode(el){
   document.querySelectorAll('.chip.mode').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected');selectedMode=el.dataset.val;
+  updateAccSummary();
 }
 function selectAsesmen(el){
   document.querySelectorAll('.chip.asesmen').forEach(c=>c.classList.remove('selected'));
@@ -1327,8 +1353,8 @@ function escHtml(s){
 
 // ===== CONTOH GAME CLICK =====
 function selectTabGame(tipe){
-  const chip=document.querySelector(`#tipeGrid .chip[data-val="${tipe}"]`);
-  if(chip){selectTipe(chip);chip.scrollIntoView({behavior:'smooth',block:'center'});}
+  const card=document.querySelector(`#tipeGrid .tipe-card[data-val="${tipe}"]`);
+  if(card){selectTipe(card);card.scrollIntoView({behavior:'smooth',block:'center'});}
 }
 
 // ===== SHARE & DOWNLOAD =====
@@ -1358,7 +1384,8 @@ function resetForm(){
   ['materi','tujuan','sumber','tipeCustom','mapelCustom','jmlCustom','durasiCustom'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   ['tipeCustomWrap','mapelCustomWrap','jmlCustomWrap','durasiCustomWrap','outputCard','errorBox','jmlCustomError'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
   selectedTipe='';
-  document.querySelectorAll('#tipeGrid .chip').forEach(c=>c.classList.remove('selected'));
+  document.querySelectorAll('#tipeGrid .tipe-card').forEach(c=>c.classList.remove('selected'));
+  updateAccSummary();
   document.querySelectorAll('#jmlGrid .chip').forEach(c=>c.classList.remove('selected'));
   const d5=document.querySelector('#jmlGrid .chip[data-val="5"]');
   if(d5){d5.classList.add('selected');selectedJml='5';}
@@ -1444,9 +1471,9 @@ function bukaHistori(i){
   document.getElementById('materi').value=h.materi||'';
   document.getElementById('tujuan').value=h.tujuan||'';
   document.getElementById('sumber').value=h.sumber||'';
-  const tc=document.querySelector(`#tipeGrid .chip[data-val="${h.tipe}"]`);
+  const tc=document.querySelector(`#tipeGrid .tipe-card[data-val="${h.tipe}"]`);
   if(tc)selectTipe(tc);
-  else{const cc=document.querySelector('#tipeGrid .chip[data-val="__custom__"]');if(cc)selectTipe(cc);document.getElementById('tipeCustom').value=h.tipe||'';}
+  else{const cc=document.querySelector('#tipeGrid .tipe-card[data-val="__custom__"]');if(cc)selectTipe(cc);document.getElementById('tipeCustom').value=h.tipe||'';}
   const jc=document.querySelector(`#jmlGrid .chip[data-val="${String(h.jml)}"]`);
   if(jc)selectJml(jc);
   const gc=document.querySelector(`.chip.gaya[data-val="${h.gaya}"]`);
