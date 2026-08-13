@@ -8,6 +8,7 @@ const links = [
   { label: "Home", href: "/" },
   { label: "Koleksi Media", href: "/catalog" },
   { label: "Kategori", href: "/#categories" },
+  { label: "Buat Game Sendiri", href: "/buat" },
 ];
 
 export default function Navbar() {

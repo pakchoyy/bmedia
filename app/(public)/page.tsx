@@ -45,6 +45,16 @@ export default async function HomePage() {
                 Jelajahi Media
               </a>
               <Link
+                href="/buat"
+                className="bg-white text-primary rounded-full px-6 py-3 text-lg font-semibold inline-flex items-center gap-2 hover:bg-primary-bg hover:scale-105 transition-all relative"
+              >
+                <Icon name="gamepad" />
+                Buat Game Sendiri
+                <span className="absolute -top-2 -right-2 bg-accent text-white text-[0.65rem] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">
+                  Baru
+                </span>
+              </Link>
+              <Link
                 href="/submit"
                 className="bg-transparent border-2 border-white text-white rounded-full px-6 py-3 text-lg font-semibold inline-flex items-center gap-2 hover:bg-white hover:text-primary transition-colors"
               >
