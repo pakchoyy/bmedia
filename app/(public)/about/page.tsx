@@ -67,7 +67,7 @@ export default function AboutPage() {
           ))}
         </div>
 
-        <div className="mt-12 bg-pagebg rounded-2xl p-8 max-w-[700px] mx-auto text-center border border-gray-100">
+        <div id="kontak" className="mt-12 bg-pagebg rounded-2xl p-8 max-w-[700px] mx-auto text-center border border-gray-100">
           <h2 className="text-2xl font-bold text-primary mb-4">Kontak Admin</h2>
           <p className="text-gray-600 mb-6">
             Punya pertanyaan, saran, atau ingin menghapus/melaporkan media?
