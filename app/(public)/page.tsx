@@ -1,88 +1,136 @@
 import Link from "next/link";
-import { getApprovedMedia, getSiteStats, getTrendingMedia } from "@/lib/queries";
-import HomeCatalog from "@/components/HomeCatalog";
+import { getApprovedMedia, getSiteStats } from "@/lib/queries";
 import Icon from "@/components/Icon";
+import SearchMedia from "@/components/SearchMedia";
+import PopularCategories from "@/components/PopularCategories";
+import MediaTerbaru from "@/components/MediaTerbaru";
+import CTABuatGame from "@/components/CTABuatGame";
+import CTAKirimKarya from "@/components/CTAKirimKarya";
+import Stats from "@/components/Stats";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function HomePage() {
-  const [media, trending, stats] = await Promise.all([
+  const [media, stats] = await Promise.all([
     getApprovedMedia(),
-    getTrendingMedia(5),
     getSiteStats(),
   ]);
+
+  // Sort media by date (newest first)
+  const sortedMedia = [...media].sort(
+    (a, b) => new Date(b.submitted_at).getTime() - new Date(a.submitted_at).getTime()
+  );
 
   return (
     <div className="fade-in">
       {/* Hero */}
-      <section className="bg-bgy-hero text-white py-20">
-        <div className="container mx-auto max-w-[1200px] px-6 flex items-center justify-center text-center">
-          <div className="max-w-[800px] flex flex-col items-center">
-            <div className="flex flex-wrap justify-center gap-2.5 mb-4">
-              {["Gratis", "Dibuat Guru Indonesia", "Media Interaktif"].map((b) => (
-                <span
-                  key={b}
-                  className="bg-white/20 border border-white/30 rounded-full px-3 py-1 text-[0.8rem]"
+      <section className="bg-bgy-hero text-white py-20 overflow-hidden">
+        <div className="container mx-auto max-w-[1200px] px-6">
+          <div className="flex items-center gap-12 max-lg:flex-col max-lg:text-center">
+            {/* Left: Content */}
+            <div className="flex-1 max-lg:max-w-[700px]">
+              <div className="flex flex-wrap justify-start gap-2 mb-5 max-lg:justify-center">
+                {["✓ Gratis", "✓ Karya Guru Indonesia", "✓ Interaktif"].map((b) => (
+                  <span
+                    key={b}
+                    className="bg-white/15 border border-white/25 rounded-full px-3 py-1 text-xs font-medium backdrop-blur-sm"
+                  >
+                    {b}
+                  </span>
+                ))}
+              </div>
+              
+              <h1 className="text-white text-5xl leading-tight font-bold mb-3 max-md:text-4xl">
+                Bantu Guru Yuk
+              </h1>
+              <h2 className="text-white text-3xl leading-snug font-bold mb-5 max-md:text-2xl">
+                Media Belajar Interaktif<br />Karya Guru Indonesia
+              </h2>
+              
+              <p className="text-lg mb-8 opacity-90 leading-relaxed max-w-[540px] max-lg:mx-auto">
+                Temukan, gunakan, dan bagikan media pembelajaran untuk membuat pembelajaran lebih menarik.
+              </p>
+
+              <div className="flex flex-wrap gap-3 max-lg:justify-center">
+                <a
+                  href="#search"
+                  className="bg-accent text-white rounded-full px-7 py-3.5 text-base font-bold inline-flex items-center gap-2 hover:bg-[#e06c0d] hover:scale-105 transition-all shadow-lg"
                 >
-                  <Icon name="check" className="inline mr-1" />
-                  {b}
-                </span>
-              ))}
+                  <Icon name="compass" />
+                  Jelajahi Media
+                </a>
+                <Link
+                  href="/buat"
+                  className="bg-white text-primary rounded-full px-7 py-3.5 text-base font-semibold inline-flex items-center gap-2 hover:bg-primary-bg hover:scale-105 transition-all shadow-md"
+                >
+                  <Icon name="gamepad" />
+                  Buat Game Sendiri
+                </Link>
+                <Link
+                  href="/submit"
+                  className="bg-transparent border-2 border-white/80 text-white rounded-full px-7 py-3.5 text-base font-semibold inline-flex items-center gap-2 hover:bg-white/10 transition-colors"
+                >
+                  <Icon name="plus" />
+                  Kirim Karya
+                </Link>
+              </div>
             </div>
-            <h1 className="text-white text-5xl leading-tight font-bold mb-4 max-md:text-4xl">
-              Bantu Guru Yuk - Belajar
-            </h1>
-            <p className="text-lg mb-8 opacity-90">
-              Media Pembelajaran Interaktif Karya Guru Indonesia.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4 max-md:gap-3">
-              <a
-                href="#catalog"
-                className="bg-accent text-white rounded-full px-6 py-3 text-lg font-semibold inline-flex items-center gap-2 hover:bg-[#e06c0d] hover:scale-105 transition-all"
-              >
-                <Icon name="compass" />
-                Jelajahi Media
-              </a>
-              <Link
-                href="/buat"
-                className="bg-white text-primary rounded-full px-6 py-3 text-lg font-semibold inline-flex items-center gap-2 hover:bg-primary-bg hover:scale-105 transition-all relative"
-              >
-                <Icon name="gamepad" />
-                Buat Game Sendiri
-                <span className="absolute -top-2 -right-2 bg-accent text-white text-[0.65rem] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">
-                  Baru
-                </span>
-              </Link>
-              <Link
-                href="/submit"
-                className="bg-transparent border-2 border-white text-white rounded-full px-6 py-3 text-lg font-semibold inline-flex items-center gap-2 hover:bg-white hover:text-primary transition-colors"
-              >
-                <Icon name="plus" />
-                Kirim Karya
-              </Link>
+
+            {/* Right: Hero Image Placeholder */}
+            <div className="flex-1 flex items-center justify-center max-w-[500px] max-lg:mt-8">
+              <div className="relative w-full aspect-square max-w-[450px]">
+                {/* Placeholder for hero image */}
+                <div className="absolute inset-0 bg-white/10 backdrop-blur-sm rounded-3xl border-2 border-white/20 flex items-center justify-center">
+                  <div className="text-center p-8">
+                    <Icon name="laptop-code" className="text-white/40 text-7xl mb-4 mx-auto" />
+                    <p className="text-white/60 text-sm font-medium">
+                      Hero Image Placeholder
+                      <br />
+                      <span className="text-xs opacity-75">
+                        Guru dengan laptop/media interaktif
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
+      {/* Search Media */}
+      <SearchMedia />
+
+      {/* Popular Categories */}
+      <PopularCategories />
+
+      {/* Media Terbaru */}
+      <MediaTerbaru media={sortedMedia} limit={8} />
+
+      {/* Stats */}
+      <Stats stats={stats} />
+
+      {/* CTA Buat Game */}
+      <CTABuatGame />
+
+      {/* CTA Kirim Karya */}
+      <CTAKirimKarya />
+
       {/* About */}
-      <section className="-mt-10 relative z-10 px-4 mb-6">
-        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-md p-10 text-center max-w-[900px] mx-auto border border-gray-100 dark:border-slate-800 max-md:p-6">
-          <h2 className="text-primary text-2xl font-bold mb-4">
-            Tentang Bantu Guru Yuk - Belajar
+      <section className="py-16 px-4 bg-pagebg dark:bg-slate-950">
+        <div className="container mx-auto max-w-[900px] text-center">
+          <h2 className="text-3xl font-bold text-ink dark:text-slate-100 mb-4">
+            Tentang Bantu Guru Yuk
           </h2>
           <p className="text-gray-600 dark:text-slate-300 text-base leading-relaxed">
-            Sebuah wadah berbagi inovasi digital bagi seluruh guru di Indonesia.
-            Kami mengumpulkan berbagai media pembelajaran interaktif yang dibuat
-            langsung oleh guru, untuk guru. Jelajahi karya menarik, gunakan
-            dengan mudah di kelas Anda, atau ikut berkontribusi dengan mengirimkan
-            media pembelajaran buatan Anda sendiri demi mewujudkan merdeka belajar.
+            Bantu Guru Yuk adalah platform berbagi media pembelajaran interaktif karya guru Indonesia. 
+            Kami mengumpulkan berbagai media pembelajaran yang dibuat langsung oleh guru, untuk guru. 
+            Jelajahi karya menarik, gunakan dengan mudah di kelas Anda, atau ikut berkontribusi dengan 
+            mengirimkan media pembelajaran buatan Anda sendiri.
           </p>
         </div>
       </section>
-
-      <HomeCatalog media={media} trending={trending} stats={stats} />
     </div>
   );
 }
