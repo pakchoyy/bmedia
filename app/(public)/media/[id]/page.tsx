@@ -49,7 +49,7 @@ export default async function MediaDetailPage({ params }: Props) {
       </Link>
 
       {/* Detail header */}
-      <div className="bg-white rounded-[15px] overflow-hidden shadow-md mb-8">
+      <div className="bg-white dark:bg-slate-900 rounded-[15px] overflow-hidden shadow-md mb-8 border border-gray-100 dark:border-slate-800">
         <div className="w-full h-[400px] max-md:h-[220px]">
           <MediaThumb media={media} className="w-full h-full" />
         </div>
@@ -75,21 +75,21 @@ export default async function MediaDetailPage({ params }: Props) {
               </span>
             </div>
 
-            <h2 className="text-[2.5rem] font-bold text-primary leading-tight mb-3 max-md:text-3xl">
+            <h2 className="text-[2.5rem] font-bold text-primary dark:text-primary-light leading-tight mb-3 max-md:text-3xl">
               {media.title}
             </h2>
 
-            <p className="my-5 text-lg text-gray-600 leading-relaxed">
+            <p className="my-5 text-lg text-gray-600 dark:text-slate-300 leading-relaxed">
               {media.description}
             </p>
 
-            <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-200">
+            <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-200 dark:border-slate-700">
               <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center text-xl font-bold shrink-0">
                 {media.guru_name.charAt(0).toUpperCase()}
               </div>
               <div>
-                <h4 className="text-primary font-bold">{media.guru_name}</h4>
-                <p className="text-sm text-gray-600">
+                <h4 className="text-primary dark:text-primary-light font-bold">{media.guru_name}</h4>
+                <p className="text-sm text-gray-600 dark:text-slate-400">
                   <Icon name="school" className="mr-1" />
                   {media.sekolah}
                 </p>
@@ -97,17 +97,11 @@ export default async function MediaDetailPage({ params }: Props) {
             </div>
           </div>
 
-          <div className="w-[300px] bg-pagebg p-6 rounded-xl shrink-0 max-md:w-full">
+          <div className="w-[300px] bg-pagebg dark:bg-slate-800 p-6 rounded-xl shrink-0 max-md:w-full">
             <PlayButton mediaId={media.id} linkUrl={media.link_url} />
-            <div className="flex justify-between text-sm text-gray-600 border-t border-gray-300 pt-3">
-              <span>
-                <Icon name="chart-simple" className="mr-1" />
-                Digunakan: <strong>{formatPlays(media.plays)}</strong> kali
-              </span>
-              <span className="cursor-pointer text-primary-light">
-                <Icon name="share-nodes" className="mr-1" />
-                Bagikan
-              </span>
+            <div className="text-sm text-gray-600 dark:text-slate-400 border-t border-gray-300 dark:border-slate-700 pt-3">
+              <Icon name="chart-simple" className="mr-1" />
+              Digunakan: <strong>{formatPlays(media.plays)}</strong> kali
             </div>
           </div>
         </div>

@@ -37,8 +37,17 @@ export default function PlayButton({
         disabled={loading}
         className={`w-full bg-accent text-white py-4 rounded-lg text-xl font-bold mb-4 flex items-center justify-center gap-2.5 transition-transform hover:bg-[#e06c0d] hover:scale-[1.02] disabled:opacity-70 ${className}`}
       >
-        <Icon name="arrow-up-right-from-square" />
-        {loading ? "Menyiapkan..." : "Buka Media"}
+        {loading ? (
+          <>
+            <Icon name="hourglass" className="animate-pulse" />
+            Menyiapkan...
+          </>
+        ) : (
+          <>
+            <Icon name="arrow-up-right-from-square" />
+            Buka Media
+          </>
+        )}
       </button>
     );
   }
@@ -49,7 +58,14 @@ export default function PlayButton({
       disabled={loading}
       className={`w-full mt-4 py-2 bg-primary-light text-white rounded-lg font-semibold text-sm transition-colors hover:bg-primary disabled:opacity-70 ${className}`}
     >
-      {loading ? "Menyiapkan..." : "Buka Media"}
+      {loading ? (
+        <span className="flex items-center justify-center gap-2">
+          <Icon name="hourglass" className="animate-pulse" />
+          Menyiapkan...
+        </span>
+      ) : (
+        "Buka Media"
+      )}
     </button>
   );
 }

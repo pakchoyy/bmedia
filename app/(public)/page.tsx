@@ -36,7 +36,7 @@ export default async function HomePage() {
             <p className="text-lg mb-8 opacity-90">
               Media Pembelajaran Interaktif Karya Guru Indonesia.
             </p>
-            <div className="flex flex-wrap justify-center gap-2.5">
+            <div className="flex flex-wrap justify-center gap-4 max-md:gap-3">
               <a
                 href="#catalog"
                 className="bg-accent text-white rounded-full px-6 py-3 text-lg font-semibold inline-flex items-center gap-2 hover:bg-[#e06c0d] hover:scale-105 transition-all"
