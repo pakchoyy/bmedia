@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { isSupabaseConfigured } from "@/lib/supabase";
-import { createServerSideClient } from "@/lib/queries";
+import { createServerSideClient } from "@/lib/supabase-server";
 
 export const dynamic = "force-dynamic";
 

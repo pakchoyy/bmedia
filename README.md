@@ -16,7 +16,7 @@ Platform berbagi media pembelajaran interaktif karya guru Indonesia. Bagian dari
 
 2. **Konfigurasi Supabase**
 
-   Jalankan `supabase/schema.sql` di Supabase SQL Editor (membuat tabel `media`, RLS, index, dan RPC `increment_plays`).
+   Jalankan `supabase/schema.sql` di Supabase SQL Editor (tabel `media`, `profiles`, RLS, index, trigger, dan RPC `increment_plays`).
 
 3. **Environment variables**
 
@@ -27,7 +27,15 @@ Platform berbagi media pembelajaran interaktif karya guru Indonesia. Bagian dari
    NEXT_PUBLIC_SUPABASE_ANON_KEY=xxx
    ```
 
-4. **Jalankan dev server**
+4. **Buat admin pertama**
+
+   Buat user di Supabase Auth, lalu:
+
+   ```sql
+   update profiles set role = 'admin' where email = 'EMAIL_ADMIN';
+   ```
+
+5. **Jalankan dev server**
 
    ```bash
    npm run dev
@@ -41,35 +49,62 @@ Platform berbagi media pembelajaran interaktif karya guru Indonesia. Bagian dari
 
 ```
 app/
-├── page.tsx                  # Home
-├── catalog/page.tsx          # Katalog + search/filter/sort (client-side) + infinite scroll
-├── media/[id]/page.tsx       # Detail media + tombol "Buka Media" + plays counter
-├── submit/page.tsx           # Form submit publik → status pending
-├── about/page.tsx            # Tentang
-└── api/play/[id]/route.ts    # Increment plays via Supabase RPC
+├── (public)/                  # Halaman publik (Navbar + Footer)
+│   ├── page.tsx               # Home
+│   ├── catalog/page.tsx       # Katalog + search/filter/sort (client-side) + infinite scroll
+│   ├── media/[id]/page.tsx    # Detail media + "Buka Media" + plays counter
+│   ├── submit/page.tsx        # Form submit publik → status pending
+│   └── about/page.tsx         # Tentang
+├── admin/                     # Admin dashboard (login publik, sisanya protected)
+│   ├── login/page.tsx         # Login Supabase Auth
+│   ├── (protected)/           # Hanya admin (requireAdmin + middleware + RLS)
+│   │   ├── layout.tsx         # Shell admin (sidebar + header)
+│   │   ├── page.tsx           # Dashboard statistik
+│   │   └── submissions/       # List + detail + approve/reject/edit/delete
+│   └── actions.ts             # Server Actions (approve, reject, delete, update)
+└── api/play/[id]/route.ts     # Increment plays via RPC increment_plays
 components/
 ├── Navbar.tsx / Footer.tsx
-├── HomeCatalog.tsx           # Preview home + pencarian + quick filter
-├── SearchFilter.tsx          # Filter lengkap katalog (client-side)
+├── HomeCatalog.tsx / SearchFilter.tsx
 ├── GameCard.tsx / CategoryCard.tsx / TrendingSidebar.tsx
 ├── PlayButton.tsx / SubmitForm.tsx / Stats.tsx / Toast.tsx
 ├── MediaThumb.tsx / Icon.tsx
+└── admin/
+    ├── AdminShell.tsx / AdminSidebar.tsx / AdminHeader.tsx
+    ├── AdminStats.tsx / SubmissionTable.tsx / SubmissionDetail.tsx
+    ├── RejectDialog.tsx / ConfirmDialog.tsx / LoginForm.tsx / StatusBadge.tsx
 lib/
-├── supabase.ts               # Client init
-├── queries.ts                # Fetch data (server)
-└── constants.ts / utils.ts
-types/media.ts
-supabase/schema.sql           # SQL schema + RLS + RPC
+├── supabase.ts                # Client browser (anon)
+├── supabase-server.ts         # Server client (session/cookies)
+├── admin.ts                   # requireAdmin + query admin
+└── queries.ts / constants.ts / utils.ts
+middleware.ts                  # Proteksi /admin/* (session)
+types/ (media.ts, admin.ts)
+supabase/
+├── schema.sql                 # Fresh install lengkap
+└── 2025_admin_dashboard.sql   # Migration admin dashboard
 ```
 
 ## Fitur
 
-- Home: hero, stats animasi, kategori, preview media terbaru, trending
+### Publik
+- Home: hero, stats animasi, kategori, media terbaru, trending
 - Katalog: search, filter (kategori/jenjang/tool), sort (terbaru/populer), infinite scroll
 - Detail: banner, info, rekomendasi, tombol "Buka Media" (+1 plays via RPC)
-- Submit: form publik tanpa login → status `pending`, menunggu review admin
-- Admin pakai Supabase Dashboard langsung (approve/reject, kelola data)
+- Submit: form publik tanpa login → status `pending`
+
+### Admin (`/admin`)
+- Login Supabase Auth (email + password)
+- Dashboard statistik (Total, Pending, Approved, Rejected, Total Plays)
+- Review submission: **Approve**, **Reject** (dengan alasan), **Edit**, **Delete**
+- Hanya menampilkan yang `approved` di website publik
+
+## Keamanan
+- RLS: publik hanya baca `approved` + insert `pending`; admin (role dari `profiles`) bisa select/update/delete semua
+- Middleware + verifikasi role di server component + RLS (defense in depth)
+- Hanya anon key di client; operasi admin lewat session + RLS
+- `increment_plays` memakai `security definer` (tanpa izin UPDATE umum ke anon)
 
 ## Deploy ke Vercel
 
-Import repo ke Vercel, tambahkan env vars di dashboard, lalu deploy. Semua halaman yang fetch data bersifat `force-dynamic`, jadi konten selalu terbaru.
+Import repo ke Vercel, tambahkan env vars di dashboard, lalu deploy. Halaman yang fetch data bersifat `force-dynamic`.

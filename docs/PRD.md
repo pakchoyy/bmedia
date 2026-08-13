@@ -1,6 +1,6 @@
 # PRD — BGY Interactive Learning
 **Platform:** bantuguruyuk.web.id/interactive (atau subdomain interactive.bantuguruyuk.web.id)  
-**Stack:** Next.js 14 App Router + Appwrite + Tailwind CSS + deploy Vercel  
+**Stack:** Next.js 14 App Router + Supabase + Tailwind CSS + deploy Vercel  
 **Status:** v1.0 — MVP
 
 ---
@@ -15,7 +15,7 @@ Platform berbagi media pembelajaran interaktif karya guru Indonesia. Guru submit
 | Role | Kemampuan |
 |------|-----------|
 | **Publik** | Browse, search, filter, buka link media |
-| **Admin (Hai)** | Review submission, approve/reject, kelola data via Appwrite Console |
+| **Admin** | Login via `/admin`, review submission, approve/reject, edit, delete |
 
 Tidak ada fitur login untuk user umum.
 
@@ -25,11 +25,10 @@ Tidak ada fitur login untuk user umum.
 
 ### 3.1 Home (`/`)
 - Hero section + tagline
-- Stats: jumlah media, guru, sekolah (fetch dari Appwrite)
+- Stats: jumlah media, guru, sekolah (fetch dari Supabase)
 - Kategori (5 kategori, klik → filter catalog)
 - Catalog preview (12 media terbaru, approved)
 - Trending sidebar (5 media paling banyak dibuka)
-- Guru kontributor teratas
 - CTA submit media
 
 ### 3.2 Catalog (`/catalog`)
@@ -52,9 +51,17 @@ Tidak ada fitur login untuk user umum.
 - Form publik, tidak perlu login
 - Field: lihat Section 4
 - Submit → status `pending`, tampil pesan sukses
-- Admin review manual di Appwrite Console
+- Admin melakukan review melalui Admin Dashboard `/admin`
 
-### 3.5 Tentang (`/about`)
+### 3.5 Admin (`/admin`)
+- Login admin via Supabase Auth (`/admin/login`)
+- Dashboard statistik (Total, Pending, Approved, Rejected, Total Plays)
+- Daftar submission + filter status + search (`/admin/submissions`)
+- Detail submission (`/admin/submissions/[id]`) — info lengkap + buka link review
+- Aksi: **Approve**, **Reject** (dengan alasan), **Edit**, **Delete**
+- Logout
+
+### 3.6 Tentang (`/about`)
 - Deskripsi platform, kontak admin
 
 ---
@@ -97,13 +104,22 @@ Tidak ada fitur login untuk user umum.
 
 ## 7. Fitur Plays Counter
 - Setiap klik "Buka Media" → hit API route Next.js `/api/play/[id]`
-- API route update field `plays` di Appwrite (`plays + 1`)
+- API route memanggil RPC Supabase `increment_plays(media_id)` (`plays + 1`)
+- RPC dibuat `security definer` agar anon tidak perlu izin UPDATE umum
 - Tidak ada debounce/auth — sederhana dulu
 
 ---
 
-## 8. Out of Scope (v1)
-- Login user
+## 8. Admin Panel
+- **Auth:** Supabase Auth (email + password), role admin ditentukan dari tabel `profiles`
+- **Route:** `/admin`, `/admin/login`, `/admin/submissions`, `/admin/submissions/[id]`
+- **Keamanan:** middleware + verifikasi role di server component + RLS Supabase
+- Status: `pending` (orange), `approved` (green), `rejected` (red) + `rejection_reason`
+
+---
+
+## 9. Out of Scope (v1)
+- Login user (publik)
 - Komentar / rating
 - Fitur PRO / berbayar
 - Upload file media (hanya link eksternal)
@@ -112,7 +128,7 @@ Tidak ada fitur login untuk user umum.
 
 ---
 
-## 9. Design Reference
+## 10. Design Reference
 - File: `design-mockup.html` (terlampir)
 - Color palette, komponen, dan layout sudah final di mockup
 - Implementasi ulang dalam Tailwind CSS mengikuti design tersebut

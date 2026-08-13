@@ -6,9 +6,10 @@ import Icon from "./Icon";
 interface ToastProps {
   message: string;
   visible: boolean;
+  variant?: "success" | "danger";
 }
 
-export default function Toast({ message, visible }: ToastProps) {
+export default function Toast({ message, visible, variant = "success" }: ToastProps) {
   const [show, setShow] = useState(visible);
 
   useEffect(() => {
@@ -18,14 +19,19 @@ export default function Toast({ message, visible }: ToastProps) {
     return () => clearTimeout(t);
   }, [visible]);
 
+  const bg = variant === "danger" ? "bg-danger" : "bg-success";
+
   return (
     <div
-      className="fixed right-5 bg-success text-white px-8 py-4 rounded-lg shadow-lg flex items-center gap-4 font-semibold z-[9999] transition-all duration-500"
+      className={`fixed right-5 ${bg} text-white px-8 py-4 rounded-lg shadow-lg flex items-center gap-4 font-semibold z-[9999] transition-all duration-500`}
       style={{
         bottom: show ? 20 : -100,
       }}
     >
-      <Icon name="circle-check" className="text-2xl" />
+      <Icon
+        name={variant === "danger" ? "xmark" : "circle-check"}
+        className="text-2xl"
+      />
       <span>{message}</span>
     </div>
   );

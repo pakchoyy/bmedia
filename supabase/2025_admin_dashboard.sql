@@ -1,54 +1,16 @@
 -- ============================================================
--- BGY Interactive Learning — Supabase Schema (lengkap, fresh install)
--- Jalankan di Supabase SQL Editor.
--- Catatan: migration terpisah ada di supabase/2025_admin_dashboard.sql
+-- BGY Interactive Learning — Admin Dashboard Migration
+-- Jalankan di Supabase SQL Editor setelah schema dasar.
 -- ============================================================
 
 -- ------------------------------------------------------------
--- Tabel: media
+-- 1) Kolom baru di tabel media
 -- ------------------------------------------------------------
-create table if not exists media (
-  id uuid default gen_random_uuid() primary key,
-  title text not null,
-  mapel text not null,
-  jenjang text not null check (jenjang in ('SD', 'SMP', 'SMA', 'SMK', 'Umum')),
-  kelas text not null,
-  category text not null check (category in ('Laboratorium Maya', 'Multimedia Interaktif', 'Game Edukasi', 'Quiz Interaktif', 'Modul Digital')),
-  tool text not null,
-  link_url text not null,
-  thumbnail_url text,
-  description text not null,
-  guru_name text not null,
-  sekolah text not null,
-  guru_wa text not null,
-  plays integer not null default 0,
-  status text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
-  rejection_reason text,
-  submitted_at timestamptz default now(),
-  updated_at timestamptz default now()
-);
-
--- Row Level Security
-alter table media enable row level security;
-
--- Publik hanya bisa baca yang approved
-create policy "public read approved"
-on media for select
-using (status = 'approved');
-
--- Publik bisa insert (form submit) dengan status pending
-create policy "public insert"
-on media for insert
-with check (status = 'pending');
-
--- Index
-create index if not exists media_status_idx on media (status);
-create index if not exists media_category_idx on media (category);
-create index if not exists media_jenjang_idx on media (jenjang);
-create index if not exists media_plays_idx on media (plays desc);
+alter table media add column if not exists rejection_reason text;
+alter table media add column if not exists updated_at timestamptz default now();
 
 -- ------------------------------------------------------------
--- Tabel: profiles (role admin/user)
+-- 2) Tabel profiles (role admin/user)
 -- ------------------------------------------------------------
 create table if not exists profiles (
   id uuid primary key references auth.users(id) on delete cascade,
@@ -78,11 +40,12 @@ create trigger on_auth_user_created
 after insert on auth.users
 for each row execute function public.handle_new_user();
 
--- RLS profiles: user baca profil sendiri; admin baca semua
+-- RLS: user bisa baca profilnya sendiri
 create policy "user read own profile"
 on profiles for select
 using (auth.uid() = id);
 
+-- RLS: admin bisa baca semua profil (helper untuk pengecekan role)
 create policy "admin read all profiles"
 on profiles for select
 using (
@@ -93,7 +56,25 @@ using (
 );
 
 -- ------------------------------------------------------------
--- RLS ADMIN untuk tabel media
+-- 3) Trigger updated_at
+-- ------------------------------------------------------------
+create or replace function public.set_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end $$;
+
+drop trigger if exists media_set_updated_at on media;
+create trigger media_set_updated_at
+before update on media
+for each row execute function public.set_updated_at();
+
+-- ------------------------------------------------------------
+-- 4) RLS ADMIN untuk tabel media
+--     (public read approved + public insert pending tetap ada di schema dasar)
 -- ------------------------------------------------------------
 create policy "admin read all media"
 on media for select
@@ -129,25 +110,8 @@ using (
 );
 
 -- ------------------------------------------------------------
--- Trigger updated_at
--- ------------------------------------------------------------
-create or replace function public.set_updated_at()
-returns trigger
-language plpgsql
-as $$
-begin
-  new.updated_at = now();
-  return new;
-end $$;
-
-drop trigger if exists media_set_updated_at on media;
-create trigger media_set_updated_at
-before update on media
-for each row execute function public.set_updated_at();
-
--- ------------------------------------------------------------
--- Plays Counter (RPC) — SECURITY DEFINER agar anon bisa increment
--- tanpa diberi izin UPDATE umum pada tabel media.
+-- 5) increment_plays → SECURITY DEFINER
+--     Supaya RLS baru (admin-only UPDATE) tidak memblokir counter publik.
 -- ------------------------------------------------------------
 create or replace function increment_plays(media_id uuid)
 returns void
@@ -161,7 +125,7 @@ $$;
 grant execute on function increment_plays(uuid) to anon, authenticated;
 
 -- ------------------------------------------------------------
--- Cara membuat admin pertama
---   1. Buat user di Supabase Auth (Authentication > Add user).
---   2. Jalankan:  update profiles set role = 'admin' where email = 'EMAIL_ADMIN';
+-- 6) Cara membuat admin pertama
+--     1. Buat user di Supabase Auth (Authentication > Add user).
+--     2. Jalankan:  update profiles set role = 'admin' where email = 'EMAIL_ADMIN';
 -- ------------------------------------------------------------

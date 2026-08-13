@@ -31,6 +31,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local opencode config (mengandung api key)
+opencode.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

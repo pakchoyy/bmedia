@@ -25,7 +25,9 @@ export interface Media {
   guru_wa: string;
   plays: number;
   status: MediaStatus;
+  rejection_reason?: string | null;
   submitted_at: string;
+  updated_at?: string | null;
 }
 
 export interface MediaInsert {

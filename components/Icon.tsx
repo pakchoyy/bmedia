@@ -31,6 +31,18 @@ import {
   FaChalkboardUser,
   FaLaptopFile,
   FaXmark,
+  FaArrowRightFromBracket,
+  FaGaugeHigh,
+  FaClipboardList,
+  FaMoon,
+  FaSun,
+  FaHouse,
+  FaTags,
+  FaCircleInfo,
+  FaPen,
+  FaTrash,
+  FaChevronDown,
+  FaHourglassHalf,
 } from "react-icons/fa6";
 import type { IconType } from "react-icons";
 
@@ -67,6 +79,18 @@ const icons: Record<string, IconType> = {
   "chalkboard-user": FaChalkboardUser,
   "laptop-file": FaLaptopFile,
   xmark: FaXmark,
+  "log-out": FaArrowRightFromBracket,
+  gauge: FaGaugeHigh,
+  clipboard: FaClipboardList,
+  moon: FaMoon,
+  sun: FaSun,
+  house: FaHouse,
+  tags: FaTags,
+  info: FaCircleInfo,
+  pen: FaPen,
+  trash: FaTrash,
+  "chevron-down": FaChevronDown,
+  hourglass: FaHourglassHalf,
 };
 
 interface IconProps {

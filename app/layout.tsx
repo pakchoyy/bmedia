@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: {
@@ -20,8 +18,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "BGY Interactive Learning",
-    description:
-      "Media Pembelajaran Interaktif Karya Guru Indonesia.",
+    description: "Media Pembelajaran Interaktif Karya Guru Indonesia.",
     type: "website",
   },
 };
@@ -33,11 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id">
-      <body className="antialiased min-h-screen flex flex-col">
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
-      </body>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }

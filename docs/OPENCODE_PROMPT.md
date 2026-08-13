@@ -60,10 +60,15 @@ Baca semua dokumen berikut sebelum mulai coding:
 
 ---
 
+## Admin
+- **Auth:** Supabase Auth (email + password), role admin dari tabel `profiles` (RLS)
+- **Route:** `/admin`, `/admin/login`, `/admin/submissions`, `/admin/submissions/[id]`
+- Middleware mengarahkan `/admin/*` yang belum login ke `/admin/login`; role dicek `lib/admin.ts` `requireAdmin()`
+- Aksi: approve, reject (dengan alasan), edit, delete
+
 ## Yang TIDAK perlu dibuat
-- Login / auth user
+- Login / auth user publik
 - Dashboard guru
 - Fitur PRO / paywall
 - Upload file (hanya link URL eksternal)
 - Notifikasi email
-- Admin panel (pakai Supabase Dashboard langsung)
