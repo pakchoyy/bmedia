@@ -13,8 +13,7 @@ export default function SubmitPage() {
       <div className="container mx-auto max-w-[1200px] px-6">
         <h2 className="section-title">Kirim Karya Media Pembelajaran</h2>
         <p className="text-center mb-8 max-w-[600px] mx-auto text-gray-600 dark:text-slate-300">
-          Bagikan karya inovatif Anda kepada seluruh guru dan siswa di Indonesia.
-          Mohon isi form berikut dengan data yang valid.
+          Bagikan media pembelajaran buatanmu agar bisa digunakan guru lainnya.
         </p>
 
         <SubmitForm />

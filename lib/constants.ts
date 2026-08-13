@@ -12,7 +12,7 @@ export const CATEGORIES: {
   { name: "Modul Digital", icon: "book-open", color: "#3b82f6" },
 ];
 
-export const JENJANG_OPTIONS: Jenjang[] = ["SD", "SMP", "SMA", "SMK", "Umum"];
+export const JENJANG_OPTIONS: Jenjang[] = ["TK", "SD", "SMP", "SMA", "SMK", "Umum"];
 
 export const KELAS_OPTIONS: { label: string; group: string }[] = [
   { label: "TK A", group: "TK/PAUD" },

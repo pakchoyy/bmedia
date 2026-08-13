@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { JENJANG_OPTIONS, KELAS_OPTIONS } from "@/lib/constants";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase";
@@ -32,12 +32,36 @@ export default function SubmitForm() {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   const update = (field: keyof FormState, value: string) => {
-    setForm((f) => ({ ...f, [field]: value }));
+    setForm((f) => {
+      const newForm = { ...f, [field]: value };
+      // Reset kelas ketika jenjang berubah
+      if (field === "jenjang") {
+        newForm.kelas = "";
+      }
+      return newForm;
+    });
     // Clear field error when user types
     if (fieldErrors[field]) {
       setFieldErrors((e) => ({ ...e, [field]: "" }));
     }
   };
+
+  // Filter kelas options berdasarkan jenjang
+  const filteredKelasOptions = useMemo(() => {
+    if (!form.jenjang) return KELAS_OPTIONS;
+
+    const jenjangMap: Record<string, string[]> = {
+      TK: ["TK/PAUD"],
+      SD: ["SD/MI"],
+      SMP: ["SMP/MTs"],
+      SMA: ["SMA/SMK/MA"],
+      SMK: ["SMA/SMK/MA"],
+      Umum: [""],
+    };
+
+    const allowedGroups = jenjangMap[form.jenjang] || [];
+    return KELAS_OPTIONS.filter((k) => allowedGroups.includes(k.group));
+  }, [form.jenjang]);
 
   const validate = (): boolean => {
     const errors: FieldErrors = {};
@@ -213,23 +237,14 @@ export default function SubmitForm() {
                 value={form.kelas}
                 onChange={(e) => update("kelas", e.target.value)}
                 className={inputClass}
+                disabled={!form.jenjang}
               >
-                <option value="">Pilih Kelas...</option>
-                {KELAS_OPTIONS.map((k, idx) => {
-                  const prev = idx === 0 ? null : KELAS_OPTIONS[idx - 1].group;
-                  if (k.group === "" || k.group !== prev) {
-                    return (
-                      <optgroup key={k.group || "Umum"} label={k.group || "Umum / Semua Kelas"}>
-                        {KELAS_OPTIONS.filter((o) => o.group === k.group).map((o) => (
-                          <option key={o.label} value={o.label}>
-                            {o.label}
-                          </option>
-                        ))}
-                      </optgroup>
-                    );
-                  }
-                  return null;
-                })}
+                <option value="">{form.jenjang ? "Pilih Kelas..." : "Pilih Jenjang terlebih dahulu"}</option>
+                {filteredKelasOptions.map((k) => (
+                  <option key={k.label} value={k.label}>
+                    {k.label}
+                  </option>
+                ))}
               </select>
               {fieldErrors.kelas && <p className={errorClass}>{fieldErrors.kelas}</p>}
             </div>
@@ -331,11 +346,11 @@ export default function SubmitForm() {
             </div>
           )}
 
-          {/* Submit Button */}
+          {/* Submit Button - HIJAU */}
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-accent hover:bg-[#e06c0d] text-white py-4 rounded-xl text-lg font-bold transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md"
+            className="w-full bg-success hover:bg-green-700 text-white py-4 rounded-xl text-lg font-bold transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md"
           >
             {submitting ? (
               <>

@@ -1,4 +1,4 @@
-export type Jenjang = "SD" | "SMP" | "SMA" | "SMK" | "Umum";
+export type Jenjang = "TK" | "SD" | "SMP" | "SMA" | "SMK" | "Umum";
 
 export type MediaStatus = "pending" | "approved" | "rejected";
 
