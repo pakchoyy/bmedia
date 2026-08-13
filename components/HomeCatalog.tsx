@@ -100,7 +100,7 @@ export default function HomeCatalog({
       {/* Search & Quick Filters */}
       <section className="px-4 mb-8 pt-4">
         <div className="container mx-auto max-w-[1200px]">
-          <div className="flex items-center gap-4 bg-white rounded-full shadow-md px-8 py-4 max-w-[800px] mx-auto border border-gray-100 max-md:flex-col max-md:rounded-[15px] max-md:py-4 max-md:gap-3">
+          <div className="flex items-center gap-4 bg-white dark:bg-slate-900 rounded-full shadow-md px-8 py-4 max-w-[800px] mx-auto border border-gray-100 dark:border-slate-800 max-md:flex-col max-md:rounded-[15px] max-md:py-4 max-md:gap-3">
             <Icon name="magnifying-glass" className="text-primary-light text-xl shrink-0" />
             <input
               type="text"
@@ -122,7 +122,7 @@ export default function HomeCatalog({
                 className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${
                   filter === f
                     ? "bg-primary-light text-white border-primary-light"
-                    : "bg-white text-ink border border-gray-300 hover:bg-primary-light hover:text-white hover:border-primary-light"
+                    : "bg-white dark:bg-slate-900 text-ink dark:text-slate-200 border border-gray-300 dark:border-slate-700 hover:bg-primary-light hover:text-white hover:border-primary-light"
                 }`}
               >
                 {f}
@@ -165,7 +165,7 @@ export default function HomeCatalog({
               ))}
             </div>
             {visible.length === 0 && (
-              <p className="text-center text-gray-500 py-10">
+              <p className="text-center text-gray-500 dark:text-slate-400 py-10">
                 Tidak ada media yang cocok dengan pencarian Anda.
               </p>
             )}

@@ -10,6 +10,11 @@
   --page-bg: #f8fafc;
 }
 
+.dark {
+  --dark-gray: #e2e8f0;
+  --page-bg: #0f172a;
+}
+
 body {
   color: var(--dark-gray);
   background: var(--page-bg);

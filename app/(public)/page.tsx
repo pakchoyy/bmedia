@@ -68,11 +68,11 @@ export default async function HomePage() {
 
       {/* About */}
       <section className="-mt-10 relative z-10 px-4 mb-6">
-        <div className="bg-white rounded-xl shadow-md p-10 text-center max-w-[900px] mx-auto border border-gray-100 max-md:p-6">
+        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-md p-10 text-center max-w-[900px] mx-auto border border-gray-100 dark:border-slate-800 max-md:p-6">
           <h2 className="text-primary text-2xl font-bold mb-4">
             Tentang Bantu Guru Yuk - Belajar
           </h2>
-          <p className="text-gray-600 text-base leading-relaxed">
+          <p className="text-gray-600 dark:text-slate-300 text-base leading-relaxed">
             Sebuah wadah berbagi inovasi digital bagi seluruh guru di Indonesia.
             Kami mengumpulkan berbagai media pembelajaran interaktif yang dibuat
             langsung oleh guru, untuk guru. Jelajahi karya menarik, gunakan

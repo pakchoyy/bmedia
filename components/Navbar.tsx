@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Icon from "./Icon";
+import ThemeToggle from "./ThemeToggle";
 
 const links = [
   { label: "Home", href: "/" },
@@ -15,38 +16,44 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <nav className="sticky top-0 z-50 bg-bgy-gradient shadow-header h-12 flex items-center">
-      <div className="container mx-auto max-w-[1200px] px-6 flex items-center justify-between h-full w-full">
+    <nav className="sticky top-0 z-50 bg-bgy-gradient shadow-header">
+      <div className="container mx-auto max-w-[1200px] px-6 flex items-center justify-between h-12 w-full">
         <Link href="/" className="flex items-center gap-2 text-sm font-extrabold text-white">
           <Icon name="laptop-code" className="text-white text-lg" />
           Bantu Guru Yuk - Belajar
         </Link>
 
-        <button
-          className="md:hidden text-white bg-black/10 p-1 px-2.5 rounded-md border border-white/30"
-          onClick={() => setOpen(!open)}
-          aria-label="Menu"
-        >
-          <Icon name={open ? "xmark" : "bars"} className="text-lg" />
-        </button>
+        <div className="flex items-center gap-2 md:hidden">
+          <ThemeToggle />
+          <button
+            className="p-1 px-2.5 rounded-md text-white bg-black/10 border border-white/30"
+            onClick={() => setOpen(!open)}
+            aria-label="Menu"
+            aria-expanded={open}
+          >
+            <Icon name={open ? "xmark" : "bars"} className="text-lg" />
+          </button>
+        </div>
 
         <ul
-          className={`${
-            open ? "flex" : "hidden"
-          } md:flex absolute md:static top-12 left-0 w-full md:w-auto bg-white md:bg-transparent flex-col md:flex-row items-center gap-6 md:gap-6 p-4 md:p-0 shadow-md md:shadow-none z-50`}
+          className={`md:flex items-center gap-6 fixed md:static left-0 right-0 top-12 md:top-auto bg-white md:bg-transparent shadow-md md:shadow-none z-50 transition-all duration-300 ease-out ${
+            open
+              ? "translate-y-0 opacity-100 pointer-events-auto"
+              : "-translate-y-4 opacity-0 pointer-events-none md:translate-y-0 md:opacity-100 md:pointer-events-auto"
+          } flex-col md:flex-row p-4 md:p-0 md:pr-4`}
         >
           {links.map((l) => (
             <li key={l.href}>
               <Link
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="font-semibold text-sm text-ink md:text-white/90 hover:text-primary-light md:hover:text-white transition-colors"
+                className="block font-semibold text-sm text-ink md:text-white/90 hover:text-primary-light md:hover:text-white transition-colors py-1.5 md:py-0"
               >
                 {l.label}
               </Link>
             </li>
           ))}
-          <li>
+          <li className="mt-2 md:mt-0">
             <Link
               href="/submit"
               onClick={() => setOpen(false)}
@@ -54,6 +61,11 @@ export default function Navbar() {
             >
               Kirim Karya
             </Link>
+          </li>
+          <li className="mt-2 md:mt-0 md:ml-1">
+            <div className="hidden md:block">
+              <ThemeToggle />
+            </div>
           </li>
         </ul>
       </div>

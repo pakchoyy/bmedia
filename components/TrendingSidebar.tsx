@@ -6,14 +6,14 @@ import Icon from "./Icon";
 
 export default function TrendingSidebar({ media }: { media: Media[] }) {
   return (
-    <aside className="bg-white p-6 rounded-xl h-fit shadow-sm border border-gray-200">
-      <h3 className="text-lg font-bold text-ink mb-4 flex items-center gap-2 border-b border-gray-200 pb-2.5">
+    <aside className="bg-white dark:bg-slate-900 p-6 rounded-xl h-fit shadow-sm border border-gray-200 dark:border-slate-800">
+      <h3 className="text-lg font-bold text-ink dark:text-slate-100 mb-4 flex items-center gap-2 border-b border-gray-200 dark:border-slate-800 pb-2.5">
         <Icon name="fire" className="text-accent" />
         Media Terpopuler
       </h3>
       <div className="space-y-4">
         {media.length === 0 && (
-          <p className="text-sm text-gray-500">Belum ada data.</p>
+          <p className="text-sm text-gray-500 dark:text-slate-400">Belum ada data.</p>
         )}
         {media.map((m, i) => (
           <Link
@@ -28,10 +28,10 @@ export default function TrendingSidebar({ media }: { media: Media[] }) {
               <MediaThumb media={m} className="w-[60px] h-[60px]" />
             </div>
             <div className="min-w-0">
-              <h4 className="text-sm font-semibold text-ink leading-snug line-clamp-2">
+              <h4 className="text-sm font-semibold text-ink dark:text-slate-100 leading-snug line-clamp-2">
                 {m.title}
               </h4>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 dark:text-slate-400">
                 {m.mapel} &bull;{" "}
                 <Icon name="play" className="text-[0.7rem] inline" />{" "}
                 {formatPlays(m.plays)}
