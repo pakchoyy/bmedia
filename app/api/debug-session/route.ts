@@ -1,9 +1,14 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { createServerSideClient } from "@/lib/supabase-server";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  const cookieNames = cookies()
+    .getAll()
+    .map((c) => c.name);
+
   const supabase = createServerSideClient();
   const {
     data: { user },
@@ -12,6 +17,7 @@ export async function GET() {
   if (!user) {
     return NextResponse.json({
       loggedIn: false,
+      cookies: cookieNames,
       message: "Tidak ada sesi login (session cookie tidak ditemukan/valid).",
     });
   }
@@ -25,6 +31,7 @@ export async function GET() {
   return NextResponse.json({
     loggedIn: true,
     email: user.email,
+    cookies: cookieNames,
     profileFound: Boolean(profile),
     role: profile?.role ?? null,
     isAdmin: profile?.role === "admin",
