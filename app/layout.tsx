@@ -20,6 +20,11 @@ export const metadata: Metadata = {
     title: "BGY Interactive Learning",
     description: "Media Pembelajaran Interaktif Karya Guru Indonesia.",
     type: "website",
+    images: ["/icon.png"],
+  },
+  icons: {
+    icon: "/icon.png",
+    apple: "/icon.png",
   },
 };
 

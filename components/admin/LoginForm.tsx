@@ -25,10 +25,11 @@ export default function LoginForm() {
 
     setLoading(true);
     const supabase = createClient();
-    const { error: authError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { data: signInData, error: authError } =
+      await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
     if (authError) {
       setError(
@@ -38,6 +39,26 @@ export default function LoginForm() {
       );
       setLoading(false);
       return;
+    }
+
+    const user = signInData.user;
+    if (user) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      if (!profile || profile.role !== "admin") {
+        await supabase.auth.signOut();
+        setError(
+          "Akun ini belum terdaftar sebagai admin. Jalankan: update profiles set role = 'admin' where email = '" +
+            email +
+            "';"
+        );
+        setLoading(false);
+        return;
+      }
     }
 
     router.push("/admin");
