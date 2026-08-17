@@ -25,12 +25,12 @@ export default async function HomePage() {
   return (
     <div className="fade-in">
       {/* Hero */}
-      <section className="bg-bgy-hero text-white py-20 overflow-hidden">
-        <div className="container mx-auto max-w-[1200px] px-6">
+      <section className="bg-bgy-hero text-white overflow-hidden">
+        <div className="container mx-auto max-w-[1200px] px-6 py-12 max-md:py-10">
           <div className="flex items-center gap-12 max-lg:flex-col max-lg:text-center">
             {/* Left: Content */}
-            <div className="flex-1 max-lg:max-w-[700px]">
-              <div className="flex flex-wrap justify-start gap-2 mb-5 max-lg:justify-center">
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-wrap justify-start gap-2 mb-4 max-lg:justify-center">
                 {["✓ Gratis", "✓ Karya Guru Indonesia", "✓ Interaktif"].map((b) => (
                   <span
                     key={b}
@@ -40,19 +40,19 @@ export default async function HomePage() {
                   </span>
                 ))}
               </div>
-              
-              <h1 className="text-white text-5xl leading-tight font-bold mb-3 max-md:text-4xl">
+
+              <h1 className="text-white text-6xl leading-tight font-extrabold mb-3 max-md:text-5xl max-sm:text-4xl">
                 Bantu Guru Yuk
               </h1>
-              <h2 className="text-white text-3xl leading-snug font-bold mb-5 max-md:text-2xl">
-                Media Belajar Interaktif<br />Karya Guru Indonesia
+              <h2 className="text-white text-2xl leading-relaxed font-medium mb-4 max-md:text-xl text-balance">
+                Media Belajar Interaktif Karya Guru Indonesia
               </h2>
-              
-              <p className="text-lg mb-8 opacity-90 leading-relaxed max-w-[540px] max-lg:mx-auto">
+
+              <p className="text-lg mb-6 opacity-90 leading-relaxed max-w-[520px] max-lg:mx-auto">
                 Temukan, gunakan, dan bagikan media pembelajaran untuk membuat pembelajaran lebih menarik.
               </p>
 
-              <div className="flex flex-wrap gap-3 max-lg:justify-center">
+              <div className="flex flex-wrap items-center gap-3 max-lg:justify-center">
                 <a
                   href="#search"
                   className="bg-accent text-white rounded-full px-7 py-3.5 text-base font-bold inline-flex items-center gap-2 hover:bg-[#e06c0d] hover:scale-105 transition-all shadow-lg"
@@ -62,14 +62,14 @@ export default async function HomePage() {
                 </a>
                 <Link
                   href="/buat"
-                  className="bg-white text-primary rounded-full px-7 py-3.5 text-base font-semibold inline-flex items-center gap-2 hover:bg-primary-bg hover:scale-105 transition-all shadow-md"
+                  className="bg-white/15 border border-white/40 text-white rounded-full px-6 py-3 text-base font-semibold inline-flex items-center gap-2 hover:bg-white/25 transition-colors backdrop-blur-sm"
                 >
                   <Icon name="gamepad" />
                   Buat Game Sendiri
                 </Link>
                 <Link
                   href="/submit"
-                  className="bg-transparent border-2 border-white/80 text-white rounded-full px-7 py-3.5 text-base font-semibold inline-flex items-center gap-2 hover:bg-white/10 transition-colors"
+                  className="text-white/90 rounded-full px-5 py-2.5 text-sm font-semibold inline-flex items-center gap-2 hover:text-white hover:underline underline-offset-4 transition-colors"
                 >
                   <Icon name="plus" />
                   Kirim Karya
@@ -78,12 +78,12 @@ export default async function HomePage() {
             </div>
 
             {/* Right: Hero Image Placeholder */}
-            <div className="flex-1 flex items-center justify-center max-w-[500px] max-lg:mt-8">
-              <div className="relative w-full aspect-square max-w-[450px]">
+            <div className="w-[38%] max-lg:w-full max-lg:mt-6 max-lg:max-w-[420px] max-lg:mx-auto">
+              <div className="relative w-full aspect-square max-w-[380px] mx-auto">
                 {/* Placeholder for hero image */}
                 <div className="absolute inset-0 bg-white/10 backdrop-blur-sm rounded-3xl border-2 border-white/20 flex items-center justify-center">
                   <div className="text-center p-8">
-                    <Icon name="laptop-code" className="text-white/40 text-7xl mb-4 mx-auto" />
+                    <Icon name="laptop-code" className="text-white/40 text-6xl mb-4 mx-auto" />
                     <p className="text-white/60 text-sm font-medium">
                       Hero Image Placeholder
                       <br />
