@@ -108,3 +108,7 @@ supabase/
 ## Deploy ke Vercel
 
 Import repo ke Vercel, tambahkan env vars di dashboard, lalu deploy. Halaman yang fetch data bersifat `force-dynamic`.
+
+## Troubleshooting
+
+Jika halaman GitHub menampilkan "Cannot retrieve latest commit at this time", itu error sementara dari sisi GitHub, bukan dari repo. Refresh halaman (Ctrl+Shift+R) atau tunggu beberapa menit.
