@@ -111,24 +111,11 @@ export default async function HomePage() {
       {/* Stats */}
       <Stats stats={stats} />
 
-      {/* CTA Buat Game */}
-      <CTABuatGame />
-
-      {/* CTA Kirim Karya */}
-      <CTAKirimKarya />
-
-      {/* About */}
-      <section className="py-16 px-4 bg-pagebg dark:bg-slate-950">
-        <div className="container mx-auto max-w-[900px] text-center">
-          <h2 className="text-3xl font-bold text-ink dark:text-slate-100 mb-4">
-            Tentang Bantu Guru Yuk
-          </h2>
-          <p className="text-gray-600 dark:text-slate-300 text-base leading-relaxed">
-            Bantu Guru Yuk adalah platform berbagi media pembelajaran interaktif karya guru Indonesia. 
-            Kami mengumpulkan berbagai media pembelajaran yang dibuat langsung oleh guru, untuk guru. 
-            Jelajahi karya menarik, gunakan dengan mudah di kelas Anda, atau ikut berkontribusi dengan 
-            mengirimkan media pembelajaran buatan Anda sendiri.
-          </p>
+      {/* CTA Buat Game & Kirim Karya */}
+      <section className="py-14 px-6">
+        <div className="container mx-auto max-w-[1200px] grid gap-6 lg:grid-cols-2">
+          <CTABuatGame />
+          <CTAKirimKarya />
         </div>
       </section>
     </div>

@@ -32,20 +32,20 @@ export default function SearchMedia() {
   };
 
   return (
-    <section id="search" className="py-16 px-4 bg-pagebg dark:bg-slate-950">
-      <div className="container mx-auto max-w-[1000px]">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-ink dark:text-slate-100 mb-3">
+    <section id="search" className="py-12 px-4 bg-pagebg dark:bg-slate-950">
+      <div className="container mx-auto max-w-[1100px] px-2">
+        <div className="text-center mb-6">
+          <h2 className="text-3xl font-bold text-ink dark:text-slate-100 mb-2">
             Cari Media Belajar
           </h2>
-          <p className="text-gray-600 dark:text-slate-400">
+          <p className="text-gray-600 dark:text-slate-400 text-base">
             Temukan media pembelajaran yang sesuai kebutuhan kelas Anda
           </p>
         </div>
 
         {/* Search Bar */}
-        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-md p-6 border border-gray-100 dark:border-slate-800 mb-6">
-          <div className="flex items-center gap-3 bg-gray-50 dark:bg-slate-800 rounded-xl px-5 py-4 mb-5">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-md p-5 border border-gray-100 dark:border-slate-800">
+          <div className="flex items-center gap-3 bg-gray-50 dark:bg-slate-800 rounded-xl px-5 py-3.5 mb-4">
             <Icon name="magnifying-glass" className="text-primary-light text-2xl shrink-0" />
             <input
               type="text"
