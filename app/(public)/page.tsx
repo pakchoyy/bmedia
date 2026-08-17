@@ -26,8 +26,8 @@ export default async function HomePage() {
     <div className="fade-in">
       {/* Hero */}
       <section className="bg-bgy-hero text-white overflow-hidden">
-        <div className="container mx-auto max-w-[1200px] px-6 py-12 max-md:py-10">
-          <div className="flex items-center gap-12 max-lg:flex-col max-lg:text-center">
+        <div className="container mx-auto max-w-[1200px] px-6 py-8 max-md:py-8">
+          <div className="flex items-center gap-10 max-lg:flex-col max-lg:text-center">
             {/* Left: Content */}
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap justify-start gap-2 mb-4 max-lg:justify-center">
@@ -77,22 +77,14 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Right: Hero Image Placeholder */}
-            <div className="w-[38%] max-lg:w-full max-lg:mt-6 max-lg:max-w-[420px] max-lg:mx-auto">
-              <div className="relative w-full aspect-square max-w-[380px] mx-auto">
-                {/* Placeholder for hero image */}
-                <div className="absolute inset-0 bg-white/10 backdrop-blur-sm rounded-3xl border-2 border-white/20 flex items-center justify-center">
-                  <div className="text-center p-8">
-                    <Icon name="laptop-code" className="text-white/40 text-6xl mb-4 mx-auto" />
-                    <p className="text-white/60 text-sm font-medium">
-                      Hero Image Placeholder
-                      <br />
-                      <span className="text-xs opacity-75">
-                        Guru dengan laptop/media interaktif
-                      </span>
-                    </p>
-                  </div>
-                </div>
+            {/* Right: Hero Image */}
+            <div className="w-[36%] max-lg:w-full max-lg:mt-6 max-lg:max-w-[320px] max-lg:mx-auto">
+              <div className="w-full max-w-[300px] mx-auto">
+                <img
+                  src="/hero-banner.webp"
+                  alt="Ilustrasi media belajar interaktif bersama guru"
+                  className="w-full h-auto rounded-3xl border-2 border-white/30 shadow-xl"
+                />
               </div>
             </div>
           </div>
