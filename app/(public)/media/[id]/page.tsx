@@ -38,15 +38,7 @@ export default async function MediaDetailPage({ params }: Props) {
     .slice(0, 3);
 
   return (
-    <div className="container mx-auto max-w-[1200px] px-6 py-12 fade-in">
-      <Link
-        href="/catalog"
-        className="inline-flex items-center gap-2 text-primary border-2 border-primary rounded-full px-5 py-2 font-semibold mb-6 hover:bg-primary hover:text-white transition-colors"
-      >
-        <Icon name="arrow-left" />
-        Kembali ke Koleksi
-      </Link>
-
+    <div className="container mx-auto max-w-[1200px] px-6 py-6 fade-in">
       {/* Detail header */}
       <div className="bg-white dark:bg-slate-900 rounded-[15px] overflow-hidden shadow-md mb-8 border border-gray-100 dark:border-slate-800">
         <div className="w-full h-[400px] max-md:h-[220px]">
@@ -104,8 +96,16 @@ export default async function MediaDetailPage({ params }: Props) {
         </div>
       </div>
 
+      <Link
+        href="/catalog"
+        className="inline-flex items-center gap-2 text-primary border-2 border-primary rounded-full px-5 py-2 font-semibold my-6 hover:bg-primary hover:text-white transition-colors"
+      >
+        <Icon name="arrow-left" />
+        Kembali ke Koleksi
+      </Link>
+
       {/* Recommendations */}
-      <h3 className="text-3xl font-bold text-primary mt-10 mb-6">
+      <h3 className="text-3xl font-bold text-primary mt-6 mb-6">
         Rekomendasi Media Serupa
       </h3>
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
