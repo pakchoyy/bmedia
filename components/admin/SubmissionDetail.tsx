@@ -64,6 +64,8 @@ export default function SubmissionDetail({ media }: { media: Media }) {
     link_url: media.link_url,
     thumbnail_url: media.thumbnail_url ?? "",
     thumbnail_position: media.thumbnail_position ?? 50,
+    thumbnail_pos_y: media.thumbnail_pos_y ?? 50,
+    thumbnail_zoom: media.thumbnail_zoom ?? 1,
     guru_name: media.guru_name,
     sekolah: media.sekolah,
     guru_wa: media.guru_wa,
@@ -82,6 +84,8 @@ export default function SubmissionDetail({ media }: { media: Media }) {
       ...f,
       thumbnail_url: url ?? "",
       thumbnail_position: 50,
+      thumbnail_pos_y: 50,
+      thumbnail_zoom: 1,
     }));
 
   const handleApprove = async () => {
@@ -384,9 +388,18 @@ export default function SubmissionDetail({ media }: { media: Media }) {
                 <ThumbnailUpload
                   value={form.thumbnail_url || null}
                   onChange={setThumbnail}
-                  position={form.thumbnail_position}
-                  onPositionChange={(p) =>
-                    setForm((f) => ({ ...f, thumbnail_position: p }))
+                  crop={{
+                    x: form.thumbnail_position ?? 50,
+                    y: form.thumbnail_pos_y ?? 50,
+                    zoom: form.thumbnail_zoom ?? 1,
+                  }}
+                  onCropChange={(crop) =>
+                    setForm((f) => ({
+                      ...f,
+                      thumbnail_position: crop.x,
+                      thumbnail_pos_y: crop.y,
+                      thumbnail_zoom: crop.zoom,
+                    }))
                   }
                   label="Thumbnail"
                 />

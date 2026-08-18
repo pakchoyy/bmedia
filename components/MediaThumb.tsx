@@ -1,24 +1,34 @@
 import type { Media } from "@/types/media";
 import { CATEGORY_PLACEHOLDER_COLORS } from "@/lib/constants";
+import { thumbCropStyle } from "@/lib/storage";
 import Icon from "./Icon";
 import { CATEGORIES } from "@/lib/constants";
 
 interface MediaThumbProps {
-  media: Pick<Media, "title" | "thumbnail_url" | "category" | "thumbnail_position">;
+  media: Pick<
+    Media,
+    | "title"
+    | "thumbnail_url"
+    | "category"
+    | "thumbnail_position"
+    | "thumbnail_pos_y"
+    | "thumbnail_zoom"
+  >;
   className?: string;
 }
 
 export default function MediaThumb({ media, className }: MediaThumbProps) {
   if (media.thumbnail_url) {
-    const pos = media.thumbnail_position ?? 50;
     return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={media.thumbnail_url}
-        alt={media.title}
-        className={`${className} object-cover w-full h-full`}
-        style={{ objectPosition: `${pos}% center` }}
-      />
+      <div className={`${className} overflow-hidden`}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={media.thumbnail_url}
+          alt={media.title}
+          className="object-cover w-full h-full"
+          style={thumbCropStyle(media)}
+        />
+      </div>
     );
   }
 

@@ -123,6 +123,8 @@ export interface MediaEditInput {
   link_url: string;
   thumbnail_url: string;
   thumbnail_position?: number | null;
+  thumbnail_pos_y?: number | null;
+  thumbnail_zoom?: number | null;
   guru_name: string;
   sekolah: string;
   guru_wa: string;
@@ -179,6 +181,8 @@ export async function createMedia(
     link_url: normalizedLink,
     thumbnail_url: thumbnail,
     thumbnail_position: input.thumbnail_position ?? 50,
+    thumbnail_pos_y: input.thumbnail_pos_y ?? 50,
+    thumbnail_zoom: input.thumbnail_zoom ?? 1,
     guru_name: guruName,
     sekolah: sekolah || "-",
     guru_wa: guruWa || "-",
@@ -236,6 +240,8 @@ export async function updateMedia(
       link_url: normalizedLink,
       thumbnail_url: thumbnail,
       thumbnail_position: input.thumbnail_position ?? 50,
+      thumbnail_pos_y: input.thumbnail_pos_y ?? 50,
+      thumbnail_zoom: input.thumbnail_zoom ?? 1,
       guru_name: input.guru_name.trim(),
       sekolah: input.sekolah.trim(),
       guru_wa: input.guru_wa.trim(),

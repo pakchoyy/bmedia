@@ -18,6 +18,8 @@ create table if not exists media (
   link_url text not null,
   thumbnail_url text,
   thumbnail_position double precision default 50,
+  thumbnail_pos_y double precision default 50,
+  thumbnail_zoom double precision default 1,
   description text not null,
   guru_name text not null,
   sekolah text not null,

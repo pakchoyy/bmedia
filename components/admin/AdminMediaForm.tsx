@@ -10,6 +10,7 @@ import {
 } from "@/app/admin/actions";
 import { CATEGORIES, JENJANG_OPTIONS, KELAS_OPTIONS } from "@/lib/constants";
 import type { Jenjang, Media, MediaCategory } from "@/types/media";
+import type { ThumbCrop } from "@/lib/storage";
 import ThumbnailUpload from "../ThumbnailUpload";
 import Icon from "../Icon";
 
@@ -36,6 +37,8 @@ export default function AdminMediaForm({ mode, media }: AdminMediaFormProps) {
           link_url: media.link_url,
           thumbnail_url: media.thumbnail_url,
           thumbnail_position: media.thumbnail_position ?? 50,
+          thumbnail_pos_y: media.thumbnail_pos_y ?? 50,
+          thumbnail_zoom: media.thumbnail_zoom ?? 1,
           guru_name: media.guru_name,
           sekolah: media.sekolah,
           guru_wa: media.guru_wa,
@@ -51,6 +54,8 @@ export default function AdminMediaForm({ mode, media }: AdminMediaFormProps) {
           link_url: "",
           thumbnail_url: null as string | null,
           thumbnail_position: 50,
+          thumbnail_pos_y: 50,
+          thumbnail_zoom: 1,
           guru_name: "",
           sekolah: "",
           guru_wa: "",
@@ -76,6 +81,8 @@ export default function AdminMediaForm({ mode, media }: AdminMediaFormProps) {
       link_url: form.link_url,
       thumbnail_url: form.thumbnail_url ?? "",
       thumbnail_position: form.thumbnail_position ?? 50,
+      thumbnail_pos_y: form.thumbnail_pos_y ?? 50,
+      thumbnail_zoom: form.thumbnail_zoom ?? 1,
       guru_name: form.guru_name,
       sekolah: form.sekolah,
       guru_wa: form.guru_wa,
@@ -217,11 +224,22 @@ export default function AdminMediaForm({ mode, media }: AdminMediaFormProps) {
             ...f,
             thumbnail_url: url,
             thumbnail_position: 50,
+            thumbnail_pos_y: 50,
+            thumbnail_zoom: 1,
           }))
         }
-        position={form.thumbnail_position}
-        onPositionChange={(p) =>
-          setForm((f) => ({ ...f, thumbnail_position: p }))
+        crop={{
+          x: form.thumbnail_position,
+          y: form.thumbnail_pos_y,
+          zoom: form.thumbnail_zoom,
+        }}
+        onCropChange={(crop: ThumbCrop) =>
+          setForm((f) => ({
+            ...f,
+            thumbnail_position: crop.x,
+            thumbnail_pos_y: crop.y,
+            thumbnail_zoom: crop.zoom,
+          }))
         }
         label="Thumbnail"
       />

@@ -6,6 +6,7 @@ import { CATEGORIES, JENJANG_OPTIONS, KELAS_OPTIONS } from "@/lib/constants";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase";
 import { normalizeUrl } from "@/lib/utils";
 import type { Jenjang, MediaCategory } from "@/types/media";
+import type { ThumbCrop } from "@/lib/storage";
 import Icon from "./Icon";
 import ThumbnailUpload from "./ThumbnailUpload";
 
@@ -30,6 +31,8 @@ const emptyForm = {
   link_url: "",
   thumbnail_url: null as string | null,
   thumbnail_position: 50,
+  thumbnail_pos_y: 50,
+  thumbnail_zoom: 1,
   tool: "",
   description: "",
   guru_name: "",
@@ -66,6 +69,16 @@ export default function SubmitForm() {
       ...f,
       thumbnail_url: url,
       thumbnail_position: 50,
+      thumbnail_pos_y: 50,
+      thumbnail_zoom: 1,
+    }));
+
+  const setCrop = (crop: ThumbCrop) =>
+    setForm((f) => ({
+      ...f,
+      thumbnail_position: crop.x,
+      thumbnail_pos_y: crop.y,
+      thumbnail_zoom: crop.zoom,
     }));
 
   const filteredKelasOptions = useMemo(() => {
@@ -130,6 +143,8 @@ export default function SubmitForm() {
         link_url: normalizedLink,
         thumbnail_url: form.thumbnail_url,
         thumbnail_position: form.thumbnail_position,
+        thumbnail_pos_y: form.thumbnail_pos_y,
+        thumbnail_zoom: form.thumbnail_zoom,
         description: form.description.trim(),
         guru_name: form.guru_name.trim(),
         sekolah: form.sekolah.trim() || "-",
@@ -258,10 +273,12 @@ export default function SubmitForm() {
           <ThumbnailUpload
             value={form.thumbnail_url}
             onChange={setThumbnail}
-            position={form.thumbnail_position}
-            onPositionChange={(p) =>
-              setForm((f) => ({ ...f, thumbnail_position: p }))
-            }
+            crop={{
+              x: form.thumbnail_position,
+              y: form.thumbnail_pos_y,
+              zoom: form.thumbnail_zoom,
+            }}
+            onCropChange={setCrop}
           />
           <p className="text-xs text-gray-400 mt-1">Format JPG, JPEG, PNG, atau WebP &middot; maksimal 1,5 MB</p>
         </div>

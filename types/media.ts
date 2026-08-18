@@ -22,6 +22,8 @@ export interface Media {
   link_url: string;
   thumbnail_url: string | null;
   thumbnail_position?: number | null;
+  thumbnail_pos_y?: number | null;
+  thumbnail_zoom?: number | null;
   description: string;
   guru_name: string;
   sekolah: string;
@@ -43,6 +45,8 @@ export interface MediaInsert {
   link_url: string;
   thumbnail_url?: string | null;
   thumbnail_position?: number | null;
+  thumbnail_pos_y?: number | null;
+  thumbnail_zoom?: number | null;
   description: string;
   guru_name: string;
   sekolah: string;
