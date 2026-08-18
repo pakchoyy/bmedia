@@ -50,11 +50,14 @@ export default function Footer() {
       </div>
       <div className="bg-primary text-center py-4">
         <div className="container mx-auto max-w-[1200px] px-6 text-sm text-white/90">
-          &copy; 2026 Bantu Guru Yuk by{" "}
-          <a href="https://bantuguruyuk.web.id" target="_blank" rel="noreferrer" className="font-extrabold hover:text-accent transition-colors">
-            @pak.choyy
-          </a>{" "}
-          &bull; v1.0.0
+          <div className="text-xs text-white/60 mb-0.5">Media Belajar</div>
+          <div>
+            Bantu Guru Yuk by{" "}
+            <a href="https://bantuguruyuk.web.id" target="_blank" rel="noreferrer" className="font-extrabold hover:text-accent transition-colors">
+              Pak Choyy
+            </a>{" "}
+            &bull; v1.0.0
+          </div>
         </div>
       </div>
     </footer>

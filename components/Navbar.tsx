@@ -19,12 +19,12 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 bg-bgy-gradient shadow-header">
-      <div className="container mx-auto max-w-[1200px] px-4 flex items-center justify-between h-14 w-full">
+      <div className="container mx-auto max-w-[1200px] pl-5 pr-4 flex items-center justify-between h-14 w-full">
         <Link href="/" className="flex items-center gap-2.5 text-sm font-bold text-white">
           <img
             src="/guru-cibisd2.png"
             alt="BGY"
-            className="w-8 h-8 rounded-full object-cover shrink-0 border border-white/40 bg-white"
+            className="w-8 h-8 rounded-full object-cover shrink-0"
           />
           <span className="whitespace-nowrap">Bantu Guru Yuk | Media Belajar</span>
         </Link>
