@@ -4,18 +4,20 @@ import Icon from "./Icon";
 import { CATEGORIES } from "@/lib/constants";
 
 interface MediaThumbProps {
-  media: Pick<Media, "title" | "thumbnail_url" | "category">;
+  media: Pick<Media, "title" | "thumbnail_url" | "category" | "thumbnail_position">;
   className?: string;
 }
 
 export default function MediaThumb({ media, className }: MediaThumbProps) {
   if (media.thumbnail_url) {
+    const pos = media.thumbnail_position ?? 50;
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
         src={media.thumbnail_url}
         alt={media.title}
         className={`${className} object-cover w-full h-full`}
+        style={{ objectPosition: `${pos}% center` }}
       />
     );
   }

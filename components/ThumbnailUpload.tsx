@@ -17,12 +17,16 @@ interface ThumbnailUploadProps {
   value: string | null;
   onChange: (url: string | null) => void;
   label?: string;
+  position?: number | null;
+  onPositionChange?: (position: number) => void;
 }
 
 export default function ThumbnailUpload({
   value,
   onChange,
   label = "Thumbnail (opsional)",
+  position = 50,
+  onPositionChange,
 }: ThumbnailUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -30,6 +34,9 @@ export default function ThumbnailUpload({
   const [uploading, setUploading] = useState(false);
 
   const displayUrl = preview ?? value;
+  const displayPos = Math.min(100, Math.max(0, position ?? 50));
+
+  const objectPosition = `${displayPos}% center`;
 
   // Revoke object URL yang tidak dipakai agar tidak bocor memori.
   useEffect(() => {
@@ -106,33 +113,67 @@ export default function ThumbnailUpload({
       </label>
 
       {displayUrl ? (
-        <div className="flex items-start gap-3">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={displayUrl}
-            alt="Pratinjau thumbnail"
-            className="w-40 h-28 object-cover rounded-lg border border-gray-300 dark:border-slate-700"
-          />
-          <div className="flex flex-col gap-2">
-            <button
-              type="button"
-              onClick={() => inputRef.current?.click()}
-              disabled={uploading}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-pagebg text-primary border border-gray-300 dark:border-slate-700 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors disabled:opacity-60"
-            >
-              <Icon name="cloud-arrow-up" />
-              {uploading ? "Mengunggah..." : "Ganti Gambar"}
-            </button>
-            <button
-              type="button"
-              onClick={clearSelection}
-              disabled={uploading}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-danger border border-danger/40 hover:bg-danger/10 transition-colors disabled:opacity-60"
-            >
-              <Icon name="trash" />
-              Hapus Gambar
-            </button>
+        <div className="flex flex-col gap-3">
+          <div className="flex items-start gap-3 flex-wrap">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={displayUrl}
+              alt="Pratinjau thumbnail"
+              className="w-40 h-28 object-cover rounded-lg border border-gray-300 dark:border-slate-700"
+              style={{ objectPosition }}
+            />
+            <div className="flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={() => inputRef.current?.click()}
+                disabled={uploading}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-pagebg text-primary border border-gray-300 dark:border-slate-700 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors disabled:opacity-60"
+              >
+                <Icon name="cloud-arrow-up" />
+                {uploading ? "Mengunggah..." : "Ganti Gambar"}
+              </button>
+              <button
+                type="button"
+                onClick={clearSelection}
+                disabled={uploading}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-danger border border-danger/40 hover:bg-danger/10 transition-colors disabled:opacity-60"
+              >
+                <Icon name="trash" />
+                Hapus Gambar
+              </button>
+            </div>
           </div>
+
+          {onPositionChange && (
+            <div className="max-w-md">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs font-semibold text-gray-500 dark:text-slate-400">
+                  Atur posisi gambar
+                </span>
+                <span className="text-xs text-gray-400">
+                  {displayPos === 0
+                    ? "Kiri"
+                    : displayPos === 100
+                      ? "Kanan"
+                      : "Tengah"}
+                </span>
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={displayPos}
+                onChange={(e) => onPositionChange(Number(e.target.value))}
+                className="w-full accent-[#0ea5a0]"
+                aria-label="Posisi horizontal thumbnail"
+              />
+              <div className="flex justify-between text-[10px] text-gray-400 mt-0.5">
+                <span>Kiri</span>
+                <span>Tengah</span>
+                <span>Kanan</span>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <button

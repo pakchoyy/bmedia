@@ -17,6 +17,7 @@ create table if not exists media (
   tool text not null,
   link_url text not null,
   thumbnail_url text,
+  thumbnail_position double precision default 50,
   description text not null,
   guru_name text not null,
   sekolah text not null,

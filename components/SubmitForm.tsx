@@ -29,6 +29,8 @@ const emptyForm = {
   category: "",
   link_url: "",
   thumbnail_url: null as string | null,
+  thumbnail_position: 50,
+  tool: "",
   description: "",
   guru_name: "",
   sekolah: "",
@@ -60,7 +62,11 @@ export default function SubmitForm() {
   };
 
   const setThumbnail = (url: string | null) =>
-    setForm((f) => ({ ...f, thumbnail_url: url }));
+    setForm((f) => ({
+      ...f,
+      thumbnail_url: url,
+      thumbnail_position: 50,
+    }));
 
   const filteredKelasOptions = useMemo(() => {
     if (!form.jenjang) return KELAS_OPTIONS;
@@ -120,9 +126,10 @@ export default function SubmitForm() {
         jenjang: form.jenjang as Jenjang,
         kelas: form.kelas.trim(),
         category: form.category as MediaCategory,
-        tool: "Lainnya",
+        tool: form.tool.trim() || "Lainnya",
         link_url: normalizedLink,
         thumbnail_url: form.thumbnail_url,
+        thumbnail_position: form.thumbnail_position,
         description: form.description.trim(),
         guru_name: form.guru_name.trim(),
         sekolah: form.sekolah.trim() || "-",
@@ -248,7 +255,14 @@ export default function SubmitForm() {
         </div>
 
         <div className={`${rowGreen} px-8 py-5 max-md:px-5`}>
-          <ThumbnailUpload value={form.thumbnail_url} onChange={setThumbnail} />
+          <ThumbnailUpload
+            value={form.thumbnail_url}
+            onChange={setThumbnail}
+            position={form.thumbnail_position}
+            onPositionChange={(p) =>
+              setForm((f) => ({ ...f, thumbnail_position: p }))
+            }
+          />
           <p className="text-xs text-gray-400 mt-1">Format JPG, JPEG, PNG, atau WebP &middot; maksimal 1,5 MB</p>
         </div>
 
@@ -266,10 +280,16 @@ export default function SubmitForm() {
           </h3>
         </div>
         <div className={`${rowGreen} px-8 py-6 max-md:px-5 space-y-5`}>
-          <div>
-            <label htmlFor="guru_name" className={labelClass}>Nama Guru <span className="text-danger">*</span></label>
-            <input id="guru_name" type="text" value={form.guru_name} onChange={(e) => update("guru_name", e.target.value)} placeholder="Contoh: Budi Santoso, S.Pd" className={inputClass} />
-            {fieldErrors.guru_name && <p className={errorClass}>{fieldErrors.guru_name}</p>}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="guru_name" className={labelClass}>Nama Guru <span className="text-danger">*</span></label>
+              <input id="guru_name" type="text" value={form.guru_name} onChange={(e) => update("guru_name", e.target.value)} placeholder="Contoh: Budi Santoso, S.Pd" className={inputClass} />
+              {fieldErrors.guru_name && <p className={errorClass}>{fieldErrors.guru_name}</p>}
+            </div>
+            <div>
+              <label htmlFor="tool" className={labelClass}>Dibuat dengan <span className="text-gray-400 font-normal">(opsional)</span></label>
+              <input id="tool" type="text" value={form.tool} onChange={(e) => update("tool", e.target.value)} placeholder="Contoh: Scratch, Canva, Articulate..." className={inputClass} />
+            </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
