@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Icon from "./Icon";
-import { JENJANG_OPTIONS, KELAS_OPTIONS } from "@/lib/constants";
+import { CATEGORIES, JENJANG_OPTIONS, KELAS_OPTIONS } from "@/lib/constants";
 
 const MAPEL_OPTIONS = ["Matematika", "Bahasa Indonesia", "IPAS", "Bahasa Inggris", "Pendidikan Pancasila", "PJOK", "Seni"];
-const TIPE_OPTIONS = ["Game Edukasi", "Quiz Interaktif", "Multimedia Interaktif", "Laboratorium Maya", "Modul Digital"];
+const TIPE_OPTIONS = CATEGORIES.map((c) => c.name);
 
 export default function SearchMedia() {
   const router = useRouter();

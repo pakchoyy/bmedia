@@ -13,7 +13,7 @@ create table if not exists media (
   mapel text not null,
   jenjang text not null check (jenjang in ('SD', 'SMP', 'SMA', 'SMK', 'Umum')),
   kelas text not null,
-  category text not null check (category in ('Laboratorium Maya', 'Multimedia Interaktif', 'Game Edukasi', 'Quiz Interaktif', 'Modul Digital')),
+  category text not null check (category in ('Laboratorium Maya', 'Multimedia Interaktif', 'Game Edukasi', 'Quiz Interaktif', 'Modul Digital', 'Video Pembelajaran Interaktif', 'Lainnya')),
   tool text not null,
   link_url text not null,
   thumbnail_url text,

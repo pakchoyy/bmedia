@@ -7,7 +7,9 @@ export type MediaCategory =
   | "Multimedia Interaktif"
   | "Game Edukasi"
   | "Quiz Interaktif"
-  | "Modul Digital";
+  | "Modul Digital"
+  | "Video Pembelajaran Interaktif"
+  | "Lainnya";
 
 export interface Media {
   id: string;

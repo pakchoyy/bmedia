@@ -270,4 +270,6 @@ const categoryOptions: MediaCategory[] = [
   "Game Edukasi",
   "Quiz Interaktif",
   "Modul Digital",
+  "Video Pembelajaran Interaktif",
+  "Lainnya",
 ];

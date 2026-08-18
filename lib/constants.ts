@@ -10,6 +10,8 @@ export const CATEGORIES: {
   { name: "Game Edukasi", icon: "gamepad", color: "#10b981" },
   { name: "Quiz Interaktif", icon: "clipboard-question", color: "#8b5cf6" },
   { name: "Modul Digital", icon: "book-open", color: "#3b82f6" },
+  { name: "Video Pembelajaran Interaktif", icon: "play", color: "#e11d48" },
+  { name: "Lainnya", icon: "tags", color: "#64748b" },
 ];
 
 export const JENJANG_OPTIONS: Jenjang[] = ["TK", "SD", "SMP", "SMA", "SMK", "Umum"];
@@ -33,6 +35,8 @@ export const CATEGORY_PLACEHOLDER_COLORS: Record<MediaCategory, string> = {
   "Game Edukasi": "#10b981",
   "Quiz Interaktif": "#8b5cf6",
   "Modul Digital": "#3b82f6",
+  "Video Pembelajaran Interaktif": "#e11d48",
+  "Lainnya": "#64748b",
 };
 
 export const CONTACT_EMAIL = "admin@bgy.id";
