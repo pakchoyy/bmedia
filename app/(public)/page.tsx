@@ -35,18 +35,18 @@ export default async function HomePage() {
         </div>
 
         {/* Hero image — separuh kanan banner */}
-        <div className="absolute inset-y-0 right-0 w-[46%] max-lg:hidden">
+        <div className="absolute inset-y-0 right-0 w-[52%] max-lg:hidden">
           <img
             src="/hero-banner.webp"
             alt="Ilustrasi media belajar interaktif bersama guru"
             className="w-full h-full object-cover"
           />
         </div>
-        {/* Gradient transparansi teal → foto */}
-        <div className="absolute inset-y-0 right-0 w-[54%] bg-gradient-to-l from-transparent via-[#0d7a8a]/25 to-[#0d7a8a] pointer-events-none max-lg:hidden" />
+        {/* Gradient blend tipis di tepi kiri foto (tidak menutupi foto) */}
+        <div className="absolute inset-y-0 right-[29%] w-[23%] bg-gradient-to-r from-[#0d7a8a] via-[#0d7a8a]/25 to-transparent pointer-events-none max-lg:hidden" />
 
         <div className="relative z-10 container mx-auto max-w-[1200px] px-6 py-6 max-md:py-5">
-          <div className="w-[54%] max-lg:w-full max-lg:text-center">
+          <div className="w-[48%] max-lg:w-full max-lg:text-center">
             <div className="flex flex-wrap justify-start gap-2 mb-2 max-lg:justify-center">
               {["✓ Gratis", "✓ Karya Guru Indonesia", "✓ Interaktif"].map((b) => (
                 <span key={b} className="bg-white/15 rounded-full px-3 py-1 text-xs font-medium">
