@@ -14,8 +14,18 @@ export default function AdminSidebar({ email, onNavigate }: AdminSidebarProps) {
 
   const items = [
     { href: "/admin", label: "Dashboard", icon: "gauge" },
-    { href: "/admin/submissions", label: "Submissions", icon: "clipboard" },
+    { href: "/admin/media", label: "Semua Media", icon: "book" },
+    { href: "/admin/media/new", label: "Tambah Media", icon: "plus" },
+    { href: "/admin/submissions", label: "Submission", icon: "clipboard" },
   ];
+
+  const isActive = (item: (typeof items)[number]) => {
+    if (item.href === "/admin") return pathname === "/admin";
+    if (item.href === "/admin/media") {
+      return pathname.startsWith("/admin/media") && pathname !== "/admin/media/new";
+    }
+    return pathname.startsWith(item.href);
+  };
 
   return (
     <div className="flex flex-col h-full bg-white">
@@ -33,10 +43,7 @@ export default function AdminSidebar({ email, onNavigate }: AdminSidebarProps) {
 
       <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
         {items.map((item) => {
-          const active =
-            item.href === "/admin"
-              ? pathname === "/admin"
-              : pathname.startsWith(item.href);
+          const active = isActive(item);
           return (
             <Link
               key={item.href}

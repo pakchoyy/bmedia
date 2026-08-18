@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { normalizeUrl } from "@/lib/utils";
 import Icon from "./Icon";
 
 interface PlayButtonProps {
@@ -19,6 +20,8 @@ export default function PlayButton({
   const [loading, setLoading] = useState(false);
 
   const handleClick = async () => {
+    const target = normalizeUrl(linkUrl);
+    if (!target) return;
     setLoading(true);
     try {
       await fetch(`/api/play/${mediaId}`, { method: "POST" });
@@ -27,7 +30,7 @@ export default function PlayButton({
     } finally {
       setLoading(false);
     }
-    window.open(linkUrl, "_blank", "noopener,noreferrer");
+    window.open(target, "_blank", "noopener,noreferrer");
   };
 
   if (size === "lg") {

@@ -40,7 +40,7 @@ export default async function AdminDashboardPage() {
       <div className="mt-8 bg-white rounded-xl border border-gray-200 shadow-sm p-6">
         <h2 className="font-bold text-ink mb-3">Panduan Singkat</h2>
         <ul className="text-sm text-gray-600 space-y-2 list-disc list-inside">
-          <li>Buka menu <strong>Submissions</strong> untuk mereview karya.</li>
+          <li>Buka menu <strong>Submission</strong> untuk mereview karya dan menu <strong>Media</strong> untuk mengelola semua media.</li>
           <li>
             <strong>Approve</strong> → media langsung tampil di website publik.
           </li>
@@ -51,6 +51,10 @@ export default async function AdminDashboardPage() {
           <li>
             <strong>Edit</strong> untuk memperbaiki metadata karya jika ada
             kesalahan.
+          </li>
+          <li>
+            <strong>Tambah Media</strong> untuk membuat media baru langsung
+            berstatus approved.
           </li>
         </ul>
       </div>

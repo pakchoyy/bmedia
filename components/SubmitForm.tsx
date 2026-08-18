@@ -2,10 +2,12 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { JENJANG_OPTIONS, KELAS_OPTIONS } from "@/lib/constants";
+import { CATEGORIES, JENJANG_OPTIONS, KELAS_OPTIONS } from "@/lib/constants";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase";
-import type { Jenjang } from "@/types/media";
+import { normalizeUrl } from "@/lib/utils";
+import type { Jenjang, MediaCategory } from "@/types/media";
 import Icon from "./Icon";
+import ThumbnailUpload from "./ThumbnailUpload";
 
 const MAPEL_OPTIONS = [
   "Matematika",
@@ -24,8 +26,9 @@ const emptyForm = {
   mapelCustom: "",
   jenjang: "",
   kelas: "",
+  category: "",
   link_url: "",
-  thumbnail_url: "",
+  thumbnail_url: null as string | null,
   description: "",
   guru_name: "",
   sekolah: "",
@@ -56,6 +59,9 @@ export default function SubmitForm() {
     }
   };
 
+  const setThumbnail = (url: string | null) =>
+    setForm((f) => ({ ...f, thumbnail_url: url }));
+
   const filteredKelasOptions = useMemo(() => {
     if (!form.jenjang) return KELAS_OPTIONS;
     const jenjangMap: Record<string, string[]> = {
@@ -77,7 +83,9 @@ export default function SubmitForm() {
     if (form.mapel === "Lainnya" && !form.mapelCustom.trim()) errors.mapelCustom = "Isi mata pelajaran manual.";
     if (!form.jenjang) errors.jenjang = "Jenjang wajib dipilih.";
     if (!form.kelas) errors.kelas = "Kelas wajib dipilih.";
+    if (!form.category) errors.category = "Tipe media wajib dipilih.";
     if (!form.link_url.trim()) errors.link_url = "Link media wajib diisi.";
+    else if (!normalizeUrl(form.link_url)) errors.link_url = "Link media tidak valid.";
     if (!form.description.trim()) errors.description = "Deskripsi singkat wajib diisi.";
     if (!form.guru_name.trim()) errors.guru_name = "Nama guru wajib diisi.";
     setFieldErrors(errors);
@@ -100,15 +108,21 @@ export default function SubmitForm() {
     try {
       const supabase = createClient();
       const finalMapel = form.mapel === "Lainnya" ? form.mapelCustom.trim() : form.mapel;
+      const normalizedLink = normalizeUrl(form.link_url);
+      if (!normalizedLink) {
+        setError("Link media tidak valid.");
+        setSubmitting(false);
+        return;
+      }
       const { error: insertError } = await supabase.from("media").insert({
         title: form.title.trim(),
         mapel: finalMapel,
         jenjang: form.jenjang as Jenjang,
         kelas: form.kelas.trim(),
-        category: "Multimedia Interaktif",
+        category: form.category as MediaCategory,
         tool: "Lainnya",
-        link_url: form.link_url.trim(),
-        thumbnail_url: form.thumbnail_url.trim() || null,
+        link_url: normalizedLink,
+        thumbnail_url: form.thumbnail_url,
         description: form.description.trim(),
         guru_name: form.guru_name.trim(),
         sekolah: form.sekolah.trim() || "-",
@@ -207,46 +221,24 @@ export default function SubmitForm() {
               )}
             </div>
           </div>
-          {form.mapel !== "Lainnya" && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="jenjang2" className={labelClass}>Jenjang <span className="text-danger">*</span></label>
-                <select id="jenjang2" value={form.jenjang} onChange={(e) => update("jenjang", e.target.value)} className={inputClass}>
-                  <option value="">Pilih Jenjang...</option>
-                  {JENJANG_OPTIONS.map((j) => (<option key={j} value={j}>{j}</option>))}
-                </select>
-                {fieldErrors.jenjang && <p className={errorClass}>{fieldErrors.jenjang}</p>}
-              </div>
-              <div>
-                <label htmlFor="kelas" className={labelClass}>Kelas <span className="text-danger">*</span></label>
-                <select id="kelas" value={form.kelas} onChange={(e) => update("kelas", e.target.value)} className={inputClass} disabled={!form.jenjang}>
-                  <option value="">{form.jenjang ? "Pilih Kelas..." : "Pilih Jenjang terlebih dahulu"}</option>
-                  {filteredKelasOptions.map((k) => (<option key={k.label} value={k.label}>{k.label}</option>))}
-                </select>
-                {fieldErrors.kelas && <p className={errorClass}>{fieldErrors.kelas}</p>}
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="kelas" className={labelClass}>Kelas <span className="text-danger">*</span></label>
+              <select id="kelas" value={form.kelas} onChange={(e) => update("kelas", e.target.value)} className={inputClass} disabled={!form.jenjang}>
+                <option value="">{form.jenjang ? "Pilih Kelas..." : "Pilih Jenjang terlebih dahulu"}</option>
+                {filteredKelasOptions.map((k) => (<option key={k.label} value={k.label}>{k.label}</option>))}
+              </select>
+              {fieldErrors.kelas && <p className={errorClass}>{fieldErrors.kelas}</p>}
             </div>
-          )}
-          {form.mapel === "Lainnya" && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="jenjang3" className={labelClass}>Jenjang <span className="text-danger">*</span></label>
-                <select id="jenjang3" value={form.jenjang} onChange={(e) => update("jenjang", e.target.value)} className={inputClass}>
-                  <option value="">Pilih Jenjang...</option>
-                  {JENJANG_OPTIONS.map((j) => (<option key={j} value={j}>{j}</option>))}
-                </select>
-                {fieldErrors.jenjang && <p className={errorClass}>{fieldErrors.jenjang}</p>}
-              </div>
-              <div>
-                <label htmlFor="kelas2" className={labelClass}>Kelas <span className="text-danger">*</span></label>
-                <select id="kelas2" value={form.kelas} onChange={(e) => update("kelas", e.target.value)} className={inputClass} disabled={!form.jenjang}>
-                  <option value="">{form.jenjang ? "Pilih Kelas..." : "Pilih Jenjang terlebih dahulu"}</option>
-                  {filteredKelasOptions.map((k) => (<option key={k.label} value={k.label}>{k.label}</option>))}
-                </select>
-                {fieldErrors.kelas && <p className={errorClass}>{fieldErrors.kelas}</p>}
-              </div>
+            <div>
+              <label htmlFor="category" className={labelClass}>Tipe Media <span className="text-danger">*</span></label>
+              <select id="category" value={form.category} onChange={(e) => update("category", e.target.value)} className={inputClass}>
+                <option value="">Pilih Tipe Media...</option>
+                {CATEGORIES.map((c) => (<option key={c.name} value={c.name}>{c.name}</option>))}
+              </select>
+              {fieldErrors.category && <p className={errorClass}>{fieldErrors.category}</p>}
             </div>
-          )}
+          </div>
         </div>
 
         <div className={`${rowWhite} px-8 py-5 max-md:px-5`}>
@@ -256,9 +248,8 @@ export default function SubmitForm() {
         </div>
 
         <div className={`${rowGreen} px-8 py-5 max-md:px-5`}>
-          <label htmlFor="thumbnail_url" className={labelClass}>Thumbnail <span className="text-gray-400 font-normal">(opsional)</span></label>
-          <input id="thumbnail_url" type="text" value={form.thumbnail_url} onChange={(e) => update("thumbnail_url", e.target.value)} placeholder="URL gambar thumbnail, contoh: https://i.imgur.com/abc.jpg" className={inputClass} />
-          <p className="text-xs text-gray-400 mt-1">Paste link gambar dari Canva, Google Drive, atau hosting lain</p>
+          <ThumbnailUpload value={form.thumbnail_url} onChange={setThumbnail} />
+          <p className="text-xs text-gray-400 mt-1">Format JPG, JPEG, PNG, atau WebP &middot; maksimal 1,5 MB</p>
         </div>
 
         <div className={`${rowGreen} px-8 py-5 max-md:px-5`}>

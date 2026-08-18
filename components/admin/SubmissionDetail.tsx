@@ -12,11 +12,12 @@ import {
   type MediaEditInput,
 } from "@/app/admin/actions";
 import { CATEGORIES, JENJANG_OPTIONS, KELAS_OPTIONS } from "@/lib/constants";
-import { formatDate, formatPlays } from "@/lib/utils";
+import { formatDate, formatPlays, normalizeUrl } from "@/lib/utils";
 import StatusBadge from "./StatusBadge";
 import RejectDialog from "./RejectDialog";
 import ConfirmDialog from "./ConfirmDialog";
 import MediaThumb from "../MediaThumb";
+import ThumbnailUpload from "../ThumbnailUpload";
 import Icon from "../Icon";
 import Toast from "../Toast";
 
@@ -50,6 +51,8 @@ export default function SubmissionDetail({ media }: { media: Media }) {
   const [toast, setToast] = useState("");
   const [toastError, setToastError] = useState(false);
 
+  const reviewLink = normalizeUrl(media.link_url);
+
   const [form, setForm] = useState<MediaEditInput>({
     title: media.title,
     description: media.description,
@@ -72,6 +75,9 @@ export default function SubmissionDetail({ media }: { media: Media }) {
 
   const update = (field: keyof MediaEditInput, value: string) =>
     setForm((f) => ({ ...f, [field]: value }));
+
+  const setThumbnail = (url: string | null) =>
+    setForm((f) => ({ ...f, thumbnail_url: url ?? "" }));
 
   const handleApprove = async () => {
     setBusy(true);
@@ -207,22 +213,30 @@ export default function SubmissionDetail({ media }: { media: Media }) {
             <InfoItem label="Kelas" value={media.kelas} />
             <InfoItem label="Kategori" value={media.category} />
             <InfoItem label="Tool" value={media.tool} />
-            <InfoItem label="Plays" value={formatPlays(media.plays)} />
+            <InfoItem label="Plays / Klik" value={formatPlays(media.plays)} />
             <InfoItem label="Link Media" value={media.link_url} mono />
             {media.thumbnail_url && (
               <InfoItem label="Thumbnail" value={media.thumbnail_url} mono />
             )}
           </div>
 
-          <a
-            href={media.link_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-accent text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#e06c0d] transition-colors"
-          >
-            <Icon name="arrow-up-right-from-square" />
-            Buka Link Media untuk Review
-          </a>
+          {reviewLink ? (
+            <a
+              href={reviewLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-accent text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#e06c0d] transition-colors"
+            >
+              <Icon name="arrow-up-right-from-square" />
+              Buka Link Media untuk Review
+              <span className="text-xs opacity-80">(tab baru)</span>
+            </a>
+          ) : (
+            <div className="inline-flex items-center gap-2 bg-danger/10 text-danger px-6 py-3 rounded-lg font-semibold">
+              <Icon name="info" />
+              Link media tidak valid atau belum diisi.
+            </div>
+          )}
         </div>
       </div>
 
@@ -362,14 +376,10 @@ export default function SubmissionDetail({ media }: { media: Media }) {
                 />
               </div>
               <div className="md:col-span-2">
-                <label htmlFor="edit-thumb" className={labelCls}>
-                  Thumbnail URL
-                </label>
-                <input
-                  id="edit-thumb"
-                  value={form.thumbnail_url}
-                  onChange={(e) => update("thumbnail_url", e.target.value)}
-                  className={field}
+                <ThumbnailUpload
+                  value={form.thumbnail_url || null}
+                  onChange={setThumbnail}
+                  label="Thumbnail"
                 />
               </div>
             </div>
