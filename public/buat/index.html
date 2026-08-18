@@ -140,6 +140,12 @@ main{max-width:960px;margin:0 auto;padding:20px;width:100%;flex:1;}
 label{display:block;font-size:.69rem;font-weight:700;color:var(--text-light);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px;}
 input[type=text],input[type=number],select,textarea{width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.83rem;color:var(--text);background:var(--input-bg);transition:border-color .2s,background .3s;outline:none;font-family:inherit;}
 input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(14,165,160,.12);}
+input.invalid,select.invalid,textarea.invalid{border-color:#ef4444!important;box-shadow:0 0 0 3px rgba(239,68,68,.15);}
+.chip-grid.invalid{box-shadow:0 0 0 2px rgba(239,68,68,.5);border-radius:10px;animation:invShake .3s;}
+@keyframes invShake{0%,100%{transform:translateX(0);}25%{transform:translateX(2px);}75%{transform:translateX(-2px);}}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important;}
+}
 textarea{resize:vertical;min-height:70px;}
 .row-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 @media(max-width:500px){.row-2{grid-template-columns:1fr;}}
@@ -238,8 +244,8 @@ body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
 .btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:none;font-weight:600;font-size:.8rem;cursor:pointer;transition:all .2s;justify-content:center;}
 .btn-primary{background:var(--grad);color:#fff;width:100%;padding:13px;font-size:.92rem;border-radius:10px;box-shadow:0 4px 14px rgba(14,165,160,.3);}
 .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(14,165,160,.4);}
-.btn-regen{background:linear-gradient(135deg,#475569,#334155);color:#fff;width:100%;padding:10px;font-size:.85rem;border-radius:9px;margin-top:6px;}
-.btn-regen:hover{transform:translateY(-1px);}
+.btn-regen{background:var(--input-bg);color:var(--text-light);border:1.5px solid var(--border);width:auto;padding:7px 14px;font-size:.75rem;border-radius:9px;margin-top:8px;transition:all .2s;}
+.btn-regen:hover{border-color:#0EA5A0;color:#0EA5A0;}
 .btn-copy{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;width:100%;padding:11px;font-size:.88rem;border-radius:9px;}
 .btn-copy:hover{transform:translateY(-1px);}
 .btn-reset{background:var(--input-bg);color:var(--text-light);border:1.5px solid var(--border);width:100%;padding:9px;font-size:.8rem;border-radius:9px;cursor:pointer;font-weight:600;display:block;margin-top:8px;transition:all .2s;}
@@ -637,6 +643,18 @@ body.dark .prompt-raw{background:#0f172a;}
     </div>
     <div class="accordion-body" id="accBody">
 
+      <!-- Nama Game + Tema -->
+      <div class="form-group">
+        <div class="section-label">🎮 Nama Game <span style="opacity:.6;font-weight:500;">(opsional)</span></div>
+        <input type="text" id="namaGame" class="text-input" placeholder="Contoh: Petualangan Matematika Kelas 5" maxlength="60"/>
+        <div style="font-size:.7rem;color:var(--text-light);margin-top:4px;">💡 Kosongkan jika ingin AI yang menentukan nama.</div>
+      </div>
+      <div class="form-group">
+        <div class="section-label">🎨 Tema Game <span style="opacity:.6;font-weight:500;">(opsional)</span></div>
+        <input type="text" id="temaGame" class="text-input" placeholder="Contoh: Eksplorasi hutan hujan tropis" maxlength="60"/>
+        <div style="font-size:.7rem;color:var(--text-light);margin-top:4px;">💡 Kosongkan jika ingin AI yang memilihkan tema.</div>
+      </div>
+
       <!-- Mode Bermain — NAIK KE ATAS -->
       <div class="form-group">
         <div class="section-label">👥 Mode Bermain</div>
@@ -767,7 +785,7 @@ body.dark .prompt-raw{background:#0f172a;}
       <button class="btn" style="background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;flex:1;padding:10px;font-size:.85rem;border-radius:9px;" onclick="shareWA()">💬 Share WA</button>
       <button class="btn" style="background:linear-gradient(135deg,#475569,#334155);color:#fff;flex:1;padding:10px;font-size:.85rem;border-radius:9px;" onclick="downloadTxt()">⬇️ Download .txt</button>
     </div>
-    <button class="btn btn-regen" onclick="generate()">🔄 Generate Ulang</button>
+    <div style="text-align:center;margin-top:8px;"><button class="btn btn-regen" onclick="generate()">🔄 Generate Ulang</button></div>
 
     <!-- Panduan paste -->
     <div class="panduan-box">
@@ -783,9 +801,9 @@ body.dark .prompt-raw{background:#0f172a;}
 
     <div style="font-size:.72rem;color:var(--text-light);margin:10px 0 4px;text-align:center;font-weight:600;">Buka di AI favorit kamu:</div>
     <div class="ai-btns">
-      <button class="btn" style="background:linear-gradient(135deg,#4285f4,#34a853);color:#fff;flex:1;padding:10px;font-size:.85rem;border-radius:9px;" onclick="window.open('https://gemini.google.com','_blank')">✨ Gemini</button>
-      <button class="btn" style="background:linear-gradient(135deg,#d97706,#b45309);color:#fff;flex:1;padding:10px;font-size:.85rem;border-radius:9px;" onclick="window.open('https://claude.ai','_blank')">🟠 Claude</button>
-      <button class="btn" style="background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;flex:1;padding:10px;font-size:.85rem;border-radius:9px;" onclick="window.open('https://canva.com','_blank')">🎨 Canva AI</button>
+      <button class="btn" style="background:linear-gradient(135deg,#4285f4,#34a853);color:#fff;flex:1;padding:10px;font-size:.85rem;border-radius:9px;" onclick="openAI('https://gemini.google.com','text')">✨ Gemini</button>
+      <button class="btn" style="background:linear-gradient(135deg,#d97706,#b45309);color:#fff;flex:1;padding:10px;font-size:.85rem;border-radius:9px;" onclick="openAI('https://claude.ai/new','q')">🟠 Claude</button>
+      <button class="btn" style="background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;flex:1;padding:10px;font-size:.85rem;border-radius:9px;" onclick="openAI('https://canva.com')">🎨 Canva AI</button>
     </div>
 
     <!-- Cross-link tools BGY -->
@@ -808,7 +826,18 @@ body.dark .prompt-raw{background:#0f172a;}
   <div class="footer-sub">© 2026 by <a href="https://www.tiktok.com/@pak.choyy" target="_blank">@pak.choyy</a> · v1.3.0 · <a href="https://bantuguruyuk.web.id" target="_blank">bantuguruyuk.web.id</a></div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// ===== SUPABASE CONFIG (isi dengan project kamu) =====
+const SUPABASE_URL='YOUR_SUPABASE_URL';
+const SUPABASE_ANON='YOUR_SUPABASE_ANON_KEY';
+let __sb=null;
+function initSupabase(){
+  if(SUPABASE_URL.startsWith('YOUR')||SUPABASE_ANON.startsWith('YOUR'))return;
+  if(!window.supabase)return;
+  try{__sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON);}catch(e){console.error('Supabase init error:',e);}
+}
+
 // ===== STATE =====
 let selectedTipe       = '';
 let selectedJml        = '5';
@@ -836,12 +865,22 @@ function initCounter(){
   const KEY='bgy_pg_total';
   let n=parseInt(localStorage.getItem(KEY)||'0')||Math.floor(Math.random()*800)+200;
   document.getElementById('spCount').textContent=n.toLocaleString('id-ID');
+  if(!__sb)return;
+  __sb.from('buat_prompt_stats').select('prompt_count').eq('id',1).maybeSingle()
+    .then(({data})=>{
+      if(data&&data.prompt_count!=null){
+        const v=Number(data.prompt_count);
+        document.getElementById('spCount').textContent=v.toLocaleString('id-ID');
+        try{localStorage.setItem(KEY,String(v));}catch(e){}
+      }
+    }).catch(()=>{});
 }
-function incrementCounter(){
+async function incrementCounter(){
   const KEY='bgy_pg_total';
-  let n=parseInt(localStorage.getItem(KEY)||'0')||200;
+  let n=parseInt(localStorage.getItem(KEY)||'0')||0;
   n++;localStorage.setItem(KEY,n);
-  document.getElementById('spCount').textContent=n.toLocaleString('id-ID');
+  const el=document.getElementById('spCount');if(el)el.textContent=n.toLocaleString('id-ID');
+  if(__sb){try{await __sb.rpc('bgy_buat_track',{p_prompt:1});}catch(e){}}
 }
 
 // ===== AUTOSAVE DRAFT =====
@@ -857,6 +896,8 @@ function saveDraft(){
     tipe:selectedTipe,jml:selectedJml,gaya:selectedGaya,
     difficulty:selectedDifficulty,durasi:selectedDurasi,mode:selectedMode,
     soalMode:selectedSoalMode,soalSendiri:document.getElementById('soalSendiri').value,
+    namaGame:document.getElementById('namaGame').value.trim(),
+    temaGame:document.getElementById('temaGame').value.trim(),
     ts:Date.now()
   };
   try{localStorage.setItem(DRAFT_KEY,JSON.stringify(d));}catch(e){}
@@ -882,6 +923,8 @@ function loadDraft(){
     if(d.durasi){const dr=document.querySelector(`#durasiGrid .chip[data-val="${d.durasi}"]`);if(dr)selectDurasi(dr);}
     if(d.mode){const dm=document.querySelector(`.chip.mode[data-val="${d.mode}"]`);if(dm)selectMode(dm);}
     if(d.soalMode){const sm=document.querySelector(`.chip.soal-mode[data-val="${d.soalMode}"]`);if(sm)selectSoalMode(sm,d.soalMode);}
+    if(d.namaGame)document.getElementById('namaGame').value=d.namaGame;
+    if(d.temaGame)document.getElementById('temaGame').value=d.temaGame;
     updateRekom();
   }catch(e){}
 }
@@ -1119,20 +1162,29 @@ function validateJmlCustom(el){
 }
 
 // ===== VALIDATE FORM =====
+function setInvalid(id,bad){const el=typeof id==='string'?document.getElementById(id):document.querySelector(id);if(el)el.classList.toggle('invalid',bad);}
 function validate(){
   const e=[];
-  if(!document.getElementById('jenjang').value)e.push('Jenjang');
-  if(!document.getElementById('kelas').value)e.push('Kelas');
+  document.querySelectorAll('.invalid').forEach(el=>el.classList.remove('invalid'));
+  const jenj=document.getElementById('jenjang').value;
+  const kel=document.getElementById('kelas').value;
   const mv=document.getElementById('mapel').value;
-  if(!mv)e.push('Mata Pelajaran');
-  else if(mv==='Lainnya'&&!document.getElementById('mapelCustom').value.trim())e.push('Nama Mata Pelajaran');
-  if(!document.getElementById('materi').value.trim())e.push('Materi Pembelajaran');
-  if(!selectedTipe)e.push('Tipe Game');
-  if(selectedTipe==='__custom__'&&!document.getElementById('tipeCustom').value.trim())e.push('Deskripsi tipe game kustom');
-  if(selectedJml==='__custom__'){const v=parseInt(document.getElementById('jmlCustom').value);if(isNaN(v)||v<1||v>20)e.push('Jumlah Tantangan (1–20)');}
-  if(selectedDurasi==='__custom__'){const v=parseInt(document.getElementById('durasiCustom').value);if(isNaN(v)||v<1||v>120)e.push('Durasi custom (1–120 menit)');}
+  const mcv=document.getElementById('mapelCustom').value.trim();
+  const materiv=document.getElementById('materi').value.trim();
+  const tcv=document.getElementById('tipeCustom').value.trim();
+  setInvalid('jenjang',!jenj);if(!jenj)e.push('Jenjang');
+  setInvalid('kelas',!kel);if(!kel)e.push('Kelas');
+  if(!mv){setInvalid('mapel',true);e.push('Mata Pelajaran');}
+  else if(mv==='Lainnya'&&!mcv){setInvalid('mapelCustom',true);e.push('Nama Mata Pelajaran');}
+  setInvalid('materi',!materiv);if(!materiv)e.push('Materi Pembelajaran');
+  if(!selectedTipe){setInvalid('#tipeGrid',true);e.push('Tipe Game');}
+  else if(selectedTipe==='__custom__'&&!tcv){setInvalid('tipeCustom',true);e.push('Deskripsi tipe game kustom');}
+  if(selectedJml==='__custom__'){const v=parseInt(document.getElementById('jmlCustom').value);if(isNaN(v)||v<1||v>20){setInvalid('jmlCustom',true);e.push('Jumlah Tantangan (1–20)');}}
+  if(selectedDurasi==='__custom__'){const v=parseInt(document.getElementById('durasiCustom').value);if(isNaN(v)||v<1||v>120){setInvalid('durasiCustom',true);e.push('Durasi custom (1–120 menit)');}}
   return e;
 }
+document.addEventListener('input',e=>{const el=e.target;const g=el&&el.closest?el.closest('.form-group'):null;if(g)g.querySelectorAll('.invalid').forEach(x=>x.classList.remove('invalid'));});
+document.addEventListener('change',e=>{const el=e.target;const g=el&&el.closest?el.closest('.form-group'):null;if(g)g.querySelectorAll('.invalid').forEach(x=>x.classList.remove('invalid'));});
 
 // ===== GENERATE =====
 function generate(){
@@ -1217,6 +1269,8 @@ function buildPrompt(){
   const kondisi=selectedKondisi;
   const qc=selectedQC;
   const soalSendiri=selectedSoalMode==='sendiri'?document.getElementById('soalSendiri').value.trim():'';
+  const namaGame=document.getElementById('namaGame').value.trim();
+  const temaGame=document.getElementById('temaGame').value.trim();
 
   const usiaMap={
     PAUD:'Anak 3–5 tahun. Teks SANGAT minimal (maks 5 kata per instruksi), visual dominan, tombol SANGAT besar (min 60px), satu interaksi per layar, TANPA timer, feedback audio menyenangkan, warna sangat cerah.',
@@ -1310,6 +1364,8 @@ Kondisi Kelas  : ${kondisi}
 ═══════════════════════════════════════════════════════
 
 Tipe Game         : ${tipe}
+${namaGame?'Nama Game        : '+namaGame:''}
+${temaGame?'Tema Cerita      : '+temaGame:''}
 Jumlah Tantangan  : ${jml}
 Tingkat Kesulitan : ${difficulty}
 Durasi            : ${durasi}
@@ -1443,7 +1499,7 @@ bantuguruyuk.web.id · @pak.choyy · Sesuai Kurikulum Merdeka
   // Prompt terstruktur (visual)
   const sections=[
     {label:'🎯 Konteks',body:`${jenjang} ${kelas} · ${mapel}\nMateri: ${materi}${tujuan?'\nTujuan: '+tujuan:''}`},
-    {label:'🎮 Desain Game',body:`Tipe: ${tipe} · Tantangan: ${jml} · Kesulitan: ${difficulty}\nMode: ${mode} · Durasi: ${durasi} · Visual: ${gaya}`},
+    {label:'🎮 Desain Game',body:`Tipe: ${tipe} · Tantangan: ${jml} · Kesulitan: ${difficulty}\nMode: ${mode} · Durasi: ${durasi} · Visual: ${gaya}${namaGame?'\nNama: '+namaGame:''}${temaGame?'\nTema: '+temaGame:''}`},
     {label:'📝 Soal',body:soalSendiri?'✅ Menggunakan soal dari guru ('+soalSendiri.split('\n').length+' baris)':'🤖 AI akan membuat '+jml+' soal/tantangan baru'},
     {label:'🏆 Output',body:'Game HTML single-file · Mobile-friendly · Feedback mendidik · Hasil akhir + learning feedback'},
   ];
@@ -1458,7 +1514,7 @@ bantuguruyuk.web.id · @pak.choyy · Sesuai Kurikulum Merdeka
   oc.style.display='block';
   updateProgress();
   setTimeout(()=>oc.scrollIntoView({behavior:'smooth',block:'start'}),100);
-  simpanHistori({jenjang,kelas,mapel,materi,tujuan,tipe,jml,gaya,difficulty,durasi,mode,asesmen,kondisi,qc,soalMode:selectedSoalMode,prompt});
+  simpanHistori({jenjang,kelas,mapel,materi,tujuan,tipe,jml,gaya,difficulty,durasi,mode,asesmen,kondisi,qc,soalMode:selectedSoalMode,namaGame,temaGame,prompt});
 }
 
 // ===== TOGGLE RAW =====
@@ -1476,12 +1532,18 @@ function voteFeedback(val){
   document.getElementById('fbDown').classList.toggle('voted',val==='down');
   const KEY='bgy_pg_feedback';
   try{const d=JSON.parse(localStorage.getItem(KEY)||'{"up":0,"down":0}');d[val]=(d[val]||0)+1;localStorage.setItem(KEY,JSON.stringify(d));}catch(e){}
+  if(__sb){__sb.rpc('bgy_buat_track',val==='up'?{p_up:1}:{p_down:1}).catch(()=>{});}
 }
 
 // ===== SANITIZE =====
 function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 // ===== SHARE & DOWNLOAD =====
+function openAI(base,param){
+  let url=base;
+  if(param&&currentPrompt)url+=(url.includes('?')?'&':'?')+param+'='+encodeURIComponent(currentPrompt.slice(0,2000));
+  window.open(url,'_blank');
+}
 function shareWA(){
   if(!currentPrompt)return;
   const jenjang=document.getElementById('jenjang').value;
@@ -1514,7 +1576,7 @@ function konfirmasiReset(){
   resetForm();
 }
 function resetForm(){
-  ['materi','tujuan','tipeCustom','mapelCustom','jmlCustom','durasiCustom','soalSendiri'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['materi','tujuan','tipeCustom','mapelCustom','jmlCustom','durasiCustom','soalSendiri','namaGame','temaGame'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   ['tipeCustomWrap','mapelCustomWrap','jmlCustomWrap','durasiCustomWrap','outputCard','errorBox','jmlCustomError','soalSendiriWrap'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
   selectedTipe='';currentPrompt='';
   document.getElementById('jenjang').value='';
@@ -1597,6 +1659,8 @@ function bukaHistori(i){
   if(h.mapel==='Lainnya'){document.getElementById('mapelCustomWrap').style.display='block';document.getElementById('mapelCustom').value='';}
   document.getElementById('materi').value=h.materi||'';
   document.getElementById('tujuan').value=h.tujuan||'';
+  document.getElementById('namaGame').value=h.namaGame||'';
+  document.getElementById('temaGame').value=h.temaGame||'';
   const tc=document.querySelector(`#tipeGrid .tipe-card[data-val="${h.tipe}"]`);
   if(tc)selectTipe(tc);
   else{const cc=document.querySelector('#tipeGrid .tipe-card[data-val="__custom__"]');if(cc)selectTipe(cc);document.getElementById('tipeCustom').value=h.tipe||'';}
@@ -1618,7 +1682,7 @@ function bukaHistori(i){
     {label:'Mode',val:h.mode||''},
   ].map(r=>`<div class="ringkasan-item"><div class="ri-label">${escHtml(r.label)}</div><div class="ri-val">${escHtml(r.val)}</div></div>`).join('');
   document.getElementById('promptResult').textContent=h.prompt;
-  document.getElementById('promptStructured').innerHTML='<div class="prompt-section"><div class="prompt-section-label">📂 Dari Histori</div><div class="prompt-section-body">'+escHtml((h.materi||'')+' · '+h.jenjang+' '+h.kelas+' · '+h.mapel)+'</div></div>';
+  document.getElementById('promptStructured').innerHTML='<div class="prompt-section"><div class="prompt-section-label">📂 Dari Histori</div><div class="prompt-section-body">'+escHtml(((h.namaGame?h.namaGame+' · ':'')+(h.materi||'')+' · '+h.jenjang+' '+h.kelas+' · '+h.mapel))+'</div></div>';
   document.getElementById('outputCard').style.display='block';
   selectTab('home');
 }
@@ -1692,9 +1756,13 @@ window.addEventListener('load',()=>{
   initDark();
   renderHistori();
   updateHistoriBadge();
+  initSupabase();
   initCounter();
   loadDraft();
   selectedJml='5';
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('sw.js',{scope:'./'}).catch(()=>{});
+  }
 });
 </script>
 </body>
