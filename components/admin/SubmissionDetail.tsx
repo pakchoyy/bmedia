@@ -12,7 +12,7 @@ import {
   type MediaEditInput,
 } from "@/app/admin/actions";
 import { CATEGORIES, JENJANG_OPTIONS, KELAS_OPTIONS } from "@/lib/constants";
-import { formatDate, formatPlays, isValidUrl } from "@/lib/utils";
+import { formatDate, formatPlays } from "@/lib/utils";
 import StatusBadge from "./StatusBadge";
 import RejectDialog from "./RejectDialog";
 import ConfirmDialog from "./ConfirmDialog";
@@ -108,14 +108,6 @@ export default function SubmissionDetail({ media }: { media: Media }) {
 
   const handleSaveEdit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isValidUrl(form.link_url)) {
-      notify("Link media tidak valid.", true);
-      return;
-    }
-    if (form.thumbnail_url && !isValidUrl(form.thumbnail_url)) {
-      notify("URL thumbnail tidak valid.", true);
-      return;
-    }
     setBusy(true);
     const res = await updateMedia(media.id, form);
     setBusy(false);

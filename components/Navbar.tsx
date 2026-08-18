@@ -6,10 +6,13 @@ import Icon from "./Icon";
 import ThemeToggle from "./ThemeToggle";
 
 const links = [
-  { label: "Home", href: "/" },
-  { label: "Tentang", href: "/about" },
-  { label: "Kontak", href: "/about#kontak" },
+  { label: "Home", href: "/", icon: "house" },
+  { label: "Katalog", href: "/catalog", icon: "magnifying-glass" },
+  { label: "Tentang & Kontak", href: "/about", icon: "info" },
+  { label: "Kirim Karya", href: "/submit", icon: "paper-plane" },
 ];
+
+const EKOSISTEM_URL = "https://bantuguruyuk.web.id";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -38,10 +41,10 @@ export default function Navbar() {
             <Icon name={open ? "xmark" : "bars"} className="text-base" />
           </button>
 
-          {/* Dropdown menu - compact, right-aligned */}
+          {/* Dropdown menu */}
           <div
             id="navbarMenu"
-            className={`absolute right-0 top-full mt-2 w-48 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-gray-100 dark:border-slate-800 z-50 transition-all duration-200 ease-out origin-top-right ${
+            className={`absolute right-0 top-full mt-2 w-56 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-gray-100 dark:border-slate-800 z-50 transition-all duration-200 ease-out origin-top-right ${
               open
                 ? "scale-100 opacity-100 pointer-events-auto"
                 : "scale-95 opacity-0 pointer-events-none"
@@ -53,11 +56,23 @@ export default function Navbar() {
                   key={l.href}
                   href={l.href}
                   onClick={() => setOpen(false)}
-                  className="block px-4 py-2.5 text-sm font-medium text-ink dark:text-slate-200 hover:bg-primary-bg hover:text-primary-light transition-colors"
+                  className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-ink dark:text-slate-200 hover:bg-primary-bg hover:text-primary-light transition-colors"
                 >
+                  <Icon name={l.icon} className="w-4 text-primary-light" />
                   {l.label}
                 </Link>
               ))}
+              <div className="border-t border-gray-100 dark:border-slate-800 my-1" />
+              <a
+                href={EKOSISTEM_URL}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-ink dark:text-slate-200 hover:bg-primary-bg hover:text-primary-light transition-colors"
+              >
+                <Icon name="arrow-up-right-from-square" className="w-4 text-primary-light" />
+                bantuguruyuk.web.id
+              </a>
             </div>
           </div>
         </div>

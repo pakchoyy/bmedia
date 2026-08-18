@@ -25,6 +25,7 @@ const emptyForm = {
   jenjang: "",
   kelas: "",
   link_url: "",
+  thumbnail_url: "",
   description: "",
   guru_name: "",
   sekolah: "",
@@ -107,7 +108,7 @@ export default function SubmitForm() {
         category: "Multimedia Interaktif",
         tool: "Lainnya",
         link_url: form.link_url.trim(),
-        thumbnail_url: null,
+        thumbnail_url: form.thumbnail_url.trim() || null,
         description: form.description.trim(),
         guru_name: form.guru_name.trim(),
         sekolah: form.sekolah.trim() || "-",
@@ -135,7 +136,7 @@ export default function SubmitForm() {
   const labelClass = "block font-semibold mb-2 text-ink dark:text-slate-200 text-sm";
   const errorClass = "text-danger text-sm mt-1";
   const rowWhite = "bg-white dark:bg-slate-900";
-  const rowGray = "bg-gray-50/80 dark:bg-slate-800/40";
+  const rowGreen = "bg-primary/5 dark:bg-primary/10";
 
   if (success) {
     return (
@@ -172,7 +173,7 @@ export default function SubmitForm() {
             Tentang Media
           </h3>
         </div>
-        <div className={`${rowGray} px-8 py-6 max-md:px-5 space-y-5`}>
+        <div className={`${rowGreen} px-8 py-6 max-md:px-5 space-y-5`}>
           <div>
             <label htmlFor="title" className={labelClass}>Judul Media <span className="text-danger">*</span></label>
             <input id="title" type="text" value={form.title} onChange={(e) => update("title", e.target.value)} placeholder="Contoh: Permainan Pecahan" className={inputClass} />
@@ -254,7 +255,13 @@ export default function SubmitForm() {
           {fieldErrors.link_url && <p className={errorClass}>{fieldErrors.link_url}</p>}
         </div>
 
-        <div className={`${rowGray} px-8 py-5 max-md:px-5`}>
+        <div className={`${rowGreen} px-8 py-5 max-md:px-5`}>
+          <label htmlFor="thumbnail_url" className={labelClass}>Thumbnail <span className="text-gray-400 font-normal">(opsional)</span></label>
+          <input id="thumbnail_url" type="text" value={form.thumbnail_url} onChange={(e) => update("thumbnail_url", e.target.value)} placeholder="URL gambar thumbnail, contoh: https://i.imgur.com/abc.jpg" className={inputClass} />
+          <p className="text-xs text-gray-400 mt-1">Paste link gambar dari Canva, Google Drive, atau hosting lain</p>
+        </div>
+
+        <div className={`${rowGreen} px-8 py-5 max-md:px-5`}>
           <label htmlFor="description" className={labelClass}>Deskripsi Singkat <span className="text-danger">*</span></label>
           <textarea id="description" value={form.description} onChange={(e) => update("description", e.target.value)} placeholder="Jelaskan singkat tentang media ini..." className={`${inputClass} resize-y min-h-[100px]`} />
           {fieldErrors.description && <p className={errorClass}>{fieldErrors.description}</p>}
@@ -267,7 +274,7 @@ export default function SubmitForm() {
             Tentang Pembuat
           </h3>
         </div>
-        <div className={`${rowGray} px-8 py-6 max-md:px-5 space-y-5`}>
+        <div className={`${rowGreen} px-8 py-6 max-md:px-5 space-y-5`}>
           <div>
             <label htmlFor="guru_name" className={labelClass}>Nama Guru <span className="text-danger">*</span></label>
             <input id="guru_name" type="text" value={form.guru_name} onChange={(e) => update("guru_name", e.target.value)} placeholder="Contoh: Budi Santoso, S.Pd" className={inputClass} />
