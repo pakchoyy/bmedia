@@ -170,7 +170,8 @@ export async function createMedia(
   }
 
   const supabase = createServerSideClient();
-  const { error } = await supabase.from("media").insert({
+
+  const insertPayload: Record<string, unknown> = {
     title,
     description,
     mapel,
@@ -181,14 +182,24 @@ export async function createMedia(
     link_url: normalizedLink,
     thumbnail_url: thumbnail,
     thumbnail_position: input.thumbnail_position ?? 50,
-    thumbnail_pos_y: input.thumbnail_pos_y ?? 50,
-    thumbnail_zoom: input.thumbnail_zoom ?? 1,
     guru_name: guruName,
     sekolah: sekolah || "-",
     guru_wa: guruWa || "-",
     status: "approved",
     plays: 0,
-  });
+  };
+
+  const withCropFields = {
+    ...insertPayload,
+    thumbnail_pos_y: input.thumbnail_pos_y ?? 50,
+    thumbnail_zoom: input.thumbnail_zoom ?? 1,
+  };
+
+  let { error } = await supabase.from("media").insert(withCropFields);
+
+  if (error && /column.*does not exist/i.test(error.message)) {
+    ({ error } = await supabase.from("media").insert(insertPayload));
+  }
 
   if (error) {
     console.error("createMedia error:", error.message);
@@ -227,26 +238,39 @@ export async function updateMedia(
     .eq("id", id)
     .maybeSingle();
 
-  const { error } = await supabase
+  const updatePayload: Record<string, unknown> = {
+    title: input.title.trim(),
+    description: input.description.trim(),
+    mapel: input.mapel.trim(),
+    jenjang: input.jenjang,
+    kelas: input.kelas.trim(),
+    category: input.category,
+    tool: input.tool.trim(),
+    link_url: normalizedLink,
+    thumbnail_url: thumbnail,
+    thumbnail_position: input.thumbnail_position ?? 50,
+    guru_name: input.guru_name.trim(),
+    sekolah: input.sekolah.trim(),
+    guru_wa: input.guru_wa.trim(),
+  };
+
+  const withCropFields = {
+    ...updatePayload,
+    thumbnail_pos_y: input.thumbnail_pos_y ?? 50,
+    thumbnail_zoom: input.thumbnail_zoom ?? 1,
+  };
+
+  let { error } = await supabase
     .from("media")
-    .update({
-      title: input.title.trim(),
-      description: input.description.trim(),
-      mapel: input.mapel.trim(),
-      jenjang: input.jenjang,
-      kelas: input.kelas.trim(),
-      category: input.category,
-      tool: input.tool.trim(),
-      link_url: normalizedLink,
-      thumbnail_url: thumbnail,
-      thumbnail_position: input.thumbnail_position ?? 50,
-      thumbnail_pos_y: input.thumbnail_pos_y ?? 50,
-      thumbnail_zoom: input.thumbnail_zoom ?? 1,
-      guru_name: input.guru_name.trim(),
-      sekolah: input.sekolah.trim(),
-      guru_wa: input.guru_wa.trim(),
-    })
+    .update(withCropFields)
     .eq("id", id);
+
+  if (error && /column.*does not exist/i.test(error.message)) {
+    ({ error } = await supabase
+      .from("media")
+      .update(updatePayload)
+      .eq("id", id));
+  }
 
   if (error) {
     console.error("updateMedia error:", error.message);
