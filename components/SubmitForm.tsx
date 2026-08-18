@@ -4,13 +4,24 @@ import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { JENJANG_OPTIONS, KELAS_OPTIONS } from "@/lib/constants";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase";
-import { isValidUrl } from "@/lib/utils";
 import type { Jenjang } from "@/types/media";
 import Icon from "./Icon";
+
+const MAPEL_OPTIONS = [
+  "Matematika",
+  "Bahasa Indonesia",
+  "IPAS",
+  "Bahasa Inggris",
+  "Pendidikan Pancasila",
+  "PJOK",
+  "Seni",
+  "Lainnya",
+];
 
 const emptyForm = {
   title: "",
   mapel: "",
+  mapelCustom: "",
   jenjang: "",
   kelas: "",
   link_url: "",
@@ -34,22 +45,18 @@ export default function SubmitForm() {
   const update = (field: keyof FormState, value: string) => {
     setForm((f) => {
       const newForm = { ...f, [field]: value };
-      // Reset kelas ketika jenjang berubah
       if (field === "jenjang") {
         newForm.kelas = "";
       }
       return newForm;
     });
-    // Clear field error when user types
     if (fieldErrors[field]) {
       setFieldErrors((e) => ({ ...e, [field]: "" }));
     }
   };
 
-  // Filter kelas options berdasarkan jenjang
   const filteredKelasOptions = useMemo(() => {
     if (!form.jenjang) return KELAS_OPTIONS;
-
     const jenjangMap: Record<string, string[]> = {
       TK: ["TK/PAUD"],
       SD: ["SD/MI"],
@@ -58,26 +65,20 @@ export default function SubmitForm() {
       SMK: ["SMA/SMK/MA"],
       Umum: [""],
     };
-
     const allowedGroups = jenjangMap[form.jenjang] || [];
     return KELAS_OPTIONS.filter((k) => allowedGroups.includes(k.group));
   }, [form.jenjang]);
 
   const validate = (): boolean => {
     const errors: FieldErrors = {};
-
     if (!form.title.trim()) errors.title = "Judul media wajib diisi.";
-    if (!form.mapel.trim()) errors.mapel = "Mata pelajaran wajib diisi.";
+    if (!form.mapel) errors.mapel = "Mata pelajaran wajib dipilih.";
+    if (form.mapel === "Lainnya" && !form.mapelCustom.trim()) errors.mapelCustom = "Isi mata pelajaran manual.";
     if (!form.jenjang) errors.jenjang = "Jenjang wajib dipilih.";
     if (!form.kelas) errors.kelas = "Kelas wajib dipilih.";
-    if (!form.link_url.trim()) {
-      errors.link_url = "Link media wajib diisi.";
-    } else if (!isValidUrl(form.link_url.trim())) {
-      errors.link_url = "Masukkan link media yang valid (harus dimulai dengan http:// atau https://).";
-    }
+    if (!form.link_url.trim()) errors.link_url = "Link media wajib diisi.";
     if (!form.description.trim()) errors.description = "Deskripsi singkat wajib diisi.";
     if (!form.guru_name.trim()) errors.guru_name = "Nama guru wajib diisi.";
-
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -86,27 +87,25 @@ export default function SubmitForm() {
     e.preventDefault();
     setError("");
     setSuccess(false);
-
     if (!isSupabaseConfigured()) {
       setError("Sistem belum siap. Silakan hubungi administrator.");
       return;
     }
-
     if (!validate()) {
       setError("Mohon lengkapi semua field yang wajib diisi.");
       return;
     }
-
     setSubmitting(true);
     try {
       const supabase = createClient();
+      const finalMapel = form.mapel === "Lainnya" ? form.mapelCustom.trim() : form.mapel;
       const { error: insertError } = await supabase.from("media").insert({
         title: form.title.trim(),
-        mapel: form.mapel.trim(),
+        mapel: finalMapel,
         jenjang: form.jenjang as Jenjang,
         kelas: form.kelas.trim(),
-        category: "Multimedia Interaktif", // Default kategori
-        tool: "Lainnya", // Default tool
+        category: "Multimedia Interaktif",
+        tool: "Lainnya",
         link_url: form.link_url.trim(),
         thumbnail_url: null,
         description: form.description.trim(),
@@ -116,13 +115,11 @@ export default function SubmitForm() {
         status: "pending",
         plays: 0,
       });
-
       if (insertError) {
         console.error("Insert error:", insertError);
-        setError("Gagal mengirim karya. Silakan coba lagi.");
+        setError("Gagal mengirim karya: " + insertError.message);
         return;
       }
-
       setSuccess(true);
       setForm(emptyForm);
       setFieldErrors({});
@@ -135,8 +132,10 @@ export default function SubmitForm() {
   };
 
   const inputClass = "w-full px-4 py-3 border border-gray-300 dark:border-slate-700 rounded-lg text-base bg-white dark:bg-slate-900 dark:text-slate-100 focus:border-primary-light focus:ring-2 focus:ring-primary-light/20 outline-none transition";
-  const labelClass = "block font-semibold mb-2 text-ink dark:text-slate-200";
+  const labelClass = "block font-semibold mb-2 text-ink dark:text-slate-200 text-sm";
   const errorClass = "text-danger text-sm mt-1";
+  const rowWhite = "bg-white dark:bg-slate-900";
+  const rowGray = "bg-gray-50/80 dark:bg-slate-800/40";
 
   if (success) {
     return (
@@ -165,207 +164,150 @@ export default function SubmitForm() {
 
   return (
     <div className="max-w-[800px] mx-auto">
-      <div className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-2xl p-8 shadow-sm max-md:p-6">
-        <form onSubmit={handleSubmit} noValidate>
-          {/* Section: Tentang Media */}
-          <div className="mb-10">
-            <h3 className="text-lg font-bold text-primary dark:text-primary-light mb-6 pb-3 border-b border-gray-200 dark:border-slate-800">
-              Tentang Media
-            </h3>
-
-            {/* Judul Media */}
-            <div className="mb-6">
-              <label htmlFor="title" className={labelClass}>
-                Judul Media <span className="text-danger">*</span>
-              </label>
-              <input
-                id="title"
-                type="text"
-                value={form.title}
-                onChange={(e) => update("title", e.target.value)}
-                placeholder="Contoh: Permainan Pecahan"
-                className={inputClass}
-              />
-              {fieldErrors.title && <p className={errorClass}>{fieldErrors.title}</p>}
+      <form onSubmit={handleSubmit} noValidate className="rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-slate-800">
+        {/* Section: Tentang Media */}
+        <div className={`${rowWhite} px-8 py-5 max-md:px-5`}>
+          <h3 className="text-lg font-bold text-primary dark:text-primary-light flex items-center gap-2">
+            <Icon name="book-open" className="text-primary-light" />
+            Tentang Media
+          </h3>
+        </div>
+        <div className={`${rowGray} px-8 py-6 max-md:px-5 space-y-5`}>
+          <div>
+            <label htmlFor="title" className={labelClass}>Judul Media <span className="text-danger">*</span></label>
+            <input id="title" type="text" value={form.title} onChange={(e) => update("title", e.target.value)} placeholder="Contoh: Permainan Pecahan" className={inputClass} />
+            {fieldErrors.title && <p className={errorClass}>{fieldErrors.title}</p>}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="mapel" className={labelClass}>Mata Pelajaran <span className="text-danger">*</span></label>
+              <select id="mapel" value={form.mapel} onChange={(e) => update("mapel", e.target.value)} className={inputClass}>
+                <option value="">Pilih Mata Pelajaran...</option>
+                {MAPEL_OPTIONS.map((m) => (<option key={m} value={m}>{m}</option>))}
+              </select>
+              {fieldErrors.mapel && <p className={errorClass}>{fieldErrors.mapel}</p>}
             </div>
-
-            {/* Mata Pelajaran & Jenjang */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div>
+              {form.mapel === "Lainnya" ? (
+                <>
+                  <label htmlFor="mapelCustom" className={labelClass}>Isi Mata Pelajaran <span className="text-danger">*</span></label>
+                  <input id="mapelCustom" type="text" value={form.mapelCustom} onChange={(e) => update("mapelCustom", e.target.value)} placeholder="Tulis nama mata pelajaran" className={inputClass} />
+                  {fieldErrors.mapelCustom && <p className={errorClass}>{fieldErrors.mapelCustom}</p>}
+                </>
+              ) : (
+                <>
+                  <label htmlFor="jenjang" className={labelClass}>Jenjang <span className="text-danger">*</span></label>
+                  <select id="jenjang" value={form.jenjang} onChange={(e) => update("jenjang", e.target.value)} className={inputClass}>
+                    <option value="">Pilih Jenjang...</option>
+                    {JENJANG_OPTIONS.map((j) => (<option key={j} value={j}>{j}</option>))}
+                  </select>
+                  {fieldErrors.jenjang && <p className={errorClass}>{fieldErrors.jenjang}</p>}
+                </>
+              )}
+            </div>
+          </div>
+          {form.mapel !== "Lainnya" && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="mapel" className={labelClass}>
-                  Mata Pelajaran <span className="text-danger">*</span>
-                </label>
-                <input
-                  id="mapel"
-                  type="text"
-                  value={form.mapel}
-                  onChange={(e) => update("mapel", e.target.value)}
-                  placeholder="Contoh: Matematika"
-                  className={inputClass}
-                />
-                {fieldErrors.mapel && <p className={errorClass}>{fieldErrors.mapel}</p>}
-              </div>
-
-              <div>
-                <label htmlFor="jenjang" className={labelClass}>
-                  Jenjang <span className="text-danger">*</span>
-                </label>
-                <select
-                  id="jenjang"
-                  value={form.jenjang}
-                  onChange={(e) => update("jenjang", e.target.value)}
-                  className={inputClass}
-                >
+                <label htmlFor="jenjang2" className={labelClass}>Jenjang <span className="text-danger">*</span></label>
+                <select id="jenjang2" value={form.jenjang} onChange={(e) => update("jenjang", e.target.value)} className={inputClass}>
                   <option value="">Pilih Jenjang...</option>
-                  {JENJANG_OPTIONS.map((j) => (
-                    <option key={j} value={j}>
-                      {j}
-                    </option>
-                  ))}
+                  {JENJANG_OPTIONS.map((j) => (<option key={j} value={j}>{j}</option>))}
                 </select>
                 {fieldErrors.jenjang && <p className={errorClass}>{fieldErrors.jenjang}</p>}
               </div>
-            </div>
-
-            {/* Kelas */}
-            <div className="mb-6">
-              <label htmlFor="kelas" className={labelClass}>
-                Kelas <span className="text-danger">*</span>
-              </label>
-              <select
-                id="kelas"
-                value={form.kelas}
-                onChange={(e) => update("kelas", e.target.value)}
-                className={inputClass}
-                disabled={!form.jenjang}
-              >
-                <option value="">{form.jenjang ? "Pilih Kelas..." : "Pilih Jenjang terlebih dahulu"}</option>
-                {filteredKelasOptions.map((k) => (
-                  <option key={k.label} value={k.label}>
-                    {k.label}
-                  </option>
-                ))}
-              </select>
-              {fieldErrors.kelas && <p className={errorClass}>{fieldErrors.kelas}</p>}
-            </div>
-
-            {/* Link Media */}
-            <div className="mb-6">
-              <label htmlFor="link_url" className={labelClass}>
-                Link Media <span className="text-danger">*</span>
-              </label>
-              <input
-                id="link_url"
-                type="url"
-                value={form.link_url}
-                onChange={(e) => update("link_url", e.target.value)}
-                placeholder="https://..."
-                className={inputClass}
-              />
-              {fieldErrors.link_url && <p className={errorClass}>{fieldErrors.link_url}</p>}
-            </div>
-
-            {/* Deskripsi */}
-            <div className="mb-6">
-              <label htmlFor="description" className={labelClass}>
-                Deskripsi Singkat <span className="text-danger">*</span>
-              </label>
-              <textarea
-                id="description"
-                value={form.description}
-                onChange={(e) => update("description", e.target.value)}
-                placeholder="Jelaskan singkat tentang media ini dan cara menggunakannya..."
-                className={`${inputClass} resize-y min-h-[120px]`}
-              />
-              {fieldErrors.description && <p className={errorClass}>{fieldErrors.description}</p>}
-            </div>
-          </div>
-
-          {/* Section: Tentang Pembuat */}
-          <div className="mb-8">
-            <h3 className="text-lg font-bold text-primary dark:text-primary-light mb-6 pb-3 border-b border-gray-200 dark:border-slate-800">
-              Tentang Pembuat
-            </h3>
-
-            {/* Nama Guru */}
-            <div className="mb-6">
-              <label htmlFor="guru_name" className={labelClass}>
-                Nama Guru <span className="text-danger">*</span>
-              </label>
-              <input
-                id="guru_name"
-                type="text"
-                value={form.guru_name}
-                onChange={(e) => update("guru_name", e.target.value)}
-                placeholder="Contoh: Budi Santoso, S.Pd"
-                className={inputClass}
-              />
-              {fieldErrors.guru_name && <p className={errorClass}>{fieldErrors.guru_name}</p>}
-            </div>
-
-            {/* Asal Sekolah */}
-            <div className="mb-6">
-              <label htmlFor="sekolah" className={labelClass}>
-                Asal Sekolah
-              </label>
-              <p className="text-sm text-gray-500 dark:text-slate-400 mb-2">Opsional</p>
-              <input
-                id="sekolah"
-                type="text"
-                value={form.sekolah}
-                onChange={(e) => update("sekolah", e.target.value)}
-                placeholder="Contoh: SDN 1 Nusantara"
-                className={inputClass}
-              />
-            </div>
-
-            {/* Nomor WhatsApp */}
-            <div className="mb-6">
-              <label htmlFor="guru_wa" className={labelClass}>
-                Nomor WhatsApp
-              </label>
-              <p className="text-sm text-gray-500 dark:text-slate-400 mb-2">
-                Opsional — hanya digunakan jika perlu menghubungi Anda
-              </p>
-              <input
-                id="guru_wa"
-                type="tel"
-                value={form.guru_wa}
-                onChange={(e) => update("guru_wa", e.target.value)}
-                placeholder="Contoh: 081234567890"
-                className={inputClass}
-              />
-            </div>
-          </div>
-
-          {/* Global Error */}
-          {error && (
-            <div className="bg-danger/10 text-danger border border-danger/30 rounded-lg px-4 py-3 mb-6 text-sm flex items-start gap-2">
-              <Icon name="xmark" className="text-lg shrink-0 mt-0.5" />
-              <span>{error}</span>
+              <div>
+                <label htmlFor="kelas" className={labelClass}>Kelas <span className="text-danger">*</span></label>
+                <select id="kelas" value={form.kelas} onChange={(e) => update("kelas", e.target.value)} className={inputClass} disabled={!form.jenjang}>
+                  <option value="">{form.jenjang ? "Pilih Kelas..." : "Pilih Jenjang terlebih dahulu"}</option>
+                  {filteredKelasOptions.map((k) => (<option key={k.label} value={k.label}>{k.label}</option>))}
+                </select>
+                {fieldErrors.kelas && <p className={errorClass}>{fieldErrors.kelas}</p>}
+              </div>
             </div>
           )}
+          {form.mapel === "Lainnya" && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="jenjang3" className={labelClass}>Jenjang <span className="text-danger">*</span></label>
+                <select id="jenjang3" value={form.jenjang} onChange={(e) => update("jenjang", e.target.value)} className={inputClass}>
+                  <option value="">Pilih Jenjang...</option>
+                  {JENJANG_OPTIONS.map((j) => (<option key={j} value={j}>{j}</option>))}
+                </select>
+                {fieldErrors.jenjang && <p className={errorClass}>{fieldErrors.jenjang}</p>}
+              </div>
+              <div>
+                <label htmlFor="kelas2" className={labelClass}>Kelas <span className="text-danger">*</span></label>
+                <select id="kelas2" value={form.kelas} onChange={(e) => update("kelas", e.target.value)} className={inputClass} disabled={!form.jenjang}>
+                  <option value="">{form.jenjang ? "Pilih Kelas..." : "Pilih Jenjang terlebih dahulu"}</option>
+                  {filteredKelasOptions.map((k) => (<option key={k.label} value={k.label}>{k.label}</option>))}
+                </select>
+                {fieldErrors.kelas && <p className={errorClass}>{fieldErrors.kelas}</p>}
+              </div>
+            </div>
+          )}
+        </div>
 
-          {/* Submit Button - HIJAU */}
+        <div className={`${rowWhite} px-8 py-5 max-md:px-5`}>
+          <label htmlFor="link_url" className={labelClass}>Link Media <span className="text-danger">*</span></label>
+          <input id="link_url" type="text" value={form.link_url} onChange={(e) => update("link_url", e.target.value)} placeholder="https://... atau link apapun" className={inputClass} />
+          {fieldErrors.link_url && <p className={errorClass}>{fieldErrors.link_url}</p>}
+        </div>
+
+        <div className={`${rowGray} px-8 py-5 max-md:px-5`}>
+          <label htmlFor="description" className={labelClass}>Deskripsi Singkat <span className="text-danger">*</span></label>
+          <textarea id="description" value={form.description} onChange={(e) => update("description", e.target.value)} placeholder="Jelaskan singkat tentang media ini..." className={`${inputClass} resize-y min-h-[100px]`} />
+          {fieldErrors.description && <p className={errorClass}>{fieldErrors.description}</p>}
+        </div>
+
+        {/* Section: Tentang Pembuat */}
+        <div className={`${rowWhite} px-8 py-5 max-md:px-5`}>
+          <h3 className="text-lg font-bold text-primary dark:text-primary-light flex items-center gap-2">
+            <Icon name="user-tie" className="text-primary-light" />
+            Tentang Pembuat
+          </h3>
+        </div>
+        <div className={`${rowGray} px-8 py-6 max-md:px-5 space-y-5`}>
+          <div>
+            <label htmlFor="guru_name" className={labelClass}>Nama Guru <span className="text-danger">*</span></label>
+            <input id="guru_name" type="text" value={form.guru_name} onChange={(e) => update("guru_name", e.target.value)} placeholder="Contoh: Budi Santoso, S.Pd" className={inputClass} />
+            {fieldErrors.guru_name && <p className={errorClass}>{fieldErrors.guru_name}</p>}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="sekolah" className={labelClass}>Asal Sekolah <span className="text-gray-400 font-normal">(opsional)</span></label>
+              <input id="sekolah" type="text" value={form.sekolah} onChange={(e) => update("sekolah", e.target.value)} placeholder="Contoh: SDN 1 Nusantara" className={inputClass} />
+            </div>
+            <div>
+              <label htmlFor="guru_wa" className={labelClass}>WhatsApp <span className="text-gray-400 font-normal">(opsional)</span></label>
+              <input id="guru_wa" type="tel" value={form.guru_wa} onChange={(e) => update("guru_wa", e.target.value)} placeholder="081234567890" className={inputClass} />
+            </div>
+          </div>
+        </div>
+
+        {/* Error */}
+        {error && (
+          <div className="mx-8 my-4 bg-danger/10 text-danger border border-danger/30 rounded-lg px-4 py-3 text-sm flex items-start gap-2">
+            <Icon name="xmark" className="text-lg shrink-0 mt-0.5" />
+            <span>{error}</span>
+          </div>
+        )}
+
+        {/* Submit */}
+        <div className={`${rowWhite} px-8 py-6 max-md:px-5`}>
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-success hover:bg-green-700 text-white py-4 rounded-xl text-lg font-bold transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md"
+            className="w-full bg-success hover:bg-green-700 text-white py-3.5 rounded-xl text-base font-bold transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md"
           >
             {submitting ? (
-              <>
-                <Icon name="hourglass" className="animate-pulse" />
-                Mengirim...
-              </>
+              <><Icon name="hourglass" className="animate-pulse" /> Mengirim...</>
             ) : (
-              <>
-                <Icon name="paper-plane" />
-                Kirim Media Pembelajaran
-              </>
+              <><Icon name="paper-plane" /> Kirim Media Pembelajaran</>
             )}
           </button>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   );
 }

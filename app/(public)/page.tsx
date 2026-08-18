@@ -25,8 +25,17 @@ export default async function HomePage() {
   return (
     <div className="fade-in">
       {/* Hero */}
-      <section className="bg-bgy-hero text-white overflow-hidden">
-        <div className="container mx-auto max-w-[1200px] px-6 py-8 max-md:py-6">
+      <section className="bg-bgy-hero text-white overflow-hidden relative">
+        {/* Decorative floating shapes */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+          <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/5 rounded-full blur-3xl" style={{animation:'float 8s ease-in-out infinite'}} />
+          <div className="absolute top-1/3 -left-16 w-40 h-40 bg-white/5 rounded-full blur-2xl" style={{animation:'floatSlow 6s ease-in-out infinite'}} />
+          <div className="absolute bottom-8 right-1/4 w-24 h-24 bg-white/[0.04] rounded-full blur-xl" style={{animation:'float 10s ease-in-out infinite'}} />
+          <div className="absolute top-8 left-1/3 w-16 h-16 bg-white/[0.06] rounded-full blur-lg" style={{animation:'floatSlow 7s ease-in-out infinite'}} />
+          <div className="absolute bottom-1/3 right-10 w-12 h-12 bg-accent/10 rounded-full blur-md" style={{animation:'float 5s ease-in-out infinite'}} />
+        </div>
+
+        <div className="container mx-auto max-w-[1200px] px-6 py-8 max-md:py-6 relative z-10">
           <div className="flex items-center gap-10 max-lg:flex-col max-lg:text-center">
             {/* Left: Content */}
             <div className="flex-1 min-w-0">
