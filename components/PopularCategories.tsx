@@ -14,9 +14,9 @@ const MAPEL_CATEGORIES = [
 
 export default function PopularCategories() {
   return (
-    <section id="categories" className="py-10 px-4">
+    <section id="categories" className="py-6 px-4">
       <div className="container mx-auto max-w-[1200px]">
-        <div className="text-center mb-6">
+        <div className="text-center mb-4">
           <h2 className="text-3xl font-bold text-ink dark:text-slate-100 mb-3">
             Jelajahi berdasarkan kategori
           </h2>
@@ -26,7 +26,7 @@ export default function PopularCategories() {
         </div>
 
         {/* Tipe Media */}
-        <div className="mb-8">
+        <div className="mb-5">
           <h3 className="text-sm font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wide mb-4">
             Tipe Media
           </h3>

@@ -78,7 +78,7 @@ export default function Stats({ stats }: { stats: SiteStats }) {
   return (
     <section
       ref={ref}
-      className="bg-bgy-stats text-white py-10 my-4"
+      className="bg-bgy-stats text-white py-8 my-2"
     >
       <div className="container mx-auto max-w-[1200px] px-6 grid gap-8 text-center grid-cols-1 sm:grid-cols-3">
         {items.map((item, i) => (

@@ -32,9 +32,9 @@ export default function SearchMedia() {
   };
 
   return (
-    <section id="search" className="py-8 px-4 bg-pagebg dark:bg-slate-950">
+    <section id="search" className="py-5 px-4 bg-pagebg dark:bg-slate-950">
       <div className="container mx-auto max-w-[1100px] px-2">
-        <div className="text-center mb-6">
+        <div className="text-center mb-4">
           <h2 className="text-3xl font-bold text-ink dark:text-slate-100 mb-2">
             Cari Media Belajar
           </h2>
