@@ -22,7 +22,7 @@ export async function GET() {
     });
   }
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("id, email, role")
     .eq("id", user.id)
@@ -33,6 +33,7 @@ export async function GET() {
     email: user.email,
     cookies: cookieNames,
     profileFound: Boolean(profile),
+    profileError: profileError?.message ?? null,
     role: profile?.role ?? null,
     isAdmin: profile?.role === "admin",
   });

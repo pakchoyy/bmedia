@@ -43,18 +43,25 @@ export default function LoginForm() {
 
     const user = signInData.user;
     if (user) {
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("role")
         .eq("id", user.id)
         .maybeSingle();
+
+      if (profileError) {
+        await supabase.auth.signOut();
+        setError("Gagal memeriksa role admin: " + profileError.message);
+        setLoading(false);
+        return;
+      }
 
       if (!profile || profile.role !== "admin") {
         await supabase.auth.signOut();
         setError(
           "Akun ini belum terdaftar sebagai admin. Jalankan: update profiles set role = 'admin' where email = '" +
             email +
-            "';"
+            "';  lalu verifikasi: select email, role from profiles;"
         );
         setLoading(false);
         return;
