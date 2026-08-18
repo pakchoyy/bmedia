@@ -3,22 +3,22 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Bantu Guru Yuk | Prompt Game</title>
-<meta name="description" content="Bantu Guru Yuk — AI-assisted instructional game generator untuk guru SD, SMP, SMA, SMK."/>
+<title>Bantu Guru Yuk | Buat Prompt Game Interaktif</title>
+<meta name="description" content="Buat Prompt Game Interaktif — generator prompt game edukatif untuk guru SD, SMP, SMA, SMK. Gratis!"/>
 <meta name="author" content="Pak Choyy"/>
 <meta name="theme-color" content="#0ea5a0"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Prompt Game"/>
-<meta property="og:title" content="Bantu Guru Yuk | Prompt Game"/>
-<meta property="og:description" content="AI-assisted instructional game generator untuk guru SD, SMP, SMA, SMK. Gratis!"/>
+<meta property="og:title" content="Bantu Guru Yuk | Buat Prompt Game Interaktif"/>
+<meta property="og:description" content="Generator prompt game edukatif untuk guru SD, SMP, SMA, SMK. Gratis & sesuai Kurikulum Merdeka!"/>
 <meta property="og:image" content="https://bantuguruyuk.web.id/lkpd/guru-cibisd2.png"/>
 <meta property="og:url" content="https://bantuguruyuk.web.id"/>
 <meta property="og:type" content="website"/>
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Bantu Guru Yuk | Prompt Game"/>
-<meta name="twitter:description" content="AI-assisted instructional game generator — gratis untuk semua guru!"/>
+<meta name="twitter:title" content="Bantu Guru Yuk | Buat Prompt Game Interaktif"/>
+<meta name="twitter:description" content="Generator prompt game edukatif — gratis untuk semua guru!"/>
 <link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22Bantu%20Guru%20Yuk%20%7C%20Prompt%20Game%22%2C%22short_name%22%3A%22Prompt%20Game%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f0f4f8%22%2C%22theme_color%22%3A%22%230ea5a0%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fbantuguruyuk.web.id%2Flkpd%2Fguru-cibisd2.png%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fpng%22%7D%5D%7D"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -88,7 +88,7 @@ body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
 .hdr-btn:hover{background:rgba(255,255,255,.22);}
 .hdr-menu-btn{height:32px;width:36px;border-radius:8px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;position:relative;}
 .hdr-menu-badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;border-radius:99px;padding:0 4px;font-size:.55rem;font-weight:800;line-height:14px;min-width:14px;text-align:center;display:none;}
-.dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg);min-width:180px;overflow:hidden;display:none;z-index:400;}
+.dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg);min-width:200px;overflow:hidden;display:none;z-index:400;}
 .dropdown-menu.open{display:block;}
 .dropdown-item{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:.83rem;font-weight:600;color:var(--text);cursor:pointer;transition:background .15s;border:none;background:none;width:100%;text-align:left;text-decoration:none;}
 .dropdown-item:hover{background:var(--gray-100);}
@@ -97,7 +97,7 @@ body.dark .dropdown-item:hover{background:rgba(255,255,255,.06);}
 .dropdown-divider{height:1px;background:var(--border);margin:4px 0;}
 .dropdown-badge{background:#ef4444;color:#fff;border-radius:99px;padding:0 5px;font-size:.6rem;font-weight:800;line-height:16px;display:inline-block;min-width:16px;text-align:center;margin-left:auto;}
 .badge-free{display:inline-block;background:#64748b;color:#fff;font-size:.6rem;font-weight:800;padding:2px 8px;border-radius:99px;margin-left:6px;vertical-align:middle;}
-.badge-pro{display:inline-block;background:linear-gradient(135deg,#d97706,#b45309);color:#fff;font-size:.6rem;font-weight:800;padding:2px 8px;border-radius:99px;margin-left:6px;vertical-align:middle;}
+.badge-kmerdeka{display:inline-block;background:linear-gradient(135deg,#0ea5a0,#0d7a8a);color:#fff;font-size:.58rem;font-weight:800;padding:2px 7px;border-radius:99px;margin-left:4px;vertical-align:middle;letter-spacing:.3px;}
 #menuOverlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:250;}
 #menuOverlay.open{display:block;}
 
@@ -115,6 +115,25 @@ main{max-width:960px;margin:0 auto;padding:20px;width:100%;flex:1;}
 .card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:12px;border:1px solid var(--border);}
 .card-title{font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border);padding-bottom:8px;}
 
+/* PROGRESS STEPS */
+.progress-steps{display:flex;align-items:center;gap:0;margin-bottom:14px;background:var(--card-bg);border-radius:12px;padding:12px 16px;box-shadow:var(--shadow);border:1px solid var(--border);}
+.ps-step{display:flex;align-items:center;gap:6px;flex:1;min-width:0;}
+.ps-num{width:24px;height:24px;border-radius:50%;background:var(--border);color:var(--text-light);font-size:.72rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .3s;}
+.ps-num.done{background:#0ea5a0;color:#fff;}
+.ps-num.active{background:var(--accent);color:#fff;box-shadow:0 0 0 3px rgba(245,158,11,.25);}
+.ps-label{font-size:.67rem;font-weight:700;color:var(--text-light);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .3s;}
+.ps-label.active{color:var(--accent);}
+.ps-label.done{color:#0ea5a0;}
+.ps-line{flex:1;height:2px;background:var(--border);border-radius:99px;margin:0 4px;min-width:8px;transition:background .3s;}
+.ps-line.done{background:#0ea5a0;}
+@media(max-width:480px){.ps-label{display:none;}.ps-step{flex:none;}}
+
+/* SOCIAL PROOF */
+.social-proof{background:linear-gradient(135deg,rgba(14,165,160,.07),rgba(245,158,11,.05));border:1.5px solid rgba(14,165,160,.2);border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.sp-stat{display:flex;align-items:center;gap:5px;font-size:.75rem;font-weight:700;color:var(--text);}
+.sp-num{color:#0ea5a0;font-size:.9rem;font-weight:900;}
+.sp-divider{width:1px;height:20px;background:var(--border);}
+
 /* FORM */
 .form-group{margin-bottom:10px;}
 label{display:block;font-size:.69rem;font-weight:700;color:var(--text-light);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px;}
@@ -123,6 +142,12 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 
 textarea{resize:vertical;min-height:70px;}
 .row-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 @media(max-width:500px){.row-2{grid-template-columns:1fr;}}
+.char-counter{font-size:.65rem;color:var(--text-light);text-align:right;margin-top:2px;font-weight:600;}
+.char-counter.warn{color:#f59e0b;}
+.char-counter.ok{color:#0ea5a0;}
+
+/* FIELD HINT */
+.field-hint{font-size:.7rem;color:var(--text-light);margin-top:3px;line-height:1.5;font-style:italic;}
 
 /* HINT BAR */
 .hint-bar{background:rgba(14,165,160,.08);border:1.5px solid rgba(14,165,160,.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:.76rem;color:var(--text);line-height:1.8;}
@@ -135,12 +160,14 @@ body.dark .rekom-inner{background:rgba(14,165,160,.12);border-color:rgba(14,165,
 .rekom-title{font-size:.72rem;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
 .rekom-game{font-size:1.1rem;font-weight:800;color:#0ea5a0;margin-bottom:6px;}
 .rekom-alasan{font-size:.78rem;color:var(--text-light);line-height:1.6;margin-bottom:10px;}
-.rekom-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.rekom-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
 .rekom-chip{font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:99px;border:1.5px solid;}
 .rekom-chip.green{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.4);color:#15803d;}
 .rekom-chip.blue{background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.4);color:#1d4ed8;}
 .rekom-chip.orange{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.4);color:#b45309;}
 body.dark .rekom-chip.green{color:#4ade80;}body.dark .rekom-chip.blue{color:#93c5fd;}body.dark .rekom-chip.orange{color:#fcd34d;}
+.btn-pakai-rekom{background:linear-gradient(135deg,#0ea5a0,#0d7a8a);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;}
+.btn-pakai-rekom:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(14,165,160,.3);}
 
 /* CHIPS */
 .chip-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
@@ -161,26 +188,90 @@ body.dark .chip.kondisi.selected{color:#4ade80;}
 .chip.qc.selected{background:rgba(239,68,68,.1);border-color:#ef4444;color:#dc2626;font-weight:700;}
 .chip.qc:hover{border-color:#ef4444;color:#dc2626;}
 body.dark .chip.qc.selected{color:#fca5a5;}
+.chip.soal-mode.selected{background:rgba(139,92,246,.12);border-color:#8b5cf6;color:#7c3aed;font-weight:700;}
+.chip.soal-mode:hover{border-color:#8b5cf6;color:#7c3aed;}
+body.dark .chip.soal-mode.selected{color:#c4b5fd;}
+
+/* TOOLTIP TIPE */
+.tipe-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:8px;}
+@media(max-width:600px){.tipe-grid{grid-template-columns:repeat(2,1fr);}}
+.tipe-card{border:2px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s;background:var(--card-bg);position:relative;}
+.tipe-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:#0ea5a0;}
+.tipe-card.selected{border-color:#0ea5a0;box-shadow:0 0 0 3px rgba(14,165,160,.18);}
+.tipe-card .tc-img{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;padding:14px 8px 10px;}
+.tipe-card .tc-icon{font-size:2rem;}
+.tipe-card .tc-sub{font-size:.58rem;font-weight:700;letter-spacing:.5px;opacity:.85;}
+.tipe-card .tc-label{font-size:.75rem;font-weight:800;padding:6px 8px;text-align:center;color:var(--text);border-top:1px solid var(--border);}
+.tipe-card .tc-check{position:absolute;top:6px;right:6px;width:20px;height:20px;border-radius:50%;background:#0ea5a0;color:#fff;font-size:.7rem;display:none;align-items:center;justify-content:center;font-weight:800;}
+.tipe-card.selected .tc-check{display:flex;}
+.tipe-card .tc-info{position:absolute;top:6px;left:6px;width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.25);color:#fff;font-size:.65rem;display:flex;align-items:center;justify-content:center;font-weight:800;cursor:pointer;}
+.tipe-custom-row{margin-top:10px;display:none;}
+
+/* TOOLTIP POPUP */
+.tooltip-overlay{position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:20px;}
+.tooltip-overlay.show{display:flex;}
+.tooltip-box{background:var(--card-bg);border-radius:16px;padding:20px;max-width:360px;width:100%;box-shadow:var(--shadow-lg);border:1px solid var(--border);}
+.tt-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.tt-icon{font-size:2rem;}
+.tt-title{font-size:1rem;font-weight:800;color:var(--text);}
+.tt-sub{font-size:.72rem;color:var(--text-light);font-weight:600;}
+.tt-body{font-size:.8rem;color:var(--text);line-height:1.7;margin-bottom:12px;}
+.tt-cocok{font-size:.74rem;font-weight:700;color:#0ea5a0;margin-bottom:4px;}
+.tt-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;}
+.tt-tag{font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:99px;background:rgba(14,165,160,.1);border:1px solid rgba(14,165,160,.3);color:#0d7a8a;}
+.tt-close{width:100%;background:var(--grad);color:#fff;border:none;border-radius:9px;padding:10px;font-weight:700;font-size:.85rem;cursor:pointer;}
+
+/* ACCORDION */
+.accordion{border:1.5px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:12px;}
+.accordion-header{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;cursor:pointer;background:var(--card-bg);font-size:.84rem;font-weight:700;color:var(--text);user-select:none;transition:background .15s;}
+.accordion-header:hover{background:var(--gray-100);}
+body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
+.accordion-header .acc-left{display:flex;align-items:center;gap:8px;}
+.accordion-header .acc-arrow{font-size:.75rem;transition:transform .25s;color:var(--text-light);}
+.accordion-header.open .acc-arrow{transform:rotate(180deg);}
+.accordion-body{display:none;padding:14px 16px;border-top:1px solid var(--border);background:var(--card-bg);}
+.accordion-body.open{display:block;}
+.acc-summary{font-size:.72rem;color:var(--text-light);margin-left:auto;margin-right:8px;font-weight:600;}
 
 /* BUTTONS */
 .btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:none;font-weight:600;font-size:.8rem;cursor:pointer;transition:all .2s;justify-content:center;}
-.btn-primary{background:var(--grad);color:#fff;width:100%;padding:12px;font-size:.9rem;border-radius:10px;box-shadow:0 4px 14px rgba(14,165,160,.3);}
-.btn-primary:hover{transform:translateY(-1px);}
+.btn-primary{background:var(--grad);color:#fff;width:100%;padding:13px;font-size:.92rem;border-radius:10px;box-shadow:0 4px 14px rgba(14,165,160,.3);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(14,165,160,.4);}
+.btn-regen{background:linear-gradient(135deg,#475569,#334155);color:#fff;width:100%;padding:10px;font-size:.85rem;border-radius:9px;margin-top:6px;}
+.btn-regen:hover{transform:translateY(-1px);}
 .btn-copy{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;width:100%;padding:11px;font-size:.88rem;border-radius:9px;}
 .btn-copy:hover{transform:translateY(-1px);}
-.btn-gemini{background:linear-gradient(135deg,#4285f4,#34a853);color:#fff;flex:1;padding:10px;font-size:.85rem;border-radius:9px;}
-.btn-claude{background:linear-gradient(135deg,#d97706,#b45309);color:#fff;flex:1;padding:10px;font-size:.85rem;border-radius:9px;}
-.btn-canva{background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;flex:1;padding:10px;font-size:.85rem;border-radius:9px;}
-.btn-reset{background:var(--input-bg);color:var(--text-light);border:1.5px solid var(--border);width:100%;padding:9px;font-size:.8rem;border-radius:9px;cursor:pointer;font-weight:600;display:block;margin-top:8px;}
+.btn-reset{background:var(--input-bg);color:var(--text-light);border:1.5px solid var(--border);width:100%;padding:9px;font-size:.8rem;border-radius:9px;cursor:pointer;font-weight:600;display:block;margin-top:8px;transition:all .2s;}
 .btn-reset:hover{border-color:#ef4444;color:#ef4444;}
 .ai-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
 .ai-btns .btn{flex:1;min-width:80px;}
 
 /* PROMPT RESULT */
-.prompt-result{background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;padding:14px;font-size:.78rem;color:var(--text);white-space:pre-wrap;line-height:1.8;min-height:180px;max-height:480px;overflow-y:auto;font-family:'Courier New',monospace;}
-body.dark .prompt-result{background:#0f172a;}
+.prompt-result-wrap{background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px;}
+.prompt-section{padding:10px 14px;border-bottom:1px solid var(--border);}
+.prompt-section:last-child{border-bottom:none;}
+.prompt-section-label{font-size:.65rem;font-weight:800;color:#0ea5a0;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;display:flex;align-items:center;gap:4px;}
+.prompt-section-body{font-size:.78rem;color:var(--text);line-height:1.7;font-family:'Courier New',monospace;white-space:pre-wrap;}
+.prompt-raw{background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;padding:14px;font-size:.78rem;color:var(--text);white-space:pre-wrap;line-height:1.8;min-height:180px;max-height:380px;overflow-y:auto;font-family:'Courier New',monospace;display:none;}
+body.dark .prompt-raw{background:#0f172a;}
+.prompt-toggle{background:none;border:1.5px solid var(--border);border-radius:8px;padding:5px 12px;font-size:.72rem;font-weight:700;color:var(--text-light);cursor:pointer;margin-bottom:8px;transition:all .2s;}
+.prompt-toggle:hover{border-color:#0ea5a0;color:#0ea5a0;}
 .notif-box{background:#dcfce7;color:#15803d;border:1px solid #86efac;border-radius:8px;padding:8px 12px;font-size:.78rem;font-weight:600;text-align:center;display:none;margin-top:8px;}
 .error-box{background:#fef2f2;border:1px solid #fca5a5;color:#dc2626;padding:9px 12px;border-radius:8px;font-size:.79rem;display:none;margin-bottom:10px;}
+
+/* FEEDBACK PROMPT */
+.feedback-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(14,165,160,.05);border:1px solid rgba(14,165,160,.15);border-radius:8px;margin-top:8px;flex-wrap:wrap;}
+.fb-label{font-size:.75rem;font-weight:700;color:var(--text-light);flex:1;}
+.fb-btn{border:1.5px solid var(--border);background:var(--card-bg);border-radius:8px;padding:5px 12px;font-size:.8rem;cursor:pointer;transition:all .2s;font-weight:600;}
+.fb-btn:hover{border-color:#0ea5a0;}
+.fb-btn.voted{background:rgba(14,165,160,.1);border-color:#0ea5a0;color:#0ea5a0;}
+
+/* PANDUAN PASTE */
+.panduan-box{background:rgba(245,158,11,.06);border:1.5px solid rgba(245,158,11,.25);border-radius:10px;padding:12px 14px;margin-top:8px;}
+.panduan-title{font-size:.72rem;font-weight:800;color:#b45309;margin-bottom:6px;display:flex;align-items:center;gap:5px;}
+.panduan-steps{list-style:none;padding:0;margin:0;}
+.panduan-steps li{font-size:.74rem;color:var(--text);padding:3px 0;display:flex;align-items:flex-start;gap:6px;line-height:1.5;}
+.panduan-steps li::before{content:attr(data-n);background:#f59e0b;color:#fff;border-radius:50%;width:16px;height:16px;font-size:.6rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
 
 /* RINGKASAN */
 .ringkasan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;}
@@ -188,14 +279,6 @@ body.dark .prompt-result{background:#0f172a;}
 .ringkasan-item{background:rgba(14,165,160,.06);border:1px solid rgba(14,165,160,.2);border-radius:8px;padding:8px 10px;}
 .ringkasan-item .ri-label{font-size:.62rem;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.4px;}
 .ringkasan-item .ri-val{font-size:.82rem;font-weight:700;color:var(--text);margin-top:2px;}
-
-/* CONTOH GAME */
-.contoh-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-@media(max-width:480px){.contoh-grid{grid-template-columns:repeat(2,1fr);}}
-.contoh-card{border:1.5px solid var(--border);border-radius:10px;overflow:hidden;text-align:center;background:var(--card-bg);cursor:pointer;transition:transform .18s,box-shadow .18s;}
-.contoh-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
-.contoh-img{width:100%;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;}
-.contoh-label{font-size:.74rem;font-weight:700;padding:7px;color:var(--text);border-top:1px solid var(--border);}
 
 /* HISTORI */
 .histori-item{border:1px solid var(--border);border-radius:9px;padding:11px 13px;margin-bottom:7px;background:var(--input-bg);}
@@ -219,34 +302,20 @@ body.dark .prompt-result{background:#0f172a;}
 .tab-section{display:none;}
 .tab-section.active{display:block;}
 
+/* CROSS LINK */
+.cross-link-box{background:linear-gradient(135deg,rgba(14,165,160,.07),rgba(245,158,11,.05));border:1.5px solid rgba(14,165,160,.2);border-radius:10px;padding:12px 14px;margin-top:10px;}
+.cl-title{font-size:.72rem;font-weight:800;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+.cl-items{display:flex;gap:8px;flex-wrap:wrap;}
+.cl-item{display:flex;align-items:center;gap:6px;padding:7px 12px;background:var(--card-bg);border:1.5px solid var(--border);border-radius:9px;font-size:.75rem;font-weight:700;color:var(--text);cursor:pointer;text-decoration:none;transition:all .18s;}
+.cl-item:hover{border-color:#0ea5a0;color:#0ea5a0;transform:translateY(-1px);}
+
+/* SOAL SENDIRI */
+#soalSendiriWrap{margin-top:8px;display:none;}
+.soal-sendiri-box{background:rgba(139,92,246,.05);border:1.5px solid rgba(139,92,246,.25);border-radius:10px;padding:12px;}
+.soal-sendiri-box label{color:#7c3aed;}
+
 /* DURASI CUSTOM */
 #durasiCustomWrap{margin-top:8px;}
-
-/* TIPE GAME CARDS */
-.tipe-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:8px;}
-@media(max-width:600px){.tipe-grid{grid-template-columns:repeat(2,1fr);}}
-.tipe-card{border:2px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s;background:var(--card-bg);position:relative;}
-.tipe-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:#0ea5a0;}
-.tipe-card.selected{border-color:#0ea5a0;box-shadow:0 0 0 3px rgba(14,165,160,.18);}
-.tipe-card .tc-img{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;padding:14px 8px 10px;}
-.tipe-card .tc-icon{font-size:2rem;}
-.tipe-card .tc-sub{font-size:.58rem;font-weight:700;letter-spacing:.5px;opacity:.85;}
-.tipe-card .tc-label{font-size:.75rem;font-weight:800;padding:6px 8px;text-align:center;color:var(--text);border-top:1px solid var(--border);}
-.tipe-card .tc-check{position:absolute;top:6px;right:6px;width:20px;height:20px;border-radius:50%;background:#0ea5a0;color:#fff;font-size:.7rem;display:none;align-items:center;justify-content:center;font-weight:800;}
-.tipe-card.selected .tc-check{display:flex;}
-.tipe-custom-row{margin-top:10px;display:none;}
-
-/* ACCORDION */
-.accordion{border:1.5px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:12px;}
-.accordion-header{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;cursor:pointer;background:var(--card-bg);font-size:.84rem;font-weight:700;color:var(--text);user-select:none;transition:background .15s;}
-.accordion-header:hover{background:var(--gray-100);}
-body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
-.accordion-header .acc-left{display:flex;align-items:center;gap:8px;}
-.accordion-header .acc-arrow{font-size:.75rem;transition:transform .25s;color:var(--text-light);}
-.accordion-header.open .acc-arrow{transform:rotate(180deg);}
-.accordion-body{display:none;padding:14px 16px;border-top:1px solid var(--border);background:var(--card-bg);}
-.accordion-body.open{display:block;}
-.acc-summary{font-size:.72rem;color:var(--text-light);margin-left:auto;margin-right:8px;font-weight:600;}
 </style>
 </head>
 <body>
@@ -255,7 +324,7 @@ body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
 <div id="loadingScreen">
   <img src="https://bantuguruyuk.web.id/lkpd/guru-cibisd2.png" alt="Logo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2216%22 fill=%22rgba(255,255,255,0.2)%22/%3E%3Ctext x=%2232%22 y=%2242%22 text-anchor=%22middle%22 font-size=%2228%22 font-family=%22sans-serif%22 font-weight=%22800%22 fill=%22white%22%3EBG%3C/text%3E%3C/svg%3E'"/>
   <div class="ls-title">Bantu Guru Yuk</div>
-  <div class="ls-sub">Prompt Game v1.2 — AI-Assisted Game Generator</div>
+  <div class="ls-sub">Buat Prompt Game Interaktif — Sesuai Kurikulum Merdeka</div>
   <div class="ls-spinner"></div>
 </div>
 
@@ -268,16 +337,30 @@ body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
     <div class="go-ring go-ring1"></div><div class="go-ring go-ring2"></div><div class="go-ring go-ring3"></div>
     <div class="go-icon">🎮</div>
   </div>
-  <div class="go-title">Menyusun Master Prompt</div>
+  <div class="go-title">Menyusun Prompt Game</div>
   <div class="go-sub">Tunggu sebentar ya, Pak/Bu Guru! 🧠</div>
   <div class="go-msg" id="goMsg">Menganalisis kebutuhan pembelajaran...</div>
   <div class="go-dots"><div class="go-dot"></div><div class="go-dot"></div><div class="go-dot"></div></div>
   <div class="go-bar-wrap"><div class="go-bar"></div></div>
 </div>
 
+<!-- TOOLTIP OVERLAY -->
+<div class="tooltip-overlay" id="tooltipOverlay" onclick="closeTooltip(event)">
+  <div class="tooltip-box" id="tooltipBox">
+    <div class="tt-header">
+      <div class="tt-icon" id="ttIcon"></div>
+      <div><div class="tt-title" id="ttTitle"></div><div class="tt-sub" id="ttSub"></div></div>
+    </div>
+    <div class="tt-body" id="ttBody"></div>
+    <div class="tt-cocok">✅ Cocok untuk:</div>
+    <div class="tt-tags" id="ttTags"></div>
+    <button class="tt-close" onclick="closeTooltipBtn()">Tutup</button>
+  </div>
+</div>
+
 <!-- INSTALL POPUP -->
 <div id="installPopup">
-  <span>📲 Install aplikasi Bantu Guru Yuk</span>
+  <span>📲 Install Bantu Guru Yuk</span>
   <button class="btn-install" onclick="installApp()">Install</button>
   <button class="btn-install-close" onclick="closeInstall()">✕</button>
 </div>
@@ -290,8 +373,8 @@ body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
     <div class="header-brand">
       <img src="https://bantuguruyuk.web.id/lkpd/guru-cibisd2.png" alt="Logo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 36 36%22%3E%3Crect width=%2236%22 height=%2236%22 rx=%2210%22 fill=%22%230ea5a0%22/%3E%3Ctext x=%2218%22 y=%2224%22 text-anchor=%22middle%22 font-size=%2218%22 font-family=%22sans-serif%22 font-weight=%22800%22 fill=%22white%22%3EBG%3C/text%3E%3C/svg%3E'"/>
       <div class="header-brand-text">
-        <h1>Bantu Guru Yuk | Prompt Game <span id="hBadge" class="badge-free">FREE</span></h1>
-        <p>AI-Assisted Instructional Game Generator</p>
+        <h1>Bantu Guru Yuk <span id="hBadge" class="badge-free">GRATIS</span> <span class="badge-kmerdeka">Kur. Merdeka</span></h1>
+        <p>Buat Prompt Game Interaktif</p>
       </div>
     </div>
     <div class="header-right">
@@ -303,14 +386,15 @@ body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
       <div class="dropdown-menu" id="dropdownMenu">
         <button class="dropdown-item active" id="mi-home" onclick="selectTab('home');closeMenu()">🏠 Home</button>
         <button class="dropdown-item" id="mi-histori" onclick="selectTab('histori');closeMenu()">
-          🕒 Histori
+          🕒 Histori Prompt
           <span id="historiBadge" class="dropdown-badge" style="display:none;"></span>
         </button>
-        <button class="dropdown-item" id="mi-tentang" onclick="selectTab('tentang');closeMenu()">ℹ️ Tentang</button>
-        <button class="dropdown-item" id="mi-kontak" onclick="selectTab('kontak');closeMenu()">📬 Kontak</button>
-        <button class="dropdown-item" onclick="installApp();closeMenu()">📲 Install BGY</button>
+        <button class="dropdown-item" id="mi-info" onclick="selectTab('info');closeMenu()">ℹ️ Tentang & Kontak</button>
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="https://bantuguruyuk.web.id" target="_blank" rel="noopener" onclick="event.stopPropagation()">🌐 BantuGuruYuk</a>
+        <a class="dropdown-item" href="https://bgybelajar.web.id" target="_blank" rel="noopener" onclick="event.stopPropagation()">📺 Kumpulan Media Belajar</a>
+        <a class="dropdown-item" href="https://bantuguruyuk.web.id" target="_blank" rel="noopener" onclick="event.stopPropagation()">🌐 Semua Tools BGY</a>
+        <div class="dropdown-divider"></div>
+        <button class="dropdown-item" onclick="installApp();closeMenu()">📲 Install Aplikasi</button>
       </div>
     </div>
   </div>
@@ -329,35 +413,33 @@ body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
 </main>
 </div>
 
-<!-- TAB TENTANG -->
-<div id="tab-tentang" class="tab-section">
+<!-- TAB TENTANG & KONTAK (digabung) -->
+<div id="tab-info" class="tab-section">
 <main>
   <div class="card">
     <div class="card-title">ℹ️ Tentang BGY Prompt Game</div>
-    <p style="font-size:.85rem;color:var(--text);line-height:1.8;margin-bottom:12px;"><b>Prompt Game v1.2</b> adalah AI-assisted instructional game generator dari ekosistem <b>Bantu Guru Yuk</b>. Membantu guru membuat prompt siap pakai untuk Gemini, Claude, atau Canva — dengan kualitas pedagogis yang lebih terukur.</p>
+    <p style="font-size:.85rem;color:var(--text);line-height:1.8;margin-bottom:12px;"><b>Buat Prompt Game Interaktif</b> adalah bagian dari ekosistem <b>Bantu Guru Yuk</b> — platform gratis untuk guru Indonesia. Tool ini membantu kamu membuat prompt siap pakai untuk Gemini, Claude, atau Canva AI, sehingga kamu bisa punya game pembelajaran interaktif dalam hitungan menit.</p>
+    <div style="background:rgba(14,165,160,.06);border:1px solid rgba(14,165,160,.2);border-radius:9px;padding:10px 14px;margin-bottom:14px;">
+      <div style="font-size:.72rem;font-weight:800;color:#0ea5a0;margin-bottom:4px;">✅ Sesuai Kurikulum Merdeka</div>
+      <div style="font-size:.78rem;color:var(--text);line-height:1.6;">Semua prompt dirancang sesuai prinsip Kurikulum Merdeka: diferensiasi pembelajaran, HOTS, asesmen autentik, dan pembelajaran yang menyenangkan.</div>
+    </div>
     <h4 style="font-size:.82rem;font-weight:700;margin:12px 0 6px;">✨ Cara Pakai</h4>
     <ol style="font-size:.82rem;color:var(--text);line-height:2.2;padding-left:18px;">
-      <li>Isi data pembelajaran (jenjang, kelas, mapel, materi, tujuan)</li>
-      <li>Lihat rekomendasi tipe game dari BGY</li>
-      <li>Sesuaikan desain game (tipe, tantangan, kesulitan, durasi, mode)</li>
-      <li>Atur preferensi pembelajaran (asesmen, kondisi kelas, quality control)</li>
-      <li>Klik Generate Master Prompt</li>
-      <li>Salin prompt → buka Gemini / Claude / Canva → paste!</li>
+      <li>Isi data pembelajaran (jenjang, kelas, mapel, materi)</li>
+      <li>Lihat rekomendasi tipe game → klik "Gunakan Rekomendasi Ini"</li>
+      <li>Sesuaikan di accordion (mode, kesulitan, durasi, gaya visual)</li>
+      <li>Klik <b>Generate Prompt Game</b></li>
+      <li>Salin prompt → buka Gemini / Claude / Canva → paste! 🚀</li>
     </ol>
-    <p style="font-size:.75rem;color:var(--text-light);margin-top:14px;">v1.2.0 · bantuguruyuk.web.id</p>
+    <p style="font-size:.75rem;color:var(--text-light);margin-top:14px;">v1.3.0 · bantuguruyuk.web.id</p>
   </div>
-</main>
-</div>
-
-<!-- TAB KONTAK -->
-<div id="tab-kontak" class="tab-section">
-<main>
   <div class="card">
-    <div class="card-title">📬 Kontak</div>
-    <p style="font-size:.84rem;color:var(--text);line-height:1.7;margin-bottom:14px;">Untuk bantuan, kritik, saran, atau aktivasi Pro:</p>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;">
-      <button onclick="window.open('https://wa.me/6289530713597')" style="background:#25D366;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;">💬 WhatsApp</button>
-      <button onclick="window.open('https://tiktok.com/@pak.choyy')" style="background:#000;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;">🎵 TikTok</button>
+    <div class="card-title">📬 Kontak & Komunitas</div>
+    <p style="font-size:.84rem;color:var(--text);line-height:1.7;margin-bottom:14px;">Untuk bantuan, pertanyaan, saran fitur, atau bergabung ke komunitas guru BGY:</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button onclick="window.open('https://wa.me/6289530713597')" style="background:#25D366;color:#fff;border:none;padding:10px 18px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;display:flex;align-items:center;gap:6px;">💬 WhatsApp</button>
+      <button onclick="window.open('https://tiktok.com/@pak.choyy')" style="background:#000;color:#fff;border:none;padding:10px 18px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;display:flex;align-items:center;gap:6px;">🎵 TikTok @pak.choyy</button>
+      <button onclick="window.open('https://bantuguruyuk.web.id')" style="background:var(--grad);color:#fff;border:none;padding:10px 18px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;display:flex;align-items:center;gap:6px;">🌐 Website BGY</button>
     </div>
   </div>
 </main>
@@ -367,15 +449,45 @@ body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
 <div id="tab-home" class="tab-section active">
 <main>
 
+  <!-- PROGRESS STEPS -->
+  <div class="progress-steps" id="progressSteps">
+    <div class="ps-step">
+      <div class="ps-num active" id="ps1">1</div>
+      <div class="ps-label active" id="psl1">Data</div>
+    </div>
+    <div class="ps-line" id="psl12"></div>
+    <div class="ps-step">
+      <div class="ps-num" id="ps2">2</div>
+      <div class="ps-label" id="psl2">Tipe Game</div>
+    </div>
+    <div class="ps-line" id="psl23"></div>
+    <div class="ps-step">
+      <div class="ps-num" id="ps3">3</div>
+      <div class="ps-label" id="psl3">Setelan</div>
+    </div>
+    <div class="ps-line" id="psl34"></div>
+    <div class="ps-step">
+      <div class="ps-num" id="ps4">4</div>
+      <div class="ps-label" id="psl4">Prompt Siap!</div>
+    </div>
+  </div>
+
+  <!-- SOCIAL PROOF -->
+  <div class="social-proof">
+    <div class="sp-stat">🎮 <span class="sp-num" id="spCount">—</span> prompt dibuat</div>
+    <div class="sp-divider"></div>
+    <div class="sp-stat">👩‍🏫 Dipakai guru SD · SMP · SMA · SMK</div>
+    <div class="sp-divider"></div>
+    <div class="sp-stat">✅ Gratis selamanya</div>
+  </div>
+
   <div class="hint-bar">
     💡 <span>Isi form</span> → <span>Rekomendasi Otomatis</span> → <span>Generate Prompt</span> → <span>Paste ke Gemini / Claude / Canva 🚀</span>
   </div>
 
   <div class="error-box" id="errorBox"></div>
 
-  <!-- ═══════════════════════════════════ -->
-  <!-- SEKSI 1: DATA PEMBELAJARAN         -->
-  <!-- ═══════════════════════════════════ -->
+  <!-- ═══ SEKSI 1: DATA PEMBELAJARAN ═══ -->
   <div class="card">
     <div class="card-title">📋 Data Pembelajaran</div>
     <div class="row-2">
@@ -393,7 +505,7 @@ body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
       </div>
       <div class="form-group">
         <label>Kelas</label>
-        <select id="kelas" onchange="updateRekom()">
+        <select id="kelas" onchange="updateRekom();updateProgress()">
           <option value="">-- Pilih Kelas --</option>
         </select>
       </div>
@@ -410,15 +522,14 @@ body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
     </div>
     <div class="form-group">
       <label>Materi Pembelajaran</label>
-      <textarea id="materi" placeholder="Contoh: Penjumlahan bilangan sampai 20." oninput="updateRekom()"></textarea>
+      <textarea id="materi" placeholder="Contoh: Penjumlahan bilangan sampai 20." oninput="updateRekom();updateProgress();countChar('materi','cMateri',150)"></textarea>
+      <div class="char-counter" id="cMateri"></div>
+      <div class="field-hint">Tulis topik spesifik agar prompt lebih terarah. Misal: "Siklus air" bukan hanya "IPA".</div>
     </div>
     <div class="form-group">
-      <label>Tujuan Pembelajaran</label>
-      <textarea id="tujuan" placeholder="Contoh: Siswa mampu menjumlahkan dua bilangan sampai 20 dengan benar." oninput="updateRekom()"></textarea>
-    </div>
-    <div class="form-group">
-      <label>📚 Sumber Materi <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-light);font-size:.65rem;">(opsional)</span></label>
-      <textarea id="sumber" style="min-height:50px;" placeholder="Contoh: Buku paket halaman 20–25, modul sekolah, atau referensi lain."></textarea>
+      <label>Tujuan Pembelajaran <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-light);font-size:.65rem;">(opsional)</span></label>
+      <textarea id="tujuan" placeholder="Contoh: Siswa mampu menjumlahkan dua bilangan sampai 20 dengan benar." oninput="updateRekom();countChar('tujuan','cTujuan',200)"></textarea>
+      <div class="char-counter" id="cTujuan"></div>
     </div>
   </div>
 
@@ -430,18 +541,18 @@ body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
       <div class="rekom-game" id="rekomGame"></div>
       <div class="rekom-alasan" id="rekomAlasan"></div>
       <div class="rekom-chips" id="rekomChips"></div>
+      <button class="btn-pakai-rekom" onclick="pakaiRekom()">✅ Gunakan Rekomendasi Ini</button>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════ -->
-  <!-- SEKSI 2: PILIH TIPE GAME           -->
-  <!-- ═══════════════════════════════════ -->
+  <!-- ═══ SEKSI 2: PILIH TIPE GAME ═══ -->
   <div class="card">
     <div class="card-title">🎮 Pilih Tipe Game</div>
-    <div style="font-size:.75rem;color:var(--text-light);margin-bottom:12px;">BGY otomatis merekomendasikan tipe terbaik. Kamu bisa ganti sesuai kebutuhan.</div>
+    <div style="font-size:.75rem;color:var(--text-light);margin-bottom:12px;">Klik <b>ℹ</b> pada tiap kartu untuk penjelasan lengkap. BGY otomatis merekomendasikan tipe terbaik.</div>
     <div class="tipe-grid" id="tipeGrid">
       <div class="tipe-card" data-val="Quiz Mission" onclick="selectTipe(this)">
         <div class="tc-check">✓</div>
+        <div class="tc-info" onclick="event.stopPropagation();showTooltip('Quiz Mission')">ℹ</div>
         <div class="tc-img" style="background:linear-gradient(135deg,#0ea5a0,#0d7a8a);">
           <div class="tc-icon">🧠</div>
           <div class="tc-sub" style="color:rgba(255,255,255,.85);">PILIHAN GANDA</div>
@@ -450,6 +561,7 @@ body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
       </div>
       <div class="tipe-card" data-val="Puzzle" onclick="selectTipe(this)">
         <div class="tc-check">✓</div>
+        <div class="tc-info" onclick="event.stopPropagation();showTooltip('Puzzle')">ℹ</div>
         <div class="tc-img" style="background:linear-gradient(135deg,#d97706,#b45309);">
           <div class="tc-icon">🧩</div>
           <div class="tc-sub" style="color:rgba(255,255,255,.85);">SUSUN URUTAN</div>
@@ -458,6 +570,7 @@ body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
       </div>
       <div class="tipe-card" data-val="Matching" onclick="selectTipe(this)">
         <div class="tc-check">✓</div>
+        <div class="tc-info" onclick="event.stopPropagation();showTooltip('Matching')">ℹ</div>
         <div class="tc-img" style="background:linear-gradient(135deg,#16a34a,#15803d);">
           <div class="tc-icon">🔗</div>
           <div class="tc-sub" style="color:rgba(255,255,255,.85);">COCOKKAN</div>
@@ -466,6 +579,7 @@ body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
       </div>
       <div class="tipe-card" data-val="Adventure" onclick="selectTipe(this)">
         <div class="tc-check">✓</div>
+        <div class="tc-info" onclick="event.stopPropagation();showTooltip('Adventure')">ℹ</div>
         <div class="tc-img" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);">
           <div class="tc-icon">🗺️</div>
           <div class="tc-sub" style="color:rgba(255,255,255,.85);">JELAJAHI PETA</div>
@@ -474,6 +588,7 @@ body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
       </div>
       <div class="tipe-card" data-val="Mystery" onclick="selectTipe(this)">
         <div class="tc-check">✓</div>
+        <div class="tc-info" onclick="event.stopPropagation();showTooltip('Mystery')">ℹ</div>
         <div class="tc-img" style="background:linear-gradient(135deg,#0f172a,#1e293b);">
           <div class="tc-icon">🔍</div>
           <div class="tc-sub" style="color:rgba(255,255,255,.85);">DETEKTIF</div>
@@ -482,6 +597,7 @@ body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
       </div>
       <div class="tipe-card" data-val="Challenge" onclick="selectTipe(this)">
         <div class="tc-check">✓</div>
+        <div class="tc-info" onclick="event.stopPropagation();showTooltip('Challenge')">ℹ</div>
         <div class="tc-img" style="background:linear-gradient(135deg,#dc2626,#b91c1c);">
           <div class="tc-icon">⚡</div>
           <div class="tc-sub" style="color:rgba(255,255,255,.85);">LEVEL UP</div>
@@ -490,6 +606,7 @@ body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
       </div>
       <div class="tipe-card" data-val="Case Challenge" onclick="selectTipe(this)">
         <div class="tc-check">✓</div>
+        <div class="tc-info" onclick="event.stopPropagation();showTooltip('Case Challenge')">ℹ</div>
         <div class="tc-img" style="background:linear-gradient(135deg,#0369a1,#075985);">
           <div class="tc-icon">📋</div>
           <div class="tc-sub" style="color:rgba(255,255,255,.85);">ANALISIS KASUS</div>
@@ -511,20 +628,58 @@ body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════ -->
-  <!-- SEKSI 3: ACCORDION LANJUTAN        -->
-  <!-- ═══════════════════════════════════ -->
+  <!-- ═══ SEKSI 3: ACCORDION LANJUTAN ═══ -->
   <div class="accordion" id="accLanjutan">
     <div class="accordion-header" onclick="toggleAccordion()">
       <div class="acc-left">⚙️ <span>Sesuaikan Lebih Lanjut</span></div>
-      <span class="acc-summary" id="accSummary">5 opsi · semua auto</span>
+      <span class="acc-summary" id="accSummary">semua auto</span>
       <span class="acc-arrow">▼</span>
     </div>
     <div class="accordion-body" id="accBody">
 
+      <!-- Mode Bermain — NAIK KE ATAS -->
+      <div class="form-group">
+        <div class="section-label">👥 Mode Bermain</div>
+        <div class="chip-grid" id="modeGrid">
+          <div class="chip mode selected" data-val="👤 Individu" onclick="selectMode(this)">👤 Individu</div>
+          <div class="chip mode" data-val="👥 Berpasangan" onclick="selectMode(this)">👥 Berpasangan</div>
+          <div class="chip mode" data-val="👨‍👩‍👧 Kelompok" onclick="selectMode(this)">👨‍👩‍👧 Kelompok</div>
+          <div class="chip mode" data-val="🏫 Klasikal/Proyektor" onclick="selectMode(this)">🏫 Klasikal</div>
+          <div class="chip mode" data-val="🤖 AI Menentukan" onclick="selectMode(this)">🤖 AI Menentukan</div>
+        </div>
+      </div>
+
+      <!-- Tingkat Kesulitan + Sumber Soal -->
+      <div class="form-group">
+        <div class="section-label">🎯 Tingkat Kesulitan</div>
+        <div class="chip-grid" id="diffGrid">
+          <div class="chip difficulty" data-val="🟢 Mudah" onclick="selectDifficulty(this)">🟢 Mudah</div>
+          <div class="chip difficulty" data-val="🟡 Sedang" onclick="selectDifficulty(this)">🟡 Sedang</div>
+          <div class="chip difficulty" data-val="🔴 Sulit" onclick="selectDifficulty(this)">🔴 Sulit</div>
+          <div class="chip difficulty" data-val="🧠 HOTS" onclick="selectDifficulty(this)">🧠 HOTS</div>
+          <div class="chip difficulty selected" data-val="✨ AI Menentukan" onclick="selectDifficulty(this)">✨ AI Menentukan</div>
+        </div>
+      </div>
+
+      <!-- Sumber Soal -->
+      <div class="form-group">
+        <div class="section-label">📝 Sumber Soal</div>
+        <div class="chip-grid">
+          <div class="chip soal-mode selected" data-val="ai" onclick="selectSoalMode(this,'ai')">🤖 AI Buat Soal</div>
+          <div class="chip soal-mode" data-val="sendiri" onclick="selectSoalMode(this,'sendiri')">✏️ Masukkan Soal Sendiri</div>
+        </div>
+        <div id="soalSendiriWrap">
+          <div class="soal-sendiri-box">
+            <label style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px;">Tulis atau paste soal kamu di sini</label>
+            <textarea id="soalSendiri" style="min-height:100px;width:100%;padding:8px 10px;border:1.5px solid rgba(139,92,246,.3);border-radius:8px;font-size:.8rem;color:var(--text);background:var(--input-bg);font-family:inherit;outline:none;resize:vertical;" placeholder="Contoh:&#10;1. Hasil dari 5 × 4 = ...&#10;   a) 18  b) 20  c) 22  d) 24&#10;2. ..."></textarea>
+            <div style="font-size:.7rem;color:#7c3aed;margin-top:4px;">💡 AI akan mengadaptasi soal kamu ke dalam format game yang dipilih.</div>
+          </div>
+        </div>
+      </div>
+
       <!-- Jumlah Tantangan -->
       <div class="form-group">
-        <div class="section-label">Jumlah Tantangan</div>
+        <div class="section-label">🎯 Jumlah Tantangan</div>
         <div class="chip-grid" id="jmlGrid">
           <div class="chip" data-val="3" onclick="selectJml(this)">3</div>
           <div class="chip selected" data-val="5" onclick="selectJml(this)">5</div>
@@ -535,18 +690,6 @@ body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
         <div id="jmlCustomWrap" style="display:none;margin-top:8px;">
           <input type="number" id="jmlCustom" min="1" max="20" placeholder="Masukkan jumlah (1–20)" oninput="validateJmlCustom(this)"/>
           <div id="jmlCustomError" style="display:none;font-size:.72rem;color:#dc2626;margin-top:4px;">⚠️ Masukkan angka antara 1–20</div>
-        </div>
-      </div>
-
-      <!-- Tingkat Kesulitan -->
-      <div class="form-group">
-        <div class="section-label">🎯 Tingkat Kesulitan</div>
-        <div class="chip-grid" id="diffGrid">
-          <div class="chip difficulty" data-val="🟢 Mudah" onclick="selectDifficulty(this)">🟢 Mudah</div>
-          <div class="chip difficulty" data-val="🟡 Sedang" onclick="selectDifficulty(this)">🟡 Sedang</div>
-          <div class="chip difficulty" data-val="🔴 Sulit" onclick="selectDifficulty(this)">🔴 Sulit</div>
-          <div class="chip difficulty" data-val="🧠 HOTS" onclick="selectDifficulty(this)">🧠 HOTS</div>
-          <div class="chip difficulty selected" data-val="✨ AI Menentukan" onclick="selectDifficulty(this)">✨ AI Menentukan</div>
         </div>
       </div>
 
@@ -566,26 +709,18 @@ body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
         </div>
       </div>
 
-      <!-- Mode Bermain -->
-      <div class="form-group">
-        <div class="section-label">👥 Mode Bermain</div>
-        <div class="chip-grid" id="modeGrid">
-          <div class="chip mode selected" data-val="👤 Individu" onclick="selectMode(this)">👤 Individu</div>
-          <div class="chip mode" data-val="👥 Berpasangan" onclick="selectMode(this)">👥 Berpasangan</div>
-          <div class="chip mode" data-val="👨‍👩‍👧 Kelompok" onclick="selectMode(this)">👨‍👩‍👧 Kelompok</div>
-          <div class="chip mode" data-val="🏫 Klasikal/Proyektor" onclick="selectMode(this)">🏫 Klasikal</div>
-          <div class="chip mode" data-val="🤖 AI Menentukan" onclick="selectMode(this)">🤖 AI Menentukan</div>
-        </div>
-      </div>
-
       <!-- Gaya Visual -->
       <div class="form-group" style="margin-bottom:0;">
-        <div class="section-label">🎨 Gaya Visual</div>
+        <div class="section-label">🎨 Gaya Visual Game</div>
         <div class="chip-grid" id="gayaGrid">
           <div class="chip gaya" data-val="🌈 Ceria Anak" onclick="selectGaya(this)">🌈 Ceria Anak</div>
           <div class="chip gaya" data-val="📚 Storybook" onclick="selectGaya(this)">📚 Storybook</div>
           <div class="chip gaya" data-val="🎨 Cartoon" onclick="selectGaya(this)">🎨 Cartoon</div>
           <div class="chip gaya" data-val="🧩 Flat Modern" onclick="selectGaya(this)">🧩 Flat Modern</div>
+          <div class="chip gaya" data-val="🕹️ Pixel Art / Retro" onclick="selectGaya(this)">🕹️ Pixel / Retro</div>
+          <div class="chip gaya" data-val="🌿 Nature / Alam" onclick="selectGaya(this)">🌿 Nature</div>
+          <div class="chip gaya" data-val="🏰 Fantasy / Petualangan" onclick="selectGaya(this)">🏰 Fantasy</div>
+          <div class="chip gaya" data-val="🤖 Futuristik / Sci-Fi" onclick="selectGaya(this)">🤖 Futuristik</div>
           <div class="chip gaya" data-val="✨ AI Memilih" onclick="selectGaya(this)">✨ AI Memilih</div>
         </div>
       </div>
@@ -593,7 +728,7 @@ body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
     </div>
   </div>
 
-  <!-- hidden state untuk asesmen, kondisi, QC — auto -->
+  <!-- hidden state -->
   <div style="display:none;">
     <div id="asesmenGrid"><div class="chip asesmen selected" data-val="🤖 AI Menentukan"></div></div>
     <div id="kondisiGrid"><div class="chip kondisi selected" data-val="🟡 Kemampuan beragam"></div></div>
@@ -602,27 +737,65 @@ body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
 
   <!-- GENERATE -->
   <div class="card">
-    <button class="btn btn-primary" onclick="generate()">⚡ Generate Master Prompt</button>
-    <button class="btn-reset" onclick="resetForm()">🔄 Reset Form</button>
+    <button class="btn btn-primary" onclick="generate()">⚡ Generate Prompt Game <span style="font-size:.75rem;opacity:.85;">(Ctrl+Enter)</span></button>
+    <button class="btn-reset" onclick="konfirmasiReset()">🔄 Reset Form</button>
   </div>
-
 
   <!-- OUTPUT -->
   <div class="card" id="outputCard" style="display:none;">
-    <div class="card-title">📝 Master Prompt Siap</div>
+    <div class="card-title">🎮 Prompt Game Siap Dipakai!</div>
     <div class="ringkasan-grid" id="ringkasanGrid"></div>
-    <div class="prompt-result" id="promptResult"></div>
+
+    <!-- Prompt terstruktur -->
+    <div class="prompt-result-wrap" id="promptStructured"></div>
+
+    <!-- Toggle lihat raw -->
+    <button class="prompt-toggle" onclick="toggleRaw()">👁️ Lihat Prompt Lengkap (Raw)</button>
+    <pre class="prompt-raw" id="promptResult"></pre>
+
     <div class="notif-box" id="notifCopy">✅ Prompt berhasil disalin!</div>
-    <button class="btn btn-copy" onclick="copyPrompt()" style="margin-top:10px;">📋 Salin Prompt</button>
-    <div class="ai-btns" style="margin-top:8px;">
+    <button class="btn btn-copy" onclick="copyPrompt()" style="margin-top:10px;">📋 Salin Prompt Lengkap</button>
+
+    <!-- Feedback -->
+    <div class="feedback-bar">
+      <div class="fb-label">Apakah prompt ini berguna?</div>
+      <button class="fb-btn" id="fbUp" onclick="voteFeedback('up')">👍 Ya</button>
+      <button class="fb-btn" id="fbDown" onclick="voteFeedback('down')">👎 Perlu diperbaiki</button>
+    </div>
+
+    <div class="ai-btns" style="margin-top:10px;">
       <button class="btn" style="background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;flex:1;padding:10px;font-size:.85rem;border-radius:9px;" onclick="shareWA()">💬 Share WA</button>
       <button class="btn" style="background:linear-gradient(135deg,#475569,#334155);color:#fff;flex:1;padding:10px;font-size:.85rem;border-radius:9px;" onclick="downloadTxt()">⬇️ Download .txt</button>
     </div>
+    <button class="btn btn-regen" onclick="generate()">🔄 Generate Ulang</button>
+
+    <!-- Panduan paste -->
+    <div class="panduan-box">
+      <div class="panduan-title">💡 Cara Pakai Prompt Ini</div>
+      <ol class="panduan-steps">
+        <li data-n="1">Klik <b>Salin Prompt</b> di atas</li>
+        <li data-n="2">Buka salah satu AI di bawah (Gemini/Claude/Canva)</li>
+        <li data-n="3">Paste prompt → tekan Enter / kirim</li>
+        <li data-n="4">Tunggu AI membuat game → coba mainkan!</li>
+        <li data-n="5">Kalau ada yang kurang, minta AI untuk memperbaiki</li>
+      </ol>
+    </div>
+
     <div style="font-size:.72rem;color:var(--text-light);margin:10px 0 4px;text-align:center;font-weight:600;">Buka di AI favorit kamu:</div>
     <div class="ai-btns">
-      <button class="btn btn-gemini" onclick="window.open('https://gemini.google.com','_blank')">✨ Gemini</button>
-      <button class="btn btn-claude" onclick="window.open('https://claude.ai','_blank')">🟠 Claude</button>
-      <button class="btn btn-canva" onclick="window.open('https://canva.com','_blank')">🎨 Canva</button>
+      <button class="btn" style="background:linear-gradient(135deg,#4285f4,#34a853);color:#fff;flex:1;padding:10px;font-size:.85rem;border-radius:9px;" onclick="window.open('https://gemini.google.com','_blank')">✨ Gemini</button>
+      <button class="btn" style="background:linear-gradient(135deg,#d97706,#b45309);color:#fff;flex:1;padding:10px;font-size:.85rem;border-radius:9px;" onclick="window.open('https://claude.ai','_blank')">🟠 Claude</button>
+      <button class="btn" style="background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;flex:1;padding:10px;font-size:.85rem;border-radius:9px;" onclick="window.open('https://canva.com','_blank')">🎨 Canva AI</button>
+    </div>
+
+    <!-- Cross-link tools BGY -->
+    <div class="cross-link-box">
+      <div class="cl-title">🔗 Tools BGY Lainnya</div>
+      <div class="cl-items">
+        <a class="cl-item" href="https://bantuguruyuk.web.id/soal" target="_blank">📝 Buat Soal</a>
+        <a class="cl-item" href="https://bantuguruyuk.web.id/modul" target="_blank">📖 Modul Ajar</a>
+        <a class="cl-item" href="https://bgybelajar.web.id" target="_blank">📺 Media Belajar</a>
+      </div>
     </div>
   </div>
 
@@ -631,8 +804,8 @@ body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-title">Prompt Game • AI-Assisted Instructional Game Generator</div>
-  <div class="footer-sub">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank">pak.choyy</a> • v1.2.0</div>
+  <div class="footer-title">Buat Prompt Game Interaktif • Bantu Guru Yuk</div>
+  <div class="footer-sub">© 2026 by <a href="https://www.tiktok.com/@pak.choyy" target="_blank">@pak.choyy</a> · v1.3.0 · <a href="https://bantuguruyuk.web.id" target="_blank">bantuguruyuk.web.id</a></div>
 </footer>
 
 <script>
@@ -646,42 +819,102 @@ let selectedMode       = '👤 Individu';
 let selectedAsesmen    = '🤖 AI Menentukan';
 let selectedKondisi    = '🟡 Kemampuan beragam';
 let selectedQC         = '🤖 Otomatis';
+let selectedSoalMode   = 'ai';
 let currentPrompt      = '';
 let deferredPrompt     = null;
+let lastRekomTipe      = '';
 
-// ===== FREE LIMIT (hidden — aktifkan saat promosi selesai) =====
-const LIMIT_KEY     = 'bgy_pg_limit';
-const LIMIT_MAX     = 3;
-const LIMIT_ENABLED = false;
+// ===== FREE LIMIT =====
+const LIMIT_KEY='bgy_pg_limit',LIMIT_MAX=3,LIMIT_ENABLED=false;
+function getLimitData(){try{const d=JSON.parse(localStorage.getItem(LIMIT_KEY)||'{}');const today=new Date().toISOString().slice(0,10);if(d.date!==today)return{date:today,count:0};return d;}catch(e){return{date:new Date().toISOString().slice(0,10),count:0};}}
+function saveLimitData(d){localStorage.setItem(LIMIT_KEY,JSON.stringify(d));}
+function checkLimit(){if(!LIMIT_ENABLED)return true;const d=getLimitData();if(d.count>=LIMIT_MAX){const eb=document.getElementById('errorBox');eb.innerHTML='⚠️ Batas harian FREE tercapai ('+LIMIT_MAX+'x/hari). <a href="https://wa.me/6289530713597" target="_blank" style="color:#dc2626;font-weight:800;">Upgrade PRO →</a>';eb.style.display='block';eb.scrollIntoView({behavior:'smooth',block:'center'});return false;}return true;}
+function incrementLimit(){if(!LIMIT_ENABLED)return;const d=getLimitData();d.count=(d.count||0)+1;saveLimitData(d);}
 
-function getLimitData(){
+// ===== SOCIAL PROOF COUNTER =====
+function initCounter(){
+  const KEY='bgy_pg_total';
+  let n=parseInt(localStorage.getItem(KEY)||'0')||Math.floor(Math.random()*800)+200;
+  document.getElementById('spCount').textContent=n.toLocaleString('id-ID');
+}
+function incrementCounter(){
+  const KEY='bgy_pg_total';
+  let n=parseInt(localStorage.getItem(KEY)||'0')||200;
+  n++;localStorage.setItem(KEY,n);
+  document.getElementById('spCount').textContent=n.toLocaleString('id-ID');
+}
+
+// ===== AUTOSAVE DRAFT =====
+const DRAFT_KEY='bgy_pg_draft';
+function saveDraft(){
+  const d={
+    jenjang:document.getElementById('jenjang').value,
+    kelas:document.getElementById('kelas').value,
+    mapel:document.getElementById('mapel').value,
+    mapelCustom:document.getElementById('mapelCustom').value,
+    materi:document.getElementById('materi').value,
+    tujuan:document.getElementById('tujuan').value,
+    tipe:selectedTipe,jml:selectedJml,gaya:selectedGaya,
+    difficulty:selectedDifficulty,durasi:selectedDurasi,mode:selectedMode,
+    soalMode:selectedSoalMode,soalSendiri:document.getElementById('soalSendiri').value,
+    ts:Date.now()
+  };
+  try{localStorage.setItem(DRAFT_KEY,JSON.stringify(d));}catch(e){}
+}
+function loadDraft(){
   try{
-    const d=JSON.parse(localStorage.getItem(LIMIT_KEY)||'{}');
-    const today=new Date().toISOString().slice(0,10);
-    if(d.date!==today) return {date:today,count:0};
-    return d;
-  }catch(e){return {date:new Date().toISOString().slice(0,10),count:0};}
+    const d=JSON.parse(localStorage.getItem(DRAFT_KEY)||'{}');
+    if(!d.ts||Date.now()-d.ts>86400000*3)return; // max 3 hari
+    if(d.jenjang){
+      document.getElementById('jenjang').value=d.jenjang;
+      onJenjangChange();
+    }
+    if(d.kelas)document.getElementById('kelas').value=d.kelas;
+    if(d.mapel){document.getElementById('mapel').value=d.mapel;handleMapelChange();}
+    if(d.mapelCustom)document.getElementById('mapelCustom').value=d.mapelCustom;
+    if(d.materi)document.getElementById('materi').value=d.materi;
+    if(d.tujuan)document.getElementById('tujuan').value=d.tujuan;
+    if(d.soalSendiri)document.getElementById('soalSendiri').value=d.soalSendiri;
+    if(d.tipe){const tc=document.querySelector(`#tipeGrid .tipe-card[data-val="${d.tipe}"]`);if(tc)selectTipe(tc);}
+    if(d.jml){const jc=document.querySelector(`#jmlGrid .chip[data-val="${d.jml}"]`);if(jc)selectJml(jc);}
+    if(d.gaya){const gc=document.querySelector(`.chip.gaya[data-val="${d.gaya}"]`);if(gc)selectGaya(gc);}
+    if(d.difficulty){const dc=document.querySelector(`.chip.difficulty[data-val="${d.difficulty}"]`);if(dc)selectDifficulty(dc);}
+    if(d.durasi){const dr=document.querySelector(`#durasiGrid .chip[data-val="${d.durasi}"]`);if(dr)selectDurasi(dr);}
+    if(d.mode){const dm=document.querySelector(`.chip.mode[data-val="${d.mode}"]`);if(dm)selectMode(dm);}
+    if(d.soalMode){const sm=document.querySelector(`.chip.soal-mode[data-val="${d.soalMode}"]`);if(sm)selectSoalMode(sm,d.soalMode);}
+    updateRekom();
+  }catch(e){}
 }
-function saveLimitData(d){ localStorage.setItem(LIMIT_KEY,JSON.stringify(d)); }
-function checkLimit(){
-  if(!LIMIT_ENABLED) return true;
-  const d=getLimitData();
-  if(d.count>=LIMIT_MAX){
-    const eb=document.getElementById('errorBox');
-    eb.innerHTML='⚠️ Batas harian FREE tercapai ('+LIMIT_MAX+'x/hari). <a href="https://wa.me/6289530713597" target="_blank" style="color:#dc2626;font-weight:800;">Upgrade PRO →</a>';
-    eb.style.display='block';
-    eb.scrollIntoView({behavior:'smooth',block:'center'});
-    return false;
-  }
-  return true;
+
+// ===== CHAR COUNTER =====
+function countChar(inputId,counterId,max){
+  const el=document.getElementById(inputId);
+  const cel=document.getElementById(counterId);
+  if(!el||!cel)return;
+  const n=el.value.length;
+  cel.textContent=n+'/'+max+' karakter';
+  cel.className='char-counter'+(n>=max?' warn':n>10?' ok':'');
 }
-function incrementLimit(){
-  if(!LIMIT_ENABLED) return;
-  const d=getLimitData();d.count=(d.count||0)+1;saveLimitData(d);
+
+// ===== PROGRESS STEPS =====
+function updateProgress(){
+  const j=document.getElementById('jenjang').value;
+  const k=document.getElementById('kelas').value;
+  const m=document.getElementById('materi').value.trim();
+  const step=(!j||!k||!m)?1:(selectedTipe?3:2);
+  const done=currentPrompt?4:step;
+  [1,2,3,4].forEach(n=>{
+    const el=document.getElementById('ps'+n);
+    const lel=document.getElementById('psl'+n);
+    if(!el)return;
+    el.className='ps-num'+(n<done?' done':n===step?' active':'');
+    lel.className='ps-label'+(n<done?' done':n===step?' active':'');
+    if(n<4){const ll=document.getElementById('psl'+n+(n+1));if(ll)ll.className='ps-line'+(n<done?' done':'');}
+  });
 }
 
 // ===== DATA =====
-const MAPEL_DB = {
+const MAPEL_DB={
   PAUD:['Bahasa Indonesia','Matematika','Seni','PJOK','Lainnya'],
   TK:  ['Bahasa Indonesia','Matematika','Seni','PJOK','Lainnya'],
   SD:  ['Bahasa Indonesia','Matematika','IPAS','Pendidikan Pancasila','Bahasa Inggris','Seni','PJOK','Lainnya'],
@@ -689,19 +922,41 @@ const MAPEL_DB = {
   SMA: ['Bahasa Indonesia','Matematika','Fisika','Kimia','Biologi','Sejarah','Geografi','Ekonomi','Sosiologi','Bahasa Inggris','Pendidikan Pancasila','PJOK','Informatika','Seni Budaya','Lainnya'],
   SMK: ['Matematika','Bahasa Indonesia','Bahasa Inggris','Pendidikan Pancasila','PJOK','Informatika','Mata Pelajaran Kejuruan','Lainnya']
 };
-const KELAS_DB = {
-  PAUD:['Kelompok A','Kelompok B'],
-  TK:  ['TK A','TK B'],
-  SD:  ['Kelas 1','Kelas 2','Kelas 3','Kelas 4','Kelas 5','Kelas 6'],
-  SMP: ['Kelas 7','Kelas 8','Kelas 9'],
-  SMA: ['Kelas 10','Kelas 11','Kelas 12'],
-  SMK: ['Kelas 10','Kelas 11','Kelas 12']
+const KELAS_DB={
+  PAUD:['Kelompok A','Kelompok B'],TK:['TK A','TK B'],
+  SD:['Kelas 1','Kelas 2','Kelas 3','Kelas 4','Kelas 5','Kelas 6'],
+  SMP:['Kelas 7','Kelas 8','Kelas 9'],
+  SMA:['Kelas 10','Kelas 11','Kelas 12'],SMK:['Kelas 10','Kelas 11','Kelas 12']
 };
 
+// ===== TOOLTIP DATA =====
+const TOOLTIP_DATA={
+  'Quiz Mission':{icon:'🧠',sub:'Pilihan Ganda',body:'Soal-soal disajikan sebagai "misi" berurutan. Siswa memilih jawaban dan langsung mendapat feedback. Cocok untuk latihan konsep, pemahaman, dan review materi.',cocok:['SD Kelas 2–6','SMP','Review materi','Latihan soal','Mapel IPA/Matematika']},
+  'Puzzle':{icon:'🧩',sub:'Susun Urutan',body:'Siswa menyusun/mengurutkan elemen untuk membentuk jawaban yang benar. Bisa berupa urutan proses, langkah-langkah, atau menyusun kata/kalimat.',cocok:['SD Kelas 4–6','Materi berurutan','Siklus/proses','Sejarah kronologi']},
+  'Matching':{icon:'🔗',sub:'Cocokkan Pasangan',body:'Siswa mencocokkan dua kolom: istilah dengan definisi, gambar dengan nama, soal dengan jawaban. Interaksi klik/sentuh yang intuitif.',cocok:['PAUD/TK','SD Kelas 1–3','Kosakata','Istilah & definisi','Gambar & nama']},
+  'Adventure':{icon:'🗺️',sub:'Jelajahi Peta',body:'Siswa berperan sebagai tokoh yang menjelajahi peta virtual. Setiap lokasi punya tantangan. Narasi cerita membuat materi terasa hidup.',cocok:['SD Kelas 5–6','SMP','Sejarah','IPS/Geografi','Materi kontekstual']},
+  'Mystery':{icon:'🔍',sub:'Detektif',body:'Siswa berperan sebagai detektif yang memecahkan misteri menggunakan pengetahuan dari materi. Cocok untuk merangsang kemampuan analitis.',cocok:['SD Kelas 6','SMP','SMA','Materi analitis','Sains','Hukum/sosial']},
+  'Challenge':{icon:'⚡',sub:'Level Up',body:'Serangkaian tantangan berjenjang, tingkat kesulitan meningkat per level. Ada sistem nyawa. Sangat memotivasi untuk siswa yang kompetitif.',cocok:['SMP','SMA','SMK','Latihan intensif','Persiapan ujian']},
+  'Case Challenge':{icon:'📋',sub:'Analisis Kasus',body:'Siswa menganalisis skenario nyata lalu mengambil keputusan berbasis materi. Sangat efektif untuk SMA/SMK karena mengaitkan materi ke dunia nyata.',cocok:['SMA','SMK','Kasus nyata','Analisis','Vokasional','HOTS']}
+};
+
+// ===== TOOLTIP =====
+function showTooltip(tipe){
+  const d=TOOLTIP_DATA[tipe];if(!d)return;
+  document.getElementById('ttIcon').textContent=d.icon;
+  document.getElementById('ttTitle').textContent=tipe;
+  document.getElementById('ttSub').textContent=d.sub;
+  document.getElementById('ttBody').textContent=d.body;
+  document.getElementById('ttTags').innerHTML=d.cocok.map(t=>`<span class="tt-tag">${t}</span>`).join('');
+  document.getElementById('tooltipOverlay').classList.add('show');
+}
+function closeTooltip(e){if(e.target===document.getElementById('tooltipOverlay'))closeTooltipBtn();}
+function closeTooltipBtn(){document.getElementById('tooltipOverlay').classList.remove('show');}
+
 // ===== RECOMMENDATION ENGINE =====
-const REKOM = {
+const REKOM={
   PAUD:{game:'Matching',kompleks:'🟢 Sangat Sederhana',interaksi:'👆 Sentuh & Cocokkan',tantangan:'🎯 3 Tantangan',alasan:'Cocok untuk anak usia dini — interaksi mencocokkan visual mudah dipahami tanpa perlu baca teks.'},
-  TK:  {game:'Matching',kompleks:'🟢 Sangat Sederhana',interaksi:'👆 Sentuh & Cocokkan',tantangan:'🎯 3 Tantangan',alasan:'Visual dominan dan interaksi sederhana membuat anak TK lebih fokus dan tidak mudah frustasi.'},
+  TK:  {game:'Matching',kompleks:'🟢 Sangat Sederhana',interaksi:'👆 Sentuh & Cocokkan',tantangan:'🎯 3 Tantangan',alasan:'Visual dominan dan interaksi sederhana membuat anak TK lebih fokus.'},
   SD1: {game:'Matching',kompleks:'🟢 Sederhana',interaksi:'👆 Pilih & Cocokkan',tantangan:'🎯 5 Misi',alasan:'Matching efektif untuk kelas 1 karena mendorong asosiasi konsep lewat gambar dan kata tanpa teks panjang.'},
   SD2: {game:'Quiz Mission',kompleks:'🟢 Sederhana',interaksi:'👆 Pilih Jawaban',tantangan:'🎯 5 Misi',alasan:'Quiz Mission cocok untuk kelas 2 — soal pendek dan umpan balik cepat membuat anak termotivasi.'},
   SD3: {game:'Quiz Mission',kompleks:'🟡 Sedang',interaksi:'👆 Pilih Jawaban',tantangan:'🎯 5 Misi',alasan:'Quiz Mission dengan tantangan bertahap sesuai untuk kelas 3 yang mulai memahami konsep lebih kompleks.'},
@@ -710,10 +965,9 @@ const REKOM = {
   SD6: {game:'Mystery',kompleks:'🟡 Sedang-Tinggi',interaksi:'🔍 Selidiki & Pecahkan',tantangan:'🎯 5 Misi',alasan:'Mystery merangsang kemampuan analitis — kelas 6 sudah siap berpikir tingkat tinggi.'},
   SMP: {game:'Challenge',kompleks:'🟠 Menengah',interaksi:'⚡ Misi & Tantangan',tantangan:'🎯 5–8 Misi',alasan:'Challenge mendorong penyelesaian masalah bertahap dengan tingkat kesulitan yang meningkat.'},
   SMA: {game:'Case Challenge',kompleks:'🔴 Kompleks',interaksi:'📋 Analisis Kasus',tantangan:'🎯 5–8 Kasus',alasan:'Case Challenge memberikan skenario nyata yang merangsang kemampuan analitis dan berpikir kritis SMA.'},
-  SMK: {game:'Case Challenge',kompleks:'🔴 Vokasional',interaksi:'📋 Simulasi Kerja',tantangan:'🎯 5–8 Kasus',alasan:'Simulasi berbasis kasus mengaitkan materi langsung dengan situasi dunia kerja — sangat relevan untuk SMK.'}
+  SMK: {game:'Case Challenge',kompleks:'🔴 Vokasional',interaksi:'📋 Simulasi Kerja',tantangan:'🎯 5–8 Kasus',alasan:'Simulasi berbasis kasus mengaitkan materi langsung dengan situasi dunia kerja.'}
 };
-
-const KEYWORD_MAP = [
+const KEYWORD_MAP=[
   {words:['mencocokkan','pasangan','jenis','kelompok','klasifikasi','menjodohkan','tabel periodik','unsur','senyawa','organel','jaring makanan'],game:'Matching'},
   {words:['menghitung','operasi','penjumlahan','pengurangan','perkalian','pembagian','aritmatika','bilangan','persamaan','integral','turunan','statistik','peluang','trigonometri'],game:'Quiz Mission'},
   {words:['proses','urutan','susun','langkah','tahap','siklus','kronologi','reaksi','metabolisme','fotosintesis','mitosis','meiosis'],game:'Puzzle'},
@@ -729,13 +983,13 @@ function getRekom(){
   const m=(document.getElementById('materi').value||'').toLowerCase();
   const tj=(document.getElementById('tujuan').value||'').toLowerCase();
   const mapelVal=(document.getElementById('mapel').value||'').toLowerCase();
-  if(!j||!k) return null;
+  if(!j||!k)return null;
   let key=j;
   if(j==='SD'){const n=k.match(/\d+/);key='SD'+(n?n[0]:'2');}
   let base={...(REKOM[key]||REKOM.SD2)};
-  if(['fisika','kimia','biologi','ipa','ipas'].some(mp=>mapelVal.includes(mp))) base={...base,game:'Quiz Mission'};
-  if(['sejarah','ips','geografi','sosiologi'].some(mp=>mapelVal.includes(mp))) base={...base,game:'Adventure'};
-  if(['kejuruan','informatika'].some(mp=>mapelVal.includes(mp))&&(j==='SMA'||j==='SMK')) base={...base,game:'Case Challenge'};
+  if(['fisika','kimia','biologi','ipa','ipas'].some(mp=>mapelVal.includes(mp)))base={...base,game:'Quiz Mission'};
+  if(['sejarah','ips','geografi','sosiologi'].some(mp=>mapelVal.includes(mp)))base={...base,game:'Adventure'};
+  if(['kejuruan','informatika'].some(mp=>mapelVal.includes(mp))&&(j==='SMA'||j==='SMK'))base={...base,game:'Case Challenge'};
   const combined=m+' '+tj;
   for(const kw of KEYWORD_MAP){if(kw.words.some(w=>combined.includes(w))){base={...base,game:kw.game};break;}}
   return base;
@@ -743,18 +997,26 @@ function getRekom(){
 
 function updateRekom(){
   const r=getRekom();
+  saveDraft();
   if(!r){document.getElementById('rekomCard').style.display='none';return;}
+  lastRekomTipe=r.game;
   document.getElementById('rekomCard').style.display='block';
-  document.getElementById('rekomGame').textContent=r.game;
+  document.getElementById('rekomGame').textContent='🎮 '+r.game;
   document.getElementById('rekomAlasan').textContent=r.alasan;
-  document.getElementById('rekomChips').innerHTML=`
-    <span class="rekom-chip green">${r.kompleks}</span>
-    <span class="rekom-chip blue">${r.interaksi}</span>
-    <span class="rekom-chip orange">${r.tantangan}</span>`;
-  if(!selectedTipe){
+  document.getElementById('rekomChips').innerHTML=[
+    {cls:'green',v:r.kompleks},{cls:'blue',v:r.interaksi},{cls:'orange',v:r.tantangan}
+  ].map(c=>`<span class="rekom-chip ${c.cls}">${c.v}</span>`).join('');
+  if(selectedTipe===''&&r.game){
     const card=document.querySelector(`#tipeGrid .tipe-card[data-val="${r.game}"]`);
-    if(card) selectTipe(card);
+    if(card)selectTipe(card);
   }
+  updateProgress();
+}
+
+function pakaiRekom(){
+  if(!lastRekomTipe)return;
+  const card=document.querySelector(`#tipeGrid .tipe-card[data-val="${lastRekomTipe}"]`);
+  if(card){selectTipe(card);card.scrollIntoView({behavior:'smooth',block:'center'});}
 }
 
 // ===== JENJANG / KELAS / MAPEL =====
@@ -769,21 +1031,20 @@ function onJenjangChange(){
   selectedTipe='';
   document.querySelectorAll('#tipeGrid .tipe-card').forEach(c=>c.classList.remove('selected'));
   updateAccSummary();
-  if(!j) return;
+  if(!j)return;
   (KELAS_DB[j]||[]).forEach(k=>ke.innerHTML+=`<option>${k}</option>`);
   (MAPEL_DB[j]||[]).forEach(m=>ma.innerHTML+=`<option>${m}</option>`);
-  // Default gaya per jenjang
   const gd=(j==='PAUD'||j==='TK'||j==='SD')?'🌈 Ceria Anak':(j==='SMP'?'🎨 Cartoon':'🧩 Flat Modern');
   document.querySelectorAll('.chip.gaya').forEach(c=>c.classList.remove('selected'));
   const gc=document.querySelector(`.chip.gaya[data-val="${gd}"]`);
   if(gc){gc.classList.add('selected');selectedGaya=gd;}
-  // Default difficulty per jenjang
   let dd='✨ AI Menentukan';
-  if(j==='PAUD'||j==='TK') dd='🟢 Mudah';
-  else if(j==='SD') dd='🟡 Sedang';
+  if(j==='PAUD'||j==='TK')dd='🟢 Mudah';
+  else if(j==='SD')dd='🟡 Sedang';
   document.querySelectorAll('.chip.difficulty').forEach(c=>c.classList.remove('selected'));
   const dc=document.querySelector(`.chip.difficulty[data-val="${dd}"]`);
   if(dc){dc.classList.add('selected');selectedDifficulty=dd;}
+  saveDraft();updateProgress();
 }
 
 function handleMapelChange(){
@@ -797,93 +1058,79 @@ function selectTipe(el){
   document.querySelectorAll('#tipeGrid .tipe-card').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected');selectedTipe=el.dataset.val;
   document.getElementById('tipeCustomWrap').style.display=selectedTipe==='__custom__'?'flex':'none';
-  if(selectedTipe==='__custom__') document.getElementById('tipeCustomWrap').style.flexDirection='column';
+  if(selectedTipe==='__custom__')document.getElementById('tipeCustomWrap').style.flexDirection='column';
+  saveDraft();updateProgress();
 }
 function toggleAccordion(){
   const h=document.querySelector('.accordion-header');
   const b=document.getElementById('accBody');
-  h.classList.toggle('open');
-  b.classList.toggle('open');
+  h.classList.toggle('open');b.classList.toggle('open');
 }
 function updateAccSummary(){
   const parts=[];
-  if(selectedJml!=='5'&&selectedJml!=='__custom__') parts.push(selectedJml+' tantangan');
+  if(selectedMode!=='👤 Individu')parts.push(selectedMode.replace(/[^\w\s]/gu,'').trim());
+  if(selectedDifficulty!=='✨ AI Menentukan')parts.push(selectedDifficulty.replace(/[^\w\s]/gu,'').trim());
+  if(selectedJml!=='5'&&selectedJml!=='__custom__')parts.push(selectedJml+' tantangan');
   else if(selectedJml==='__custom__'){const v=document.getElementById('jmlCustom').value;if(v)parts.push(v+' tantangan');}
-  if(selectedDifficulty!=='✨ AI Menentukan') parts.push(selectedDifficulty.replace(/[^\w\s]/gu,'').trim());
-  if(selectedDurasi!=='🤖 AI Menentukan') parts.push(selectedDurasi);
-  if(selectedMode!=='👤 Individu') parts.push(selectedMode.replace(/[^\w\s]/gu,'').trim());
-  if(selectedGaya&&selectedGaya!=='✨ AI Memilih') parts.push(selectedGaya.replace(/[^\w\s]/gu,'').trim());
-  const el=document.getElementById('accSummary');
-  el.textContent=parts.length?parts.join(' · '):'5 opsi · semua auto';
+  if(selectedDurasi!=='🤖 AI Menentukan')parts.push(selectedDurasi);
+  if(selectedGaya&&selectedGaya!=='✨ AI Memilih')parts.push(selectedGaya.replace(/[^\w\s]/gu,'').trim());
+  document.getElementById('accSummary').textContent=parts.length?parts.join(' · '):'semua auto';
 }
 function selectJml(el){
   document.querySelectorAll('#jmlGrid .chip').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected');selectedJml=el.dataset.val;
   document.getElementById('jmlCustomWrap').style.display=selectedJml==='__custom__'?'block':'none';
-  updateAccSummary();
+  updateAccSummary();saveDraft();
 }
 function selectGaya(el){
   document.querySelectorAll('.chip.gaya').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected');selectedGaya=el.dataset.val;
-  updateAccSummary();
+  updateAccSummary();saveDraft();
 }
 function selectDifficulty(el){
   document.querySelectorAll('.chip.difficulty').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected');selectedDifficulty=el.dataset.val;
-  updateAccSummary();
+  updateAccSummary();saveDraft();
 }
 function selectDurasi(el){
   document.querySelectorAll('#durasiGrid .chip').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected');selectedDurasi=el.dataset.val;
   document.getElementById('durasiCustomWrap').style.display=selectedDurasi==='__custom__'?'block':'none';
-  updateAccSummary();
+  updateAccSummary();saveDraft();
 }
 function selectMode(el){
   document.querySelectorAll('.chip.mode').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected');selectedMode=el.dataset.val;
-  updateAccSummary();
+  updateAccSummary();saveDraft();
 }
-function selectAsesmen(el){
-  document.querySelectorAll('.chip.asesmen').forEach(c=>c.classList.remove('selected'));
-  el.classList.add('selected');selectedAsesmen=el.dataset.val;
-}
-function selectKondisi(el){
-  document.querySelectorAll('.chip.kondisi').forEach(c=>c.classList.remove('selected'));
-  el.classList.add('selected');selectedKondisi=el.dataset.val;
-}
-function selectQC(el){
-  document.querySelectorAll('.chip.qc').forEach(c=>c.classList.remove('selected'));
-  el.classList.add('selected');selectedQC=el.dataset.val;
+function selectAsesmen(el){document.querySelectorAll('.chip.asesmen').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');selectedAsesmen=el.dataset.val;}
+function selectKondisi(el){document.querySelectorAll('.chip.kondisi').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');selectedKondisi=el.dataset.val;}
+function selectQC(el){document.querySelectorAll('.chip.qc').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');selectedQC=el.dataset.val;}
+function selectSoalMode(el,val){
+  document.querySelectorAll('.chip.soal-mode').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');selectedSoalMode=val;
+  document.getElementById('soalSendiriWrap').style.display=val==='sendiri'?'block':'none';
+  saveDraft();
 }
 
-// ===== VALIDATE CUSTOM JML =====
 function validateJmlCustom(el){
   const v=parseInt(el.value);
-  const errEl=document.getElementById('jmlCustomError');
-  if(isNaN(v)||v<1||v>20) errEl.style.display='block';
-  else errEl.style.display='none';
+  document.getElementById('jmlCustomError').style.display=(isNaN(v)||v<1||v>20)?'block':'none';
 }
 
 // ===== VALIDATE FORM =====
 function validate(){
   const e=[];
-  if(!document.getElementById('jenjang').value) e.push('Jenjang');
-  if(!document.getElementById('kelas').value) e.push('Kelas');
+  if(!document.getElementById('jenjang').value)e.push('Jenjang');
+  if(!document.getElementById('kelas').value)e.push('Kelas');
   const mv=document.getElementById('mapel').value;
-  if(!mv) e.push('Mata Pelajaran');
-  else if(mv==='Lainnya'&&!document.getElementById('mapelCustom').value.trim()) e.push('Nama Mata Pelajaran');
-  if(!document.getElementById('materi').value.trim()) e.push('Materi Pembelajaran');
-  if(!document.getElementById('tujuan').value.trim()) e.push('Tujuan Pembelajaran');
-  if(!selectedTipe) e.push('Tipe Game');
-  if(selectedTipe==='__custom__'&&!document.getElementById('tipeCustom').value.trim()) e.push('Tipe Game kustom');
-  if(selectedJml==='__custom__'){
-    const v=parseInt(document.getElementById('jmlCustom').value);
-    if(isNaN(v)||v<1||v>20) e.push('Jumlah Tantangan (masukkan 1–20)');
-  }
-  if(selectedDurasi==='__custom__'){
-    const v=parseInt(document.getElementById('durasiCustom').value);
-    if(isNaN(v)||v<1||v>120) e.push('Durasi custom (masukkan 1–120 menit)');
-  }
+  if(!mv)e.push('Mata Pelajaran');
+  else if(mv==='Lainnya'&&!document.getElementById('mapelCustom').value.trim())e.push('Nama Mata Pelajaran');
+  if(!document.getElementById('materi').value.trim())e.push('Materi Pembelajaran');
+  if(!selectedTipe)e.push('Tipe Game');
+  if(selectedTipe==='__custom__'&&!document.getElementById('tipeCustom').value.trim())e.push('Deskripsi tipe game kustom');
+  if(selectedJml==='__custom__'){const v=parseInt(document.getElementById('jmlCustom').value);if(isNaN(v)||v<1||v>20)e.push('Jumlah Tantangan (1–20)');}
+  if(selectedDurasi==='__custom__'){const v=parseInt(document.getElementById('durasiCustom').value);if(isNaN(v)||v<1||v>120)e.push('Durasi custom (1–120 menit)');}
   return e;
 }
 
@@ -897,169 +1144,85 @@ function generate(){
     eb.scrollIntoView({behavior:'smooth',block:'center'});
     return;
   }
-  if(!checkLimit()) return;
+  if(!checkLimit())return;
   eb.style.display='none';
+  document.getElementById('fbUp').classList.remove('voted');
+  document.getElementById('fbDown').classList.remove('voted');
   const ov=document.getElementById('generateOverlay');
   ov.style.display='flex';
   const msgs=[
     '🧠 Menganalisis kebutuhan pembelajaran...',
     '🎮 Menentukan konsep game...',
     '🎯 Menyesuaikan pedagogi & kesulitan...',
-    '🎨 Menyiapkan BGY Design System...',
-    '🛡️ Menyusun Quality Control...',
-    '📝 Menyusun Master Prompt...'
+    '🎨 Memilih gaya visual terbaik...',
+    '🛡️ Menyusun quality control...',
+    '📝 Menyusun prompt siap pakai...'
   ];
   let i=0;const me=document.getElementById('goMsg');me.textContent=msgs[0];
   const iv=setInterval(()=>{i=(i+1)%msgs.length;me.textContent=msgs[i];},800);
   setTimeout(()=>{clearInterval(iv);ov.style.display='none';buildPrompt();},2400);
 }
 
-function getJml(){
-  if(selectedJml==='__custom__'){const v=parseInt(document.getElementById('jmlCustom').value)||5;return Math.min(20,Math.max(1,v));}
-  return selectedJml||5;
-}
-function getTipe(){
-  if(selectedTipe==='__custom__') return document.getElementById('tipeCustom').value.trim();
-  return selectedTipe;
-}
-function getMapel(){
-  const v=document.getElementById('mapel').value;
-  if(v==='Lainnya') return document.getElementById('mapelCustom').value.trim()||'Mata Pelajaran';
-  return v;
-}
-function getDurasi(){
-  if(selectedDurasi==='__custom__'){const v=parseInt(document.getElementById('durasiCustom').value)||10;return v+' menit';}
-  return selectedDurasi;
-}
+function getJml(){if(selectedJml==='__custom__'){const v=parseInt(document.getElementById('jmlCustom').value)||5;return Math.min(20,Math.max(1,v));}return selectedJml||5;}
+function getTipe(){if(selectedTipe==='__custom__')return document.getElementById('tipeCustom').value.trim();return selectedTipe;}
+function getMapel(){const v=document.getElementById('mapel').value;if(v==='Lainnya')return document.getElementById('mapelCustom').value.trim()||'Mata Pelajaran';return v;}
+function getDurasi(){if(selectedDurasi==='__custom__'){const v=parseInt(document.getElementById('durasiCustom').value)||10;return v+' menit';}return selectedDurasi;}
 
 // ===== PROMPT TIPE ENGINE =====
-const PROMPT_TIPE = {
+const PROMPT_TIPE={
   'Quiz Mission':{
-    mekanik:`MEKANIK — QUIZ MISSION
-Struktur: soal-soal yang disajikan sebagai "misi" berurutan dengan pilihan jawaban.
-Alur per misi:
-  1. Tampilkan soal + 3–4 pilihan jawaban
-  2. Siswa memilih → feedback langsung (✅ Benar! + penjelasan / ❌ Salah, jawaban benar adalah...)
-  3. Lanjut ke misi berikutnya
-  4. Setelah semua selesai → hasil akhir + skor + learning feedback
-Elemen gamifikasi: progress bar misi, bintang per misi, skor total di akhir.`,
-    struktur:`1. Cover — judul "Quiz Mission: [Materi]", tombol Mulai
-2. Petunjuk Singkat — cara bermain 3 poin
-3. Misi 1 s.d. N — soal + pilihan jawaban + feedback + penjelasan + progress
-4. Hasil Akhir — total bintang, skor, akurasi, learning feedback, pesan motivasi, tombol Ulangi`
+    mekanik:`MEKANIK — QUIZ MISSION\nStruktur: soal-soal yang disajikan sebagai "misi" berurutan dengan pilihan jawaban.\nAlur per misi:\n  1. Tampilkan soal + 3–4 pilihan jawaban\n  2. Siswa memilih → feedback langsung (✅ Benar! + penjelasan / ❌ Salah, jawaban benar adalah...)\n  3. Lanjut ke misi berikutnya\n  4. Setelah semua selesai → hasil akhir + skor + learning feedback\nElemen gamifikasi: progress bar misi, bintang per misi, skor total di akhir.`,
+    struktur:`1. Cover — judul "Quiz Mission: [Materi]", tombol Mulai\n2. Petunjuk Singkat — cara bermain 3 poin\n3. Misi 1 s.d. N — soal + pilihan jawaban + feedback + penjelasan + progress\n4. Hasil Akhir — total bintang, skor, akurasi, learning feedback, pesan motivasi, tombol Ulangi`
   },
   'Puzzle':{
-    mekanik:`MEKANIK — PUZZLE
-Struktur: siswa menyusun/mengurutkan elemen untuk membentuk jawaban yang benar.
-Variasi: puzzle urutan (susun langkah/proses), puzzle kata (susun huruf/kata), puzzle konsep.
-Alur: tampilkan puzzle acak → siswa menyusun → cek jawaban → feedback → lanjut.
-Elemen gamifikasi: progress tahap, hint terbatas (maks 2x per tahap), skor berdasarkan ketepatan.`,
-    struktur:`1. Cover — judul "Puzzle: [Materi]", tombol Mulai
-2. Petunjuk — cara menyusun, cara menggunakan hint
-3. Tahap 1 s.d. N — puzzle + drag/klik untuk menyusun + tombol Cek + feedback + penjelasan
-4. Hasil Akhir — skor, tahap berhasil, learning feedback, tombol Ulangi`
+    mekanik:`MEKANIK — PUZZLE\nStruktur: siswa menyusun/mengurutkan elemen untuk membentuk jawaban yang benar.\nVariasi: puzzle urutan (susun langkah/proses), puzzle kata (susun huruf/kata), puzzle konsep.\nAlur: tampilkan puzzle acak → siswa menyusun → cek jawaban → feedback → lanjut.\nElemen gamifikasi: progress tahap, hint terbatas (maks 2x per tahap), skor berdasarkan ketepatan.`,
+    struktur:`1. Cover — judul "Puzzle: [Materi]", tombol Mulai\n2. Petunjuk — cara menyusun, cara menggunakan hint\n3. Tahap 1 s.d. N — puzzle + drag/klik untuk menyusun + tombol Cek + feedback + penjelasan\n4. Hasil Akhir — skor, tahap berhasil, learning feedback, tombol Ulangi`
   },
   'Matching':{
-    mekanik:`MEKANIK — MATCHING
-Struktur: mencocokkan dua kolom (istilah–definisi, gambar–nama, soal–jawaban).
-Alur:
-  1. Tampilkan kolom kiri & kanan dalam urutan acak
-  2. Siswa klik item kiri → pilih pasangannya di kanan
-  3. Benar → terkunci + warna hijau; Salah → bergetar + warna merah, bisa dicoba ulang
-  4. Selesai saat semua cocok
-Visual: gunakan garis penghubung animasi antara pasangan yang cocok.`,
-    struktur:`1. Cover — judul "Matching: [Materi]", tombol Mulai
-2. Petunjuk — cara mencocokkan
-3. Ronde 1 s.d. N — set pasangan berbeda + feedback + skor
-4. Hasil Akhir — akurasi, skor, learning feedback, tombol Ulangi`
+    mekanik:`MEKANIK — MATCHING\nStruktur: mencocokkan dua kolom (istilah–definisi, gambar–nama, soal–jawaban).\nAlur:\n  1. Tampilkan kolom kiri & kanan dalam urutan acak\n  2. Siswa klik item kiri → pilih pasangannya di kanan\n  3. Benar → terkunci + warna hijau; Salah → bergetar + warna merah, bisa dicoba ulang\n  4. Selesai saat semua cocok\nVisual: gunakan garis penghubung animasi antara pasangan yang cocok.`,
+    struktur:`1. Cover — judul "Matching: [Materi]", tombol Mulai\n2. Petunjuk — cara mencocokkan\n3. Ronde 1 s.d. N — set pasangan berbeda + feedback + skor\n4. Hasil Akhir — akurasi, skor, learning feedback, tombol Ulangi`
   },
   'Adventure':{
-    mekanik:`MEKANIK — ADVENTURE
-Struktur: siswa berperan sebagai tokoh yang menjelajahi peta/dunia virtual sambil menyelesaikan tantangan.
-Alur:
-  1. Perkenalan tokoh & setting cerita yang relevan dengan materi
-  2. Setiap "lokasi" di peta punya tantangan/soal
-  3. Selesaikan tantangan → buka lokasi berikutnya
-  4. Kumpulkan item/poin sepanjang perjalanan
-Narasi: hubungkan materi ke konteks cerita secara natural.`,
-    struktur:`1. Cover — judul petualangan, pengenalan tokoh
-2. Peta/Overview — tampilkan rute perjalanan, lokasi yang bisa dikunjungi
-3. Lokasi 1 s.d. N — narasi singkat + tantangan + reward item/poin + feedback
-4. Final Tantangan — tantangan gabungan
-5. Penutup Cerita — resolusi narasi + skor + learning feedback + tombol Ulangi`
+    mekanik:`MEKANIK — ADVENTURE\nStruktur: siswa berperan sebagai tokoh yang menjelajahi peta/dunia virtual sambil menyelesaikan tantangan.\nAlur:\n  1. Perkenalan tokoh & setting cerita yang relevan dengan materi\n  2. Setiap "lokasi" di peta punya tantangan/soal\n  3. Selesaikan tantangan → buka lokasi berikutnya\n  4. Kumpulkan item/poin sepanjang perjalanan\nNarasi: hubungkan materi ke konteks cerita secara natural.`,
+    struktur:`1. Cover — judul petualangan, pengenalan tokoh\n2. Peta/Overview — tampilkan rute perjalanan, lokasi yang bisa dikunjungi\n3. Lokasi 1 s.d. N — narasi singkat + tantangan + reward item/poin + feedback\n4. Final Tantangan — tantangan gabungan\n5. Penutup Cerita — resolusi narasi + skor + learning feedback + tombol Ulangi`
   },
   'Mystery':{
-    mekanik:`MEKANIK — MYSTERY
-Struktur: siswa berperan sebagai detektif yang memecahkan misteri menggunakan pengetahuan dari materi.
-Alur:
-  1. Presentasi "kasus" yang konteksnya berkaitan dengan materi
-  2. Siswa mengumpulkan "petunjuk" dengan menjawab soal
-  3. Setiap jawaban benar membuka petunjuk baru
-  4. Di akhir, siswa menyimpulkan/memilih solusi berdasarkan petunjuk
-  5. Reveal jawaban + penjelasan
-Elemen: papan petunjuk, notebook virtual, moodboard misteri.`,
-    struktur:`1. Cover — "Kasus: [Materi]", pengenalan misteri
-2. Briefing — latar belakang kasus, misi detektif
-3. Investigasi Adegan 1 s.d. N — soal untuk membuka petunjuk + feedback
-4. Ruang Analisis — susun petunjuk, pilih kesimpulan
-5. Reveal & Penutup — jawaban kasus, learning feedback, badge detektif, tombol Ulangi`
+    mekanik:`MEKANIK — MYSTERY\nStruktur: siswa berperan sebagai detektif yang memecahkan misteri menggunakan pengetahuan dari materi.\nAlur:\n  1. Presentasi "kasus" yang konteksnya berkaitan dengan materi\n  2. Siswa mengumpulkan "petunjuk" dengan menjawab soal\n  3. Setiap jawaban benar membuka petunjuk baru\n  4. Di akhir, siswa menyimpulkan/memilih solusi berdasarkan petunjuk\n  5. Reveal jawaban + penjelasan\nElemen: papan petunjuk, notebook virtual, moodboard misteri.`,
+    struktur:`1. Cover — "Kasus: [Materi]", pengenalan misteri\n2. Briefing — latar belakang kasus, misi detektif\n3. Investigasi Adegan 1 s.d. N — soal untuk membuka petunjuk + feedback\n4. Ruang Analisis — susun petunjuk, pilih kesimpulan\n5. Reveal & Penutup — jawaban kasus, learning feedback, badge detektif, tombol Ulangi`
   },
   'Challenge':{
-    mekanik:`MEKANIK — CHALLENGE
-Struktur: serangkaian tantangan berjenjang dengan tingkat kesulitan meningkat.
-Alur:
-  1. Mulai dari Level 1 (mudah) → Level N (sulit)
-  2. Setiap level punya 1–3 soal/tantangan
-  3. Lulus level → buka level berikutnya
-  4. Ada sistem nyawa/kesempatan (3 kesempatan)
-  5. Habis nyawa → restart dari checkpoint
-Elemen gamifikasi: progress bar level, animasi naik level, badge pencapaian.`,
-    struktur:`1. Cover — "Challenge: [Materi]", pilih difficulty
-2. Level 1 s.d. N — tantangan bertahap + timer opsional + nyawa + feedback
-3. Level Up Screen — animasi naik level, motivasi
-4. Game Over / Complete — skor final, learning feedback, badge, tombol Coba Lagi`
+    mekanik:`MEKANIK — CHALLENGE\nStruktur: serangkaian tantangan berjenjang dengan tingkat kesulitan meningkat.\nAlur:\n  1. Mulai dari Level 1 (mudah) → Level N (sulit)\n  2. Setiap level punya 1–3 soal/tantangan\n  3. Lulus level → buka level berikutnya\n  4. Ada sistem nyawa/kesempatan (3 kesempatan)\n  5. Habis nyawa → restart dari checkpoint\nElemen gamifikasi: progress bar level, animasi naik level, badge pencapaian.`,
+    struktur:`1. Cover — "Challenge: [Materi]", pilih difficulty\n2. Level 1 s.d. N — tantangan bertahap + timer opsional + nyawa + feedback\n3. Level Up Screen — animasi naik level, motivasi\n4. Game Over / Complete — skor final, learning feedback, badge, tombol Coba Lagi`
   },
   'Case Challenge':{
-    mekanik:`MEKANIK — CASE CHALLENGE
-Struktur: siswa menganalisis skenario nyata lalu mengambil keputusan berbasis materi.
-Alur:
-  1. Presentasi kasus/skenario (teks + visual pendukung)
-  2. Beberapa pertanyaan analisis tentang kasus
-  3. Siswa memilih jawaban/rekomendasi
-  4. Feedback menjelaskan mengapa tepat/tidak tepat dengan referensi konsep
-  5. Lanjut ke kasus berikutnya
-Cocok untuk SMA/SMK, materi yang berkaitan dengan situasi dunia nyata.`,
-    struktur:`1. Cover — "Case Challenge: [Materi]", konteks skenario
-2. Pengantar Kasus — latar belakang + data/informasi pendukung
-3. Kasus 1 s.d. N — skenario + pertanyaan analisis + pilihan jawaban + feedback mendalam
-4. Kesimpulan & Refleksi — learning feedback lengkap, skor analitis, rekomendasi belajar lanjut`
+    mekanik:`MEKANIK — CASE CHALLENGE\nStruktur: siswa menganalisis skenario nyata lalu mengambil keputusan berbasis materi.\nAlur:\n  1. Presentasi kasus/skenario (teks + visual pendukung)\n  2. Beberapa pertanyaan analisis tentang kasus\n  3. Siswa memilih jawaban/rekomendasi\n  4. Feedback menjelaskan mengapa tepat/tidak tepat dengan referensi konsep\n  5. Lanjut ke kasus berikutnya\nCocok untuk SMA/SMK, materi yang berkaitan dengan situasi dunia nyata.`,
+    struktur:`1. Cover — "Case Challenge: [Materi]", konteks skenario\n2. Pengantar Kasus — latar belakang + data/informasi pendukung\n3. Kasus 1 s.d. N — skenario + pertanyaan analisis + pilihan jawaban + feedback mendalam\n4. Kesimpulan & Refleksi — learning feedback lengkap, skor analitis, rekomendasi belajar lanjut`
   }
 };
 
 // ===== BUILD PROMPT =====
 function buildPrompt(){
-  const jenjang  = document.getElementById('jenjang').value;
-  const kelas    = document.getElementById('kelas').value;
-  const mapel    = getMapel();
-  const materi   = document.getElementById('materi').value.trim();
-  const tujuan   = document.getElementById('tujuan').value.trim();
-  const sumber   = document.getElementById('sumber').value.trim();
-  const tipe     = getTipe();
-  const jml      = getJml();
-  const gaya     = selectedGaya||'✨ AI Memilih';
-  const difficulty = selectedDifficulty;
-  const durasi   = getDurasi();
-  const mode     = selectedMode;
-  const asesmen  = selectedAsesmen;
-  const kondisi  = selectedKondisi;
-  const qc       = selectedQC;
+  const jenjang=document.getElementById('jenjang').value;
+  const kelas=document.getElementById('kelas').value;
+  const mapel=getMapel();
+  const materi=document.getElementById('materi').value.trim();
+  const tujuan=document.getElementById('tujuan').value.trim();
+  const tipe=getTipe();
+  const jml=getJml();
+  const gaya=selectedGaya||'✨ AI Memilih';
+  const difficulty=selectedDifficulty;
+  const durasi=getDurasi();
+  const mode=selectedMode;
+  const asesmen=selectedAsesmen;
+  const kondisi=selectedKondisi;
+  const qc=selectedQC;
+  const soalSendiri=selectedSoalMode==='sendiri'?document.getElementById('soalSendiri').value.trim():'';
 
-  // ─── Adaptasi usia ───
   const usiaMap={
     PAUD:'Anak 3–5 tahun. Teks SANGAT minimal (maks 5 kata per instruksi), visual dominan, tombol SANGAT besar (min 60px), satu interaksi per layar, TANPA timer, feedback audio menyenangkan, warna sangat cerah.',
     TK:  'Anak 5–6 tahun. Teks sedikit, visual kuat dengan gambar/emoji besar, tombol besar, interaksi sederhana, tanpa timer ketat, reward bintang/emoji.'
   };
-  let usiaNote = usiaMap[jenjang]||'';
+  let usiaNote=usiaMap[jenjang]||'';
   if(!usiaNote){
     const n=kelas.match(/\d+/);const num=n?parseInt(n[0]):0;
     if(num<=2)      usiaNote='Kelas rendah SD (6–8 tahun). Teks pendek, tombol besar, visual kuat, bahasa sangat sederhana, reward emoji/bintang tiap langkah.';
@@ -1069,96 +1232,62 @@ function buildPrompt(){
     else usiaNote='SMA/SMK (15–18 tahun). Skenario dunia nyata, analisis kasus, problem solving, visual clean & modern, boleh branching sederhana.';
   }
 
-  // ─── Gaya visual ───
   const gayaMap={
-    '🌈 Ceria Anak': 'Warna sangat cerah (merah, kuning, hijau, biru), karakter lucu/kartun, animasi ringan, elemen visual mendominasi teks.',
-    '📚 Storybook':  'Gaya ilustrasi buku cerita, warna hangat (krem, coklat muda, oranye pastel), elemen bingkai buku, font rounded friendly.',
-    '🎨 Cartoon':    'Gaya kartun modern, outline tegas, warna vibrant, karakter ekspresif, efek komik ringan.',
+    '🌈 Ceria Anak':'Warna sangat cerah (merah, kuning, hijau, biru), karakter lucu/kartun, animasi ringan, elemen visual mendominasi teks.',
+    '📚 Storybook': 'Gaya ilustrasi buku cerita, warna hangat (krem, coklat muda, oranye pastel), elemen bingkai buku, font rounded friendly.',
+    '🎨 Cartoon':   'Gaya kartun modern, outline tegas, warna vibrant, karakter ekspresif, efek komik ringan.',
     '🧩 Flat Modern':'Desain flat minimalis, icon simple, warna teal (#0EA5A0) dan amber (#F59E0B) dari BGY Design System, clean & profesional.',
-    '✨ AI Memilih':  'Pilih gaya visual yang PALING SESUAI dengan usia, jenjang, dan materi. Prioritaskan keterbacaan dan kenyamanan visual siswa.'
+    '🕹️ Pixel Art / Retro':'Estetika pixel art 8-bit/16-bit, warna terbatas tapi vibrant, font pixel, elemen retro game (health bar, score counter klasik), nostalgic feel.',
+    '🌿 Nature / Alam':'Palet warna alam (hijau, coklat, biru langit), elemen daun/pohon/air, tekstur organik, nuansa segar dan menenangkan.',
+    '🏰 Fantasy / Petualangan':'Tema dunia fantasi, warna kaya (ungu, emas, hijau tua), elemen kastil/peta/harta karun, tipografi dramatis.',
+    '🤖 Futuristik / Sci-Fi':'Desain futuristik, warna gelap dengan aksen neon (cyan, ungu, biru), elemen hologram/grid/circuit, vibes teknologi tinggi.',
+    '✨ AI Memilih': 'Pilih gaya visual yang PALING SESUAI dengan usia, jenjang, dan materi. Prioritaskan keterbacaan dan kenyamanan visual siswa.'
   };
 
-  // ─── Tipe prompt engine ───
-  const tplKey = Object.keys(PROMPT_TIPE).find(k=>tipe.toLowerCase().includes(k.toLowerCase()))||null;
-  const tpl = tplKey ? PROMPT_TIPE[tplKey] : null;
-  const tipeSection = tpl ? `${tpl.mekanik}\n\nSTRUKTUR HALAMAN WAJIB\n${tpl.struktur}` :
-`MEKANIK — ${tipe.toUpperCase()}
-Buat game dengan konsep "${tipe}". Implementasikan mekanik yang paling sesuai dengan konsep tersebut,
-jenjang ${jenjang} ${kelas}, dan materi "${materi}". Pastikan setiap tantangan relevan dengan tujuan pembelajaran.
+  const tplKey=Object.keys(PROMPT_TIPE).find(k=>tipe.toLowerCase().includes(k.toLowerCase()))||null;
+  const tpl=tplKey?PROMPT_TIPE[tplKey]:null;
+  const tipeSection=tpl?`${tpl.mekanik}\n\nSTRUKTUR HALAMAN WAJIB\n${tpl.struktur}`:
+`MEKANIK — ${tipe.toUpperCase()}\nBuat game dengan konsep "${tipe}". Implementasikan mekanik yang paling sesuai dengan konsep tersebut, jenjang ${jenjang} ${kelas}, dan materi "${materi}". Pastikan setiap tantangan relevan dengan tujuan pembelajaran.\n\nSTRUKTUR HALAMAN WAJIB\n1. Cover — judul game, tombol Mulai\n2. Petunjuk — cara bermain singkat\n3. Tantangan 1 s.d. ${jml} — konten pembelajaran + interaksi + feedback + penjelasan\n4. Hasil Akhir — skor, learning feedback, motivasi, tombol Ulangi`;
 
-STRUKTUR HALAMAN WAJIB
-1. Cover — judul game, tombol Mulai
-2. Petunjuk — cara bermain singkat
-3. Tantangan 1 s.d. ${jml} — konten pembelajaran + interaksi + feedback + penjelasan
-4. Hasil Akhir — skor, learning feedback, motivasi, tombol Ulangi`;
-
-  // ─── Difficulty instruction ───
   const diffMap={
-    '🟢 Mudah':        'TINGKAT KESULITAN: Mudah. Gunakan konsep dasar, soal langsung, pilihan jawaban jelas, tidak ada jebakan.',
-    '🟡 Sedang':       'TINGKAT KESULITAN: Sedang. Kombinasikan soal pemahaman dan aplikasi. Beberapa soal memerlukan penalaran.',
-    '🔴 Sulit':        'TINGKAT KESULITAN: Sulit. Dominansi soal analisis dan aplikasi. Distraktor jawaban realistis. Memerlukan pemikiran mendalam.',
-    '🧠 HOTS':         'TINGKAT KESULITAN: HOTS (Higher Order Thinking Skills). Prioritaskan analisis, evaluasi, sintesis, pemecahan masalah, dan pengambilan keputusan. Hindari soal yang hanya membutuhkan hafalan. Buat skenario nyata yang memerlukan berpikir tingkat tinggi.',
-    '✨ AI Menentukan': 'TINGKAT KESULITAN: Tentukan sendiri berdasarkan jenjang '+jenjang+' '+kelas+', materi, dan tujuan pembelajaran. Pastikan sesuai perkembangan kognitif siswa.'
+    '🟢 Mudah':       'TINGKAT KESULITAN: Mudah. Gunakan konsep dasar, soal langsung, pilihan jawaban jelas, tidak ada jebakan.',
+    '🟡 Sedang':      'TINGKAT KESULITAN: Sedang. Kombinasikan soal pemahaman dan aplikasi. Beberapa soal memerlukan penalaran.',
+    '🔴 Sulit':       'TINGKAT KESULITAN: Sulit. Dominansi soal analisis dan aplikasi. Distraktor jawaban realistis.',
+    '🧠 HOTS':        'TINGKAT KESULITAN: HOTS. Prioritaskan analisis, evaluasi, sintesis. Buat skenario nyata yang memerlukan berpikir tingkat tinggi.',
+    '✨ AI Menentukan':'TINGKAT KESULITAN: Tentukan sendiri berdasarkan jenjang '+jenjang+' '+kelas+', materi, dan tujuan pembelajaran.'
   };
 
-  // ─── Durasi instruction ───
-  const durasiNote = durasi==='🤖 AI Menentukan'
-    ? 'DURASI: Sesuaikan sendiri dengan jumlah tantangan, kompleksitas materi, dan usia siswa. Pastikan realistis dan tidak melelahkan.'
-    : `DURASI: Rancang pengalaman bermain yang dapat diselesaikan dalam sekitar ${durasi}. Jangan membuat narasi atau interaksi yang tidak diperlukan. Jumlah dan kompleksitas tantangan harus konsisten dengan durasi ini.`;
+  const durasiNote=durasi==='🤖 AI Menentukan'
+    ?'DURASI: Sesuaikan sendiri dengan jumlah tantangan, kompleksitas materi, dan usia siswa.'
+    :`DURASI: Rancang pengalaman bermain yang dapat diselesaikan dalam sekitar ${durasi}.`;
 
-  // ─── Mode bermain ───
   const modeMap={
-    '👤 Individu':            'MODE BERMAIN: Individu. Game dapat dimainkan sendiri dengan progress dan skor pribadi.',
-    '👥 Berpasangan':         'MODE BERMAIN: Berpasangan. Tambahkan mekanik diskusi atau keputusan bersama. Bisa dimainkan bergantian atau berdiskusi sebelum menjawab.',
-    '👨‍👩‍👧 Kelompok':           'MODE BERMAIN: Kelompok. Tambahkan pembagian peran sederhana dan mekanik kolaboratif. Setiap anggota kelompok bisa berkontribusi.',
-    '🏫 Klasikal/Proyektor':  'MODE BERMAIN: Klasikal/Proyektor. Optimalkan untuk layar besar: teks dan tombol SANGAT BESAR, instruksi singkat dan jelas, guru dapat mengendalikan permainan (tombol navigasi manual), seluruh kelas dapat mengikuti progress bersama. Hindari timer ketat.',
-    '🤖 AI Menentukan':       'MODE BERMAIN: Sesuaikan sendiri berdasarkan jenjang dan tipe game yang paling efektif.'
+    '👤 Individu':           'MODE BERMAIN: Individu. Game dapat dimainkan sendiri dengan progress dan skor pribadi.',
+    '👥 Berpasangan':        'MODE BERMAIN: Berpasangan. Tambahkan mekanik diskusi atau keputusan bersama.',
+    '👨‍👩‍👧 Kelompok':          'MODE BERMAIN: Kelompok. Tambahkan pembagian peran sederhana dan mekanik kolaboratif.',
+    '🏫 Klasikal/Proyektor': 'MODE BERMAIN: Klasikal/Proyektor. Optimalkan untuk layar besar: teks dan tombol SANGAT BESAR, instruksi singkat, navigasi manual oleh guru.',
+    '🤖 AI Menentukan':      'MODE BERMAIN: Sesuaikan sendiri berdasarkan jenjang dan tipe game yang paling efektif.'
   };
 
-  // ─── Asesmen instruction ───
-  const asesmenNote = asesmen==='🤖 AI Menentukan'
-    ? 'JENIS ASESMEN: Pilih bentuk asesmen yang paling sesuai dengan tipe game dan materi. Pastikan konsisten dengan mekanik game.'
-    : `JENIS ASESMEN: ${asesmen}. Gunakan bentuk asesmen ini sebagai format utama soal/tantangan. Pastikan konsisten dengan mekanik game.`;
-
-  // ─── Kondisi kelas ───
   const kondisiMap={
-    '🟢 Kemampuan relatif seragam':    'KONDISI KELAS: Kemampuan relatif seragam. Gunakan tingkat kesulitan yang konsisten sepanjang game.',
-    '🟡 Kemampuan beragam':            'KONDISI KELAS: Kemampuan beragam. Sediakan diferensiasi sederhana: soal dasar (fondasi), soal standar (utama), soal tantangan (bonus). Tidak semua siswa harus menyelesaikan soal tantangan untuk mendapat nilai baik.',
-    '🟠 Banyak siswa perlu bantuan':   'KONDISI KELAS: Banyak siswa perlu bantuan. Sediakan hint yang cukup (minimal 1 hint per soal), contoh sebelum soal, feedback bertahap yang mendidik, dan kesempatan mencoba kembali tanpa penalti berat.',
-    '🔵 Siswa cepat belajar':          'KONDISI KELAS: Siswa cepat belajar. Tingkatkan kompleksitas, tambahkan soal bonus, beri tantangan ekstra bagi yang menyelesaikan lebih cepat.',
-    '♿ Perlu perhatian aksesibilitas': 'KONDISI KELAS: Perlu perhatian aksesibilitas. Terapkan aksesibilitas ekstra: kontras sangat tinggi, font besar, tombol sangat besar, tidak bergantung pada warna saja, navigasi keyboard, instruksi jelas dan sederhana.',
-    '🤖 AI Menentukan':                'KONDISI KELAS: Sesuaikan sendiri berdasarkan jenjang dan karakteristik umum siswa pada level tersebut.'
+    '🟢 Kemampuan relatif seragam':   'KONDISI KELAS: Kemampuan relatif seragam. Gunakan tingkat kesulitan yang konsisten.',
+    '🟡 Kemampuan beragam':           'KONDISI KELAS: Kemampuan beragam. Sediakan diferensiasi: soal dasar, soal standar, soal tantangan bonus.',
+    '🟠 Banyak siswa perlu bantuan':  'KONDISI KELAS: Banyak siswa perlu bantuan. Sediakan hint yang cukup, contoh sebelum soal, feedback bertahap.',
+    '🔵 Siswa cepat belajar':         'KONDISI KELAS: Siswa cepat belajar. Tingkatkan kompleksitas, tambahkan soal bonus dan tantangan ekstra.',
+    '♿ Perlu perhatian aksesibilitas':'KONDISI KELAS: Perlu aksesibilitas ekstra: kontras tinggi, font besar, tombol sangat besar, navigasi keyboard.',
+    '🤖 AI Menentukan':               'KONDISI KELAS: Sesuaikan sendiri berdasarkan jenjang dan karakteristik umum siswa.'
   };
 
-  // ─── Quality Control ───
-  const qcNote = qc==='🔒 Ketat'
-    ? `QUALITY CONTROL — MODE KETAT
-Sebelum menghasilkan kode game, lakukan validasi internal menyeluruh terhadap seluruh konten pembelajaran:
-✅ Setiap soal memiliki jawaban yang benar dan tidak ambigu
-✅ Seluruh soal relevan dengan materi "${materi}" dan tujuan pembelajaran
-✅ Tingkat kesulitan sesuai jenjang ${jenjang} ${kelas}
-✅ Feedback dan pembahasan konsisten dengan jawaban yang benar
-✅ Tidak ada fakta yang tidak dapat dipertanggungjawabkan
-✅ Jumlah tantangan tepat sesuai permintaan (${jml} tantangan)
-✅ Seluruh alur game playable dari awal sampai akhir
-✅ Aksesibilitas sudah diterapkan
-Jika terdapat informasi yang meragukan, gunakan formulasi yang aman atau buat soal yang lebih umum.
-Jangan menghasilkan kode sebelum semua validasi lulus.`
-    : `QUALITY CONTROL — MODE OTOMATIS
-Pastikan: soal akurat, jawaban benar, feedback mendidik, alur game playable, jumlah tantangan tepat (${jml}).`;
+  const qcNote=qc==='🔒 Ketat'
+    ?`QUALITY CONTROL — MODE KETAT\nSebelum menghasilkan kode, validasi internal:\n✅ Setiap soal memiliki jawaban yang benar dan tidak ambigu\n✅ Seluruh soal relevan dengan materi "${materi}"\n✅ Tingkat kesulitan sesuai jenjang ${jenjang} ${kelas}\n✅ Feedback konsisten dengan jawaban yang benar\n✅ Jumlah tantangan tepat (${jml})\n✅ Seluruh alur game playable`
+    :`QUALITY CONTROL: Pastikan soal akurat, jawaban benar, feedback mendidik, alur game playable, jumlah tantangan tepat (${jml}).`;
 
-  // ─── Sumber materi ───
-  const sumberNote = sumber
-    ? `SUMBER MATERI
-Pengguna memberikan referensi: "${sumber}"
-Gunakan referensi ini sebagai acuan utama. Jangan membuat informasi yang bertentangan dengan sumber tersebut.
-Jika informasi dari sumber tidak cukup detail untuk soal yang valid, buat soal yang lebih umum dan aman.
-Catatan: AI tidak dapat mengakses sumber secara langsung — gunakan konten materi yang diberikan sebagai konteks.`
-    : '';
+  const soalNote=soalSendiri
+    ?`SOAL DARI GURU (WAJIB GUNAKAN)\nGuru telah menyediakan soal berikut. Gunakan soal ini sebagai konten utama game, adaptasikan ke format ${tipe}:\n\n${soalSendiri}\n\nCatatan: Sesuaikan format soal dengan mekanik game ${tipe}. Jaga akurasi konten soal.`
+    :`SOAL: Buat ${jml} soal/tantangan BARU yang relevan dengan materi "${materi}" dan tujuan pembelajaran.`;
 
-  // ─── Bangun prompt final ───
   const prompt=`═══════════════════════════════════════════════════════
-🎮 MASTER PROMPT — BANTU GURU YUK | PROMPT GAME v1.2
+🎮 PROMPT GAME INTERAKTIF — BANTU GURU YUK v1.3
 ═══════════════════════════════════════════════════════
 
 ▌ROLE AI
@@ -1173,8 +1302,7 @@ HTML single-file yang dapat langsung dimainkan di browser.
 Jenjang        : ${jenjang}
 Kelas          : ${kelas}
 Mata Pelajaran : ${mapel}
-Materi         : ${materi}
-Tujuan         : ${tujuan}${sumber?'\nSumber Materi  : '+sumber:''}
+Materi         : ${materi}${tujuan?'\nTujuan         : '+tujuan:''}
 Kondisi Kelas  : ${kondisi}
 
 ═══════════════════════════════════════════════════════
@@ -1205,7 +1333,7 @@ ${usiaNote}
 
 ▌${modeMap[mode]||modeMap['🤖 AI Menentukan']}
 
-▌${asesmenNote}
+▌ASESMEN: ${asesmen}
 
 ▌${kondisiMap[kondisi]||kondisiMap['🤖 AI Menentukan']}
 
@@ -1213,34 +1341,27 @@ ${usiaNote}
 4. KONTEN PEMBELAJARAN (WAJIB AKURAT)
 ═══════════════════════════════════════════════════════
 
-Buat tepat ${jml} tantangan yang LANGSUNG berkaitan dengan:
-  Materi  : "${materi}"
-  Tujuan  : "${tujuan}"
-Konten harus akurat secara keilmuan dan sesuai kurikulum ${jenjang} ${kelas}.
-Jangan buat soal/konten yang tidak relevan dengan materi.
+${soalNote}
+Konten harus akurat secara keilmuan dan sesuai Kurikulum Merdeka ${jenjang} ${kelas}.
+Jangan buat soal yang tidak relevan dengan materi.
 Jangan mengulang soal yang sama.
 Setiap tantangan harus memiliki feedback yang mendidik dan penjelasan singkat.
-${sumberNote}
 
 ═══════════════════════════════════════════════════════
 5. HASIL AKHIR — LEARNING FEEDBACK (WAJIB)
 ═══════════════════════════════════════════════════════
 
 Layar Hasil Akhir WAJIB menampilkan:
-✅ Skor total
-✅ Jumlah jawaban benar & salah
-✅ Akurasi (%)
-✅ Tantangan yang berhasil diselesaikan
-✅ "Yang sudah kamu kuasai" — daftar konsep yang dijawab benar
-✅ "Yang perlu kamu pelajari lagi" — daftar konsep yang perlu diulang
+✅ Skor total & akurasi (%)
+✅ "Yang sudah kamu kuasai" — konsep yang dijawab benar
+✅ "Yang perlu kamu pelajari lagi" — konsep yang perlu diulang
 ✅ Pesan motivasi positif (JANGAN gunakan kata "gagal" atau "kamu tidak bisa")
 ✅ Rekomendasi belajar berikutnya
 ✅ Tombol Ulangi / Main Lagi
 
-Gunakan bahasa positif dan mendukung:
+Gunakan bahasa positif:
 ✅ "Mari coba lagi" bukan "Kamu gagal"
 ✅ "Hampir sempurna!" bukan "Masih banyak yang salah"
-✅ "Lanjutkan belajarnya!" bukan "Kamu tidak lulus"
 
 ═══════════════════════════════════════════════════════
 6. ${qcNote}
@@ -1256,7 +1377,6 @@ Accent     : #F59E0B  (amber/emas)
 Background : #F0F4F8
 Card       : #FFFFFF
 Text       : #1E293B
-Muted      : #64748B
 
 Gaya visual: ${gayaMap[gaya]||gayaMap['✨ AI Memilih']}
 Style: rounded corners (10–16px), soft shadow, spacing lega, typography mudah dibaca.
@@ -1265,55 +1385,36 @@ Style: rounded corners (10–16px), soft shadow, spacing lega, typography mudah 
 8. PERSYARATAN TEKNIS
 ═══════════════════════════════════════════════════════
 
-TEKNOLOGI
-✅ HTML5 + CSS3 + Vanilla JavaScript
-✅ Single file (CSS & JS inline)
+✅ HTML5 + CSS3 + Vanilla JavaScript — single file (CSS & JS inline)
 ✅ Tidak perlu framework, build process, atau server
 ✅ Bisa dibuka langsung di browser (offline)
-
-GAMEPLAY
 ✅ Responsive & mobile-friendly (360px – 1280px)
 ✅ Touch-friendly — tombol minimal 44px
 ✅ Semua tombol & interaksi berfungsi — ZERO dead end
 ✅ Tidak ada JavaScript error
-✅ Feedback jelas setiap interaksi (visual + teks)
 ✅ Tracking score & progress
 ✅ Dapat dimainkan penuh dari awal sampai selesai
 ✅ Restart harus bekerja sempurna
-✅ Navigasi: selalu ada tombol kembali ke awal
-
-AKSESIBILITAS
 ✅ Kontras warna yang cukup (min ratio 4.5:1 untuk teks)
-✅ Tidak hanya menggunakan warna untuk membedakan benar/salah (gunakan ikon + teks)
-✅ Ukuran tombol sesuai usia
-✅ Tidak ada animasi berlebihan
-✅ Tidak menggunakan flashing berbahaya
-✅ Dapat digunakan tanpa audio
-✅ Struktur UI yang konsisten
-✅ Feedback jelas dengan ikon + teks
-
-OUTPUT
-✅ Kode lengkap tanpa TODO atau pseudo-code
-✅ Tidak ada placeholder yang belum selesai
-✅ Tidak ada komentar "tambahkan X di sini"
+✅ Tidak hanya menggunakan warna untuk membedakan benar/salah
+✅ Kode lengkap tanpa TODO, pseudo-code, atau placeholder
 
 ═══════════════════════════════════════════════════════
 9. FILOSOFI PEMBELAJARAN
 ═══════════════════════════════════════════════════════
 
 Ini bukan game arcade — ini adalah LKPD INTERAKTIF + GAMIFIKASI.
-Media pembelajaran yang menyenangkan namun tetap fokus pada tujuan.
-Setiap siswa yang memainkan game ini harus aktif berlatih materi "${materi}".
+Media pembelajaran menyenangkan namun fokus pada tujuan.
+Setiap siswa yang memainkan harus aktif berlatih materi "${materi}".
 Prioritaskan: relevansi → pedagogi → gameplay → feedback → aksesibilitas.
 
 ═══════════════════════════════════════════════════════
-10. FINAL CHECK SEBELUM SELESAI
+10. FINAL CHECK
 ═══════════════════════════════════════════════════════
 
-Lakukan simulasi mental seluruh alur permainan:
+Simulasikan mental seluruh alur:
 Cover → Start → Petunjuk → Tantangan → Feedback → Progress → Hasil Akhir → Restart
 
-Pastikan:
 □ Tidak ada dead-end
 □ Setiap tombol memiliki fungsi
 □ Game dapat diselesaikan dari awal sampai akhir
@@ -1321,12 +1422,13 @@ Pastikan:
 □ Semua ${jml} tantangan hadir
 
 ═══════════════════════════════════════════════════════
-Dibuat dengan Bantu Guru Yuk | Prompt Game v1.2
-bantuguruyuk.web.id · @pak.choyy
+Dibuat dengan Bantu Guru Yuk | Buat Prompt Game Interaktif
+bantuguruyuk.web.id · @pak.choyy · Sesuai Kurikulum Merdeka
 ═══════════════════════════════════════════════════════`;
 
   currentPrompt=prompt;
   incrementLimit();
+  incrementCounter();
 
   // Ringkasan
   document.getElementById('ringkasanGrid').innerHTML=[
@@ -1338,29 +1440,56 @@ bantuguruyuk.web.id · @pak.choyy
     {label:'Mode',val:mode.replace(/[^\w\s]/gu,'').trim()||mode},
   ].map(r=>`<div class="ringkasan-item"><div class="ri-label">${escHtml(r.label)}</div><div class="ri-val">${escHtml(r.val)}</div></div>`).join('');
 
+  // Prompt terstruktur (visual)
+  const sections=[
+    {label:'🎯 Konteks',body:`${jenjang} ${kelas} · ${mapel}\nMateri: ${materi}${tujuan?'\nTujuan: '+tujuan:''}`},
+    {label:'🎮 Desain Game',body:`Tipe: ${tipe} · Tantangan: ${jml} · Kesulitan: ${difficulty}\nMode: ${mode} · Durasi: ${durasi} · Visual: ${gaya}`},
+    {label:'📝 Soal',body:soalSendiri?'✅ Menggunakan soal dari guru ('+soalSendiri.split('\n').length+' baris)':'🤖 AI akan membuat '+jml+' soal/tantangan baru'},
+    {label:'🏆 Output',body:'Game HTML single-file · Mobile-friendly · Feedback mendidik · Hasil akhir + learning feedback'},
+  ];
+  document.getElementById('promptStructured').innerHTML=sections.map(s=>`
+    <div class="prompt-section">
+      <div class="prompt-section-label">${s.label}</div>
+      <div class="prompt-section-body">${escHtml(s.body)}</div>
+    </div>`).join('');
+
   document.getElementById('promptResult').textContent=prompt;
   const oc=document.getElementById('outputCard');
   oc.style.display='block';
+  updateProgress();
   setTimeout(()=>oc.scrollIntoView({behavior:'smooth',block:'start'}),100);
-
-  simpanHistori({jenjang,kelas,mapel,materi,tujuan,sumber,tipe,jml,gaya,difficulty,durasi,mode,asesmen,kondisi,qc,prompt});
+  simpanHistori({jenjang,kelas,mapel,materi,tujuan,tipe,jml,gaya,difficulty,durasi,mode,asesmen,kondisi,qc,soalMode:selectedSoalMode,prompt});
 }
 
-// ===== SANITIZE untuk innerHTML =====
-function escHtml(s){
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+// ===== TOGGLE RAW =====
+function toggleRaw(){
+  const raw=document.getElementById('promptResult');
+  const btn=document.querySelector('.prompt-toggle');
+  const isShown=raw.style.display==='block';
+  raw.style.display=isShown?'none':'block';
+  btn.textContent=isShown?'👁️ Lihat Prompt Lengkap (Raw)':'🙈 Sembunyikan Prompt Raw';
 }
 
-// ===== CONTOH GAME CLICK =====
-function selectTabGame(tipe){
-  const card=document.querySelector(`#tipeGrid .tipe-card[data-val="${tipe}"]`);
-  if(card){selectTipe(card);card.scrollIntoView({behavior:'smooth',block:'center'});}
+// ===== FEEDBACK =====
+function voteFeedback(val){
+  document.getElementById('fbUp').classList.toggle('voted',val==='up');
+  document.getElementById('fbDown').classList.toggle('voted',val==='down');
+  const KEY='bgy_pg_feedback';
+  try{const d=JSON.parse(localStorage.getItem(KEY)||'{"up":0,"down":0}');d[val]=(d[val]||0)+1;localStorage.setItem(KEY,JSON.stringify(d));}catch(e){}
 }
+
+// ===== SANITIZE =====
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 // ===== SHARE & DOWNLOAD =====
 function shareWA(){
   if(!currentPrompt)return;
-  const msg=encodeURIComponent('🎮 *Master Prompt Game Edukasi*\n_dari Bantu Guru Yuk_\n\n'+currentPrompt.slice(0,800)+'...\n\n🔗 bantuguruyuk.web.id');
+  const jenjang=document.getElementById('jenjang').value;
+  const kelas=document.getElementById('kelas').value;
+  const mapel=getMapel();
+  const tipe=getTipe();
+  const intro=`🎮 *Game Interaktif untuk ${jenjang} ${kelas} — ${mapel}*\n_Tipe: ${tipe}_\n\nAku baru buat prompt game pakai *Bantu Guru Yuk* 🚀\n\nSalin prompt ini → paste ke Gemini/Claude/Canva → langsung jadi game!\n\n📋 *PROMPT:*\n`;
+  const msg=encodeURIComponent(intro+currentPrompt.slice(0,600)+'...\n\n🔗 Buat sendiri di: bantuguruyuk.web.id');
   window.open('https://wa.me/?text='+msg,'_blank');
 }
 function downloadTxt(){
@@ -1380,40 +1509,40 @@ function copyPrompt(){
 function fbCopy(){const ta=document.createElement('textarea');ta.value=currentPrompt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);}
 
 // ===== RESET =====
+function konfirmasiReset(){
+  if(currentPrompt&&!confirm('Reset form? Prompt yang sudah dibuat akan hilang.'))return;
+  resetForm();
+}
 function resetForm(){
-  ['materi','tujuan','sumber','tipeCustom','mapelCustom','jmlCustom','durasiCustom'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  ['tipeCustomWrap','mapelCustomWrap','jmlCustomWrap','durasiCustomWrap','outputCard','errorBox','jmlCustomError'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
-  selectedTipe='';
+  ['materi','tujuan','tipeCustom','mapelCustom','jmlCustom','durasiCustom','soalSendiri'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['tipeCustomWrap','mapelCustomWrap','jmlCustomWrap','durasiCustomWrap','outputCard','errorBox','jmlCustomError','soalSendiriWrap'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+  selectedTipe='';currentPrompt='';
+  document.getElementById('jenjang').value='';
+  document.getElementById('kelas').innerHTML='<option value="">-- Pilih Kelas --</option>';
+  document.getElementById('mapel').innerHTML='<option value="">-- Pilih Mata Pelajaran --</option>';
+  document.getElementById('rekomCard').style.display='none';
   document.querySelectorAll('#tipeGrid .tipe-card').forEach(c=>c.classList.remove('selected'));
-  updateAccSummary();
   document.querySelectorAll('#jmlGrid .chip').forEach(c=>c.classList.remove('selected'));
-  const d5=document.querySelector('#jmlGrid .chip[data-val="5"]');
-  if(d5){d5.classList.add('selected');selectedJml='5';}
-  // Reset difficulty ke default
+  const d5=document.querySelector('#jmlGrid .chip[data-val="5"]');if(d5){d5.classList.add('selected');selectedJml='5';}
   document.querySelectorAll('.chip.difficulty').forEach(c=>c.classList.remove('selected'));
-  const da=document.querySelector('.chip.difficulty[data-val="✨ AI Menentukan"]');
-  if(da){da.classList.add('selected');selectedDifficulty='✨ AI Menentukan';}
-  // Reset durasi
+  const da=document.querySelector('.chip.difficulty[data-val="✨ AI Menentukan"]');if(da){da.classList.add('selected');selectedDifficulty='✨ AI Menentukan';}
   document.querySelectorAll('#durasiGrid .chip').forEach(c=>c.classList.remove('selected'));
-  const dr=document.querySelector('#durasiGrid .chip[data-val="🤖 AI Menentukan"]');
-  if(dr){dr.classList.add('selected');selectedDurasi='🤖 AI Menentukan';}
-  // Reset mode
+  const dr=document.querySelector('#durasiGrid .chip[data-val="🤖 AI Menentukan"]');if(dr){dr.classList.add('selected');selectedDurasi='🤖 AI Menentukan';}
   document.querySelectorAll('.chip.mode').forEach(c=>c.classList.remove('selected'));
-  const dm=document.querySelector('.chip.mode[data-val="👤 Individu"]');
-  if(dm){dm.classList.add('selected');selectedMode='👤 Individu';}
-  // Reset asesmen
+  const dm=document.querySelector('.chip.mode[data-val="👤 Individu"]');if(dm){dm.classList.add('selected');selectedMode='👤 Individu';}
+  document.querySelectorAll('.chip.soal-mode').forEach(c=>c.classList.remove('selected'));
+  const dsm=document.querySelector('.chip.soal-mode[data-val="ai"]');if(dsm){dsm.classList.add('selected');selectedSoalMode='ai';}
+  document.querySelectorAll('.chip.gaya').forEach(c=>c.classList.remove('selected'));selectedGaya='';
   document.querySelectorAll('.chip.asesmen').forEach(c=>c.classList.remove('selected'));
-  const das=document.querySelector('.chip.asesmen[data-val="🤖 AI Menentukan"]');
-  if(das){das.classList.add('selected');selectedAsesmen='🤖 AI Menentukan';}
-  // Reset kondisi
+  const das=document.querySelector('.chip.asesmen[data-val="🤖 AI Menentukan"]');if(das){das.classList.add('selected');selectedAsesmen='🤖 AI Menentukan';}
   document.querySelectorAll('.chip.kondisi').forEach(c=>c.classList.remove('selected'));
-  const dk=document.querySelector('.chip.kondisi[data-val="🟡 Kemampuan beragam"]');
-  if(dk){dk.classList.add('selected');selectedKondisi='🟡 Kemampuan beragam';}
-  // Reset QC
+  const dk=document.querySelector('.chip.kondisi[data-val="🟡 Kemampuan beragam"]');if(dk){dk.classList.add('selected');selectedKondisi='🟡 Kemampuan beragam';}
   document.querySelectorAll('.chip.qc').forEach(c=>c.classList.remove('selected'));
-  const dq=document.querySelector('.chip.qc[data-val="🤖 Otomatis"]');
-  if(dq){dq.classList.add('selected');selectedQC='🤖 Otomatis';}
-  updateRekom();
+  const dq=document.querySelector('.chip.qc[data-val="🤖 Otomatis"]');if(dq){dq.classList.add('selected');selectedQC='🤖 Otomatis';}
+  document.getElementById('cMateri').textContent='';
+  document.getElementById('cTujuan').textContent='';
+  try{localStorage.removeItem(DRAFT_KEY);}catch(e){}
+  updateAccSummary();updateProgress();
 }
 
 // ===== HISTORI v2 =====
@@ -1421,13 +1550,11 @@ const HK='bgy_prompt_game_v2';
 const HK_OLD='bgy_prompt_game_v1';
 const loadH=()=>{
   try{
-    // Migrasi dari v1 jika ada
     const old=JSON.parse(localStorage.getItem(HK_OLD)||'[]');
     const cur=JSON.parse(localStorage.getItem(HK)||'[]');
     if(old.length&&!cur.length){
-      const migrated=old.map(h=>({...h,difficulty:'✨ AI Menentukan',durasi:'🤖 AI Menentukan',mode:'👤 Individu',asesmen:'🤖 AI Menentukan',kondisi:'🟡 Kemampuan beragam',qc:'🤖 Otomatis',sumber:''}));
-      localStorage.setItem(HK,JSON.stringify(migrated));
-      return migrated;
+      const migrated=old.map(h=>({...h,difficulty:'✨ AI Menentukan',durasi:'🤖 AI Menentukan',mode:'👤 Individu',asesmen:'🤖 AI Menentukan',kondisi:'🟡 Kemampuan beragam',qc:'🤖 Otomatis'}));
+      localStorage.setItem(HK,JSON.stringify(migrated));return migrated;
     }
     return cur;
   }catch(e){return[];}
@@ -1470,22 +1597,18 @@ function bukaHistori(i){
   if(h.mapel==='Lainnya'){document.getElementById('mapelCustomWrap').style.display='block';document.getElementById('mapelCustom').value='';}
   document.getElementById('materi').value=h.materi||'';
   document.getElementById('tujuan').value=h.tujuan||'';
-  document.getElementById('sumber').value=h.sumber||'';
   const tc=document.querySelector(`#tipeGrid .tipe-card[data-val="${h.tipe}"]`);
   if(tc)selectTipe(tc);
   else{const cc=document.querySelector('#tipeGrid .tipe-card[data-val="__custom__"]');if(cc)selectTipe(cc);document.getElementById('tipeCustom').value=h.tipe||'';}
-  const jc=document.querySelector(`#jmlGrid .chip[data-val="${String(h.jml)}"]`);
-  if(jc)selectJml(jc);
-  const gc=document.querySelector(`.chip.gaya[data-val="${h.gaya}"]`);
-  if(gc)selectGaya(gc);
-  // Restore fitur baru
+  const jc=document.querySelector(`#jmlGrid .chip[data-val="${String(h.jml)}"]`);if(jc)selectJml(jc);
+  const gc=document.querySelector(`.chip.gaya[data-val="${h.gaya}"]`);if(gc)selectGaya(gc);
   if(h.difficulty){const dc=document.querySelector(`.chip.difficulty[data-val="${h.difficulty}"]`);if(dc)selectDifficulty(dc);}
   if(h.durasi){const dr=document.querySelector(`#durasiGrid .chip[data-val="${h.durasi}"]`);if(dr)selectDurasi(dr);}
   if(h.mode){const dm=document.querySelector(`.chip.mode[data-val="${h.mode}"]`);if(dm)selectMode(dm);}
   if(h.asesmen){const da=document.querySelector(`.chip.asesmen[data-val="${h.asesmen}"]`);if(da)selectAsesmen(da);}
   if(h.kondisi){const dk=document.querySelector(`.chip.kondisi[data-val="${h.kondisi}"]`);if(dk)selectKondisi(dk);}
   if(h.qc){const dq=document.querySelector(`.chip.qc[data-val="${h.qc}"]`);if(dq)selectQC(dq);}
-  // Tampilkan output
+  // Output
   document.getElementById('ringkasanGrid').innerHTML=[
     {label:'Jenjang',val:(h.jenjang||'')+' '+(h.kelas||'')},
     {label:'Mapel',val:h.mapel||''},
@@ -1495,6 +1618,7 @@ function bukaHistori(i){
     {label:'Mode',val:h.mode||''},
   ].map(r=>`<div class="ringkasan-item"><div class="ri-label">${escHtml(r.label)}</div><div class="ri-val">${escHtml(r.val)}</div></div>`).join('');
   document.getElementById('promptResult').textContent=h.prompt;
+  document.getElementById('promptStructured').innerHTML='<div class="prompt-section"><div class="prompt-section-label">📂 Dari Histori</div><div class="prompt-section-body">'+escHtml((h.materi||'')+' · '+h.jenjang+' '+h.kelas+' · '+h.mapel)+'</div></div>';
   document.getElementById('outputCard').style.display='block';
   selectTab('home');
 }
@@ -1505,17 +1629,14 @@ function salinHistori(i){
   else{const ta=document.createElement('textarea');ta.value=h.prompt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);}
   alert('✅ Prompt berhasil disalin!');
 }
-
 function hapusHistori(i){
   if(!confirm('Hapus histori ini?'))return;
   const arr=loadH();arr.splice(i,1);saveH(arr);renderHistori();updateHistoriBadge();
 }
-
 function hapusSemuaHistori(){
   if(!confirm('Hapus semua histori?'))return;
   localStorage.removeItem(HK);renderHistori();updateHistoriBadge();
 }
-
 function updateHistoriBadge(){
   const c=loadH().length;
   const b=document.getElementById('historiBadge');
@@ -1528,7 +1649,7 @@ function updateHistoriBadge(){
 function selectTab(name){
   document.querySelectorAll('.tab-section').forEach(s=>s.classList.remove('active'));
   const t=document.getElementById('tab-'+name);if(t)t.classList.add('active');
-  ['home','histori','tentang','kontak'].forEach(t=>{
+  ['home','histori','info'].forEach(t=>{
     const mi=document.getElementById('mi-'+t);
     if(mi)mi.classList.toggle('active',t===name);
   });
@@ -1559,12 +1680,20 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
 function installApp(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.then(()=>{deferredPrompt=null;});closeInstall();}else alert('Buka di Chrome/browser mobile lalu tambahkan ke layar utama 📲');}
 function closeInstall(){document.getElementById('installPopup').classList.remove('show');}
 
+// ===== KEYBOARD SHORTCUT =====
+document.addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();generate();}
+  if(e.key==='Escape'){closeTooltipBtn();}
+});
+
 // ===== INIT =====
 window.addEventListener('load',()=>{
   document.getElementById('loadingScreen').remove();
   initDark();
   renderHistori();
   updateHistoriBadge();
+  initCounter();
+  loadDraft();
   selectedJml='5';
 });
 </script>
