@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Prompt Game"/>
 <meta property="og:title" content="BGY - Buat Prompt Game"/>
-<meta property="og:description" content="Generator prompt game edukatif untuk guru SD, SMP, SMA, SMK. Gratis & sesuai Kurikulum Merdeka!"/>
+<meta property="og:description" content="Generator prompt game edukatif untuk guru SD, SMP, SMA, SMK. Gratis!"/>
 <meta property="og:image" content="https://bantuguruyuk.web.id/lkpd/guru-cibisd2.png"/>
 <meta property="og:url" content="https://bantuguruyuk.web.id"/>
 <meta property="og:type" content="website"/>
@@ -37,7 +37,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 
 /* LOADING */
 #loadingScreen{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--grad);display:flex;flex-direction:column;justify-content:center;align-items:center;color:white;z-index:99999;}
-#loadingScreen img{width:64px;margin-bottom:14px;border-radius:16px;}
+#loadingScreen img{width:64px;height:64px;margin-bottom:14px;border-radius:50%;object-fit:cover;}
 #loadingScreen .ls-title{font-size:1.3rem;font-weight:800;letter-spacing:1px;}
 #loadingScreen .ls-sub{font-size:.8rem;margin-top:6px;opacity:.85;}
 .ls-spinner{width:32px;height:32px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin-top:18px;}
@@ -81,13 +81,14 @@ header{position:sticky;top:0;z-index:300;background:var(--grad);padding:0 16px;b
 body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
 .header-inner{display:flex;align-items:center;justify-content:space-between;height:60px;}
 .header-brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1;}
-.header-brand img{width:36px;height:36px;border-radius:10px;flex-shrink:0;}
+.header-brand img{width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;}
 .header-brand-text h1{font-size:1rem;font-weight:800;color:#fff;line-height:1.2;}
 .header-brand-text p{font-size:.68rem;color:rgba(255,255,255,.8);font-weight:500;}
 .header-right{display:flex;align-items:center;gap:6px;position:relative;flex-shrink:0;}
 .hdr-btn{height:32px;width:36px;border-radius:8px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-size:1rem;transition:background .2s;display:flex;align-items:center;justify-content:center;}
 .hdr-btn:hover{background:rgba(255,255,255,.22);}
-.hdr-menu-btn{height:32px;width:36px;border-radius:8px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;position:relative;}
+.hdr-menu-btn{height:32px;min-width:34px;padding:0 8px;border-radius:6px;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.1);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;transition:background .2s;}
+.hdr-menu-btn:hover{background:rgba(0,0,0,.2);}
 .hdr-menu-badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;border-radius:99px;padding:0 4px;font-size:.55rem;font-weight:800;line-height:14px;min-width:14px;text-align:center;display:none;}
 .dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg);min-width:200px;overflow:hidden;display:none;z-index:400;}
 .dropdown-menu.open{display:block;}
@@ -98,13 +99,14 @@ body.dark .dropdown-item:hover{background:rgba(255,255,255,.06);}
 .dropdown-divider{height:1px;background:var(--border);margin:4px 0;}
 .dropdown-badge{background:#ef4444;color:#fff;border-radius:99px;padding:0 5px;font-size:.6rem;font-weight:800;line-height:16px;display:inline-block;min-width:16px;text-align:center;margin-left:auto;}
 .badge-free{display:inline-block;background:#64748b;color:#fff;font-size:.6rem;font-weight:800;padding:2px 8px;border-radius:99px;margin-left:6px;vertical-align:middle;}
-.badge-kmerdeka{display:inline-block;background:linear-gradient(135deg,#0ea5a0,#0d7a8a);color:#fff;font-size:.58rem;font-weight:800;padding:2px 7px;border-radius:99px;margin-left:4px;vertical-align:middle;letter-spacing:.3px;}
 #menuOverlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:250;}
 #menuOverlay.open{display:block;}
 
 /* FOOTER */
 footer{background:var(--grad);color:#fff;text-align:center;padding:14px 20px 10px;margin-top:auto;}
 footer .footer-title{font-size:.84rem;font-weight:700;margin-bottom:2px;}
+footer .footer-contacts{font-size:.72rem;color:rgba(255,255,255,.92);margin-bottom:3px;}
+footer .footer-note{font-size:.72rem;font-weight:700;color:#ff6b6b;margin-bottom:3px;}
 footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 footer a{color:inherit;text-decoration:underline;}
 
@@ -329,9 +331,9 @@ body.dark .prompt-raw{background:#0f172a;}
 
 <!-- LOADING -->
 <div id="loadingScreen">
-  <img src="https://bantuguruyuk.web.id/lkpd/guru-cibisd2.png" alt="Logo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2216%22 fill=%22rgba(255,255,255,0.2)%22/%3E%3Ctext x=%2232%22 y=%2242%22 text-anchor=%22middle%22 font-size=%2228%22 font-family=%22sans-serif%22 font-weight=%22800%22 fill=%22white%22%3EBG%3C/text%3E%3C/svg%3E'"/>
+  <img src="/guru-cibisd2.png" alt="Logo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2232%22 fill=%22rgba(255,255,255,0.2)%22/%3E%3Ctext x=%2232%22 y=%2242%22 text-anchor=%22middle%22 font-size=%2228%22 font-family=%22sans-serif%22 font-weight=%22800%22 fill=%22white%22%3EBG%3C/text%3E%3C/svg%3E'"/>
   <div class="ls-title">Bantu Guru Yuk</div>
-  <div class="ls-sub">Buat Prompt Game Interaktif — Sesuai Kurikulum Merdeka</div>
+  <div class="ls-sub">Buat Prompt Game Interaktif</div>
   <div class="ls-spinner"></div>
 </div>
 
@@ -339,7 +341,7 @@ body.dark .prompt-raw{background:#0f172a;}
 <div id="generateOverlay">
   <div class="go-orb go-orb1"></div>
   <div class="go-orb go-orb2"></div>
-  <img src="https://bantuguruyuk.web.id/lkpd/guru-cibisd2.png" alt="Logo" style="width:72px;height:72px;border-radius:20px;margin-bottom:24px;box-shadow:0 0 40px rgba(14,165,160,.5);" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 72 72%22%3E%3Crect width=%2272%22 height=%2272%22 rx=%2220%22 fill=%22%230ea5a0%22/%3E%3Ctext x=%2236%22 y=%2248%22 text-anchor=%22middle%22 font-size=%2232%22 font-family=%22sans-serif%22 font-weight=%22800%22 fill=%22white%22%3EBG%3C/text%3E%3C/svg%3E'"/>
+  <img src="/guru-cibisd2.png" alt="Logo" style="width:72px;height:72px;border-radius:50%;object-fit:cover;margin-bottom:24px;box-shadow:0 0 40px rgba(14,165,160,.5);" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 72 72%22%3E%3Ccircle cx=%2236%22 cy=%2236%22 r=%2236%22 fill=%22rgba(14,165,160,0.9)%22/%3E%3Ctext x=%2236%22 y=%2248%22 text-anchor=%22middle%22 font-size=%2232%22 font-family=%22sans-serif%22 font-weight=%22800%22 fill=%22white%22%3EBG%3C/text%3E%3C/svg%3E'"/>
   <div class="go-ring-wrap">
     <div class="go-ring go-ring1"></div><div class="go-ring go-ring2"></div><div class="go-ring go-ring3"></div>
     <div class="go-icon">🎮</div>
@@ -378,16 +380,17 @@ body.dark .prompt-raw{background:#0f172a;}
 <header>
   <div class="header-inner">
     <div class="header-brand">
-      <img src="https://bantuguruyuk.web.id/lkpd/guru-cibisd2.png" alt="Logo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 36 36%22%3E%3Crect width=%2236%22 height=%2236%22 rx=%2210%22 fill=%22%230ea5a0%22/%3E%3Ctext x=%2218%22 y=%2224%22 text-anchor=%22middle%22 font-size=%2218%22 font-family=%22sans-serif%22 font-weight=%22800%22 fill=%22white%22%3EBG%3C/text%3E%3C/svg%3E'"/>
+      <img src="/guru-cibisd2.png" alt="Logo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 36 36%22%3E%3Ccircle cx=%2218%22 cy=%2218%22 r=%2218%22 fill=%22%230ea5a0%22/%3E%3Ctext x=%2218%22 y=%2224%22 text-anchor=%22middle%22 font-size=%2218%22 font-family=%22sans-serif%22 font-weight=%22800%22 fill=%22white%22%3EBG%3C/text%3E%3C/svg%3E'"/>
       <div class="header-brand-text">
-        <h1>Bantu Guru Yuk <span id="hBadge" class="badge-free">GRATIS</span> <span class="badge-kmerdeka">Kur. Merdeka</span></h1>
+        <h1>Bantu Guru Yuk <span id="hBadge" class="badge-free">GRATIS</span></h1>
         <p>Buat Prompt Game Interaktif</p>
       </div>
     </div>
     <div class="header-right">
       <button id="darkBtn" class="hdr-btn" onclick="toggleDark()" title="Mode gelap/terang">🌙</button>
-      <button class="hdr-menu-btn" onclick="toggleMenu()" title="Menu">
-        ☰
+      <button class="hdr-menu-btn" onclick="toggleMenu()" title="Menu" aria-label="Menu" aria-expanded="false" aria-controls="dropdownMenu">
+        <svg id="hdrIconBars" width="16" height="16" viewBox="0 0 448 512" fill="currentColor" aria-hidden="true"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg>
+        <svg id="hdrIconX" width="16" height="16" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true" style="display:none;"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
         <span id="menuBadge" class="hdr-menu-badge"></span>
       </button>
       <div class="dropdown-menu" id="dropdownMenu">
@@ -822,8 +825,10 @@ body.dark .prompt-raw{background:#0f172a;}
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-title">Buat Prompt Game Interaktif • Bantu Guru Yuk</div>
-  <div class="footer-sub">© 2026 by <a href="https://www.tiktok.com/@pak.choyy" target="_blank">@pak.choyy</a> · v1.3.0 · <a href="https://bantuguruyuk.web.id" target="_blank">bantuguruyuk.web.id</a></div>
+  <div class="footer-title">Bantu Guru Yuk</div>
+  <div class="footer-contacts">🎵 <a href="https://www.tiktok.com/@pak.choyy" target="_blank" rel="noopener">TikTok @pak.choyy</a> · 💬 <a href="https://wa.me/6289530713597" target="_blank" rel="noopener">WhatsApp Pak Choy</a></div>
+  <div class="footer-note">Ada data yang perlu diperbaiki atau ingin berbagi media? Hubungi Pak Choy.</div>
+  <div class="footer-sub">Bantu Guru Yuk © 2026 by <a href="https://www.tiktok.com/@pak.choyy" target="_blank" rel="noopener">@pak.choyy</a> · v1.3.0</div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1736,8 +1741,25 @@ function initDark(){
 }
 
 // ===== MENU =====
-function toggleMenu(){document.getElementById('dropdownMenu').classList.toggle('open');document.getElementById('menuOverlay').classList.toggle('open');}
-function closeMenu(){document.getElementById('dropdownMenu').classList.remove('open');document.getElementById('menuOverlay').classList.remove('open');}
+function syncMenuIcon(open){
+  const b=document.getElementById('hdrIconBars');
+  const x=document.getElementById('hdrIconX');
+  const btn=document.querySelector('.hdr-menu-btn');
+  if(b)b.style.display=open?'none':'block';
+  if(x)x.style.display=open?'block':'none';
+  if(btn)btn.setAttribute('aria-expanded',open?'true':'false');
+}
+function toggleMenu(){
+  const dm=document.getElementById('dropdownMenu');
+  const isOpen=dm.classList.toggle('open');
+  document.getElementById('menuOverlay').classList.toggle('open');
+  syncMenuIcon(isOpen);
+}
+function closeMenu(){
+  document.getElementById('dropdownMenu').classList.remove('open');
+  document.getElementById('menuOverlay').classList.remove('open');
+  syncMenuIcon(false);
+}
 
 // ===== INSTALL =====
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;document.getElementById('installPopup').classList.add('show');});
