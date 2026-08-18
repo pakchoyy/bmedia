@@ -63,6 +63,7 @@ export default function SubmissionDetail({ media }: { media: Media }) {
     tool: media.tool,
     link_url: media.link_url,
     thumbnail_url: media.thumbnail_url ?? "",
+    thumbnail_position: media.thumbnail_position ?? 50,
     guru_name: media.guru_name,
     sekolah: media.sekolah,
     guru_wa: media.guru_wa,
@@ -77,7 +78,11 @@ export default function SubmissionDetail({ media }: { media: Media }) {
     setForm((f) => ({ ...f, [field]: value }));
 
   const setThumbnail = (url: string | null) =>
-    setForm((f) => ({ ...f, thumbnail_url: url ?? "" }));
+    setForm((f) => ({
+      ...f,
+      thumbnail_url: url ?? "",
+      thumbnail_position: 50,
+    }));
 
   const handleApprove = async () => {
     setBusy(true);
@@ -379,6 +384,10 @@ export default function SubmissionDetail({ media }: { media: Media }) {
                 <ThumbnailUpload
                   value={form.thumbnail_url || null}
                   onChange={setThumbnail}
+                  position={form.thumbnail_position}
+                  onPositionChange={(p) =>
+                    setForm((f) => ({ ...f, thumbnail_position: p }))
+                  }
                   label="Thumbnail"
                 />
               </div>

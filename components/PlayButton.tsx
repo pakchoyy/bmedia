@@ -9,6 +9,7 @@ interface PlayButtonProps {
   linkUrl: string;
   size?: "lg" | "sm";
   className?: string;
+  onOpened?: () => void;
 }
 
 export default function PlayButton({
@@ -16,6 +17,7 @@ export default function PlayButton({
   linkUrl,
   size = "lg",
   className = "",
+  onOpened,
 }: PlayButtonProps) {
   const [loading, setLoading] = useState(false);
 
@@ -23,13 +25,16 @@ export default function PlayButton({
     const target = normalizeUrl(linkUrl);
     if (!target) return;
     setLoading(true);
+    let ok = false;
     try {
-      await fetch(`/api/play/${mediaId}`, { method: "POST" });
+      const res = await fetch(`/api/play/${mediaId}`, { method: "POST" });
+      ok = res.ok;
     } catch (e) {
       console.error("Gagal menambah plays:", e);
     } finally {
       setLoading(false);
     }
+    if (ok && onOpened) onOpened();
     window.open(target, "_blank", "noopener,noreferrer");
   };
 

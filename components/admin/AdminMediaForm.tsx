@@ -35,6 +35,7 @@ export default function AdminMediaForm({ mode, media }: AdminMediaFormProps) {
           tool: media.tool,
           link_url: media.link_url,
           thumbnail_url: media.thumbnail_url,
+          thumbnail_position: media.thumbnail_position ?? 50,
           guru_name: media.guru_name,
           sekolah: media.sekolah,
           guru_wa: media.guru_wa,
@@ -49,6 +50,7 @@ export default function AdminMediaForm({ mode, media }: AdminMediaFormProps) {
           tool: "Lainnya",
           link_url: "",
           thumbnail_url: null as string | null,
+          thumbnail_position: 50,
           guru_name: "",
           sekolah: "",
           guru_wa: "",
@@ -73,6 +75,7 @@ export default function AdminMediaForm({ mode, media }: AdminMediaFormProps) {
       tool: form.tool,
       link_url: form.link_url,
       thumbnail_url: form.thumbnail_url ?? "",
+      thumbnail_position: form.thumbnail_position ?? 50,
       guru_name: form.guru_name,
       sekolah: form.sekolah,
       guru_wa: form.guru_wa,
@@ -209,7 +212,17 @@ export default function AdminMediaForm({ mode, media }: AdminMediaFormProps) {
 
       <ThumbnailUpload
         value={form.thumbnail_url}
-        onChange={(url) => setForm((f) => ({ ...f, thumbnail_url: url }))}
+        onChange={(url) =>
+          setForm((f) => ({
+            ...f,
+            thumbnail_url: url,
+            thumbnail_position: 50,
+          }))
+        }
+        position={form.thumbnail_position}
+        onPositionChange={(p) =>
+          setForm((f) => ({ ...f, thumbnail_position: p }))
+        }
         label="Thumbnail"
       />
 

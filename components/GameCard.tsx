@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import type { Media } from "@/types/media";
 import { formatPlays } from "@/lib/utils";
@@ -5,9 +7,23 @@ import MediaThumb from "./MediaThumb";
 import Icon from "./Icon";
 
 export default function GameCard({ media }: { media: Media }) {
+  const trackOpen = () => {
+    try {
+      const p = fetch(`/api/play/${media.id}`, {
+        method: "POST",
+        keepalive: true,
+      });
+      // Biarkan request berjalan di background; jangan blokir navigasi.
+      p.catch(() => {});
+    } catch {
+      // abaikan
+    }
+  };
+
   return (
     <Link
       href={`/media/${media.id}`}
+      onClick={trackOpen}
       className="group bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-slate-800 hover:-translate-y-2 hover:shadow-md hover:border-primary-light transition-all duration-300 flex flex-col"
     >
       <div className="relative h-44 overflow-hidden">

@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getApprovedMedia, getMediaById } from "@/lib/queries";
-import { formatPlays } from "@/lib/utils";
 import MediaThumb from "@/components/MediaThumb";
-import PlayButton from "@/components/PlayButton";
+import MediaPlayPanel from "@/components/MediaPlayPanel";
 import GameCard from "@/components/GameCard";
 import Icon from "@/components/Icon";
 
@@ -97,13 +96,11 @@ export default async function MediaDetailPage({ params }: Props) {
             </div>
           </div>
 
-          <div className="w-[300px] bg-pagebg dark:bg-slate-800 p-6 rounded-xl shrink-0 max-md:w-full">
-            <PlayButton mediaId={media.id} linkUrl={media.link_url} />
-            <div className="text-sm text-gray-600 dark:text-slate-400 border-t border-gray-300 dark:border-slate-700 pt-3">
-              <Icon name="chart-simple" className="mr-1" />
-              Digunakan: <strong>{formatPlays(media.plays)}</strong> kali
-            </div>
-          </div>
+          <MediaPlayPanel
+            mediaId={media.id}
+            linkUrl={media.link_url}
+            initialPlays={media.plays}
+          />
         </div>
       </div>
 
