@@ -3,9 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Icon from "./Icon";
-import { JENJANG_OPTIONS } from "@/lib/constants";
+import { JENJANG_OPTIONS, KELAS_OPTIONS } from "@/lib/constants";
 
-const KELAS_OPTIONS = ["Semua", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
 const MAPEL_OPTIONS = ["Matematika", "Bahasa Indonesia", "IPAS", "Bahasa Inggris", "Pendidikan Pancasila", "PJOK", "Seni"];
 const TIPE_OPTIONS = ["Game Edukasi", "Quiz Interaktif", "Multimedia Interaktif", "Laboratorium Maya", "Modul Digital"];
 
@@ -83,7 +82,7 @@ export default function SearchMedia() {
             >
               <option value="">Semua Kelas</option>
               {KELAS_OPTIONS.map((k) => (
-                <option key={k} value={k}>Kelas {k}</option>
+                <option key={k.label} value={k.label}>{k.label}</option>
               ))}
             </select>
 
