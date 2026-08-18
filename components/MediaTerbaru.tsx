@@ -12,9 +12,9 @@ export default function MediaTerbaru({ media, limit = 8 }: MediaTerbaruProps) {
   const displayMedia = media.slice(0, limit);
 
   return (
-    <section className="py-16 px-4">
+    <section className="py-10 px-4">
       <div className="container mx-auto max-w-[1200px]">
-        <div className="text-center mb-10">
+        <div className="text-center mb-6">
           <h2 className="text-3xl font-bold text-ink dark:text-slate-100 mb-3">
             Media Terbaru
           </h2>

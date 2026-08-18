@@ -115,7 +115,7 @@ export default async function HomePage() {
       <Stats stats={stats} />
 
       {/* CTA Buat Game & Kirim Karya */}
-      <section className="py-14 px-6">
+      <section className="py-10 px-6">
         <div className="container mx-auto max-w-[1200px] grid gap-6 lg:grid-cols-2">
           <CTABuatGame />
           <CTAKirimKarya />
