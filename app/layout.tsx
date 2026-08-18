@@ -3,11 +3,11 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "BGY Interactive Learning",
-    template: "%s | BGY Interactive Learning",
+    default: "BGY - Media Belajar",
+    template: "%s | BGY - Media Belajar",
   },
   description:
-    "Satu Tempat untuk Media Pembelajaran Interaktif Guru Indonesia.",
+    "Media Belajar Interaktif Karya Guru Indonesia — menemukan, menggunakan, dan berbagi media pembelajaran.",
   keywords: [
     "media pembelajaran",
     "media interaktif",
@@ -17,8 +17,8 @@ export const metadata: Metadata = {
     "Bantu Guru Yuk",
   ],
   openGraph: {
-    title: "BGY Interactive Learning",
-    description: "Media Pembelajaran Interaktif Karya Guru Indonesia.",
+    title: "BGY - Media Belajar",
+    description: "Media Belajar Interaktif Karya Guru Indonesia.",
     type: "website",
     images: ["/icon.png"],
   },

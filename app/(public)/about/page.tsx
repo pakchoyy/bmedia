@@ -1,99 +1,95 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import Icon from "@/components/Icon";
-import { CONTACT_EMAIL, CONTACT_WA, SITE_URL } from "@/lib/constants";
+import { CONTACT_WA, CONTACT_TIKTOK } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "Tentang Kami",
+  title: {
+    absolute: "Tentang BGY - Media Belajar",
+  },
   description:
-    "BGY Interactive Learning — satu tempat untuk media pembelajaran interaktif karya guru Indonesia.",
+    "BGY - Media Belajar adalah tempat untuk menemukan, menggunakan, dan berbagi media pembelajaran interaktif karya guru Indonesia.",
 };
 
 const values = [
   {
     icon: "users",
-    title: "Kolaborasi Guru",
-    desc: "Setiap karya dikirim langsung oleh guru, untuk guru, demi mewujudkan merdeka belajar.",
+    title: "Karya Guru Indonesia",
+    desc: "Media belajar dari karya guru Indonesia untuk saling berbagi dan menginspirasi.",
   },
   {
     icon: "laptop-code",
-    title: "Teknologi untuk Pendidikan",
-    desc: "Membantu guru bekerja lebih mudah, cepat, dan terorganisir melalui pemanfaatan teknologi.",
+    title: "Belajar Lebih Interaktif",
+    desc: "Temukan media yang membantu pembelajaran menjadi lebih menarik dan melibatkan siswa.",
   },
   {
     icon: "book-open",
     title: "Gratis & Terbuka",
-    desc: "Seluruh media dapat diakses dan digunakan secara gratis oleh siapa saja.",
+    desc: "Media yang tersedia dapat digunakan secara gratis untuk mendukung kegiatan pembelajaran.",
   },
 ];
 
 export default function AboutPage() {
   return (
     <div className="fade-in">
-      <div className="bg-bgy-hero text-white py-16 text-center px-4">
-        <h1 className="text-4xl font-bold mb-3">Tentang BGY Interactive Learning</h1>
-        <p className="opacity-90 max-w-2xl mx-auto">
-          Satu Tempat untuk Media Pembelajaran Interaktif Guru Indonesia.
-        </p>
+      <div className="bg-bgy-hero text-white py-8 text-center px-4">
+        <h1 className="text-2xl md:text-3xl font-bold">Tentang BGY - Media Belajar</h1>
       </div>
 
-      <div className="container mx-auto max-w-[1200px] px-6 py-12">
-        <div className="max-w-[850px] mx-auto text-center">
-          <p className="text-lg text-gray-600 leading-relaxed mb-4">
-            <strong className="text-primary">BGY (Bantu Guru Yuk)</strong> adalah
-            ekosistem aplikasi pendidikan yang berfokus pada pemberdayaan guru.
-            Melalui <strong className="text-primary">BGY Interactive Learning</strong>,
-            kami menyediakan wadah berbagi inovasi digital bagi seluruh guru di
-            Indonesia.
+      <div className="container mx-auto max-w-[1200px] px-6 py-6">
+        <div className="max-w-[750px] mx-auto text-center space-y-3">
+          <p className="text-gray-600 leading-relaxed text-base">
+            BGY - Media Belajar adalah tempat untuk menemukan, menggunakan, dan
+            berbagi media pembelajaran interaktif karya guru Indonesia.
           </p>
-          <p className="text-lg text-gray-600 leading-relaxed">
-            Kami mengumpulkan berbagai media pembelajaran interaktif yang dibuat
-            langsung oleh guru — mulai dari game edukasi, quiz interaktif,
-            laboratorium maya, hingga modul digital. Setiap karya melalui proses
-            review admin sebelum dipublikasikan agar kualitasnya terjaga.
+          <p className="text-gray-600 leading-relaxed text-base">
+            Di sini, guru dapat menemukan berbagai media belajar yang dapat digunakan
+            untuk membantu pembelajaran menjadi lebih menarik, interaktif, dan mudah
+            dipahami.
+          </p>
+          <p className="text-gray-600 leading-relaxed text-base">
+            Media yang tersedia dapat berupa game edukasi, kuis interaktif, simulasi,
+            bahan ajar digital, dan berbagai karya pembelajaran lainnya.
           </p>
         </div>
 
-        <div className="grid gap-6 mt-12 grid-cols-1 md:grid-cols-3">
+        <div className="grid gap-4 mt-6 grid-cols-1 md:grid-cols-3">
           {values.map((v) => (
             <div
               key={v.title}
-              className="bg-white p-8 rounded-xl text-center shadow-sm border border-gray-100 hover:-translate-y-1.5 hover:shadow-md transition-all"
+              className="bg-white p-6 rounded-xl text-center shadow-sm border border-gray-100 hover:-translate-y-1 hover:shadow-md transition-all"
             >
-              <Icon name={v.icon} className="text-4xl mb-4 mx-auto text-primary-light" />
-              <h3 className="text-lg font-bold text-ink mb-2">{v.title}</h3>
+              <Icon name={v.icon} className="text-3xl mb-3 mx-auto text-primary-light" />
+              <h3 className="text-base font-bold text-ink mb-1.5">{v.title}</h3>
               <p className="text-sm text-gray-600 leading-relaxed">{v.desc}</p>
             </div>
           ))}
         </div>
 
-        <div id="kontak" className="mt-12 bg-pagebg rounded-2xl p-8 max-w-[700px] mx-auto text-center border border-gray-100">
-          <h2 className="text-2xl font-bold text-primary mb-4">Kontak Admin</h2>
-          <p className="text-gray-600 mb-6">
-            Punya pertanyaan, saran, atau ingin menghapus/melaporkan media?
-            Hubungi kami melalui:
+        <div id="kontak" className="mt-6 bg-pagebg rounded-2xl p-6 max-w-[700px] mx-auto text-center border border-gray-100">
+          <h2 className="text-xl font-bold text-primary mb-2">Hubungi Pak Choyy</h2>
+          <p className="text-gray-600 mb-4 text-sm">
+            Ada data yang perlu diperbaiki atau ingin berbagi media? Hubungi Pak Choyy.
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-3">
             <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors"
+              href={CONTACT_TIKTOK}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 bg-black text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:opacity-80 transition-opacity"
             >
-              <Icon name="envelope" />
-              {CONTACT_EMAIL}
+              <Icon name="tiktok" />
+              TikTok Pak Choyy
             </a>
             <a
               href={`https://wa.me/62${CONTACT_WA.slice(1)}`}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 bg-success text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+              className="inline-flex items-center gap-2 bg-success text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-green-700 transition-colors"
             >
               <Icon name="whatsapp" />
-              {CONTACT_WA}
+              WhatsApp Pak Choyy
             </a>
           </div>
-          <p className="text-sm text-gray-500 mt-6">
-            Ekosistem BGY: <Link href={`https://${SITE_URL}`} target="_blank" className="text-primary-light underline">{SITE_URL}</Link>
-          </p>
         </div>
       </div>
     </div>
