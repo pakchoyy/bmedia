@@ -28,11 +28,11 @@ set public = true,
 --      admin via tambah/edit). Bucket ini hanya untuk gambar kecil.
 --    - Hapus/ubah (update) hanya admin.
 -- ------------------------------------------------------------
+drop policy if exists "public insert thumbnails" on storage.objects;
 create policy "public insert thumbnails"
 on storage.objects for insert
 with check (
   bucket_id = 'thumbnails'
-  and (storage.foldername(name))[1] = ''
 );
 
 create policy "admin delete thumbnails"
