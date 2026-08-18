@@ -61,8 +61,8 @@ export default function HomeMediaSection({ media }: HomeMediaSectionProps) {
   return (
     <section className="px-4 pt-6 pb-6">
       <div className="container mx-auto max-w-[1200px]">
-        {/* Search + filters — compact inline */}
-        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 p-3 mb-4">
+        {/* Search + filters — compact inline, centered */}
+        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 p-3 mb-4 mx-auto max-w-[720px]">
           <div className="flex items-center gap-2 mb-2">
             <Icon name="magnifying-glass" className="text-gray-400 shrink-0" />
             <input
@@ -78,7 +78,7 @@ export default function HomeMediaSection({ media }: HomeMediaSectionProps) {
               </button>
             )}
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 justify-center">
             <select
               value={jenjang}
               onChange={(e) => { setJenjang(e.target.value); setKelas(""); }}
@@ -127,11 +127,11 @@ export default function HomeMediaSection({ media }: HomeMediaSectionProps) {
         </div>
 
         {/* Mata Pelajaran chips */}
-        <div className="mb-4">
+        <div className="mb-4 text-center">
           <h3 className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wide mb-2">
             Berdasarkan Mata Pelajaran
           </h3>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 justify-center">
             <button
               onClick={() => setMapel("")}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
@@ -172,7 +172,7 @@ export default function HomeMediaSection({ media }: HomeMediaSectionProps) {
         </div>
 
         {/* Media grid */}
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-center gap-3 mb-3">
           <h2 className="text-xl font-bold text-ink dark:text-slate-100">
             {isFiltering ? "Hasil Pencarian" : "Media Terbaru"}
           </h2>
