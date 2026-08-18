@@ -14,6 +14,9 @@ const MAPEL_CHIPS = [
   { name: "Seni", icon: "photo-video", color: "#f59e0b" },
 ];
 
+const MAPEL_NAMES = MAPEL_CHIPS.map((c) => c.name);
+const MAPEL_LAINNYA = "__lainnya__";
+
 const CATEGORY_COLORS: Record<MediaCategory, string> = {
   "Laboratorium Maya": "#0ea5a0",
   "Multimedia Interaktif": "#f59e0b",
@@ -44,16 +47,19 @@ export default function HomeMediaSection({ media }: HomeMediaSectionProps) {
       }
       if (jenjang && m.jenjang !== jenjang) return false;
       if (kelas && m.kelas !== kelas) return false;
-      if (mapel && m.mapel !== mapel) return false;
+      if (mapel === MAPEL_LAINNYA) {
+        if (MAPEL_NAMES.includes(m.mapel)) return false;
+      } else if (mapel && m.mapel !== mapel) return false;
       if (kategori && m.category !== kategori) return false;
       return true;
     });
   }, [media, query, jenjang, kelas, mapel, kategori]);
 
   const isFiltering = !!query || !!jenjang || !!kelas || !!mapel || !!kategori;
+  const isLainnya = mapel === MAPEL_LAINNYA;
 
   return (
-    <section className="px-4 pb-6">
+    <section className="px-4 pt-6 pb-6">
       <div className="container mx-auto max-w-[1200px]">
         {/* Search + filters — compact inline */}
         <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 p-3 mb-4">
@@ -126,6 +132,17 @@ export default function HomeMediaSection({ media }: HomeMediaSectionProps) {
             Berdasarkan Mata Pelajaran
           </h3>
           <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setMapel("")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+                mapel === ""
+                  ? "bg-primary-bg border-primary-light text-primary scale-105 shadow-sm"
+                  : "bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-ink dark:text-slate-200 hover:border-primary-light hover:shadow-sm"
+              }`}
+            >
+              <Icon name="layer-group" className="text-sm" style={{ color: "#64748b" }} />
+              Semua
+            </button>
             {MAPEL_CHIPS.map((chip) => (
               <button
                 key={chip.name}
@@ -140,6 +157,17 @@ export default function HomeMediaSection({ media }: HomeMediaSectionProps) {
                 {chip.name}
               </button>
             ))}
+            <button
+              onClick={() => setMapel(isLainnya ? "" : MAPEL_LAINNYA)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+                isLainnya
+                  ? "bg-primary-bg border-primary-light text-primary scale-105 shadow-sm"
+                  : "bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-ink dark:text-slate-200 hover:border-primary-light hover:shadow-sm"
+              }`}
+            >
+              <Icon name="tags" className="text-sm" style={{ color: "#64748b" }} />
+              Lainnya
+            </button>
           </div>
         </div>
 

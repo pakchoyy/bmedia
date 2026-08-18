@@ -77,7 +77,7 @@ export default async function HomePage() {
               </Link>
               <Link
                 href="/submit"
-                className="text-white/90 rounded-full px-3 py-1.5 text-xs font-semibold inline-flex items-center gap-2 hover:text-white hover:underline underline-offset-4 transition-colors"
+                className="bg-success text-white rounded-full px-5 py-2.5 text-sm font-semibold inline-flex items-center gap-2 hover:bg-green-700 hover:scale-105 transition-all shadow-md"
               >
                 <Icon name="plus" />
                 Kirim Karya
