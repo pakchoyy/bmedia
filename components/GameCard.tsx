@@ -6,7 +6,7 @@ import { formatPlays } from "@/lib/utils";
 import MediaThumb from "./MediaThumb";
 import Icon from "./Icon";
 
-export default function GameCard({ media }: { media: Media }) {
+export default function GameCard({ media, categoryColor }: { media: Media; categoryColor?: string }) {
   const trackOpen = () => {
     try {
       const p = fetch(`/api/play/${media.id}`, {
@@ -27,7 +27,10 @@ export default function GameCard({ media }: { media: Media }) {
       className="group bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-slate-800 hover:-translate-y-2 hover:shadow-md hover:border-primary-light transition-all duration-300 flex flex-col"
     >
       <div className="relative h-44 overflow-hidden">
-        <div className="absolute top-2.5 right-2.5 bg-success text-white px-3 py-1 rounded-full text-xs font-semibold z-10">
+        <div
+          className="absolute top-2.5 right-2.5 text-white px-3 py-1 rounded-full text-xs font-semibold z-10"
+          style={{ backgroundColor: categoryColor || "#16a34a" }}
+        >
           {media.category}
         </div>
         <MediaThumb media={media} className="transition-transform duration-500 group-hover:scale-110" />

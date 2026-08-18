@@ -1,9 +1,7 @@
 import Link from "next/link";
 import { getApprovedMedia, getSiteStats } from "@/lib/queries";
 import Icon from "@/components/Icon";
-import SearchMedia from "@/components/SearchMedia";
-import PopularCategories from "@/components/PopularCategories";
-import MediaTerbaru from "@/components/MediaTerbaru";
+import HomeMediaSection from "@/components/HomeMediaSection";
 import CTABuatGame from "@/components/CTABuatGame";
 import CTAKirimKarya from "@/components/CTAKirimKarya";
 import Stats from "@/components/Stats";
@@ -17,7 +15,6 @@ export default async function HomePage() {
     getSiteStats(),
   ]);
 
-  // Sort media by date (newest first)
   const sortedMedia = [...media].sort(
     (a, b) => new Date(b.submitted_at).getTime() - new Date(a.submitted_at).getTime()
   );
@@ -26,7 +23,6 @@ export default async function HomePage() {
     <div className="fade-in">
       {/* Hero */}
       <section className="bg-bgy-hero text-white overflow-hidden relative">
-        {/* Decorative floating shapes */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
           <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/5 rounded-full blur-3xl" style={{animation:'float 8s ease-in-out infinite'}} />
           <div className="absolute top-1/3 -left-16 w-40 h-40 bg-white/5 rounded-full blur-2xl" style={{animation:'floatSlow 6s ease-in-out infinite'}} />
@@ -34,7 +30,6 @@ export default async function HomePage() {
           <div className="absolute top-8 left-1/3 w-16 h-16 bg-white/[0.06] rounded-full blur-lg" style={{animation:'floatSlow 7s ease-in-out infinite'}} />
         </div>
 
-        {/* Hero image — separuh kanan banner */}
         <div className="absolute inset-y-0 right-0 w-[52%] max-lg:hidden">
           <img
             src="/hero-banner.webp"
@@ -42,10 +37,9 @@ export default async function HomePage() {
             className="w-full h-full object-cover"
           />
         </div>
-        {/* Gradient blend tipis di tepi kiri foto (tidak menutupi foto) */}
         <div className="absolute inset-y-0 right-[29%] w-[23%] bg-gradient-to-r from-[#0d7a8a] via-[#0d7a8a]/25 to-transparent pointer-events-none max-lg:hidden" />
 
-        <div className="relative z-10 container mx-auto max-w-[1200px] px-6 py-6 max-md:py-5">
+        <div className="relative z-10 container mx-auto max-w-[1200px] px-6 py-5 max-md:py-4">
           <div className="w-[48%] max-lg:w-full max-lg:text-center">
             <div className="flex flex-wrap justify-start gap-2 mb-2 max-lg:justify-center">
               {["✓ Gratis", "✓ Karya Guru Indonesia", "✓ Interaktif"].map((b) => (
@@ -55,35 +49,35 @@ export default async function HomePage() {
               ))}
             </div>
 
-            <h1 className="text-white text-5xl leading-tight font-extrabold mb-1.5 max-md:text-4xl max-sm:text-3xl">
+            <h1 className="text-white text-4xl leading-tight font-extrabold mb-1 max-md:text-3xl max-sm:text-2xl">
               Bantu Guru Yuk
             </h1>
-            <h2 className="text-white text-xl leading-relaxed font-medium mb-2.5 max-md:text-lg text-balance">
+            <h2 className="text-white text-lg leading-relaxed font-medium mb-2 max-md:text-base text-balance">
               Media Belajar Interaktif Karya Guru Indonesia
             </h2>
 
-            <p className="text-base mb-4 opacity-90 leading-relaxed max-w-[440px] max-lg:mx-auto">
+            <p className="text-sm mb-3 opacity-90 leading-relaxed max-w-[440px] max-lg:mx-auto">
               Temukan, gunakan, dan bagikan media pembelajaran untuk membuat pembelajaran lebih menarik.
             </p>
 
             <div className="flex flex-wrap items-center gap-3 max-lg:justify-center">
               <a
-                href="#search"
-                className="bg-accent text-white rounded-full px-6 py-3 text-base font-bold inline-flex items-center gap-2 hover:bg-[#e06c0d] hover:scale-105 transition-all shadow-lg"
+                href="#media"
+                className="bg-accent text-white rounded-full px-5 py-2.5 text-sm font-bold inline-flex items-center gap-2 hover:bg-[#e06c0d] hover:scale-105 transition-all shadow-lg"
               >
                 <Icon name="compass" />
                 Jelajahi Media
               </a>
               <Link
                 href="/buat"
-                className="bg-white/15 border border-white/30 text-white rounded-full px-5 py-2.5 text-base font-semibold inline-flex items-center gap-2 hover:bg-white/25 transition-colors"
+                className="bg-white/15 border border-white/30 text-white rounded-full px-4 py-2 text-sm font-semibold inline-flex items-center gap-2 hover:bg-white/25 transition-colors"
               >
                 <Icon name="gamepad" />
                 Buat Game Sendiri
               </Link>
               <Link
                 href="/submit"
-                className="text-white/90 rounded-full px-4 py-2 text-sm font-semibold inline-flex items-center gap-2 hover:text-white hover:underline underline-offset-4 transition-colors"
+                className="text-white/90 rounded-full px-3 py-1.5 text-xs font-semibold inline-flex items-center gap-2 hover:text-white hover:underline underline-offset-4 transition-colors"
               >
                 <Icon name="plus" />
                 Kirim Karya
@@ -92,8 +86,7 @@ export default async function HomePage() {
           </div>
         </div>
 
-        {/* Mobile: image di bawah teks */}
-        <div className="lg:hidden relative z-10 px-6 pb-5 max-w-[300px] mx-auto">
+        <div className="lg:hidden relative z-10 px-6 pb-4 max-w-[300px] mx-auto">
           <img
             src="/hero-banner.webp"
             alt="Ilustrasi media belajar interaktif bersama guru"
@@ -102,21 +95,17 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Search Media */}
-      <SearchMedia />
-
-      {/* Popular Categories */}
-      <PopularCategories />
-
-      {/* Media Terbaru */}
-      <MediaTerbaru media={sortedMedia} limit={8} />
+      {/* Search + Filter + Media Grid — all-in-one */}
+      <div id="media">
+        <HomeMediaSection media={sortedMedia} />
+      </div>
 
       {/* Stats */}
       <Stats stats={stats} />
 
-      {/* CTA Buat Game & Kirim Karya */}
-      <section className="py-6 px-6">
-        <div className="container mx-auto max-w-[1200px] grid gap-6 lg:grid-cols-2">
+      {/* CTA */}
+      <section className="py-4 px-6">
+        <div className="container mx-auto max-w-[1200px] grid gap-4 lg:grid-cols-2">
           <CTABuatGame />
           <CTAKirimKarya />
         </div>
