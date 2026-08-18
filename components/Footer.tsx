@@ -22,7 +22,7 @@ export default function Footer() {
             <h3 className="text-primary font-extrabold mb-3 text-sm">
               Kontak Admin
             </h3>
-            <ul className="text-sm space-y-2">
+            <ul className="text-sm space-y-2 mb-4">
               <li>
                 <a href="#panduan" className="text-gray-600 dark:text-slate-400 hover:text-primary-light transition-colors font-medium">
                   <Icon name="book-open" className="w-4 text-primary-light inline" />{" "}
@@ -42,11 +42,11 @@ export default function Footer() {
                 </a>
               </li>
             </ul>
+            <p className="text-xs text-gray-400 dark:text-slate-500 leading-relaxed">
+              Ada data salah atau ingin hapus media? Hubungi admin via WhatsApp.
+            </p>
           </div>
         </div>
-        <p className="text-xs text-gray-400 dark:text-slate-500 border-t border-gray-100 dark:border-slate-800 pt-4 mb-4">
-          Ada data salah atau ingin hapus media? Hubungi admin via WhatsApp.
-        </p>
       </div>
       <div className="bg-primary text-center py-4">
         <div className="container mx-auto max-w-[1200px] px-6 text-sm text-white/90">
