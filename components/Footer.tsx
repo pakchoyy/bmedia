@@ -3,7 +3,7 @@ import { CONTACT_EMAIL, CONTACT_WA } from "@/lib/constants";
 
 export default function Footer() {
   return (
-    <footer className="bg-white dark:bg-slate-900 text-ink dark:text-slate-200 border-t border-gray-200 dark:border-slate-800 mt-16">
+    <footer className="bg-white dark:bg-slate-900 text-ink dark:text-slate-200 border-t border-gray-200 dark:border-slate-800 mt-6">
       <div className="container mx-auto max-w-[1200px] px-6 py-10">
         <div className="grid gap-8 mb-6 grid-cols-1 md:grid-cols-2">
           <div>
@@ -49,11 +49,11 @@ export default function Footer() {
         </div>
       </div>
       <div className="bg-primary text-center py-4">
-        <div className="container mx-auto max-w-[1200px] px-6 text-sm text-white/90">
-          <div className="text-xs text-white/60 mb-0.5">Media Belajar</div>
-          <div>
+        <div className="container mx-auto max-w-[1200px] px-6">
+          <div className="text-white font-extrabold">Media Belajar</div>
+          <div className="text-xs text-white/75 mt-0.5">
             Bantu Guru Yuk by{" "}
-            <a href="https://bantuguruyuk.web.id" target="_blank" rel="noreferrer" className="font-extrabold hover:text-accent transition-colors">
+            <a href="https://bantuguruyuk.web.id" target="_blank" rel="noreferrer" className="font-semibold hover:text-accent transition-colors">
               Pak Choyy
             </a>{" "}
             &bull; v1.0.0

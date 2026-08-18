@@ -34,65 +34,71 @@ export default async function HomePage() {
           <div className="absolute top-8 left-1/3 w-16 h-16 bg-white/[0.06] rounded-full blur-lg" style={{animation:'floatSlow 7s ease-in-out infinite'}} />
         </div>
 
-        <div className="container mx-auto max-w-[1200px] px-6 py-6 max-md:py-5 relative z-10">
-          <div className="flex items-center gap-8 max-lg:flex-col max-lg:text-center">
-            {/* Left: Content */}
-            <div className="flex-1 min-w-0">
-              <div className="flex flex-wrap justify-start gap-2 mb-2 max-lg:justify-center">
-                {["✓ Gratis", "✓ Karya Guru Indonesia", "✓ Interaktif"].map((b) => (
-                  <span key={b} className="bg-white/15 rounded-full px-3 py-1 text-xs font-medium">
-                    {b}
-                  </span>
-                ))}
-              </div>
+        {/* Hero image — separuh kanan banner */}
+        <div className="absolute inset-y-0 right-0 w-[46%] max-lg:hidden">
+          <img
+            src="/hero-banner.webp"
+            alt="Ilustrasi media belajar interaktif bersama guru"
+            className="w-full h-full object-cover"
+          />
+        </div>
+        {/* Gradient transparansi teal → foto */}
+        <div className="absolute inset-y-0 right-0 w-[54%] bg-gradient-to-l from-transparent via-[#0d7a8a]/25 to-[#0d7a8a] pointer-events-none max-lg:hidden" />
 
-              <h1 className="text-white text-5xl leading-tight font-extrabold mb-1.5 max-md:text-4xl max-sm:text-3xl">
-                Bantu Guru Yuk
-              </h1>
-              <h2 className="text-white text-xl leading-relaxed font-medium mb-2.5 max-md:text-lg text-balance">
-                Media Belajar Interaktif Karya Guru Indonesia
-              </h2>
-
-              <p className="text-base mb-4 opacity-90 leading-relaxed max-w-[440px] max-lg:mx-auto">
-                Temukan, gunakan, dan bagikan media pembelajaran untuk membuat pembelajaran lebih menarik.
-              </p>
-
-              <div className="flex flex-wrap items-center gap-3 max-lg:justify-center">
-                <a
-                  href="#search"
-                  className="bg-accent text-white rounded-full px-6 py-3 text-base font-bold inline-flex items-center gap-2 hover:bg-[#e06c0d] hover:scale-105 transition-all shadow-lg"
-                >
-                  <Icon name="compass" />
-                  Jelajahi Media
-                </a>
-                <Link
-                  href="/buat"
-                  className="bg-white/15 border border-white/30 text-white rounded-full px-5 py-2.5 text-base font-semibold inline-flex items-center gap-2 hover:bg-white/25 transition-colors"
-                >
-                  <Icon name="gamepad" />
-                  Buat Game Sendiri
-                </Link>
-                <Link
-                  href="/submit"
-                  className="text-white/90 rounded-full px-4 py-2 text-sm font-semibold inline-flex items-center gap-2 hover:text-white hover:underline underline-offset-4 transition-colors"
-                >
-                  <Icon name="plus" />
-                  Kirim Karya
-                </Link>
-              </div>
+        <div className="relative z-10 container mx-auto max-w-[1200px] px-6 py-6 max-md:py-5">
+          <div className="w-[54%] max-lg:w-full max-lg:text-center">
+            <div className="flex flex-wrap justify-start gap-2 mb-2 max-lg:justify-center">
+              {["✓ Gratis", "✓ Karya Guru Indonesia", "✓ Interaktif"].map((b) => (
+                <span key={b} className="bg-white/15 rounded-full px-3 py-1 text-xs font-medium">
+                  {b}
+                </span>
+              ))}
             </div>
 
-            {/* Right: Hero Image — menyatu dengan gradient */}
-            <div className="w-[48%] max-lg:w-full max-lg:mt-4 max-lg:max-w-[320px] max-lg:mx-auto relative">
-              {/* Gradient overlay untuk transisi teal → image */}
-              <div className="absolute -left-12 top-0 bottom-0 w-24 bg-gradient-to-r from-[#0d7a8a] to-transparent pointer-events-none max-lg:hidden" />
-              <img
-                src="/hero-banner.webp"
-                alt="Ilustrasi media belajar interaktif bersama guru"
-                className="w-full h-auto relative z-10 max-h-[320px] object-contain"
-              />
+            <h1 className="text-white text-5xl leading-tight font-extrabold mb-1.5 max-md:text-4xl max-sm:text-3xl">
+              Bantu Guru Yuk
+            </h1>
+            <h2 className="text-white text-xl leading-relaxed font-medium mb-2.5 max-md:text-lg text-balance">
+              Media Belajar Interaktif Karya Guru Indonesia
+            </h2>
+
+            <p className="text-base mb-4 opacity-90 leading-relaxed max-w-[440px] max-lg:mx-auto">
+              Temukan, gunakan, dan bagikan media pembelajaran untuk membuat pembelajaran lebih menarik.
+            </p>
+
+            <div className="flex flex-wrap items-center gap-3 max-lg:justify-center">
+              <a
+                href="#search"
+                className="bg-accent text-white rounded-full px-6 py-3 text-base font-bold inline-flex items-center gap-2 hover:bg-[#e06c0d] hover:scale-105 transition-all shadow-lg"
+              >
+                <Icon name="compass" />
+                Jelajahi Media
+              </a>
+              <Link
+                href="/buat"
+                className="bg-white/15 border border-white/30 text-white rounded-full px-5 py-2.5 text-base font-semibold inline-flex items-center gap-2 hover:bg-white/25 transition-colors"
+              >
+                <Icon name="gamepad" />
+                Buat Game Sendiri
+              </Link>
+              <Link
+                href="/submit"
+                className="text-white/90 rounded-full px-4 py-2 text-sm font-semibold inline-flex items-center gap-2 hover:text-white hover:underline underline-offset-4 transition-colors"
+              >
+                <Icon name="plus" />
+                Kirim Karya
+              </Link>
             </div>
           </div>
+        </div>
+
+        {/* Mobile: image di bawah teks */}
+        <div className="lg:hidden relative z-10 px-6 pb-5 max-w-[300px] mx-auto">
+          <img
+            src="/hero-banner.webp"
+            alt="Ilustrasi media belajar interaktif bersama guru"
+            className="w-full h-auto"
+          />
         </div>
       </section>
 
