@@ -43,6 +43,7 @@ import {
   FaTrash,
   FaChevronDown,
   FaHourglassHalf,
+  FaTiktok,
 } from "react-icons/fa6";
 import type { IconType } from "react-icons";
 
@@ -91,6 +92,7 @@ const icons: Record<string, IconType> = {
   trash: FaTrash,
   "chevron-down": FaChevronDown,
   hourglass: FaHourglassHalf,
+  tiktok: FaTiktok,
 };
 
 interface IconProps {

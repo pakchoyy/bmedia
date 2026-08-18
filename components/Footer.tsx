@@ -1,5 +1,5 @@
 import Icon from "./Icon";
-import { CONTACT_EMAIL, CONTACT_WA } from "@/lib/constants";
+import { CONTACT_WA, CONTACT_TIKTOK } from "@/lib/constants";
 
 export default function Footer() {
   return (
@@ -7,43 +7,46 @@ export default function Footer() {
       <div className="container mx-auto max-w-[1200px] px-6 py-4">
         <div className="grid gap-4 mb-2 grid-cols-1 md:grid-cols-2">
           <div>
-            <h3 className="flex items-center gap-2 text-primary font-extrabold mb-3 text-sm">
+            <h3 className="flex items-center gap-2 text-primary font-extrabold mb-2 text-sm">
               <Icon name="laptop-code" className="text-primary-light text-lg" />
-              Bantu Guru Yuk - Belajar
+              Bantu Guru Yuk - Media Belajar
             </h3>
             <p className="text-gray-600 dark:text-slate-400 text-sm leading-relaxed">
-              Satu Tempat untuk Media Pembelajaran Interaktif Guru Indonesia. BGY
-              (Bantu Guru Yuk) merupakan ekosistem aplikasi pendidikan yang
-              membantu guru bekerja lebih mudah, cepat, dan terorganisir melalui
-              pemanfaatan teknologi.
+              &ldquo;Ruang berbagi media pembelajaran interaktif untuk membantu
+              guru Indonesia mengajar dengan lebih mudah dan menarik.&rdquo;
             </p>
           </div>
           <div>
-            <h3 className="text-primary font-extrabold mb-3 text-sm">
-              Kontak Admin
+            <h3 className="text-primary font-extrabold mb-2 text-sm">
+              Kontak Pak Choy
             </h3>
-            <ul className="text-sm space-y-1 mb-3">
+            <ul className="text-sm space-y-1.5 mb-2">
               <li>
-                <a href="#panduan" className="text-gray-600 dark:text-slate-400 hover:text-primary-light transition-colors font-medium">
-                  <Icon name="book-open" className="w-4 text-primary-light inline" />{" "}
-                  Panduan Penggunaan
+                <a
+                  href={CONTACT_TIKTOK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-600 dark:text-slate-400 hover:text-primary-light transition-colors font-medium inline-flex items-center gap-2"
+                >
+                  <Icon name="tiktok" className="w-4 text-primary-light" />
+                  TikTok Pak Choyy
                 </a>
               </li>
               <li>
-                <a href={`mailto:${CONTACT_EMAIL}`} className="text-gray-600 dark:text-slate-400 hover:text-primary-light transition-colors font-medium">
-                  <Icon name="envelope" className="w-4 text-primary-light inline" />{" "}
-                  {CONTACT_EMAIL}
-                </a>
-              </li>
-              <li>
-                <a href={`https://wa.me/62${CONTACT_WA.slice(1)}`} target="_blank" rel="noreferrer" className="text-gray-600 dark:text-slate-400 hover:text-primary-light transition-colors font-medium">
-                  <Icon name="whatsapp" className="w-4 text-primary-light inline" />{" "}
-                  {CONTACT_WA}
+                <a
+                  href={`https://wa.me/62${CONTACT_WA.slice(1)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-600 dark:text-slate-400 hover:text-primary-light transition-colors font-medium inline-flex items-center gap-2"
+                >
+                  <Icon name="whatsapp" className="w-4 text-primary-light" />
+                  WhatsApp Pak Choy
                 </a>
               </li>
             </ul>
-            <p className="text-xs text-gray-400 dark:text-slate-500 leading-relaxed">
-              Ada data salah atau ingin hapus media? Hubungi admin via WhatsApp.
+            <p className="text-xs text-danger leading-relaxed">
+              Ada data yang perlu diperbaiki atau ingin berbagi media? Hubungi
+              Pak Choy.
             </p>
           </div>
         </div>
@@ -53,7 +56,12 @@ export default function Footer() {
           <div className="text-white font-extrabold">Media Belajar</div>
           <div className="text-xs text-white/75 mt-0.5">
             Bantu Guru Yuk by{" "}
-            <a href="https://bantuguruyuk.web.id" target="_blank" rel="noreferrer" className="font-semibold hover:text-accent transition-colors">
+            <a
+              href="https://bantuguruyuk.web.id"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold hover:text-accent transition-colors"
+            >
               Pak Choyy
             </a>{" "}
             &bull; v1.0.0
