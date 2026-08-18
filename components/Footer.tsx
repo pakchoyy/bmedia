@@ -3,9 +3,9 @@ import { CONTACT_EMAIL, CONTACT_WA } from "@/lib/constants";
 
 export default function Footer() {
   return (
-    <footer className="bg-white dark:bg-slate-900 text-ink dark:text-slate-200 border-t border-gray-200 dark:border-slate-800 mt-4">
-      <div className="container mx-auto max-w-[1200px] px-6 py-6">
-        <div className="grid gap-6 mb-4 grid-cols-1 md:grid-cols-2">
+    <footer className="bg-white dark:bg-slate-900 text-ink dark:text-slate-200 border-t border-gray-200 dark:border-slate-800 mt-2">
+      <div className="container mx-auto max-w-[1200px] px-6 py-4">
+        <div className="grid gap-4 mb-2 grid-cols-1 md:grid-cols-2">
           <div>
             <h3 className="flex items-center gap-2 text-primary font-extrabold mb-3 text-sm">
               <Icon name="laptop-code" className="text-primary-light text-lg" />
@@ -22,7 +22,7 @@ export default function Footer() {
             <h3 className="text-primary font-extrabold mb-3 text-sm">
               Kontak Admin
             </h3>
-            <ul className="text-sm space-y-2 mb-4">
+            <ul className="text-sm space-y-1 mb-3">
               <li>
                 <a href="#panduan" className="text-gray-600 dark:text-slate-400 hover:text-primary-light transition-colors font-medium">
                   <Icon name="book-open" className="w-4 text-primary-light inline" />{" "}
@@ -48,7 +48,7 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <div className="bg-primary text-center py-3">
+      <div className="bg-primary text-center py-2">
         <div className="container mx-auto max-w-[1200px] px-6">
           <div className="text-white font-extrabold">Media Belajar</div>
           <div className="text-xs text-white/75 mt-0.5">
