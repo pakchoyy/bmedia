@@ -180,8 +180,9 @@ body.dark .rekom-chip.green{color:#4ade80;}body.dark .rekom-chip.blue{color:#93c
 
 /* CHIPS */
 .chip-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
-.chip{padding:6px 12px;border-radius:99px;border:1.5px solid var(--border);font-size:.78rem;font-weight:600;color:var(--text-light);cursor:pointer;transition:all .18s;background:var(--input-bg);}
+.chip{padding:6px 12px;border-radius:99px;border:1.5px solid var(--border);font-size:.78rem;font-weight:600;color:var(--text-light);cursor:pointer;transition:all .18s;background:var(--input-bg);font-family:inherit;line-height:1.25;min-height:36px;display:inline-flex;align-items:center;justify-content:center;}
 .chip:hover{border-color:#0ea5a0;color:#0ea5a0;}
+.chip:focus-visible,.tipe-card:focus-visible,.hdr-btn:focus-visible,.hdr-menu-btn:focus-visible,.btn:focus-visible,.cl-item:focus-visible{outline:2px solid #f59e0b;outline-offset:3px;}
 .chip.selected{background:rgba(14,165,160,.12);border-color:#0ea5a0;color:#0ea5a0;font-weight:700;}
 .chip.gaya.selected{background:rgba(245,158,11,.1);border-color:var(--accent);color:#b45309;}
 .chip.gaya:hover{border-color:var(--accent);color:#b45309;}
@@ -213,7 +214,8 @@ body.dark .chip.soal-mode.selected{color:#c4b5fd;}
 .tipe-card .tc-label{font-size:.75rem;font-weight:800;padding:6px 8px;text-align:center;color:var(--text);border-top:1px solid var(--border);}
 .tipe-card .tc-check{position:absolute;top:6px;right:6px;width:20px;height:20px;border-radius:50%;background:#0ea5a0;color:#fff;font-size:.7rem;display:none;align-items:center;justify-content:center;font-weight:800;}
 .tipe-card.selected .tc-check{display:flex;}
-.tipe-card .tc-info{position:absolute;top:6px;left:6px;width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.25);color:#fff;font-size:.65rem;display:flex;align-items:center;justify-content:center;font-weight:800;cursor:pointer;}
+.tipe-card .tc-info{position:absolute;top:6px;left:6px;width:18px;height:18px;border-radius:50%;border:none;background:rgba(255,255,255,.25);color:#fff;font-size:.65rem;display:flex;align-items:center;justify-content:center;font-weight:800;cursor:pointer;font-family:inherit;padding:0;}
+.tipe-card .tc-info:focus-visible{outline:2px solid #fff;outline-offset:2px;}
 .tipe-custom-row{margin-top:10px;display:none;}
 
 /* TOOLTIP POPUP */
@@ -254,6 +256,12 @@ body.dark .accordion-header:hover{background:rgba(255,255,255,.04);}
 .btn-reset:hover{border-color:#ef4444;color:#ef4444;}
 .ai-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
 .ai-btns .btn{flex:1;min-width:80px;}
+.output-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+.output-actions .btn{min-height:46px;font-size:.85rem;border-radius:9px;}
+.nav-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.nav-actions .btn{border:1.5px solid var(--border);background:var(--input-bg);color:var(--text-light);min-height:42px;border-radius:9px;font-size:.8rem;}
+.nav-actions .btn:hover{border-color:#0ea5a0;color:#0ea5a0;}
+@media(max-width:420px){.output-actions,.nav-actions{grid-template-columns:1fr;}}
 
 /* PROMPT RESULT */
 .prompt-result-wrap{background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px;}
@@ -314,9 +322,10 @@ body.dark .prompt-raw{background:#0f172a;}
 /* CROSS LINK */
 .cross-link-box{background:linear-gradient(135deg,rgba(14,165,160,.07),rgba(245,158,11,.05));border:1.5px solid rgba(14,165,160,.2);border-radius:10px;padding:12px 14px;margin-top:10px;}
 .cl-title{font-size:.72rem;font-weight:800;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
-.cl-items{display:flex;gap:8px;flex-wrap:wrap;}
-.cl-item{display:flex;align-items:center;gap:6px;padding:7px 12px;background:var(--card-bg);border:1.5px solid var(--border);border-radius:9px;font-size:.75rem;font-weight:700;color:var(--text);cursor:pointer;text-decoration:none;transition:all .18s;}
+.cl-items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+.cl-item{display:flex;align-items:center;gap:6px;padding:8px 10px;background:var(--card-bg);border:1.5px solid var(--border);border-radius:9px;font-size:.75rem;font-weight:700;color:var(--text);cursor:pointer;text-decoration:none;transition:all .18s;min-height:42px;}
 .cl-item:hover{border-color:#0ea5a0;color:#0ea5a0;transform:translateY(-1px);}
+@media(max-width:420px){.cl-items{grid-template-columns:1fr;}}
 
 /* SOAL SENDIRI */
 #soalSendiriWrap{margin-top:8px;display:none;}
@@ -559,70 +568,70 @@ body.dark .prompt-raw{background:#0f172a;}
     <div class="card-title">🎮 Pilih Tipe Game</div>
     <div style="font-size:.75rem;color:var(--text-light);margin-bottom:12px;">Klik <b>ℹ</b> pada tiap kartu untuk penjelasan lengkap. BGY otomatis merekomendasikan tipe terbaik.</div>
     <div class="tipe-grid" id="tipeGrid">
-      <div class="tipe-card" data-val="Quiz Mission" onclick="selectTipe(this)">
+      <div class="tipe-card" role="button" tabindex="0" aria-pressed="false" data-val="Quiz Mission" onclick="selectTipe(this)" onkeydown="activateTipeKey(event,this)">
         <div class="tc-check">✓</div>
-        <div class="tc-info" onclick="event.stopPropagation();showTooltip('Quiz Mission')">ℹ</div>
+        <button type="button" class="tc-info" aria-label="Info Quiz Mission" onclick="event.stopPropagation();showTooltip('Quiz Mission')">ℹ</button>
         <div class="tc-img" style="background:linear-gradient(135deg,#0ea5a0,#0d7a8a);">
           <div class="tc-icon">🧠</div>
           <div class="tc-sub" style="color:rgba(255,255,255,.85);">PILIHAN GANDA</div>
         </div>
         <div class="tc-label">Quiz Mission</div>
       </div>
-      <div class="tipe-card" data-val="Puzzle" onclick="selectTipe(this)">
+      <div class="tipe-card" role="button" tabindex="0" aria-pressed="false" data-val="Puzzle" onclick="selectTipe(this)" onkeydown="activateTipeKey(event,this)">
         <div class="tc-check">✓</div>
-        <div class="tc-info" onclick="event.stopPropagation();showTooltip('Puzzle')">ℹ</div>
+        <button type="button" class="tc-info" aria-label="Info Puzzle" onclick="event.stopPropagation();showTooltip('Puzzle')">ℹ</button>
         <div class="tc-img" style="background:linear-gradient(135deg,#d97706,#b45309);">
           <div class="tc-icon">🧩</div>
           <div class="tc-sub" style="color:rgba(255,255,255,.85);">SUSUN URUTAN</div>
         </div>
         <div class="tc-label">Puzzle</div>
       </div>
-      <div class="tipe-card" data-val="Matching" onclick="selectTipe(this)">
+      <div class="tipe-card" role="button" tabindex="0" aria-pressed="false" data-val="Matching" onclick="selectTipe(this)" onkeydown="activateTipeKey(event,this)">
         <div class="tc-check">✓</div>
-        <div class="tc-info" onclick="event.stopPropagation();showTooltip('Matching')">ℹ</div>
+        <button type="button" class="tc-info" aria-label="Info Matching" onclick="event.stopPropagation();showTooltip('Matching')">ℹ</button>
         <div class="tc-img" style="background:linear-gradient(135deg,#16a34a,#15803d);">
           <div class="tc-icon">🔗</div>
           <div class="tc-sub" style="color:rgba(255,255,255,.85);">COCOKKAN</div>
         </div>
         <div class="tc-label">Matching</div>
       </div>
-      <div class="tipe-card" data-val="Adventure" onclick="selectTipe(this)">
+      <div class="tipe-card" role="button" tabindex="0" aria-pressed="false" data-val="Adventure" onclick="selectTipe(this)" onkeydown="activateTipeKey(event,this)">
         <div class="tc-check">✓</div>
-        <div class="tc-info" onclick="event.stopPropagation();showTooltip('Adventure')">ℹ</div>
+        <button type="button" class="tc-info" aria-label="Info Adventure" onclick="event.stopPropagation();showTooltip('Adventure')">ℹ</button>
         <div class="tc-img" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);">
           <div class="tc-icon">🗺️</div>
           <div class="tc-sub" style="color:rgba(255,255,255,.85);">JELAJAHI PETA</div>
         </div>
         <div class="tc-label">Adventure</div>
       </div>
-      <div class="tipe-card" data-val="Mystery" onclick="selectTipe(this)">
+      <div class="tipe-card" role="button" tabindex="0" aria-pressed="false" data-val="Mystery" onclick="selectTipe(this)" onkeydown="activateTipeKey(event,this)">
         <div class="tc-check">✓</div>
-        <div class="tc-info" onclick="event.stopPropagation();showTooltip('Mystery')">ℹ</div>
+        <button type="button" class="tc-info" aria-label="Info Mystery" onclick="event.stopPropagation();showTooltip('Mystery')">ℹ</button>
         <div class="tc-img" style="background:linear-gradient(135deg,#0f172a,#1e293b);">
           <div class="tc-icon">🔍</div>
           <div class="tc-sub" style="color:rgba(255,255,255,.85);">DETEKTIF</div>
         </div>
         <div class="tc-label">Mystery</div>
       </div>
-      <div class="tipe-card" data-val="Challenge" onclick="selectTipe(this)">
+      <div class="tipe-card" role="button" tabindex="0" aria-pressed="false" data-val="Challenge" onclick="selectTipe(this)" onkeydown="activateTipeKey(event,this)">
         <div class="tc-check">✓</div>
-        <div class="tc-info" onclick="event.stopPropagation();showTooltip('Challenge')">ℹ</div>
+        <button type="button" class="tc-info" aria-label="Info Challenge" onclick="event.stopPropagation();showTooltip('Challenge')">ℹ</button>
         <div class="tc-img" style="background:linear-gradient(135deg,#dc2626,#b91c1c);">
           <div class="tc-icon">⚡</div>
           <div class="tc-sub" style="color:rgba(255,255,255,.85);">LEVEL UP</div>
         </div>
         <div class="tc-label">Challenge</div>
       </div>
-      <div class="tipe-card" data-val="Case Challenge" onclick="selectTipe(this)">
+      <div class="tipe-card" role="button" tabindex="0" aria-pressed="false" data-val="Case Challenge" onclick="selectTipe(this)" onkeydown="activateTipeKey(event,this)">
         <div class="tc-check">✓</div>
-        <div class="tc-info" onclick="event.stopPropagation();showTooltip('Case Challenge')">ℹ</div>
+        <button type="button" class="tc-info" aria-label="Info Case Challenge" onclick="event.stopPropagation();showTooltip('Case Challenge')">ℹ</button>
         <div class="tc-img" style="background:linear-gradient(135deg,#0369a1,#075985);">
           <div class="tc-icon">📋</div>
           <div class="tc-sub" style="color:rgba(255,255,255,.85);">ANALISIS KASUS</div>
         </div>
         <div class="tc-label">Case Challenge</div>
       </div>
-      <div class="tipe-card" data-val="__custom__" onclick="selectTipe(this)">
+      <div class="tipe-card" role="button" tabindex="0" aria-pressed="false" data-val="__custom__" onclick="selectTipe(this)" onkeydown="activateTipeKey(event,this)">
         <div class="tc-check">✓</div>
         <div class="tc-img" style="background:linear-gradient(135deg,#64748b,#475569);">
           <div class="tc-icon">✏️</div>
@@ -663,11 +672,15 @@ body.dark .prompt-raw{background:#0f172a;}
       <div class="form-group">
         <div class="section-label">👥 Mode Bermain</div>
         <div class="chip-grid" id="modeGrid">
-          <div class="chip mode selected" data-val="👤 Individu" onclick="selectMode(this)">👤 Individu</div>
-          <div class="chip mode" data-val="👥 Berpasangan" onclick="selectMode(this)">👥 Berpasangan</div>
-          <div class="chip mode" data-val="👨‍👩‍👧 Kelompok" onclick="selectMode(this)">👨‍👩‍👧 Kelompok</div>
-          <div class="chip mode" data-val="🏫 Klasikal/Proyektor" onclick="selectMode(this)">🏫 Klasikal</div>
-          <div class="chip mode" data-val="🤖 AI Menentukan" onclick="selectMode(this)">🤖 AI Menentukan</div>
+          <button type="button" class="chip mode selected" data-val="👤 Individu" onclick="selectMode(this)">👤 Individu</button>
+          <button type="button" class="chip mode" data-val="👥 Berpasangan" onclick="selectMode(this)">👥 Berpasangan</button>
+          <button type="button" class="chip mode" data-val="👨‍👩‍👧 Kelompok" onclick="selectMode(this)">👨‍👩‍👧 Kelompok</button>
+          <button type="button" class="chip mode" data-val="⚔️ Duel / VS" onclick="selectMode(this)">⚔️ Duel / VS</button>
+          <button type="button" class="chip mode" data-val="🏆 Tim vs Tim" onclick="selectMode(this)">🏆 Tim vs Tim</button>
+          <button type="button" class="chip mode" data-val="👩‍🏫 Guru vs Kelas" onclick="selectMode(this)">👩‍🏫 Guru vs Kelas</button>
+          <button type="button" class="chip mode" data-val="🔁 Giliran" onclick="selectMode(this)">🔁 Giliran</button>
+          <button type="button" class="chip mode" data-val="🏫 Klasikal/Proyektor" onclick="selectMode(this)">🏫 Klasikal</button>
+          <button type="button" class="chip mode" data-val="🤖 AI Menentukan" onclick="selectMode(this)">🤖 AI Menentukan</button>
         </div>
       </div>
 
@@ -675,11 +688,11 @@ body.dark .prompt-raw{background:#0f172a;}
       <div class="form-group">
         <div class="section-label">🎯 Tingkat Kesulitan</div>
         <div class="chip-grid" id="diffGrid">
-          <div class="chip difficulty" data-val="🟢 Mudah" onclick="selectDifficulty(this)">🟢 Mudah</div>
-          <div class="chip difficulty" data-val="🟡 Sedang" onclick="selectDifficulty(this)">🟡 Sedang</div>
-          <div class="chip difficulty" data-val="🔴 Sulit" onclick="selectDifficulty(this)">🔴 Sulit</div>
-          <div class="chip difficulty" data-val="🧠 HOTS" onclick="selectDifficulty(this)">🧠 HOTS</div>
-          <div class="chip difficulty selected" data-val="✨ AI Menentukan" onclick="selectDifficulty(this)">✨ AI Menentukan</div>
+          <button type="button" class="chip difficulty" data-val="🟢 Mudah" onclick="selectDifficulty(this)">🟢 Mudah</button>
+          <button type="button" class="chip difficulty" data-val="🟡 Sedang" onclick="selectDifficulty(this)">🟡 Sedang</button>
+          <button type="button" class="chip difficulty" data-val="🔴 Sulit" onclick="selectDifficulty(this)">🔴 Sulit</button>
+          <button type="button" class="chip difficulty" data-val="🧠 HOTS" onclick="selectDifficulty(this)">🧠 HOTS</button>
+          <button type="button" class="chip difficulty selected" data-val="✨ AI Menentukan" onclick="selectDifficulty(this)">✨ AI Menentukan</button>
         </div>
       </div>
 
@@ -687,8 +700,8 @@ body.dark .prompt-raw{background:#0f172a;}
       <div class="form-group">
         <div class="section-label">📝 Sumber Soal</div>
         <div class="chip-grid">
-          <div class="chip soal-mode selected" data-val="ai" onclick="selectSoalMode(this,'ai')">🤖 AI Buat Soal</div>
-          <div class="chip soal-mode" data-val="sendiri" onclick="selectSoalMode(this,'sendiri')">✏️ Masukkan Soal Sendiri</div>
+          <button type="button" class="chip soal-mode selected" data-val="ai" onclick="selectSoalMode(this,'ai')">🤖 AI Buat Soal</button>
+          <button type="button" class="chip soal-mode" data-val="sendiri" onclick="selectSoalMode(this,'sendiri')">✏️ Masukkan Soal Sendiri</button>
         </div>
         <div id="soalSendiriWrap">
           <div class="soal-sendiri-box">
@@ -703,11 +716,11 @@ body.dark .prompt-raw{background:#0f172a;}
       <div class="form-group">
         <div class="section-label">🎯 Jumlah Tantangan</div>
         <div class="chip-grid" id="jmlGrid">
-          <div class="chip" data-val="3" onclick="selectJml(this)">3</div>
-          <div class="chip selected" data-val="5" onclick="selectJml(this)">5</div>
-          <div class="chip" data-val="8" onclick="selectJml(this)">8</div>
-          <div class="chip" data-val="10" onclick="selectJml(this)">10</div>
-          <div class="chip" data-val="__custom__" onclick="selectJml(this)">Custom</div>
+          <button type="button" class="chip" data-val="3" onclick="selectJml(this)">3</button>
+          <button type="button" class="chip selected" data-val="5" onclick="selectJml(this)">5</button>
+          <button type="button" class="chip" data-val="8" onclick="selectJml(this)">8</button>
+          <button type="button" class="chip" data-val="10" onclick="selectJml(this)">10</button>
+          <button type="button" class="chip" data-val="__custom__" onclick="selectJml(this)">Custom</button>
         </div>
         <div id="jmlCustomWrap" style="display:none;margin-top:8px;">
           <input type="number" id="jmlCustom" min="1" max="20" placeholder="Masukkan jumlah (1–20)" oninput="validateJmlCustom(this)"/>
@@ -719,12 +732,12 @@ body.dark .prompt-raw{background:#0f172a;}
       <div class="form-group">
         <div class="section-label">⏱️ Durasi Game</div>
         <div class="chip-grid" id="durasiGrid">
-          <div class="chip" data-val="3–5 menit" onclick="selectDurasi(this)">⚡ 3–5 mnt</div>
-          <div class="chip" data-val="5–10 menit" onclick="selectDurasi(this)">🕐 5–10 mnt</div>
-          <div class="chip" data-val="10–15 menit" onclick="selectDurasi(this)">🎮 10–15 mnt</div>
-          <div class="chip" data-val="20–30 menit" onclick="selectDurasi(this)">🏫 20–30 mnt</div>
-          <div class="chip" data-val="__custom__" onclick="selectDurasi(this)">✏️ Custom</div>
-          <div class="chip selected" data-val="🤖 AI Menentukan" onclick="selectDurasi(this)">🤖 AI Menentukan</div>
+          <button type="button" class="chip" data-val="3–5 menit" onclick="selectDurasi(this)">⚡ 3–5 mnt</button>
+          <button type="button" class="chip" data-val="5–10 menit" onclick="selectDurasi(this)">🕐 5–10 mnt</button>
+          <button type="button" class="chip" data-val="10–15 menit" onclick="selectDurasi(this)">🎮 10–15 mnt</button>
+          <button type="button" class="chip" data-val="20–30 menit" onclick="selectDurasi(this)">🏫 20–30 mnt</button>
+          <button type="button" class="chip" data-val="__custom__" onclick="selectDurasi(this)">✏️ Custom</button>
+          <button type="button" class="chip selected" data-val="🤖 AI Menentukan" onclick="selectDurasi(this)">🤖 AI Menentukan</button>
         </div>
         <div id="durasiCustomWrap" style="display:none;margin-top:8px;">
           <input type="number" id="durasiCustom" min="1" max="120" placeholder="Durasi dalam menit (1–120)"/>
@@ -735,15 +748,15 @@ body.dark .prompt-raw{background:#0f172a;}
       <div class="form-group" style="margin-bottom:0;">
         <div class="section-label">🎨 Gaya Visual Game</div>
         <div class="chip-grid" id="gayaGrid">
-          <div class="chip gaya" data-val="🌈 Ceria Anak" onclick="selectGaya(this)">🌈 Ceria Anak</div>
-          <div class="chip gaya" data-val="📚 Storybook" onclick="selectGaya(this)">📚 Storybook</div>
-          <div class="chip gaya" data-val="🎨 Cartoon" onclick="selectGaya(this)">🎨 Cartoon</div>
-          <div class="chip gaya" data-val="🧩 Flat Modern" onclick="selectGaya(this)">🧩 Flat Modern</div>
-          <div class="chip gaya" data-val="🕹️ Pixel Art / Retro" onclick="selectGaya(this)">🕹️ Pixel / Retro</div>
-          <div class="chip gaya" data-val="🌿 Nature / Alam" onclick="selectGaya(this)">🌿 Nature</div>
-          <div class="chip gaya" data-val="🏰 Fantasy / Petualangan" onclick="selectGaya(this)">🏰 Fantasy</div>
-          <div class="chip gaya" data-val="🤖 Futuristik / Sci-Fi" onclick="selectGaya(this)">🤖 Futuristik</div>
-          <div class="chip gaya" data-val="✨ AI Memilih" onclick="selectGaya(this)">✨ AI Memilih</div>
+          <button type="button" class="chip gaya" data-val="🌈 Ceria Anak" onclick="selectGaya(this)">🌈 Ceria Anak</button>
+          <button type="button" class="chip gaya" data-val="📚 Storybook" onclick="selectGaya(this)">📚 Storybook</button>
+          <button type="button" class="chip gaya" data-val="🎨 Cartoon" onclick="selectGaya(this)">🎨 Cartoon</button>
+          <button type="button" class="chip gaya" data-val="🧩 Flat Modern" onclick="selectGaya(this)">🧩 Flat Modern</button>
+          <button type="button" class="chip gaya" data-val="🕹️ Pixel Art / Retro" onclick="selectGaya(this)">🕹️ Pixel / Retro</button>
+          <button type="button" class="chip gaya" data-val="🌿 Nature / Alam" onclick="selectGaya(this)">🌿 Nature</button>
+          <button type="button" class="chip gaya" data-val="🏰 Fantasy / Petualangan" onclick="selectGaya(this)">🏰 Fantasy</button>
+          <button type="button" class="chip gaya" data-val="🤖 Futuristik / Sci-Fi" onclick="selectGaya(this)">🤖 Futuristik</button>
+          <button type="button" class="chip gaya" data-val="✨ AI Memilih" onclick="selectGaya(this)">✨ AI Memilih</button>
         </div>
       </div>
 
@@ -785,9 +798,13 @@ body.dark .prompt-raw{background:#0f172a;}
       <button class="fb-btn" id="fbDown" onclick="voteFeedback('down')">👎 Perlu diperbaiki</button>
     </div>
 
-    <div class="ai-btns" style="margin-top:10px;">
+    <div class="output-actions">
       <button class="btn" style="background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;flex:1;padding:10px;font-size:.85rem;border-radius:9px;" onclick="shareWA()">💬 Share WA</button>
       <button class="btn" style="background:linear-gradient(135deg,#475569,#334155);color:#fff;flex:1;padding:10px;font-size:.85rem;border-radius:9px;" onclick="downloadTxt()">⬇️ Download .txt</button>
+    </div>
+    <div class="nav-actions">
+      <button class="btn" onclick="goHome()">🏠 Home</button>
+      <button class="btn" onclick="goBackSmart()">↩️ Kembali</button>
     </div>
     <div style="text-align:center;margin-top:8px;"><button class="btn btn-regen" onclick="generate()">🔄 Generate Ulang</button></div>
 
@@ -798,8 +815,8 @@ body.dark .prompt-raw{background:#0f172a;}
         <li data-n="1">Klik <b>Salin Prompt</b> di atas</li>
         <li data-n="2">Buka salah satu AI di bawah (Gemini/Claude/Canva)</li>
         <li data-n="3">Paste prompt → tekan Enter / kirim</li>
-        <li data-n="4">Tunggu AI membuat game → coba mainkan!</li>
-        <li data-n="5">Kalau ada yang kurang, minta AI untuk memperbaiki</li>
+        <li data-n="4">Tunggu AI membuat game → coba mainkan di HP/laptop</li>
+        <li data-n="5">Cek tombol Home/Kembali, suara berhasil/gagal, dan tampilan IFP</li>
       </ol>
     </div>
 
@@ -812,11 +829,14 @@ body.dark .prompt-raw{background:#0f172a;}
 
     <!-- Cross-link tools BGY -->
     <div class="cross-link-box">
-      <div class="cl-title">🔗 Tools BGY Lainnya</div>
+      <div class="cl-title">🔗 Lanjutkan dengan BGY</div>
       <div class="cl-items">
         <a class="cl-item" href="https://bantuguruyuk.web.id/soal" target="_blank">📝 Buat Soal</a>
         <a class="cl-item" href="https://bantuguruyuk.web.id/modul" target="_blank">📖 Modul Ajar</a>
         <a class="cl-item" href="https://bmedia.bantuguruyuk.web.id" target="_blank">📺 Media Belajar</a>
+        <a class="cl-item" href="https://bantuguruyuk.web.id" target="_blank">🧰 Semua Tools</a>
+        <a class="cl-item" href="https://wa.me/6289530713597" target="_blank">💬 Konsultasi</a>
+        <a class="cl-item" href="https://www.tiktok.com/@pak.choyy" target="_blank">🎵 Update BGY</a>
       </div>
     </div>
   </div>
@@ -1076,7 +1096,7 @@ function onJenjangChange(){
   document.getElementById('mapelCustomWrap').style.display='none';
   document.getElementById('rekomCard').style.display='none';
   selectedTipe='';
-  document.querySelectorAll('#tipeGrid .tipe-card').forEach(c=>c.classList.remove('selected'));
+  document.querySelectorAll('#tipeGrid .tipe-card').forEach(c=>{c.classList.remove('selected');c.setAttribute('aria-pressed','false');});
   updateAccSummary();
   if(!j)return;
   (KELAS_DB[j]||[]).forEach(k=>ke.innerHTML+=`<option>${k}</option>`);
@@ -1091,7 +1111,7 @@ function onJenjangChange(){
   document.querySelectorAll('.chip.difficulty').forEach(c=>c.classList.remove('selected'));
   const dc=document.querySelector(`.chip.difficulty[data-val="${dd}"]`);
   if(dc){dc.classList.add('selected');selectedDifficulty=dd;}
-  saveDraft();updateProgress();
+  syncPressedStates();saveDraft();updateProgress();
 }
 
 function handleMapelChange(){
@@ -1102,11 +1122,17 @@ function handleMapelChange(){
 
 // ===== CHIP SELECTORS =====
 function selectTipe(el){
-  document.querySelectorAll('#tipeGrid .tipe-card').forEach(c=>c.classList.remove('selected'));
-  el.classList.add('selected');selectedTipe=el.dataset.val;
+  document.querySelectorAll('#tipeGrid .tipe-card').forEach(c=>{c.classList.remove('selected');c.setAttribute('aria-pressed','false');});
+  el.classList.add('selected');el.setAttribute('aria-pressed','true');selectedTipe=el.dataset.val;
   document.getElementById('tipeCustomWrap').style.display=selectedTipe==='__custom__'?'flex':'none';
   if(selectedTipe==='__custom__')document.getElementById('tipeCustomWrap').style.flexDirection='column';
-  saveDraft();updateProgress();
+  syncPressedStates();saveDraft();updateProgress();
+}
+function activateTipeKey(e,el){
+  if(e.key==='Enter'||e.key===' '){
+    e.preventDefault();
+    selectTipe(el);
+  }
 }
 function toggleAccordion(){
   const h=document.querySelector('.accordion-header');
@@ -1124,38 +1150,38 @@ function updateAccSummary(){
   document.getElementById('accSummary').textContent=parts.length?parts.join(' · '):'semua auto';
 }
 function selectJml(el){
-  document.querySelectorAll('#jmlGrid .chip').forEach(c=>c.classList.remove('selected'));
-  el.classList.add('selected');selectedJml=el.dataset.val;
+  document.querySelectorAll('#jmlGrid .chip').forEach(c=>{c.classList.remove('selected');c.setAttribute('aria-pressed','false');});
+  el.classList.add('selected');el.setAttribute('aria-pressed','true');selectedJml=el.dataset.val;
   document.getElementById('jmlCustomWrap').style.display=selectedJml==='__custom__'?'block':'none';
   updateAccSummary();saveDraft();
 }
 function selectGaya(el){
-  document.querySelectorAll('.chip.gaya').forEach(c=>c.classList.remove('selected'));
-  el.classList.add('selected');selectedGaya=el.dataset.val;
+  document.querySelectorAll('.chip.gaya').forEach(c=>{c.classList.remove('selected');c.setAttribute('aria-pressed','false');});
+  el.classList.add('selected');el.setAttribute('aria-pressed','true');selectedGaya=el.dataset.val;
   updateAccSummary();saveDraft();
 }
 function selectDifficulty(el){
-  document.querySelectorAll('.chip.difficulty').forEach(c=>c.classList.remove('selected'));
-  el.classList.add('selected');selectedDifficulty=el.dataset.val;
+  document.querySelectorAll('.chip.difficulty').forEach(c=>{c.classList.remove('selected');c.setAttribute('aria-pressed','false');});
+  el.classList.add('selected');el.setAttribute('aria-pressed','true');selectedDifficulty=el.dataset.val;
   updateAccSummary();saveDraft();
 }
 function selectDurasi(el){
-  document.querySelectorAll('#durasiGrid .chip').forEach(c=>c.classList.remove('selected'));
-  el.classList.add('selected');selectedDurasi=el.dataset.val;
+  document.querySelectorAll('#durasiGrid .chip').forEach(c=>{c.classList.remove('selected');c.setAttribute('aria-pressed','false');});
+  el.classList.add('selected');el.setAttribute('aria-pressed','true');selectedDurasi=el.dataset.val;
   document.getElementById('durasiCustomWrap').style.display=selectedDurasi==='__custom__'?'block':'none';
   updateAccSummary();saveDraft();
 }
 function selectMode(el){
-  document.querySelectorAll('.chip.mode').forEach(c=>c.classList.remove('selected'));
-  el.classList.add('selected');selectedMode=el.dataset.val;
+  document.querySelectorAll('.chip.mode').forEach(c=>{c.classList.remove('selected');c.setAttribute('aria-pressed','false');});
+  el.classList.add('selected');el.setAttribute('aria-pressed','true');selectedMode=el.dataset.val;
   updateAccSummary();saveDraft();
 }
 function selectAsesmen(el){document.querySelectorAll('.chip.asesmen').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');selectedAsesmen=el.dataset.val;}
 function selectKondisi(el){document.querySelectorAll('.chip.kondisi').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');selectedKondisi=el.dataset.val;}
 function selectQC(el){document.querySelectorAll('.chip.qc').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');selectedQC=el.dataset.val;}
 function selectSoalMode(el,val){
-  document.querySelectorAll('.chip.soal-mode').forEach(c=>c.classList.remove('selected'));
-  el.classList.add('selected');selectedSoalMode=val;
+  document.querySelectorAll('.chip.soal-mode').forEach(c=>{c.classList.remove('selected');c.setAttribute('aria-pressed','false');});
+  el.classList.add('selected');el.setAttribute('aria-pressed','true');selectedSoalMode=val;
   document.getElementById('soalSendiriWrap').style.display=val==='sendiri'?'block':'none';
   saveDraft();
 }
@@ -1323,6 +1349,10 @@ function buildPrompt(){
     '👤 Individu':           'MODE BERMAIN: Individu. Game dapat dimainkan sendiri dengan progress dan skor pribadi.',
     '👥 Berpasangan':        'MODE BERMAIN: Berpasangan. Tambahkan mekanik diskusi atau keputusan bersama.',
     '👨‍👩‍👧 Kelompok':          'MODE BERMAIN: Kelompok. Tambahkan pembagian peran sederhana dan mekanik kolaboratif.',
+    '⚔️ Duel / VS':          'MODE BERMAIN: Duel / VS. Buat dua pemain/sisi bergantian menjawab atau menyelesaikan aksi. Tampilkan papan skor dua sisi, giliran saat ini, feedback untuk tiap sisi, dan pemenang akhir. Tetap playable satu perangkat di HP/IFP.',
+    '🏆 Tim vs Tim':         'MODE BERMAIN: Tim vs Tim. Buat dua tim atau lebih bertanding secara sehat. Tampilkan nama tim, giliran, skor tim, ronde, dan pemenang. Cocok untuk IFP/proyektor kelas.',
+    '👩‍🏫 Guru vs Kelas':      'MODE BERMAIN: Guru vs Kelas. Guru memandu dari layar besar, kelas memilih jawaban/aksi bersama. Tampilkan kontrol guru yang jelas, tombol besar, dan feedback yang bisa dilihat dari jauh.',
+    '🔁 Giliran':             'MODE BERMAIN: Bergiliran. Buat mekanik turn-based sederhana: pemain/tim berganti giliran, progress tidak hilang, dan giliran berikutnya terlihat jelas.',
     '🏫 Klasikal/Proyektor': 'MODE BERMAIN: Klasikal/Proyektor. Optimalkan untuk layar besar: teks dan tombol SANGAT BESAR, instruksi singkat, navigasi manual oleh guru.',
     '🤖 AI Menentukan':      'MODE BERMAIN: Sesuaikan sendiri berdasarkan jenjang dan tipe game yang paling efektif.'
   };
@@ -1369,6 +1399,11 @@ AKSI SISWA → RESPONS GAME → FEEDBACK BELAJAR → REWARD/PROGRESS → TANTANG
 Reward boleh berupa poin, bintang, item, badge, membuka lokasi, progress map, energi, atau reward sederhana lain yang relevan dengan tema.
 Reward mendukung motivasi, tetapi tidak boleh mengalahkan tujuan pembelajaran.`;
 
+  const alignmentNote=`KEPATUHAN TERHADAP SETELAN GURU
+Seluruh keputusan desain harus menyesuaikan input guru: jenjang ${jenjang}, kelas ${kelas}, mapel ${mapel}, materi "${materi}", tujuan, tipe game, mode bermain, jumlah tantangan, kesulitan, durasi, dan gaya visual.
+Jangan menghasilkan game generik yang tidak terasa terhubung ke materi.
+Jika ada konflik antar setelan, prioritaskan tujuan belajar, usia siswa, keterbacaan, dan gameplay yang playable.`;
+
   const feedbackSalahNote=`FEEDBACK SAAT SALAH
 Jangan selalu langsung memperlihatkan jawaban ketika siswa salah.
 Jika sesuai:
@@ -1391,6 +1426,22 @@ Game harus tetap dapat dimainkan ketika file HTML dibuka lokal/offline.
 Jangan bergantung pada CDN, Google Fonts, API eksternal, library eksternal, gambar remote, audio remote, atau koneksi internet.
 Visual dibuat dengan HTML, CSS, inline SVG, CSS shapes, emoji yang sesuai, atau aset embedded ringan jika benar-benar diperlukan.
 Jika menggunakan audio, audio harus opsional, kompatibel single-file/offline, dan game tetap sempurna walau audio tidak tersedia.`;
+
+  const audioFeedbackNote=`AUDIO FEEDBACK (OPSIONAL TAPI DIANJURKAN)
+Tambahkan suara ringan untuk: klik tombol, jawaban benar/berhasil, jawaban salah/perlu coba lagi, reward terkumpul, dan game selesai.
+Audio harus dibuat secara offline/single-file, misalnya memakai Web Audio API oscillator pendek. Jangan gunakan file audio remote atau CDN.
+Sediakan tombol mute/unmute yang jelas.
+Jangan autoplay audio sebelum ada interaksi pengguna.
+Jika browser memblokir audio atau perangkat tidak mendukung audio, game tetap harus berjalan sempurna dengan feedback visual dan teks.`;
+
+  const gameNavigationNote=`NAVIGASI GAME WAJIB
+Game hasil akhir harus memiliki navigasi yang jelas:
+✅ Home/Menu utama untuk kembali ke cover atau peta utama
+✅ Kembali untuk mundur satu layar/tantangan bila aman
+✅ Bantuan/Petunjuk singkat yang bisa dibuka ulang
+✅ Main Lagi/Ulangi di hasil akhir
+Navigasi tidak boleh menghapus score/progress tanpa konfirmasi.
+Pada mode VS/tim/klasikal, tampilkan giliran/ronde/score dengan jelas agar kelas tidak bingung.`;
 
   const responsiveNote=`RESPONSIVE MULTI-DEVICE — WAJIB
 Game tidak boleh dibuat untuk satu resolusi tetap. Gunakan layout fluid/responsive.
@@ -1466,9 +1517,13 @@ TEKNIS
 □ Tidak ada dependency eksternal
 □ Tidak ada TODO/placeholder
 □ Tidak ada dead-end
+□ Tombol Home/Menu utama bekerja
+□ Tombol Kembali/Bantuan bekerja
 □ Restart bekerja
 □ Score benar
 □ Tidak ada error JavaScript
+□ Suara benar/salah/reward tersedia atau fallback visual jelas
+□ Tombol mute/unmute tersedia jika audio dipakai
 
 DEVICE
 □ HP
@@ -1527,6 +1582,8 @@ Jenis Asesmen     : ${asesmen}
 ${gameFirstNote}
 
 ${gameLoopNote}
+
+${alignmentNote}
 
 ${feedbackSalahNote}
 
@@ -1620,6 +1677,10 @@ ${visualNarasiNote}
 
 ${assetOfflineNote}
 
+${audioFeedbackNote}
+
+${gameNavigationNote}
+
 ${responsiveNote}
 
 ${universalInputNote}
@@ -1681,7 +1742,7 @@ bantuguruyuk.web.id · @pak.choyy · Berorientasi Kurikulum Merdeka
     {label:'🎯 Konteks',body:`${jenjang} ${kelas} · ${mapel}\nMateri: ${materi}${tujuan?'\nTujuan: '+tujuan:''}`},
     {label:'🎮 Desain Game',body:`Tipe: ${tipe} · Tantangan: ${jml} · Kesulitan: ${difficulty}\nMode: ${mode} · Durasi: ${durasi} · Visual: ${gaya}${namaGame?'\nNama: '+namaGame:''}${temaGame?'\nTema: '+temaGame:''}`},
     {label:'📝 Soal',body:soalSendiri?'✅ Menggunakan soal dari guru ('+soalSendiri.split('\n').length+' baris)':'🤖 AI akan membuat '+jml+' soal/tantangan baru'},
-    {label:'🏆 Output',body:'Game HTML single-file · Mobile-friendly · Feedback mendidik · Hasil akhir + learning feedback'},
+    {label:'🏆 Output',body:'Game HTML single-file · Mode VS/tim jika dipilih · Audio berhasil/gagal · Home/Kembali · HP sampai IFP'},
   ];
   document.getElementById('promptStructured').innerHTML=sections.map(s=>`
     <div class="prompt-section">
@@ -1784,7 +1845,7 @@ function resetForm(){
   document.getElementById('cMateri').textContent='';
   document.getElementById('cTujuan').textContent='';
   try{localStorage.removeItem(DRAFT_KEY);}catch(e){}
-  updateAccSummary();updateProgress();
+  syncPressedStates();updateAccSummary();updateProgress();
 }
 
 // ===== HISTORI v2 =====
@@ -1936,6 +1997,24 @@ function closeMenu(){
   syncMenuIcon(false);
 }
 
+function goHome(){
+  selectTab('home');
+  const firstCard=document.querySelector('#tab-home .card');
+  if(firstCard)firstCard.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function goBackSmart(){
+  if(document.getElementById('outputCard')&&document.getElementById('outputCard').style.display!=='none'){
+    const formCard=document.querySelector('#accLanjutan');
+    if(formCard){formCard.scrollIntoView({behavior:'smooth',block:'start'});return;}
+  }
+  if(history.length>1)history.back();
+  else goHome();
+}
+function syncPressedStates(){
+  document.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',c.classList.contains('selected')?'true':'false'));
+  document.querySelectorAll('#tipeGrid .tipe-card').forEach(c=>c.setAttribute('aria-pressed',c.classList.contains('selected')?'true':'false'));
+}
+
 // ===== INSTALL =====
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;document.getElementById('installPopup').classList.add('show');});
 function installApp(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.then(()=>{deferredPrompt=null;});closeInstall();}else alert('Buka di Chrome/browser mobile lalu tambahkan ke layar utama 📲');}
@@ -1955,8 +2034,9 @@ window.addEventListener('load',()=>{
   updateHistoriBadge();
   initSupabase();
   initCounter();
-  loadDraft();
   selectedJml='5';
+  loadDraft();
+  syncPressedStates();
   if('serviceWorker' in navigator){
     navigator.serviceWorker.register('sw.js',{scope:'./'}).catch(()=>{});
   }
