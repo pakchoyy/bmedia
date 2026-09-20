@@ -276,6 +276,32 @@ body.dark .prompt-raw{background:#0f172a;}
 .notif-box{background:#dcfce7;color:#15803d;border:1px solid #86efac;border-radius:8px;padding:8px 12px;font-size:.78rem;font-weight:600;text-align:center;display:none;margin-top:8px;}
 .error-box{background:#fef2f2;border:1px solid #fca5a5;color:#dc2626;padding:9px 12px;border-radius:8px;font-size:.79rem;display:none;margin-bottom:10px;}
 
+/* GAME PREVIEW + QUALITY CHECK */
+.preview-box{border:1.5px solid rgba(14,165,160,.22);background:linear-gradient(135deg,rgba(14,165,160,.06),rgba(99,102,241,.05));border-radius:12px;padding:12px;margin:10px 0;}
+.preview-title,.quality-title{font-size:.72rem;font-weight:900;color:#0d7a8a;text-transform:uppercase;letter-spacing:.55px;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.preview-device{border:1.5px solid var(--border);border-radius:12px;background:var(--card-bg);overflow:hidden;box-shadow:var(--shadow);}
+.preview-topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;background:linear-gradient(135deg,#0ea5a0,#0d7a8a);color:#fff;}
+.preview-game-title{font-size:.78rem;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.preview-nav{display:flex;gap:5px;flex-shrink:0;}
+.preview-nav span{font-size:.65rem;font-weight:800;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.24);border-radius:999px;padding:3px 7px;}
+.preview-stage{display:grid;grid-template-columns:1fr 1.35fr;gap:10px;padding:12px;}
+.preview-screen{background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:10px;min-height:120px;display:flex;flex-direction:column;justify-content:space-between;}
+.preview-badge{font-size:.62rem;font-weight:900;color:#b45309;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+.preview-main{font-size:.9rem;font-weight:900;color:var(--text);line-height:1.35;}
+.preview-sub{font-size:.7rem;color:var(--text-light);line-height:1.55;margin-top:5px;}
+.preview-hud{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:8px;}
+.preview-hud span{font-size:.62rem;font-weight:800;text-align:center;background:rgba(14,165,160,.1);border:1px solid rgba(14,165,160,.2);border-radius:7px;padding:5px 4px;color:#0d7a8a;}
+.preview-flow{display:grid;gap:6px;}
+.preview-step{display:flex;align-items:flex-start;gap:7px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:7px 8px;}
+.preview-step-num{width:20px;height:20px;border-radius:50%;background:#0ea5a0;color:#fff;font-size:.62rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.preview-step-text{font-size:.72rem;color:var(--text);line-height:1.45;}
+.quality-box{border:1.5px solid rgba(245,158,11,.25);background:rgba(245,158,11,.05);border-radius:12px;padding:12px;margin:10px 0;}
+.quality-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;}
+.quality-item{display:flex;align-items:flex-start;gap:7px;background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:8px 9px;min-height:42px;}
+.quality-icon{font-size:.9rem;line-height:1.2;flex-shrink:0;}
+.quality-text{font-size:.72rem;color:var(--text);font-weight:700;line-height:1.45;}
+@media(max-width:560px){.preview-stage,.quality-grid{grid-template-columns:1fr;}.preview-screen{min-height:105px;}}
+
 /* FEEDBACK PROMPT */
 .feedback-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(14,165,160,.05);border:1px solid rgba(14,165,160,.15);border-radius:8px;margin-top:8px;flex-wrap:wrap;}
 .fb-label{font-size:.75rem;font-weight:700;color:var(--text-light);flex:1;}
@@ -783,6 +809,18 @@ body.dark .prompt-raw{background:#0f172a;}
 
     <!-- Prompt terstruktur -->
     <div class="prompt-result-wrap" id="promptStructured"></div>
+
+    <!-- Preview hasil game yang diharapkan -->
+    <div class="preview-box" id="gamePreviewBox">
+      <div class="preview-title">🧪 Preview Hasil Game</div>
+      <div id="gamePreview"></div>
+    </div>
+
+    <!-- Checklist kualitas output AI -->
+    <div class="quality-box" id="qualityChecklistBox">
+      <div class="quality-title">✅ Checklist Setelah AI Membuat Game</div>
+      <div class="quality-grid" id="qualityChecklist"></div>
+    </div>
 
     <!-- Toggle lihat raw -->
     <button class="prompt-toggle" onclick="toggleRaw()">👁️ Lihat Prompt Lengkap (Raw)</button>
@@ -1749,6 +1787,7 @@ bantuguruyuk.web.id · @pak.choyy · Berorientasi Kurikulum Merdeka
       <div class="prompt-section-label">${s.label}</div>
       <div class="prompt-section-body">${escHtml(s.body)}</div>
     </div>`).join('');
+  renderOutputGuides({jenjang,kelas,mapel,materi,tujuan,tipe,jml,gaya,difficulty,durasi,mode,namaGame,temaGame});
 
   document.getElementById('promptResult').textContent=prompt;
   const oc=document.getElementById('outputCard');
@@ -1756,6 +1795,72 @@ bantuguruyuk.web.id · @pak.choyy · Berorientasi Kurikulum Merdeka
   updateProgress();
   setTimeout(()=>oc.scrollIntoView({behavior:'smooth',block:'start'}),100);
   simpanHistori({jenjang,kelas,mapel,materi,tujuan,tipe,jml,gaya,difficulty,durasi,mode,asesmen,kondisi,qc,soalMode:selectedSoalMode,namaGame,temaGame,prompt});
+}
+
+function getPreviewMechanic(tipe,mode){
+  const t=(tipe||'').toLowerCase();
+  if(t.includes('puzzle'))return 'Siswa menyusun, mengurutkan, atau memperbaiki potongan konsep.';
+  if(t.includes('matching'))return 'Siswa mencocokkan kartu/objek, lalu pasangan benar terkunci.';
+  if(t.includes('adventure'))return 'Siswa membuka lokasi baru dengan menyelesaikan aksi belajar.';
+  if(t.includes('mystery'))return 'Siswa mengumpulkan petunjuk dan menyimpulkan jawaban akhir.';
+  if(t.includes('case'))return 'Siswa memilih data penting dan mengambil keputusan berbasis kasus.';
+  if(t.includes('challenge'))return 'Siswa naik level melalui misi yang makin menantang.';
+  if((mode||'').includes('VS')||(mode||'').includes('Tim'))return 'Siswa/tim bergiliran menyelesaikan aksi dan mengejar skor.';
+  return 'Siswa menjalankan misi singkat dengan aksi game, feedback, dan reward.';
+}
+function getPreviewMode(mode){
+  if((mode||'').includes('VS'))return 'Papan skor dua sisi, giliran jelas, pemenang akhir.';
+  if((mode||'').includes('Tim'))return 'Nama tim, ronde, skor tim, dan giliran tampil besar.';
+  if((mode||'').includes('Guru'))return 'Kontrol guru besar untuk memandu kelas di IFP.';
+  if((mode||'').includes('Giliran'))return 'Turn-based, progress tetap aman saat berganti pemain.';
+  if((mode||'').includes('Klasikal'))return 'Teks besar dan navigasi manual untuk layar kelas.';
+  return 'Progress pribadi, skor, reward, dan tombol ulangi.';
+}
+function renderOutputGuides(data){
+  const title=data.namaGame||('Game '+(data.materi||data.tipe||'Pembelajaran'));
+  const steps=[
+    'Cover + tombol Mulai, Home, Bantuan, dan mute/unmute.',
+    getPreviewMechanic(data.tipe,data.mode),
+    'Feedback benar/salah memakai teks, warna, ikon, dan suara ringan.',
+    'Hasil akhir menampilkan skor, akurasi, konsep dikuasai, dan latihan lanjut.'
+  ];
+  const preview=document.getElementById('gamePreview');
+  if(preview){
+    preview.innerHTML=`
+      <div class="preview-device">
+        <div class="preview-topbar">
+          <div class="preview-game-title">${escHtml(title)}</div>
+          <div class="preview-nav"><span>Home</span><span>Kembali</span><span>🔇</span></div>
+        </div>
+        <div class="preview-stage">
+          <div class="preview-screen">
+            <div>
+              <div class="preview-badge">${escHtml(data.tipe||'Game')}</div>
+              <div class="preview-main">${escHtml(data.materi||'Materi pembelajaran')}</div>
+              <div class="preview-sub">${escHtml(getPreviewMode(data.mode))}</div>
+            </div>
+            <div class="preview-hud"><span>⭐ Skor</span><span>🎯 ${escHtml(String(data.jml||5))} Misi</span><span>📱 IFP</span></div>
+          </div>
+          <div class="preview-flow">
+            ${steps.map((s,i)=>`<div class="preview-step"><div class="preview-step-num">${i+1}</div><div class="preview-step-text">${escHtml(s)}</div></div>`).join('')}
+          </div>
+        </div>
+      </div>`;
+  }
+  const checks=[
+    'Game terasa playable, bukan kuis biasa',
+    'Mekanik sesuai materi dan usia siswa',
+    'Ada Home, Kembali, Bantuan, dan Main Lagi',
+    'Ada suara benar/salah atau fallback visual jelas',
+    'Score, progress, reward, dan hasil akhir bekerja',
+    'Nyaman di HP, laptop, tablet, dan IFP',
+    'Bisa offline dalam satu file HTML',
+    'Feedback belajar menjelaskan konsep'
+  ];
+  const checklist=document.getElementById('qualityChecklist');
+  if(checklist){
+    checklist.innerHTML=checks.map(c=>`<div class="quality-item"><span class="quality-icon">□</span><span class="quality-text">${escHtml(c)}</span></div>`).join('');
+  }
 }
 
 // ===== TOGGLE RAW =====
@@ -1924,6 +2029,7 @@ function bukaHistori(i){
   ].map(r=>`<div class="ringkasan-item"><div class="ri-label">${escHtml(r.label)}</div><div class="ri-val">${escHtml(r.val)}</div></div>`).join('');
   document.getElementById('promptResult').textContent=h.prompt;
   document.getElementById('promptStructured').innerHTML='<div class="prompt-section"><div class="prompt-section-label">📂 Dari Histori</div><div class="prompt-section-body">'+escHtml(((h.namaGame?h.namaGame+' · ':'')+(h.materi||'')+' · '+h.jenjang+' '+h.kelas+' · '+h.mapel))+'</div></div>';
+  renderOutputGuides(h);
   document.getElementById('outputCard').style.display='block';
   selectTab('home');
 }
