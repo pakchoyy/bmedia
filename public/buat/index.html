@@ -1513,6 +1513,18 @@ Hormati prefers-reduced-motion jika memungkinkan.
 Prioritaskan kelancaran pada HP sekolah/guru spesifikasi rendah.
 Hindari canvas animation berat, particle berlebihan, DOM sangat besar, loop JavaScript terus-menerus tanpa kebutuhan, gambar embedded besar, efek blur/shadow berlebihan, dan animasi berat.`;
 
+  const antiSlopNote=`ANTI-SLOP GATE — JANGAN HASILKAN GAME GENERIK AI
+Game harus terasa dibuat khusus untuk materi "${materi}", jenjang ${jenjang} ${kelas}, dan gaya visual "${gaya}".
+Hindari UI/copy generik yang sering muncul pada output AI:
+□ Jangan memakai statistik, badge, testimoni, klaim keamanan, atau angka yang tidak diminta dan tidak punya sumber.
+□ Jangan membuat dekorasi hanya agar terlihat ramai: glow, blob, grid, glassmorphism, kartu berlebihan, atau gradient mencolok harus punya fungsi jelas.
+□ Jangan membuat "3 langkah", "fitur", "FAQ", atau section template yang tidak dibutuhkan game.
+□ Jangan memakai placeholder, TODO, tombol palsu, menu palsu, level palsu, atau elemen yang tidak berfungsi.
+□ Jangan membuat copy terasa seperti iklan AI. Gunakan bahasa guru/siswa yang natural, singkat, dan sesuai usia.
+□ Jangan memakai ikon/dekorasi yang tidak terhubung ke materi, reward, status, atau aksi permainan.
+□ Setiap elemen visual harus membantu salah satu hal ini: memahami materi, memainkan game, melihat progress, menerima feedback, atau bernavigasi.
+Tes identitas: jika materi, nama game, dan konteks guru diganti, game ini tidak boleh tetap terasa seperti template yang sama.`;
+
   const finalDeviceCheck=`FINAL DEVICE TEST — WAJIB SEBELUM SELESAI
 Lakukan pemeriksaan logis pada ukuran berikut:
 1. 360×640 portrait
@@ -1548,6 +1560,7 @@ GAMEPLAY
 □ Mekanik sesuai materi
 □ Variasi interaksi cukup
 □ Reward/progress bekerja
+□ Tidak terasa seperti template AI generik
 
 TEKNIS
 □ Single HTML
@@ -1725,6 +1738,8 @@ ${universalInputNote}
 
 ${microPerfNote}
 
+${antiSlopNote}
+
 ═══════════════════════════════════════════════════════
 10. FILOSOFI PEMBELAJARAN
 ═══════════════════════════════════════════════════════
@@ -1780,7 +1795,7 @@ bantuguruyuk.web.id · @pak.choyy · Berorientasi Kurikulum Merdeka
     {label:'🎯 Konteks',body:`${jenjang} ${kelas} · ${mapel}\nMateri: ${materi}${tujuan?'\nTujuan: '+tujuan:''}`},
     {label:'🎮 Desain Game',body:`Tipe: ${tipe} · Tantangan: ${jml} · Kesulitan: ${difficulty}\nMode: ${mode} · Durasi: ${durasi} · Visual: ${gaya}${namaGame?'\nNama: '+namaGame:''}${temaGame?'\nTema: '+temaGame:''}`},
     {label:'📝 Soal',body:soalSendiri?'✅ Menggunakan soal dari guru ('+soalSendiri.split('\n').length+' baris)':'🤖 AI akan membuat '+jml+' soal/tantangan baru'},
-    {label:'🏆 Output',body:'Game HTML single-file · Mode VS/tim jika dipilih · Audio berhasil/gagal · Home/Kembali · HP sampai IFP'},
+    {label:'🏆 Output',body:'Game HTML single-file · Mode VS/tim jika dipilih · Audio berhasil/gagal · Home/Kembali · Anti-slop · HP sampai IFP'},
   ];
   document.getElementById('promptStructured').innerHTML=sections.map(s=>`
     <div class="prompt-section">
@@ -1855,7 +1870,9 @@ function renderOutputGuides(data){
     'Score, progress, reward, dan hasil akhir bekerja',
     'Nyaman di HP, laptop, tablet, dan IFP',
     'Bisa offline dalam satu file HTML',
-    'Feedback belajar menjelaskan konsep'
+    'Feedback belajar menjelaskan konsep',
+    'Tidak ada placeholder, tombol palsu, atau elemen mati',
+    'Tidak ada statistik/klaim/dekorasi generik tanpa fungsi'
   ];
   const checklist=document.getElementById('qualityChecklist');
   if(checklist){
