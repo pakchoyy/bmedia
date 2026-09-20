@@ -202,6 +202,18 @@ body.dark .chip.qc.selected{color:#fca5a5;}
 .chip.soal-mode:hover{border-color:#8b5cf6;color:#7c3aed;}
 body.dark .chip.soal-mode.selected{color:#c4b5fd;}
 
+/* PRESET CEPAT */
+.preset-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;}
+.preset-card{border:1.5px solid var(--border);border-radius:10px;background:var(--input-bg);padding:10px;text-align:left;cursor:pointer;font-family:inherit;color:var(--text);transition:border-color .18s,box-shadow .18s,transform .18s,background .18s;min-height:96px;}
+.preset-card:hover{border-color:#0ea5a0;transform:translateY(-1px);box-shadow:0 5px 16px rgba(14,165,160,.14);}
+.preset-card:focus-visible{outline:2px solid #f59e0b;outline-offset:3px;}
+.preset-card.active{border-color:#0ea5a0;background:rgba(14,165,160,.08);box-shadow:0 0 0 3px rgba(14,165,160,.14);}
+.preset-icon{font-size:1.25rem;line-height:1;margin-bottom:7px;}
+.preset-title{font-size:.77rem;font-weight:800;line-height:1.25;color:var(--text);}
+.preset-desc{font-size:.66rem;line-height:1.45;color:var(--text-light);margin-top:4px;}
+@media(max-width:760px){.preset-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.preset-card{min-height:88px;}}
+@media(max-width:380px){.preset-grid{grid-template-columns:1fr;}}
+
 /* TOOLTIP TIPE */
 .tipe-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:8px;}
 @media(max-width:600px){.tipe-grid{grid-template-columns:repeat(2,1fr);}}
@@ -589,6 +601,39 @@ body.dark .prompt-raw{background:#0f172a;}
     </div>
   </div>
 
+  <!-- PRESET CEPAT -->
+  <div class="card">
+    <div class="card-title">⚡ Preset Cepat</div>
+    <div style="font-size:.75rem;color:var(--text-light);margin-bottom:12px;">Pilih jika ingin BGY langsung mengatur mode, durasi, tantangan, dan gaya yang sering dipakai.</div>
+    <div class="preset-grid" id="presetGrid">
+      <button type="button" class="preset-card" data-preset="hp" onclick="applyPreset('hp')" aria-pressed="false">
+        <div class="preset-icon">📱</div>
+        <div class="preset-title">HP siswa</div>
+        <div class="preset-desc">Ringkas, tap-friendly, cocok dimainkan sendiri.</div>
+      </button>
+      <button type="button" class="preset-card" data-preset="ifp" onclick="applyPreset('ifp')" aria-pressed="false">
+        <div class="preset-icon">🖥️</div>
+        <div class="preset-title">IFP kelas</div>
+        <div class="preset-desc">Tombol besar, dipandu guru, nyaman di layar besar.</div>
+      </button>
+      <button type="button" class="preset-card" data-preset="vs" onclick="applyPreset('vs')" aria-pressed="false">
+        <div class="preset-icon">⚔️</div>
+        <div class="preset-title">Duel / VS</div>
+        <div class="preset-desc">Skor dua sisi, giliran jelas, kompetisi sehat.</div>
+      </button>
+      <button type="button" class="preset-card" data-preset="sd" onclick="applyPreset('sd')" aria-pressed="false">
+        <div class="preset-icon">🌈</div>
+        <div class="preset-title">SD ceria</div>
+        <div class="preset-desc">Visual kuat, narasi pendek, reward sering.</div>
+      </button>
+      <button type="button" class="preset-card" data-preset="cepat" onclick="applyPreset('cepat')" aria-pressed="false">
+        <div class="preset-icon">⏱️</div>
+        <div class="preset-title">Kilat 5 menit</div>
+        <div class="preset-desc">Tiga tantangan cepat untuk pembuka/penutup.</div>
+      </button>
+    </div>
+  </div>
+
   <!-- ═══ SEKSI 2: PILIH TIPE GAME ═══ -->
   <div class="card">
     <div class="card-title">🎮 Pilih Tipe Game</div>
@@ -914,6 +959,8 @@ let selectedSoalMode   = 'ai';
 let currentPrompt      = '';
 let deferredPrompt     = null;
 let lastRekomTipe      = '';
+let selectedPreset     = '';
+let isApplyingPreset   = false;
 
 // ===== FREE LIMIT =====
 const LIMIT_KEY='bgy_pg_limit',LIMIT_MAX=3,LIMIT_ENABLED=false;
@@ -957,6 +1004,7 @@ function saveDraft(){
     tujuan:document.getElementById('tujuan').value,
     tipe:selectedTipe,jml:selectedJml,gaya:selectedGaya,
     difficulty:selectedDifficulty,durasi:selectedDurasi,mode:selectedMode,
+    preset:selectedPreset,
     soalMode:selectedSoalMode,soalSendiri:document.getElementById('soalSendiri').value,
     namaGame:document.getElementById('namaGame').value.trim(),
     temaGame:document.getElementById('temaGame').value.trim(),
@@ -985,6 +1033,7 @@ function loadDraft(){
     if(d.durasi){const dr=document.querySelector(`#durasiGrid .chip[data-val="${d.durasi}"]`);if(dr)selectDurasi(dr);}
     if(d.mode){const dm=document.querySelector(`.chip.mode[data-val="${d.mode}"]`);if(dm)selectMode(dm);}
     if(d.soalMode){const sm=document.querySelector(`.chip.soal-mode[data-val="${d.soalMode}"]`);if(sm)selectSoalMode(sm,d.soalMode);}
+    if(d.preset)markPreset(d.preset);
     if(d.namaGame)document.getElementById('namaGame').value=d.namaGame;
     if(d.temaGame)document.getElementById('temaGame').value=d.temaGame;
     updateRekom();
@@ -1124,8 +1173,49 @@ function pakaiRekom(){
   if(card){selectTipe(card);card.scrollIntoView({behavior:'smooth',block:'center'});}
 }
 
+const PRESET_MAP={
+  hp:{tipe:'Matching',mode:'👤 Individu',difficulty:'🟡 Sedang',jml:'5',durasi:'5–10 menit',gaya:'🧩 Flat Modern'},
+  ifp:{tipe:'Adventure',mode:'👩‍🏫 Guru vs Kelas',difficulty:'✨ AI Menentukan',jml:'8',durasi:'10–15 menit',gaya:'🧩 Flat Modern'},
+  vs:{tipe:'Challenge',mode:'⚔️ Duel / VS',difficulty:'🟡 Sedang',jml:'10',durasi:'10–15 menit',gaya:'🎨 Cartoon'},
+  sd:{tipe:'Adventure',mode:'🔁 Giliran',difficulty:'🟢 Mudah',jml:'5',durasi:'5–10 menit',gaya:'🌈 Ceria Anak'},
+  cepat:{tipe:'Puzzle',mode:'👤 Individu',difficulty:'✨ AI Menentukan',jml:'3',durasi:'3–5 menit',gaya:'✨ AI Memilih'}
+};
+
+function selectChipByValue(selector,val,fn){
+  const el=document.querySelector(`${selector}[data-val="${val}"]`);
+  if(el&&typeof fn==='function')fn(el);
+}
+function markPreset(key){
+  selectedPreset=key||'';
+  document.querySelectorAll('.preset-card').forEach(card=>{
+    const active=card.dataset.preset===selectedPreset;
+    card.classList.toggle('active',active);
+    card.setAttribute('aria-pressed',active?'true':'false');
+  });
+}
+function clearPresetSelection(){
+  if(isApplyingPreset)return;
+  markPreset('');
+}
+function applyPreset(key){
+  const p=PRESET_MAP[key];if(!p)return;
+  isApplyingPreset=true;
+  markPreset(key);
+  const tipeCard=document.querySelector(`#tipeGrid .tipe-card[data-val="${p.tipe}"]`);
+  if(tipeCard)selectTipe(tipeCard);
+  selectChipByValue('#modeGrid .chip',p.mode,selectMode);
+  selectChipByValue('#diffGrid .chip',p.difficulty,selectDifficulty);
+  selectChipByValue('#jmlGrid .chip',p.jml,selectJml);
+  selectChipByValue('#durasiGrid .chip',p.durasi,selectDurasi);
+  selectChipByValue('#gayaGrid .chip',p.gaya,selectGaya);
+  isApplyingPreset=false;
+  markPreset(key);
+  updateAccSummary();saveDraft();updateProgress();
+}
+
 // ===== JENJANG / KELAS / MAPEL =====
 function onJenjangChange(){
+  clearPresetSelection();
   const j=document.getElementById('jenjang').value;
   const ke=document.getElementById('kelas');
   const ma=document.getElementById('mapel');
@@ -1160,6 +1250,7 @@ function handleMapelChange(){
 
 // ===== CHIP SELECTORS =====
 function selectTipe(el){
+  clearPresetSelection();
   document.querySelectorAll('#tipeGrid .tipe-card').forEach(c=>{c.classList.remove('selected');c.setAttribute('aria-pressed','false');});
   el.classList.add('selected');el.setAttribute('aria-pressed','true');selectedTipe=el.dataset.val;
   document.getElementById('tipeCustomWrap').style.display=selectedTipe==='__custom__'?'flex':'none';
@@ -1188,28 +1279,33 @@ function updateAccSummary(){
   document.getElementById('accSummary').textContent=parts.length?parts.join(' · '):'semua auto';
 }
 function selectJml(el){
+  clearPresetSelection();
   document.querySelectorAll('#jmlGrid .chip').forEach(c=>{c.classList.remove('selected');c.setAttribute('aria-pressed','false');});
   el.classList.add('selected');el.setAttribute('aria-pressed','true');selectedJml=el.dataset.val;
   document.getElementById('jmlCustomWrap').style.display=selectedJml==='__custom__'?'block':'none';
   updateAccSummary();saveDraft();
 }
 function selectGaya(el){
+  clearPresetSelection();
   document.querySelectorAll('.chip.gaya').forEach(c=>{c.classList.remove('selected');c.setAttribute('aria-pressed','false');});
   el.classList.add('selected');el.setAttribute('aria-pressed','true');selectedGaya=el.dataset.val;
   updateAccSummary();saveDraft();
 }
 function selectDifficulty(el){
+  clearPresetSelection();
   document.querySelectorAll('.chip.difficulty').forEach(c=>{c.classList.remove('selected');c.setAttribute('aria-pressed','false');});
   el.classList.add('selected');el.setAttribute('aria-pressed','true');selectedDifficulty=el.dataset.val;
   updateAccSummary();saveDraft();
 }
 function selectDurasi(el){
+  clearPresetSelection();
   document.querySelectorAll('#durasiGrid .chip').forEach(c=>{c.classList.remove('selected');c.setAttribute('aria-pressed','false');});
   el.classList.add('selected');el.setAttribute('aria-pressed','true');selectedDurasi=el.dataset.val;
   document.getElementById('durasiCustomWrap').style.display=selectedDurasi==='__custom__'?'block':'none';
   updateAccSummary();saveDraft();
 }
 function selectMode(el){
+  clearPresetSelection();
   document.querySelectorAll('.chip.mode').forEach(c=>{c.classList.remove('selected');c.setAttribute('aria-pressed','false');});
   el.classList.add('selected');el.setAttribute('aria-pressed','true');selectedMode=el.dataset.val;
   updateAccSummary();saveDraft();
@@ -1941,7 +2037,7 @@ function konfirmasiReset(){
 function resetForm(){
   ['materi','tujuan','tipeCustom','mapelCustom','jmlCustom','durasiCustom','soalSendiri','namaGame','temaGame'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   ['tipeCustomWrap','mapelCustomWrap','jmlCustomWrap','durasiCustomWrap','outputCard','errorBox','jmlCustomError','soalSendiriWrap'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
-  selectedTipe='';currentPrompt='';
+  selectedTipe='';currentPrompt='';selectedPreset='';
   document.getElementById('jenjang').value='';
   document.getElementById('kelas').innerHTML='<option value="">-- Pilih Kelas --</option>';
   document.getElementById('mapel').innerHTML='<option value="">-- Pilih Mata Pelajaran --</option>';
@@ -1964,6 +2060,7 @@ function resetForm(){
   const dk=document.querySelector('.chip.kondisi[data-val="🟡 Kemampuan beragam"]');if(dk){dk.classList.add('selected');selectedKondisi='🟡 Kemampuan beragam';}
   document.querySelectorAll('.chip.qc').forEach(c=>c.classList.remove('selected'));
   const dq=document.querySelector('.chip.qc[data-val="🤖 Otomatis"]');if(dq){dq.classList.add('selected');selectedQC='🤖 Otomatis';}
+  markPreset('');
   document.getElementById('cMateri').textContent='';
   document.getElementById('cTujuan').textContent='';
   try{localStorage.removeItem(DRAFT_KEY);}catch(e){}
@@ -2136,6 +2233,7 @@ function goBackSmart(){
 function syncPressedStates(){
   document.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',c.classList.contains('selected')?'true':'false'));
   document.querySelectorAll('#tipeGrid .tipe-card').forEach(c=>c.setAttribute('aria-pressed',c.classList.contains('selected')?'true':'false'));
+  document.querySelectorAll('.preset-card').forEach(c=>c.setAttribute('aria-pressed',c.classList.contains('active')?'true':'false'));
 }
 
 // ===== INSTALL =====
