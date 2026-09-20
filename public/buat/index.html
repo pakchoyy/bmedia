@@ -1227,32 +1227,32 @@ function getDurasi(){if(selectedDurasi==='__custom__'){const v=parseInt(document
 // ===== PROMPT TIPE ENGINE =====
 const PROMPT_TIPE={
   'Quiz Mission':{
-    mekanik:`MEKANIK — QUIZ MISSION\nStruktur: soal-soal yang disajikan sebagai "misi" berurutan dengan pilihan jawaban.\nAlur per misi:\n  1. Tampilkan soal + 3–4 pilihan jawaban\n  2. Siswa memilih → feedback langsung (✅ Benar! + penjelasan / ❌ Salah, jawaban benar adalah...)\n  3. Lanjut ke misi berikutnya\n  4. Setelah semua selesai → hasil akhir + skor + learning feedback\nElemen gamifikasi: progress bar misi, bintang per misi, skor total di akhir.`,
-    struktur:`1. Cover — judul "Quiz Mission: [Materi]", tombol Mulai\n2. Petunjuk Singkat — cara bermain 3 poin\n3. Misi 1 s.d. N — soal + pilihan jawaban + feedback + penjelasan + progress\n4. Hasil Akhir — total bintang, skor, akurasi, learning feedback, pesan motivasi, tombol Ulangi`
+    mekanik:`MEKANIK — QUIZ MISSION\nStruktur: misi belajar singkat yang terasa seperti permainan, bukan hanya daftar soal pilihan ganda.\nGunakan pilihan ganda hanya bila paling pedagogis. Campurkan dengan tap objek, memilih jalur, memperbaiki jawaban NPC, input angka/teks pendek, mengumpulkan item, atau mini-sort sesuai materi.\nAlur per misi:\n  1. Tampilkan situasi/tujuan misi singkat\n  2. Siswa melakukan aksi game yang melatih konsep\n  3. Game memberi respons visual + feedback belajar\n  4. Reward/progress bertambah, lalu lanjut ke misi berikutnya\nElemen gamifikasi: progress misi, bintang/item, skor, dan tantangan akhir sederhana.`,
+    struktur:`1. Cover — judul "Quiz Mission: [Materi]", tombol Mulai\n2. Petunjuk Singkat — cara bermain 3 poin\n3. Misi 1 s.d. N — aksi game + feedback + reward/progress\n4. Final Mission — tantangan gabungan singkat\n5. Hasil Akhir — total bintang, skor, akurasi, learning feedback, pesan motivasi, tombol Ulangi`
   },
   'Puzzle':{
-    mekanik:`MEKANIK — PUZZLE\nStruktur: siswa menyusun/mengurutkan elemen untuk membentuk jawaban yang benar.\nVariasi: puzzle urutan (susun langkah/proses), puzzle kata (susun huruf/kata), puzzle konsep.\nAlur: tampilkan puzzle acak → siswa menyusun → cek jawaban → feedback → lanjut.\nElemen gamifikasi: progress tahap, hint terbatas (maks 2x per tahap), skor berdasarkan ketepatan.`,
-    struktur:`1. Cover — judul "Puzzle: [Materi]", tombol Mulai\n2. Petunjuk — cara menyusun, cara menggunakan hint\n3. Tahap 1 s.d. N — puzzle + drag/klik untuk menyusun + tombol Cek + feedback + penjelasan\n4. Hasil Akhir — skor, tahap berhasil, learning feedback, tombol Ulangi`
+    mekanik:`MEKANIK — PUZZLE\nStruktur: siswa memanipulasi elemen visual untuk membentuk konsep yang benar.\nVariasi: susun urutan proses, kelompokkan kartu, perbaiki susunan salah, pilih bagian yang hilang, atau puzzle konsep.\nAlur: tampilkan puzzle acak → siswa menyusun/memilih/mengoreksi → cek jawaban → hint bertahap bila salah → feedback → reward/progress.\nElemen gamifikasi: progress tahap, hint terbatas, skor berdasarkan ketepatan, dan puzzle akhir.`,
+    struktur:`1. Cover — judul "Puzzle: [Materi]", tombol Mulai\n2. Petunjuk — cara menyusun, tap/drag, dan hint\n3. Tahap 1 s.d. N — puzzle interaktif + cek + feedback + reward\n4. Puzzle Akhir — gabungan konsep inti\n5. Hasil Akhir — skor, tahap berhasil, learning feedback, tombol Ulangi`
   },
   'Matching':{
-    mekanik:`MEKANIK — MATCHING\nStruktur: mencocokkan dua kolom (istilah–definisi, gambar–nama, soal–jawaban).\nAlur:\n  1. Tampilkan kolom kiri & kanan dalam urutan acak\n  2. Siswa klik item kiri → pilih pasangannya di kanan\n  3. Benar → terkunci + warna hijau; Salah → bergetar + warna merah, bisa dicoba ulang\n  4. Selesai saat semua cocok\nVisual: gunakan garis penghubung animasi antara pasangan yang cocok.`,
-    struktur:`1. Cover — judul "Matching: [Materi]", tombol Mulai\n2. Petunjuk — cara mencocokkan\n3. Ronde 1 s.d. N — set pasangan berbeda + feedback + skor\n4. Hasil Akhir — akurasi, skor, learning feedback, tombol Ulangi`
+    mekanik:`MEKANIK — MATCHING\nStruktur: siswa mencocokkan, mengelompokkan, atau menemukan pasangan konsep secara visual.\nVariasi: pasangan istilah-definisi, gambar-nama, objek-kondisi, memory cards, pilih kelompok yang tepat, atau sorting sederhana.\nAlur:\n  1. Tampilkan objek/kartu dalam urutan acak\n  2. Siswa tap/drag untuk memasangkan atau mengelompokkan\n  3. Benar → terkunci + reward; salah → hint tanpa langsung memberi jawaban bila masih bisa dicoba\n  4. Selesai saat semua pasangan/kelompok benar\nVisual: gunakan garis/kartu/slot yang jelas dan touch-friendly.`,
+    struktur:`1. Cover — judul "Matching: [Materi]", tombol Mulai\n2. Petunjuk — cara mencocokkan/mengelompokkan\n3. Ronde 1 s.d. N — set pasangan/kelompok berbeda + feedback + skor\n4. Ronde Bonus — aplikasi konsep singkat bila sesuai\n5. Hasil Akhir — akurasi, skor, learning feedback, tombol Ulangi`
   },
   'Adventure':{
-    mekanik:`MEKANIK — ADVENTURE\nStruktur: siswa berperan sebagai tokoh yang menjelajahi peta/dunia virtual sambil menyelesaikan tantangan.\nAlur:\n  1. Perkenalan tokoh & setting cerita yang relevan dengan materi\n  2. Setiap "lokasi" di peta punya tantangan/soal\n  3. Selesaikan tantangan → buka lokasi berikutnya\n  4. Kumpulkan item/poin sepanjang perjalanan\nNarasi: hubungkan materi ke konteks cerita secara natural.`,
+    mekanik:`MEKANIK — ADVENTURE\nStruktur: siswa berperan sebagai tokoh yang menjelajahi peta/dunia virtual sambil memakai konsep materi untuk bertindak.\nAlur:\n  1. Perkenalan tokoh & setting cerita singkat yang relevan\n  2. Setiap lokasi punya aksi berbeda: pilih jalur, ambil objek, urutkan langkah, buka gerbang, atau selesaikan tantangan konsep\n  3. Selesaikan tantangan → buka lokasi berikutnya\n  4. Kumpulkan item/poin sepanjang perjalanan\nNarasi: pendek, langsung mendukung aksi, tidak menjadi bacaan panjang.`,
     struktur:`1. Cover — judul petualangan, pengenalan tokoh\n2. Peta/Overview — tampilkan rute perjalanan, lokasi yang bisa dikunjungi\n3. Lokasi 1 s.d. N — narasi singkat + tantangan + reward item/poin + feedback\n4. Final Tantangan — tantangan gabungan\n5. Penutup Cerita — resolusi narasi + skor + learning feedback + tombol Ulangi`
   },
   'Mystery':{
-    mekanik:`MEKANIK — MYSTERY\nStruktur: siswa berperan sebagai detektif yang memecahkan misteri menggunakan pengetahuan dari materi.\nAlur:\n  1. Presentasi "kasus" yang konteksnya berkaitan dengan materi\n  2. Siswa mengumpulkan "petunjuk" dengan menjawab soal\n  3. Setiap jawaban benar membuka petunjuk baru\n  4. Di akhir, siswa menyimpulkan/memilih solusi berdasarkan petunjuk\n  5. Reveal jawaban + penjelasan\nElemen: papan petunjuk, notebook virtual, moodboard misteri.`,
+    mekanik:`MEKANIK — MYSTERY\nStruktur: siswa berperan sebagai detektif yang memecahkan misteri menggunakan konsep materi.\nAlur:\n  1. Presentasi kasus singkat yang berkaitan dengan materi\n  2. Siswa mengumpulkan petunjuk lewat aksi: memilih bukti, mengurutkan kronologi, membandingkan data, memperbaiki kesimpulan NPC, atau menjawab tantangan konsep\n  3. Jawaban tepat membuka petunjuk baru; jawaban kurang tepat memberi hint bertahap\n  4. Di akhir, siswa menyusun/memilih solusi berdasarkan petunjuk\n  5. Reveal jawaban + penjelasan\nElemen: papan petunjuk, notebook virtual, moodboard misteri.`,
     struktur:`1. Cover — "Kasus: [Materi]", pengenalan misteri\n2. Briefing — latar belakang kasus, misi detektif\n3. Investigasi Adegan 1 s.d. N — soal untuk membuka petunjuk + feedback\n4. Ruang Analisis — susun petunjuk, pilih kesimpulan\n5. Reveal & Penutup — jawaban kasus, learning feedback, badge detektif, tombol Ulangi`
   },
   'Challenge':{
-    mekanik:`MEKANIK — CHALLENGE\nStruktur: serangkaian tantangan berjenjang dengan tingkat kesulitan meningkat.\nAlur:\n  1. Mulai dari Level 1 (mudah) → Level N (sulit)\n  2. Setiap level punya 1–3 soal/tantangan\n  3. Lulus level → buka level berikutnya\n  4. Ada sistem nyawa/kesempatan (3 kesempatan)\n  5. Habis nyawa → restart dari checkpoint\nElemen gamifikasi: progress bar level, animasi naik level, badge pencapaian.`,
+    mekanik:`MEKANIK — CHALLENGE\nStruktur: serangkaian tantangan berjenjang dengan tingkat kesulitan meningkat.\nAlur:\n  1. Mulai dari Level 1 (mudah) → Level N (sulit)\n  2. Setiap level memakai aksi yang cocok: tap objek, sorting, input singkat, memilih strategi, memperbaiki jawaban, atau tantangan waktu ringan bila sesuai usia\n  3. Lulus level → buka level berikutnya\n  4. Gunakan kesempatan/hint secara positif; hindari game over yang menghukum berlebihan\n  5. Bila kesempatan habis, beri checkpoint dan ajakan coba lagi\nElemen gamifikasi: progress bar level, animasi naik level, badge pencapaian.`,
     struktur:`1. Cover — "Challenge: [Materi]", pilih difficulty\n2. Level 1 s.d. N — tantangan bertahap + timer opsional + nyawa + feedback\n3. Level Up Screen — animasi naik level, motivasi\n4. Game Over / Complete — skor final, learning feedback, badge, tombol Coba Lagi`
   },
   'Case Challenge':{
-    mekanik:`MEKANIK — CASE CHALLENGE\nStruktur: siswa menganalisis skenario nyata lalu mengambil keputusan berbasis materi.\nAlur:\n  1. Presentasi kasus/skenario (teks + visual pendukung)\n  2. Beberapa pertanyaan analisis tentang kasus\n  3. Siswa memilih jawaban/rekomendasi\n  4. Feedback menjelaskan mengapa tepat/tidak tepat dengan referensi konsep\n  5. Lanjut ke kasus berikutnya\nCocok untuk SMA/SMK, materi yang berkaitan dengan situasi dunia nyata.`,
-    struktur:`1. Cover — "Case Challenge: [Materi]", konteks skenario\n2. Pengantar Kasus — latar belakang + data/informasi pendukung\n3. Kasus 1 s.d. N — skenario + pertanyaan analisis + pilihan jawaban + feedback mendalam\n4. Kesimpulan & Refleksi — learning feedback lengkap, skor analitis, rekomendasi belajar lanjut`
+    mekanik:`MEKANIK — CASE CHALLENGE\nStruktur: siswa menganalisis skenario nyata lalu mengambil keputusan berbasis materi.\nAlur:\n  1. Presentasi kasus/skenario singkat dengan visual/data pendukung\n  2. Siswa melakukan aksi analitis: memilih data relevan, memprioritaskan langkah, memperbaiki keputusan NPC, mengisi rekomendasi pendek, atau memilih tindakan terbaik\n  3. Feedback menjelaskan mengapa tepat/tidak tepat dengan referensi konsep\n  4. Lanjut ke kasus berikutnya dengan kompleksitas meningkat\nCocok untuk SMA/SMK dan materi yang berkaitan dengan situasi dunia nyata.`,
+    struktur:`1. Cover — "Case Challenge: [Materi]", konteks skenario\n2. Pengantar Kasus — latar belakang + data/informasi pendukung ringkas\n3. Kasus 1 s.d. N — aksi analitis + keputusan + feedback mendalam\n4. Final Decision — keputusan akhir berbasis data\n5. Kesimpulan & Refleksi — learning feedback lengkap, skor analitis, rekomendasi belajar lanjut`
   }
 };
 
@@ -1344,6 +1344,147 @@ function buildPrompt(){
     ?`SOAL DARI GURU (WAJIB GUNAKAN)\nGuru telah menyediakan soal berikut. Gunakan soal ini sebagai konten utama game, adaptasikan ke format ${tipe}:\n\n${soalSendiri}\n\nCatatan: Sesuaikan format soal dengan mekanik game ${tipe}. Jaga akurasi konten soal.`
     :`SOAL: Buat ${jml} soal/tantangan BARU yang relevan dengan materi "${materi}" dan tujuan pembelajaran.`;
 
+  const variasiInteraksi=Number(jml)>=5
+    ?'Karena jumlah tantangan minimal 5, usahakan ada minimal 3 pola interaksi berbeda jika sesuai materi. Jangan memaksakan variasi jika membuat tujuan belajar kabur.'
+    :'Gunakan variasi interaksi seperlunya sesuai materi dan usia siswa.';
+
+  const planningNote=`PERENCANAAN INTERNAL (WAJIB, JANGAN DITAMPILKAN)
+Sebelum menulis kode final, rancang secara internal:
+TUJUAN BELAJAR → KONSEP YANG DILATIH → TANTANGAN → MEKANIK → FEEDBACK → PROGRESS.
+Gunakan rencana itu untuk membuat game lebih kuat, tetapi jangan tampilkan chain-of-thought/proses berpikir internal kepada pengguna.`;
+
+  const gameFirstNote=`PRINSIP UTAMA — GAME FIRST, QUIZ SECOND
+Game harus terasa seperti permainan pembelajaran, BUKAN kumpulan soal pilihan ganda yang diberi dekorasi game.
+Materi pembelajaran harus menjadi bagian dari AKSI permainan.
+Hindari pola berulang untuk seluruh permainan:
+narasi → soal → pilih A/B/C/D → benar/salah → lanjut.
+Pilihan ganda boleh dipakai jika memang pedagogis, tetapi tidak boleh menjadi satu-satunya mekanik permainan.
+Pilih mekanik berdasarkan jenjang, usia, materi, tujuan belajar, tipe game, dan perangkat yang mungkin digunakan.
+Contoh mekanik: tap/select object, drag & drop, matching, sorting, menyusun urutan, memilih jalur, mengumpulkan item, number/text input, memperbaiki jawaban NPC, memilih objek berdasarkan kondisi, manipulasi benda visual, memory cards, puzzle sederhana, navigasi peta, boss/final challenge.
+${variasiInteraksi}`;
+
+  const gameLoopNote=`GAME LOOP WAJIB
+Setiap tantangan harus memiliki loop yang jelas:
+AKSI SISWA → RESPONS GAME → FEEDBACK BELAJAR → REWARD/PROGRESS → TANTANGAN BERIKUTNYA.
+Reward boleh berupa poin, bintang, item, badge, membuka lokasi, progress map, energi, atau reward sederhana lain yang relevan dengan tema.
+Reward mendukung motivasi, tetapi tidak boleh mengalahkan tujuan pembelajaran.`;
+
+  const feedbackSalahNote=`FEEDBACK SAAT SALAH
+Jangan selalu langsung memperlihatkan jawaban ketika siswa salah.
+Jika sesuai:
+Percobaan pertama salah → beri petunjuk sederhana.
+Siswa mencoba kembali.
+Jika masih salah → beri bantuan/penjelasan lebih konkret.
+Setelah itu → bantu siswa memahami jawaban.
+Gunakan bahasa positif seperti "Coba perhatikan lagi...", "Hampir!", "Mari kita hitung bersama.", "Coba strategi ini...".
+Jangan gunakan kalimat merendahkan seperti "Kamu gagal", "Kamu bodoh", atau "Salah terus".`;
+
+  const visualNarasiNote=`VISUAL & NARASI
+Tema visual "${gaya}" harus terasa pada background, kartu, karakter, progress, reward, tombol, map, feedback, dan micro-interaction.
+Keterbacaan lebih penting daripada dekorasi.
+Jika Pixel Art: font pixel boleh untuk judul/score/badge/dekorasi, tetapi body text, instruksi, dan soal harus tetap sangat mudah dibaca.
+Narasi harus pendek. Untuk SD, gunakan sekitar 1–3 kalimat pendek per scene kecuali konteks benar-benar membutuhkan lebih.
+Jangan membuat siswa membaca paragraf panjang hanya untuk mulai bermain.`;
+
+  const assetOfflineNote=`ASSET & OFFLINE
+Game harus tetap dapat dimainkan ketika file HTML dibuka lokal/offline.
+Jangan bergantung pada CDN, Google Fonts, API eksternal, library eksternal, gambar remote, audio remote, atau koneksi internet.
+Visual dibuat dengan HTML, CSS, inline SVG, CSS shapes, emoji yang sesuai, atau aset embedded ringan jika benar-benar diperlukan.
+Jika menggunakan audio, audio harus opsional, kompatibel single-file/offline, dan game tetap sempurna walau audio tidak tersedia.`;
+
+  const responsiveNote=`RESPONSIVE MULTI-DEVICE — WAJIB
+Game tidak boleh dibuat untuk satu resolusi tetap. Gunakan layout fluid/responsive.
+Target nyaman pada:
+1. HP minimum 360×640 portrait
+2. HP umum 390×844 dan 412×915 portrait
+3. Tablet 768×1024
+4. Laptop 1366×768
+5. Desktop/IFP 1920×1080
+6. IFP 4K 3840×2160
+Gunakan CSS Grid, Flexbox, clamp(), min(), max(), minmax(), relative units, media queries, aspect-ratio, dan container max-width yang proporsional jika sesuai.
+Tidak boleh ada horizontal scrolling pada gameplay normal.
+Tidak boleh ada tombol keluar viewport, teks terpotong, modal melebihi layar, kartu terlalu kecil, objek overlap, atau game yang hanya bagus di desktop/HP.
+Pada HP: prioritaskan portrait, layout satu kolom jika perlu, touch target minimal sekitar 44×44 CSS px, hindari hover-only interaction, semua fitur bisa tap/touch, drag harus mendukung touch/pointer events, jangan mengandalkan mouse.
+Pada IFP/layar kelas besar: target utama 16:9 1920×1080 dan tetap baik di 3840×2160. Jangan hanya memperlebar konten memenuhi layar; pusatkan area game, gunakan ukuran komponen/teks dengan clamp(), tombol besar, feedback jelas, score/progress terlihat, dan informasi penting terbaca dari jarak kelas.
+Orientation portrait ↔ landscape tidak boleh menghilangkan score, progress, jawaban, atau state permainan.
+Gunakan meta viewport:
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+Pertimbangkan safe-area. Hindari 100vh naif pada browser mobile; gunakan 100dvh dengan fallback aman bila sesuai.`;
+
+  const universalInputNote=`INPUT UNIVERSAL
+Game harus dapat digunakan dengan touch, mouse/pointer, dan keyboard jika relevan.
+Untuk mekanik drag, prioritaskan Pointer Events atau implementasi yang kompatibel dengan touch.
+Jangan membuat fitur penting bergantung pada hover atau mouse saja.
+Jika input keyboard tidak cocok untuk anak/HP, pilih mekanik tap/drag yang lebih nyaman.`;
+
+  const microPerfNote=`MICRO-INTERACTION & PERFORMANCE
+Tambahkan animasi ringan bila relevan: karakter bergerak, item terkumpul, bintang/poin bertambah, lokasi terbuka, progress berubah, feedback benar/salah.
+Animasi harus singkat, ringan, tidak berlebihan, tidak menghambat siswa, dan tidak menyebabkan layout shift mengganggu.
+Hormati prefers-reduced-motion jika memungkinkan.
+Prioritaskan kelancaran pada HP sekolah/guru spesifikasi rendah.
+Hindari canvas animation berat, particle berlebihan, DOM sangat besar, loop JavaScript terus-menerus tanpa kebutuhan, gambar embedded besar, efek blur/shadow berlebihan, dan animasi berat.`;
+
+  const finalDeviceCheck=`FINAL DEVICE TEST — WAJIB SEBELUM SELESAI
+Lakukan pemeriksaan logis pada ukuran berikut:
+1. 360×640 portrait
+2. 390×844 portrait
+3. 768×1024 tablet
+4. 1366×768 laptop
+5. 1920×1080 IFP/desktop
+6. 3840×2160 IFP 4K
+Pastikan pada semua ukuran:
+□ Tidak ada horizontal overflow
+□ Tidak ada teks terpotong
+□ Tombol dapat ditekan
+□ Modal muat di viewport
+□ Game playable
+□ Score/progress terlihat
+□ Restart bekerja
+□ Touch interaction bekerja
+□ Mouse interaction bekerja
+□ Tidak ada dead-end
+□ Tidak ada elemen penting terlalu kecil
+□ Tampilan IFP tidak terlihat "mini di tengah layar"
+□ Tampilan HP tidak terasa seperti desktop yang diperkecil`;
+
+  const qualityGate=`QUALITY GATE FINAL
+PEDAGOGI
+□ Materi benar
+□ Tantangan sesuai tujuan
+□ Feedback mendidik
+
+GAMEPLAY
+□ Bukan sekadar quiz skin
+□ Ada game loop
+□ Mekanik sesuai materi
+□ Variasi interaksi cukup
+□ Reward/progress bekerja
+
+TEKNIS
+□ Single HTML
+□ Offline
+□ Tidak ada dependency eksternal
+□ Tidak ada TODO/placeholder
+□ Tidak ada dead-end
+□ Restart bekerja
+□ Score benar
+□ Tidak ada error JavaScript
+
+DEVICE
+□ HP
+□ Tablet
+□ Laptop
+□ Desktop
+□ IFP Full HD
+□ IFP 4K
+
+AKSESIBILITAS
+□ Kontras cukup
+□ Tidak mengandalkan warna saja
+□ Touch target memadai
+□ Teks terbaca
+□ Reduced motion dipertimbangkan`;
+
   const prompt=`═══════════════════════════════════════════════════════
 🎮 PROMPT GAME INTERAKTIF — BANTU GURU YUK v1.3
 ═══════════════════════════════════════════════════════
@@ -1352,6 +1493,8 @@ function buildPrompt(){
 Kamu adalah instructional game designer, guru yang memahami pedagogi,
 UX designer, dan front-end developer. Tugasmu: membuat game pembelajaran
 HTML single-file yang dapat langsung dimainkan di browser.
+
+${planningNote}
 
 ═══════════════════════════════════════════════════════
 1. KONTEKS PEMBELAJARAN
@@ -1378,7 +1521,17 @@ Gaya Visual       : ${gaya}
 Jenis Asesmen     : ${asesmen}
 
 ═══════════════════════════════════════════════════════
-3. SPESIFIKASI GAME
+3. PRINSIP GAMEPLAY
+═══════════════════════════════════════════════════════
+
+${gameFirstNote}
+
+${gameLoopNote}
+
+${feedbackSalahNote}
+
+═══════════════════════════════════════════════════════
+4. SPESIFIKASI GAME
 ═══════════════════════════════════════════════════════
 
 ▌TIPE GAME: ${tipe}
@@ -1398,23 +1551,27 @@ ${usiaNote}
 ▌${kondisiMap[kondisi]||kondisiMap['🤖 AI Menentukan']}
 
 ═══════════════════════════════════════════════════════
-4. KONTEN PEMBELAJARAN (WAJIB AKURAT)
+5. KONTEN PEMBELAJARAN (WAJIB AKURAT)
 ═══════════════════════════════════════════════════════
 
 ${soalNote}
-Konten harus akurat secara keilmuan dan sesuai Kurikulum Merdeka ${jenjang} ${kelas}.
+Konten harus akurat secara keilmuan dan sesuai jenjang ${jenjang} ${kelas}.
+Jika CP/TP spesifik tidak diberikan, sesuaikan dengan materi dan karakteristik umum jenjang tanpa mengklaim telah memverifikasi CP/TP tertentu.
+Jika tujuan pembelajaran/CP/TP diberikan, jadikan itu anchor utama.
 Jangan buat soal yang tidak relevan dengan materi.
 Jangan mengulang soal yang sama.
 Setiap tantangan harus memiliki feedback yang mendidik dan penjelasan singkat.
+Verifikasi internal: tidak ada jawaban ambigu, kunci jawaban benar, angka/data konsisten, tingkat bahasa sesuai usia, dan feedback menjelaskan konsep dengan benar.
 
 ═══════════════════════════════════════════════════════
-5. HASIL AKHIR — LEARNING FEEDBACK (WAJIB)
+6. HASIL AKHIR — LEARNING FEEDBACK (WAJIB)
 ═══════════════════════════════════════════════════════
 
 Layar Hasil Akhir WAJIB menampilkan:
 ✅ Skor total & akurasi (%)
 ✅ "Yang sudah kamu kuasai" — konsep yang dijawab benar
 ✅ "Yang perlu kamu pelajari lagi" — konsep yang perlu diulang
+✅ Progress/level yang sudah diselesaikan
 ✅ Pesan motivasi positif (JANGAN gunakan kata "gagal" atau "kamu tidak bisa")
 ✅ Rekomendasi belajar berikutnya
 ✅ Tombol Ulangi / Main Lagi
@@ -1424,11 +1581,11 @@ Gunakan bahasa positif:
 ✅ "Hampir sempurna!" bukan "Masih banyak yang salah"
 
 ═══════════════════════════════════════════════════════
-6. ${qcNote}
+7. ${qcNote}
 ═══════════════════════════════════════════════════════
 
 ═══════════════════════════════════════════════════════
-7. BGY DESIGN SYSTEM
+8. BGY DESIGN SYSTEM
 ═══════════════════════════════════════════════════════
 
 Primary    : #0EA5A0  (teal utama)
@@ -1441,15 +1598,17 @@ Text       : #1E293B
 Gaya visual: ${gayaMap[gaya]||gayaMap['✨ AI Memilih']}
 Style: rounded corners (10–16px), soft shadow, spacing lega, typography mudah dibaca.
 
+${visualNarasiNote}
+
 ═══════════════════════════════════════════════════════
-8. PERSYARATAN TEKNIS
+9. PERSYARATAN TEKNIS
 ═══════════════════════════════════════════════════════
 
 ✅ HTML5 + CSS3 + Vanilla JavaScript — single file (CSS & JS inline)
 ✅ Tidak perlu framework, build process, atau server
 ✅ Bisa dibuka langsung di browser (offline)
-✅ Responsive & mobile-friendly (360px – 1280px)
-✅ Touch-friendly — tombol minimal 44px
+✅ Responsive & multi-device dari HP sampai IFP 4K
+✅ Touch-friendly — tombol minimal sekitar 44×44 CSS px
 ✅ Semua tombol & interaksi berfungsi — ZERO dead end
 ✅ Tidak ada JavaScript error
 ✅ Tracking score & progress
@@ -1459,17 +1618,32 @@ Style: rounded corners (10–16px), soft shadow, spacing lega, typography mudah 
 ✅ Tidak hanya menggunakan warna untuk membedakan benar/salah
 ✅ Kode lengkap tanpa TODO, pseudo-code, atau placeholder
 
+${assetOfflineNote}
+
+${responsiveNote}
+
+${universalInputNote}
+
+${microPerfNote}
+
 ═══════════════════════════════════════════════════════
-9. FILOSOFI PEMBELAJARAN
+10. FILOSOFI PEMBELAJARAN
 ═══════════════════════════════════════════════════════
 
 Ini bukan game arcade — ini adalah LKPD INTERAKTIF + GAMIFIKASI.
 Media pembelajaran menyenangkan namun fokus pada tujuan.
 Setiap siswa yang memainkan harus aktif berlatih materi "${materi}".
 Prioritaskan: relevansi → pedagogi → gameplay → feedback → aksesibilitas.
+Jangan overengineer. Buat game sederhana, jelas, langsung dipakai guru, tetapi tetap terasa playable dan bermakna.
 
 ═══════════════════════════════════════════════════════
-10. FINAL CHECK
+11. FINAL DEVICE TEST
+═══════════════════════════════════════════════════════
+
+${finalDeviceCheck}
+
+═══════════════════════════════════════════════════════
+12. FINAL CHECK & QUALITY GATE
 ═══════════════════════════════════════════════════════
 
 Simulasikan mental seluruh alur:
@@ -1481,9 +1655,11 @@ Cover → Start → Petunjuk → Tantangan → Feedback → Progress → Hasil A
 □ Learning feedback tampil di hasil akhir
 □ Semua ${jml} tantangan hadir
 
+${qualityGate}
+
 ═══════════════════════════════════════════════════════
 Dibuat dengan BGY - Buat Prompt Game
-bantuguruyuk.web.id · @pak.choyy · Sesuai Kurikulum Merdeka
+bantuguruyuk.web.id · @pak.choyy · Berorientasi Kurikulum Merdeka
 ═══════════════════════════════════════════════════════`;
 
   currentPrompt=prompt;
