@@ -6,7 +6,32 @@ import { THUMBNAIL_BUCKET, thumbnailPublicUrl } from "@/lib/storage";
 import { thumbCropStyle, clampCrop, type ThumbCrop } from "@/lib/storage";
 import Icon from "./Icon";
 
-const MAX_SIZE = 1.5 * 1024 * 1024; // 1.5 MB
+const MAX_SIZE = 1.5 * 1024 * 1024; // 1.5 MB setelah dikompres
+const MAX_INPUT_SIZE = 15 * 1024 * 1024;
+const MAX_WIDTH = 900;
+
+async function compressImage(file: File): Promise<File> {
+  try {
+    const bmp = await createImageBitmap(file);
+    const scale = Math.min(1, MAX_WIDTH / bmp.width);
+    const w = Math.round(bmp.width * scale);
+    const h = Math.round(bmp.height * scale);
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    canvas.getContext("2d")!.drawImage(bmp, 0, 0, w, h);
+    bmp.close();
+    const toBlob = (type: string, q: number) =>
+      new Promise<Blob | null>((res) => canvas.toBlob(res, type, q));
+    let blob = await toBlob("image/webp", 0.72);
+    // Browser lama tanpa encoder WebP mengembalikan PNG: pakai JPEG.
+    if (!blob || blob.type !== "image/webp") blob = await toBlob("image/jpeg", 0.8);
+    if (!blob || blob.size >= file.size) return file;
+    return new File([blob], file.name, { type: blob.type });
+  } catch {
+    return file;
+  }
+}
 const ALLOWED_MIME = ["image/jpeg", "image/png", "image/webp"];
 const EXT_BY_MIME: Record<string, string> = {
   "image/jpeg": "jpg",
@@ -64,8 +89,8 @@ export default function ThumbnailUpload({
       );
       return;
     }
-    if (file.size > MAX_SIZE) {
-      setError("Ukuran gambar maksimal 1,5 MB.");
+    if (file.size > MAX_INPUT_SIZE) {
+      setError("Ukuran gambar maksimal 15 MB.");
       return;
     }
     if (preview) URL.revokeObjectURL(preview);
@@ -74,13 +99,19 @@ export default function ThumbnailUpload({
     void uploadFile(file);
   };
 
-  const uploadFile = async (file: File) => {
+  const uploadFile = async (original: File) => {
+    let file = original;
     if (!isSupabaseConfigured()) {
       setError("Sistem penyimpanan belum siap. Silakan hubungi administrator.");
       return;
     }
     setUploading(true);
     try {
+      file = await compressImage(file);
+      if (file.size > MAX_SIZE) {
+        setError("Gambar masih terlalu besar setelah dikompres. Coba gambar lain.");
+        return;
+      }
       const ext = EXT_BY_MIME[file.type] ?? "jpg";
       const name = `thumb-${crypto.randomUUID()}.${ext}`;
       const supabase = createClient();
@@ -255,7 +286,7 @@ export default function ThumbnailUpload({
                 Pilih gambar dari perangkat
               </span>
               <span className="text-xs text-gray-500 dark:text-slate-400">
-                JPG, JPEG, PNG, atau WebP &middot; maksimal 1,5 MB
+                JPG, JPEG, PNG, atau WebP &middot; otomatis dikompres
               </span>
             </>
           )}

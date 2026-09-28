@@ -392,6 +392,11 @@ body.dark .prompt-raw{background:#0f172a;}
 .social-proof-mini{display:flex;align-items:center;justify-content:center;gap:6px;font-size:.78rem;color:var(--text-light);margin:0 0 10px;}
 .social-proof-mini b{color:#0d7a8a;font-size:.9rem;}body.dark .social-proof-mini b{color:#5eead4;}
 .progress-steps{padding:8px 12px;margin-bottom:10px;}
+.share-karya{border:1.5px solid rgba(14,165,160,.3);background:rgba(14,165,160,.06);border-radius:12px;padding:14px;margin:14px 0;}
+.share-karya .sk-title{font-weight:800;font-size:.9rem;color:var(--text);display:flex;align-items:center;gap:6px;margin-bottom:4px;}
+.share-karya .sk-title .ic{color:#0ea5a0;}
+.share-karya p{font-size:.8rem;color:var(--text-light);margin:0 0 10px;line-height:1.5;}
+.sk-btn{display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;background:#0d7a8a;color:#fff;border-radius:9px;font-weight:700;font-size:.85rem;text-decoration:none;}
 </style>
 <script src="https://www.bantuguruyuk.web.id/bgy-info.js" defer></script>
 <link rel="stylesheet" href="https://www.bantuguruyuk.web.id/fonts/bgy-font.css?v=2">
@@ -916,6 +921,12 @@ body.dark .prompt-raw{background:#0f172a;}
     </div>
     <div style="text-align:center;margin-top:8px;"><button class="btn btn-regen" onclick="generate()"><svg class="ic" aria-hidden="true"><use href="#i-rotate-ccw"/></svg> Generate Ulang</button></div>
 
+    <div class="share-karya">
+      <div class="sk-title"><svg class="ic" aria-hidden="true"><use href="#i-trophy"/></svg> Game-nya sudah jadi?</div>
+      <p>Bagikan ke <b>Media Belajar</b> supaya guru lain bisa ikut memakai. Isian judul, mapel, dan jenjang langsung terisi.</p>
+      <a id="ctaKirim" class="btn sk-btn" href="/submit" target="_blank" rel="noopener"><svg class="ic" aria-hidden="true"><use href="#i-link"/></svg> Kirim ke Media Belajar</a>
+    </div>
+
     <!-- Cross-link tools BGY -->
     <div class="cross-link-box">
       <div class="cl-title"><svg class="ic" aria-hidden="true"><use href="#i-link"/></svg> Lanjutkan dengan BGY</div>
@@ -1248,6 +1259,32 @@ function onJenjangChange(){
   const dc=document.querySelector(`.chip.difficulty[data-val="${dd}"]`);
   if(dc){dc.classList.add('selected');selectedDifficulty=dd;}
   syncPressedStates();saveDraft();updateProgress();
+}
+
+function applyUrlParams(){
+  const q=new URLSearchParams(location.search);
+  if(!q.get('jenjang')&&!q.get('materi'))return;
+  const js=document.getElementById('jenjang');
+  const j=(q.get('jenjang')||'').toUpperCase();
+  if(j&&[...js.options].some(o=>o.value===j)){js.value=j;onJenjangChange();}
+  const k=q.get('kelas'),ks=document.getElementById('kelas');
+  if(k&&[...ks.options].some(o=>o.value===k))ks.value=k;
+  const m=(q.get('mapel')||'').trim(),ms=document.getElementById('mapel');
+  if(m&&js.value){
+    const opt=[...ms.options].find(o=>o.value.toLowerCase()===m.toLowerCase());
+    if(opt)ms.value=opt.value;
+    else if([...ms.options].some(o=>o.value==='Lainnya')){ms.value='Lainnya';document.getElementById('mapelCustom').value=m.slice(0,60);}
+    handleMapelChange();
+  }
+  const mt=(q.get('materi')||'').trim();
+  if(mt){const el=document.getElementById('materi');el.value=mt.slice(0,150);el.dispatchEvent(new Event('input'));}
+  const note=document.createElement('div');
+  note.className='hint-bar';note.setAttribute('role','status');note.style.marginBottom='10px';
+  note.textContent=q.get('dari')==='media'
+    ?'Isian diambil dari Media Belajar. Cek materi, pilih kelas, lalu pilih tipe game.'
+    :'Sebagian isian sudah terisi. Lengkapi yang masih kosong.';
+  document.getElementById('errorBox').before(note);
+  history.replaceState(null,'',location.pathname);
 }
 
 function handleMapelChange(){
@@ -1605,6 +1642,13 @@ Balas HANYA satu blok kode HTML dari <!DOCTYPE html> sampai </html>, tanpa penje
   renderOutputGuides({jenjang,kelas,mapel,materi,tujuan,tipe,jml,gaya,difficulty,durasi,mode,namaGame,temaGame});
 
   document.getElementById('promptResult').textContent=prompt;
+  document.getElementById('ctaKirim').href='/submit?'+new URLSearchParams({
+    title:namaGame||('Game '+materi).slice(0,80),
+    mapel:mapel,
+    jenjang:(jenjang==='PAUD'?'TK':jenjang),
+    category:'Game Edukasi',
+    dari:'buat'
+  }).toString();
   const oc=document.getElementById('outputCard');
   oc.style.display='block';
   updateProgress();
@@ -1964,6 +2008,7 @@ window.addEventListener('load',()=>{
   initCounter();
   selectedJml='5';
   loadDraft();
+  applyUrlParams();
   syncPressedStates();
   if('serviceWorker' in navigator){
     navigator.serviceWorker.register('sw.js',{scope:'./'}).catch(()=>{});

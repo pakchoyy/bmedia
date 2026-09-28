@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { CATEGORIES, JENJANG_OPTIONS, KELAS_OPTIONS } from "@/lib/constants";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase";
@@ -50,6 +50,25 @@ export default function SubmitForm() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [fromBuat, setFromBuat] = useState(false);
+
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+    if (!q.get("title") && !q.get("mapel")) return;
+    const mapel = (q.get("mapel") || "").trim();
+    const known = MAPEL_OPTIONS.find((m) => m.toLowerCase() === mapel.toLowerCase());
+    const jenjang = q.get("jenjang") || "";
+    const category = q.get("category") || "";
+    setForm((f) => ({
+      ...f,
+      title: (q.get("title") || "").slice(0, 120),
+      mapel: known ?? (mapel ? "Lainnya" : ""),
+      mapelCustom: known ? "" : mapel.slice(0, 60),
+      jenjang: (JENJANG_OPTIONS as string[]).includes(jenjang) ? jenjang : "",
+      category: CATEGORIES.some((c) => c.name === category) ? category : "",
+    }));
+    setFromBuat(q.get("dari") === "buat");
+  }, []);
 
   const update = (field: keyof FormState, value: string) => {
     setForm((f) => {
@@ -201,6 +220,11 @@ export default function SubmitForm() {
 
   return (
     <div className="max-w-[800px] mx-auto">
+      {fromBuat && (
+        <div role="status" className="mb-4 rounded-xl border border-primary-light/30 bg-primary-light/10 px-4 py-3 text-sm text-ink dark:text-slate-200">
+          Judul, mapel, jenjang, dan tipe sudah diisi dari Prompt Game. Tinggal tempel link game-mu, tambah gambar, lalu kirim.
+        </div>
+      )}
       <form onSubmit={handleSubmit} noValidate className="rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-slate-800">
         {/* Section: Tentang Media */}
         <div className={`${rowWhite} px-8 py-5 max-md:px-5`}>

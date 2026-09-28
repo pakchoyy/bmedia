@@ -74,6 +74,22 @@ export default async function MediaDetailPage({ params }: Props) {
               {media.description}
             </p>
 
+            <a
+              href={`/buat?${new URLSearchParams({
+                ...(media.jenjang !== "Umum" ? { jenjang: media.jenjang } : {}),
+                mapel: media.mapel,
+                materi: media.title,
+                dari: "media",
+              }).toString()}`}
+              className="inline-flex items-center gap-2 min-h-[44px] bg-primary-light text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-primary transition-colors mb-2"
+            >
+              <Icon name="gamepad" />
+              Buat Game dari Materi Ini
+            </a>
+            <p className="text-sm text-gray-500 dark:text-slate-400 mb-2">
+              Gratis. Isian jenjang, mapel, dan materi langsung terisi.
+            </p>
+
             <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-200 dark:border-slate-700">
               <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center text-xl font-bold shrink-0">
                 {media.guru_name.charAt(0).toUpperCase()}

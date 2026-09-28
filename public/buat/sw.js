@@ -1,4 +1,4 @@
-const CACHE = 'bgy-buat-prompt-v6';
+const CACHE = 'bgy-buat-prompt-v7';
 const ASSETS = [
   './',
   './index.html',
