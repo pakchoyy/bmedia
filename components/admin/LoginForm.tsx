@@ -10,7 +10,28 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [info, setInfo] = useState("");
   const router = useRouter();
+
+  const handleForgot = async () => {
+    setError("");
+    setInfo("");
+    if (!email) {
+      setError("Isi email admin dulu, lalu klik Lupa password.");
+      return;
+    }
+    if (!isSupabaseConfigured()) return;
+    setLoading(true);
+    const { error: resetError } = await createClient().auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/admin/reset`,
+    });
+    setLoading(false);
+    if (resetError) {
+      setError(resetError.message);
+      return;
+    }
+    setInfo("Jika email terdaftar, link reset password sudah dikirim. Cek inbox/spam, lalu buka link di browser ini.");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -115,8 +136,14 @@ export default function LoginForm() {
             />
           </div>
 
+          {info && (
+            <div role="status" className="bg-success/10 text-success border border-success/30 rounded-lg px-4 py-3 text-sm">
+              {info}
+            </div>
+          )}
+
           {error && (
-            <div className="bg-danger/10 text-danger border border-danger/30 rounded-lg px-4 py-3 text-sm">
+            <div role="alert" className="bg-danger/10 text-danger border border-danger/30 rounded-lg px-4 py-3 text-sm">
               <Icon name="xmark" className="mr-1.5 inline" />
               {error}
             </div>
@@ -128,6 +155,14 @@ export default function LoginForm() {
             className="w-full bg-primary-light text-white py-3 rounded-lg font-bold hover:bg-primary transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
           >
             {loading ? "Memproses..." : "Masuk"}
+          </button>
+          <button
+            type="button"
+            onClick={handleForgot}
+            disabled={loading}
+            className="w-full text-sm font-semibold text-primary-light hover:text-primary py-2 disabled:opacity-60"
+          >
+            Lupa password?
           </button>
         </form>
 

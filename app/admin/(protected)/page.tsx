@@ -37,6 +37,21 @@ export default async function AdminDashboardPage() {
         </div>
       </div>
 
+      <div className="mt-8 bg-white rounded-xl border border-gray-200 shadow-sm p-6 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 className="font-bold text-ink">Backup Data Media</h2>
+          <p className="text-sm text-gray-600 mt-1">
+            Unduh semua media (termasuk pending &amp; rejected) sebagai CSV. Lakukan rutin tiap minggu.
+          </p>
+        </div>
+        <a
+          href="/admin/export"
+          className="inline-flex items-center gap-2 bg-primary-light text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary transition-colors"
+        >
+          Unduh Backup (CSV)
+        </a>
+      </div>
+
       <div className="mt-8 bg-white rounded-xl border border-gray-200 shadow-sm p-6">
         <h2 className="font-bold text-ink mb-3">Panduan Singkat</h2>
         <ul className="text-sm text-gray-600 space-y-2 list-disc list-inside">

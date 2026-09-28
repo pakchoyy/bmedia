@@ -41,7 +41,7 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const pathname = request.nextUrl.pathname;
-  const isLoginPath = pathname === "/admin/login";
+  const isLoginPath = pathname === "/admin/login" || pathname === "/admin/reset";
 
   // Belum login → arahkan ke halaman login (kecuali memang di login).
   if (!user && !isLoginPath) {

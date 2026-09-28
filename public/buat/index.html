@@ -978,14 +978,17 @@ function incrementLimit(){if(!LIMIT_ENABLED)return;const d=getLimitData();d.coun
 // ===== SOCIAL PROOF COUNTER =====
 function initCounter(){
   const KEY='bgy_pg_total';
-  let n=parseInt(localStorage.getItem(KEY)||'0')||Math.floor(Math.random()*800)+200;
-  document.getElementById('spCount').textContent=n.toLocaleString('id-ID');
+  const box=document.querySelector('.social-proof-mini');
+  const show=v=>{document.getElementById('spCount').textContent=v.toLocaleString('id-ID');if(box)box.style.display='';};
+  if(box)box.style.display='none';
+  const cached=parseInt(localStorage.getItem(KEY)||'0');
+  if(cached>0)show(cached);
   if(!__sb)return;
   __sb.from('buat_prompt_stats').select('prompt_count').eq('id',1).maybeSingle()
     .then(({data})=>{
       if(data&&data.prompt_count!=null){
         const v=Number(data.prompt_count);
-        document.getElementById('spCount').textContent=v.toLocaleString('id-ID');
+        if(v>0)show(v);
         try{localStorage.setItem(KEY,String(v));}catch(e){}
       }
     }).catch(()=>{});
@@ -993,8 +996,7 @@ function initCounter(){
 async function incrementCounter(){
   const KEY='bgy_pg_total';
   let n=parseInt(localStorage.getItem(KEY)||'0')||0;
-  n++;localStorage.setItem(KEY,n);
-  const el=document.getElementById('spCount');if(el)el.textContent=n.toLocaleString('id-ID');
+  if(n>0){n++;localStorage.setItem(KEY,n);const el=document.getElementById('spCount');if(el)el.textContent=n.toLocaleString('id-ID');}
   if(__sb){try{await __sb.rpc('bgy_buat_track',{p_prompt:1});}catch(e){}}
 }
 
