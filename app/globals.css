@@ -2,25 +2,52 @@
 @tailwind components;
 @tailwind utilities;
 
+/* === BGY Design System === */
 :root {
+  --grad: linear-gradient(135deg, #0ea5a0, #0d7a8a, #2d6a7f);
+  --blue: #0ea5a0;
+  --teal-dark: #0d7a8a;
+  --bg: #f0f4f8;
+  --card-bg: #fff;
+  --text: #1e293b;
+  --text-light: #64748b;
+  --border: #e2e8f0;
+  --input-bg: #f8fafc;
+  --radius: 12px;
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.13);
+
+  /* compat */
   --primary: #0d7a8a;
   --light-blue: #0ea5a0;
   --bg-blue: #e6f6f5;
   --dark-gray: #1e293b;
-  --page-bg: #f8fafc;
+  --page-bg: #f0f4f8;
 }
 
+body.dark,
 .dark {
+  --bg: #0f172a;
+  --card-bg: #1e293b;
+  --text: #f1f5f9;
+  --text-light: #94a3b8;
+  --border: #334155;
+  --input-bg: #0f172a;
   --dark-gray: #e2e8f0;
   --page-bg: #0f172a;
 }
 
+.dark header {
+  background: linear-gradient(135deg, #0d4a47, #1a3a4a) !important;
+}
+
 body {
-  color: var(--dark-gray);
-  background: var(--page-bg);
+  color: var(--text);
+  background: var(--bg);
   font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
   line-height: 1.6;
   overflow-x: hidden;
+  font-size: 0.875rem;
 }
 
 a {
@@ -32,6 +59,75 @@ button {
   cursor: pointer;
 }
 
+/* === Touch targets minimum 40px di mobile === */
+@media (max-width: 640px) {
+  input,
+  select,
+  textarea {
+    min-height: 42px;
+    font-size: 15px !important;
+  }
+
+  button:not(.btn-icon-sm) {
+    min-height: 40px;
+  }
+}
+
+/* === Minimum font size 12px (0.75rem) === */
+.text-xs {
+  font-size: 0.75rem !important; /* 12px */
+}
+
+/* === Kartu BGY === */
+.bgy-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px;
+}
+
+@media (max-width: 640px) {
+  .bgy-card {
+    padding: 14px 12px;
+  }
+}
+
+/* === Hint bar === */
+.hint-bar {
+  background: rgba(14, 165, 160, 0.08);
+  border: 1.5px solid rgba(14, 165, 160, 0.25);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.76rem;
+}
+
+/* === Input BGY === */
+.bgy-input {
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: var(--input-bg);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.bgy-input:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(14, 165, 160, 0.12);
+}
+
+/* === Tombol utama BGY === */
+.bgy-btn {
+  background: var(--grad);
+  border-radius: 10px;
+  width: 100%;
+  box-shadow: 0 4px 14px rgba(14, 165, 160, 0.25);
+  color: #fff;
+  font-weight: 700;
+  min-height: 42px;
+  border: none;
+}
+
 .section-title {
   @apply text-primary font-bold text-center text-[2rem] mb-8 relative;
 }
@@ -40,7 +136,7 @@ button {
   content: "";
   width: 80px;
   height: 4px;
-  background-color: var(--accent, #d97706);
+  background-color: #d97706;
   display: block;
   margin: 0.5rem auto 0;
   border-radius: 2px;
@@ -62,15 +158,34 @@ button {
 }
 
 .fade-in {
-  animation: fadeIn 0.5s ease-in-out;
+  animation: fadeIn 0.45s ease-in-out;
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px) scale(1); }
-  50% { transform: translateY(-12px) scale(1.02); }
+  0%,
+  100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-12px) scale(1.02);
+  }
 }
 
 @keyframes floatSlow {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
