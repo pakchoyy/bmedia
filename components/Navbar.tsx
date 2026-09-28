@@ -8,8 +8,8 @@ import ThemeToggle from "./ThemeToggle";
 const links = [
   { label: "Home", href: "/", icon: "house" },
   { label: "Katalog", href: "/catalog", icon: "magnifying-glass" },
-  { label: "Kirim Karya", href: "/submit", icon: "paper-plane" },
   { label: "Tentang & Kontak", href: "/about", icon: "info" },
+  { label: "Kirim Karya", href: "/submit", icon: "paper-plane" },
 ];
 
 const EKOSISTEM_URL = "https://bantuguruyuk.web.id";
@@ -18,85 +18,65 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <>
-      <nav className="sticky top-0 z-50 shadow-header" style={{ background: "var(--grad)" }}>
-        <div className="container mx-auto max-w-[1200px] px-4 flex items-center justify-between h-[60px] w-full">
-          {/* Brand */}
-          <Link href="/" className="flex items-center gap-2.5 min-w-0 flex-1 overflow-hidden">
-            <img
-              src="/guru-cibisd2.png"
-              alt="BGY"
-              className="w-9 h-9 rounded-[10px] object-cover shrink-0"
-            />
-            <span
-              className="font-bold text-white text-[1rem] whitespace-nowrap overflow-hidden text-ellipsis leading-tight"
-            >
-              BGY | Media Belajar
-            </span>
-          </Link>
+    <nav className="sticky top-0 z-50 bg-bgy-gradient shadow-header">
+      <div className="container mx-auto max-w-[1200px] pl-5 pr-4 flex items-center justify-between h-14 w-full">
+        <Link href="/" className="flex items-center gap-2.5 text-sm font-bold text-white">
+          <img
+            src="/guru-cibisd2.png"
+            alt="BGY"
+            className="w-8 h-8 rounded-full object-cover shrink-0"
+          />
+          <span className="whitespace-nowrap">Bantu Guru Yuk | Media Belajar</span>
+        </Link>
 
-          {/* Actions */}
-          <div className="relative flex items-center gap-2">
-            <ThemeToggle />
-            <button
-              className="h-10 min-w-10 rounded-[10px] border border-white/30 bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-colors"
-              onClick={() => setOpen(!open)}
-              aria-label="Menu"
-              aria-expanded={open}
-              aria-controls="navbarMenu"
-            >
-              <Icon name={open ? "xmark" : "bars"} size={18} />
-            </button>
+        <div className="relative flex items-center gap-2">
+          <ThemeToggle />
+          <button
+            className="p-1.5 rounded-md text-white bg-black/10 border border-white/20 hover:bg-black/20 transition-colors"
+            onClick={() => setOpen(!open)}
+            aria-label="Menu"
+            aria-expanded={open}
+            aria-controls="navbarMenu"
+          >
+            <Icon name={open ? "xmark" : "bars"} className="text-base" />
+          </button>
 
-            {/* Dropdown 280px per DESIGN-BGY */}
-            {open && (
-              <div
-                id="navbarMenu"
-                className="absolute right-0 top-[calc(100%+8px)] w-[280px] max-w-[calc(100vw-24px)] bg-[var(--card-bg,#fff)] dark:bg-slate-900 rounded-[12px] shadow-lg border border-[var(--border,#e2e8f0)] dark:border-slate-800 z-50 overflow-y-auto max-h-[calc(100vh-90px)]"
+          {/* Dropdown menu */}
+          <div
+            id="navbarMenu"
+            className={`absolute right-0 top-full mt-2 w-56 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-gray-100 dark:border-slate-800 z-50 transition-all duration-200 ease-out origin-top-right ${
+              open
+                ? "scale-100 opacity-100 pointer-events-auto"
+                : "scale-95 opacity-0 pointer-events-none"
+            }`}
+          >
+            <div className="py-2">
+              {links.map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-ink dark:text-slate-200 hover:bg-primary-bg hover:text-primary-light transition-colors"
+                >
+                  <Icon name={l.icon} className="w-4 text-primary-light" />
+                  {l.label}
+                </Link>
+              ))}
+              <div className="border-t border-gray-100 dark:border-slate-800 my-1" />
+              <a
+                href={EKOSISTEM_URL}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-ink dark:text-slate-200 hover:bg-primary-bg hover:text-primary-light transition-colors"
               >
-                <div className="py-2">
-                  {links.map((l) => (
-                    <Link
-                      key={l.href}
-                      href={l.href}
-                      onClick={() => setOpen(false)}
-                      className="flex items-center gap-3 px-4 h-10 text-[.83rem] font-semibold text-[var(--text,#1e293b)] dark:text-slate-200 hover:bg-primary-bg hover:text-primary-light transition-colors"
-                    >
-                      <Icon name={l.icon} size={16} className="text-primary-light shrink-0" />
-                      {l.label}
-                    </Link>
-                  ))}
-
-                  <div className="border-t border-[var(--border,#e2e8f0)] dark:border-slate-800 my-1" />
-
-                  {/* data-bgy-menu: diisi bgy-info.js */}
-                  <div data-bgy-menu />
-
-                  <a
-                    href={EKOSISTEM_URL}
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 px-4 h-10 text-[.83rem] font-semibold text-[var(--text,#1e293b)] dark:text-slate-200 hover:bg-primary-bg hover:text-primary-light transition-colors"
-                  >
-                    <Icon name="arrow-up-right-from-square" size={16} className="text-primary-light shrink-0" />
-                    Semua Tools BGY
-                  </a>
-                </div>
-              </div>
-            )}
+                <Icon name="arrow-up-right-from-square" className="w-4 text-primary-light" />
+                bantuguruyuk.web.id
+              </a>
+            </div>
           </div>
         </div>
-      </nav>
-
-      {/* Overlay tutup menu saat klik luar */}
-      {open && (
-        <div
-          className="fixed inset-0 z-40"
-          onClick={() => setOpen(false)}
-          aria-hidden="true"
-        />
-      )}
-    </>
+      </div>
+    </nav>
   );
 }

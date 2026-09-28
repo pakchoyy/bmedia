@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Bantu Guru Yuk | Media Belajar",
+    default: "BGY - Media Belajar",
     template: "%s | BGY - Media Belajar",
   },
   description:
@@ -17,12 +17,11 @@ export const metadata: Metadata = {
     "Bantu Guru Yuk",
   ],
   openGraph: {
-    title: "Bantu Guru Yuk | Media Belajar",
+    title: "BGY - Media Belajar",
     description: "Media Belajar Interaktif Karya Guru Indonesia.",
     type: "website",
     images: ["/icon.png"],
   },
-  themeColor: "#0ea5a0",
   icons: {
     icon: "/icon.png",
     apple: "/icon.png",
@@ -39,7 +38,7 @@ export default function RootLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark")}}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem("bgy-theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark")}}catch(e){}})();`,
           }}
         />
       </head>
