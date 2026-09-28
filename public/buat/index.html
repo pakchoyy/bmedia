@@ -389,6 +389,9 @@ body.dark .prompt-raw{background:#0f172a;}
 .chip.selected,.preset-card[aria-pressed="true"]{font-weight:800;box-shadow:inset 0 0 0 2px currentColor;}
 :focus-visible{outline:3px solid #0ea5a0;outline-offset:2px;}
 .header-brand-text h1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.social-proof-mini{display:flex;align-items:center;justify-content:center;gap:6px;font-size:.78rem;color:var(--text-light);margin:0 0 10px;}
+.social-proof-mini b{color:#0d7a8a;font-size:.9rem;}body.dark .social-proof-mini b{color:#5eead4;}
+.progress-steps{padding:8px 12px;margin-bottom:10px;}
 </style>
 <script src="https://www.bantuguruyuk.web.id/bgy-info.js" defer></script>
 <link rel="stylesheet" href="https://www.bantuguruyuk.web.id/fonts/bgy-font.css?v=2">
@@ -548,12 +551,7 @@ body.dark .prompt-raw{background:#0f172a;}
   </div>
 
   <!-- SOCIAL PROOF -->
-  <div class="social-proof">
-    <div class="sp-icon"><svg class="ic" aria-hidden="true"><use href="#i-gamepad-2"/></svg></div>
-    <div class="sp-num" id="spCount">—</div>
-    <div class="sp-label">prompt dibuat</div>
-    <div class="sp-teachers"><svg class="ic" aria-hidden="true"><use href="#i-presentation"/></svg> Dipakai guru SD · SMP · SMA · SMK</div>
-  </div>
+  <div class="social-proof-mini"><svg class="ic" aria-hidden="true"><use href="#i-gamepad-2"/></svg> <b id="spCount">—</b> prompt dibuat guru SD · SMP · SMA · SMK</div>
 
   <div class="hint-bar">
     <svg class="ic" aria-hidden="true"><use href="#i-lightbulb"/></svg> <span>Isi data</span> → <span>Pilih tipe game</span> → <span>Generate</span> → <span>Salin &amp; paste ke AI</span>
@@ -1513,317 +1511,68 @@ function buildPrompt(){
     '🤖 AI Menentukan':               'KONDISI KELAS: Sesuaikan sendiri berdasarkan jenjang dan karakteristik umum siswa.'
   };
 
-  const qcNote=qc==='🔒 Ketat'
-    ?`QUALITY CONTROL — MODE KETAT\nSebelum menghasilkan kode, validasi internal:\n- Setiap soal memiliki jawaban yang benar dan tidak ambigu\n- Seluruh soal relevan dengan materi "${materi}"\n- Tingkat kesulitan sesuai jenjang ${jenjang} ${kelas}\n- Feedback konsisten dengan jawaban yang benar\n- Jumlah tantangan tepat (${jml})\n- Seluruh alur game playable`
-    :`QUALITY CONTROL: Pastikan soal akurat, jawaban benar, feedback mendidik, alur game playable, jumlah tantangan tepat (${jml}).`;
-
   const soalNote=soalSendiri
-    ?`SOAL DARI GURU (WAJIB GUNAKAN)\nGuru telah menyediakan soal berikut. Gunakan soal ini sebagai konten utama game, adaptasikan ke format ${tipe}:\n\n${soalSendiri}\n\nCatatan: Sesuaikan format soal dengan mekanik game ${tipe}. Jaga akurasi konten soal.`
-    :`SOAL: Buat ${jml} soal/tantangan BARU yang relevan dengan materi "${materi}" dan tujuan pembelajaran.`;
+    ?`Soal dari guru (WAJIB dipakai, adaptasi ke mekanik ${tipe}, jaga isinya):\n${soalSendiri}`
+    :`Buat ${jml} tantangan baru yang relevan dengan materi.`;
 
-  const variasiInteraksi=Number(jml)>=5
-    ?'Karena jumlah tantangan minimal 5, usahakan ada minimal 3 pola interaksi berbeda jika sesuai materi. Jangan memaksakan variasi jika membuat tujuan belajar kabur.'
-    :'Gunakan variasi interaksi seperlunya sesuai materi dan usia siswa.';
-
-  const planningNote=`PERENCANAAN INTERNAL (WAJIB, JANGAN DITAMPILKAN)
-Sebelum menulis kode final, rancang secara internal:
-TUJUAN BELAJAR → KONSEP YANG DILATIH → TANTANGAN → MEKANIK → FEEDBACK → PROGRESS.
-Gunakan rencana itu untuk membuat game lebih kuat, tetapi jangan tampilkan chain-of-thought/proses berpikir internal kepada pengguna.`;
-
-  const gameFirstNote=`PRINSIP UTAMA — GAME FIRST, QUIZ SECOND
-Game harus terasa seperti permainan pembelajaran, BUKAN kumpulan soal pilihan ganda yang diberi dekorasi game.
-Materi pembelajaran harus menjadi bagian dari AKSI permainan.
-Hindari pola berulang untuk seluruh permainan:
-narasi → soal → pilih A/B/C/D → benar/salah → lanjut.
-Pilihan ganda boleh dipakai jika memang pedagogis, tetapi tidak boleh menjadi satu-satunya mekanik permainan.
-Pilih mekanik berdasarkan jenjang, usia, materi, tujuan belajar, tipe game, dan perangkat yang mungkin digunakan.
-Contoh mekanik: tap/select object, drag & drop, matching, sorting, menyusun urutan, memilih jalur, mengumpulkan item, number/text input, memperbaiki jawaban NPC, memilih objek berdasarkan kondisi, manipulasi benda visual, memory cards, puzzle sederhana, navigasi peta, boss/final challenge.
-${variasiInteraksi}`;
-
-  const gameLoopNote=`GAME LOOP WAJIB
-Setiap tantangan harus memiliki loop yang jelas:
-AKSI SISWA → RESPONS GAME → FEEDBACK BELAJAR → REWARD/PROGRESS → TANTANGAN BERIKUTNYA.
-Reward boleh berupa poin, bintang, item, badge, membuka lokasi, progress map, energi, atau reward sederhana lain yang relevan dengan tema.
-Reward mendukung motivasi, tetapi tidak boleh mengalahkan tujuan pembelajaran.`;
-
-  const alignmentNote=`KEPATUHAN TERHADAP SETELAN GURU
-Seluruh keputusan desain harus menyesuaikan input guru: jenjang ${jenjang}, kelas ${kelas}, mapel ${mapel}, materi "${materi}", tujuan, tipe game, mode bermain, jumlah tantangan, kesulitan, durasi, dan gaya visual.
-Jangan menghasilkan game generik yang tidak terasa terhubung ke materi.
-Jika ada konflik antar setelan, prioritaskan tujuan belajar, usia siswa, keterbacaan, dan gameplay yang playable.`;
-
-  const feedbackSalahNote=`FEEDBACK SAAT SALAH
-Jangan selalu langsung memperlihatkan jawaban ketika siswa salah.
-Jika sesuai:
-Percobaan pertama salah → beri petunjuk sederhana.
-Siswa mencoba kembali.
-Jika masih salah → beri bantuan/penjelasan lebih konkret.
-Setelah itu → bantu siswa memahami jawaban.
-Gunakan bahasa positif seperti "Coba perhatikan lagi...", "Hampir!", "Mari kita hitung bersama.", "Coba strategi ini...".
-Jangan gunakan kalimat merendahkan seperti "Kamu gagal", "Kamu bodoh", atau "Salah terus".`;
-
-  const visualNarasiNote=`VISUAL & NARASI
-Tema visual "${vGaya}" harus terasa pada background, kartu, karakter, progress, reward, tombol, map, feedback, dan micro-interaction.
-Keterbacaan lebih penting daripada dekorasi.
-Jika Pixel Art: font pixel boleh untuk judul/score/badge/dekorasi, tetapi body text, instruksi, dan soal harus tetap sangat mudah dibaca.
-Narasi harus pendek. Untuk SD, gunakan sekitar 1–3 kalimat pendek per scene kecuali konteks benar-benar membutuhkan lebih.
-Jangan membuat siswa membaca paragraf panjang hanya untuk mulai bermain.`;
-
-  const assetOfflineNote=`ASSET & OFFLINE
-Game harus tetap dapat dimainkan ketika file HTML dibuka lokal/offline.
-Jangan bergantung pada CDN, Google Fonts, API eksternal, library eksternal, gambar remote, audio remote, atau koneksi internet.
-Visual dibuat dengan HTML, CSS, inline SVG, CSS shapes, emoji yang sesuai, atau aset embedded ringan jika benar-benar diperlukan.
-Jika menggunakan audio, audio harus opsional, kompatibel single-file/offline, dan game tetap sempurna walau audio tidak tersedia.`;
-
-  const audioFeedbackNote=`AUDIO FEEDBACK (OPSIONAL TAPI DIANJURKAN)
-Tambahkan suara ringan untuk: klik tombol, jawaban benar/berhasil, jawaban salah/perlu coba lagi, reward terkumpul, dan game selesai.
-Audio harus dibuat secara offline/single-file, misalnya memakai Web Audio API oscillator pendek. Jangan gunakan file audio remote atau CDN.
-Sediakan tombol mute/unmute yang jelas.
-Jangan autoplay audio sebelum ada interaksi pengguna.
-Jika browser memblokir audio atau perangkat tidak mendukung audio, game tetap harus berjalan sempurna dengan feedback visual dan teks.`;
-
-  const gameNavigationNote=`NAVIGASI GAME WAJIB
-Game hasil akhir harus memiliki navigasi yang jelas:
-- Home/Menu utama untuk kembali ke cover atau peta utama
-- Kembali untuk mundur satu layar/tantangan bila aman
-- Bantuan/Petunjuk singkat yang bisa dibuka ulang
-- Main Lagi/Ulangi di hasil akhir
-Navigasi tidak boleh menghapus score/progress tanpa konfirmasi.
-Pada mode VS/tim/klasikal, tampilkan giliran/ronde/score dengan jelas agar kelas tidak bingung.`;
-
-  const responsiveNote=`RESPONSIVE MULTI-DEVICE — WAJIB
-Game tidak boleh dibuat untuk satu resolusi tetap. Gunakan layout fluid/responsive.
-Target: HP 360–412px portrait, tablet 768px, laptop 1366px, IFP 1920×1080 dan 4K 3840×2160.
-Gunakan CSS Grid, Flexbox, clamp(), min(), max(), minmax(), relative units, media queries, aspect-ratio, dan container max-width yang proporsional jika sesuai.
-Tidak boleh ada scroll horizontal, tombol keluar layar, teks terpotong, modal melebihi layar, atau objek bertumpuk.
-Pada HP: prioritaskan portrait, layout satu kolom jika perlu, touch target minimal sekitar 44×44 CSS px, hindari hover-only interaction, semua fitur bisa tap/touch, drag harus mendukung touch/pointer events, jangan mengandalkan mouse.
-Pada IFP/layar kelas besar: target utama 16:9 1920×1080 dan tetap baik di 3840×2160. Jangan hanya memperlebar konten memenuhi layar; pusatkan area game, gunakan ukuran komponen/teks dengan clamp(), tombol besar, feedback jelas, score/progress terlihat, dan informasi penting terbaca dari jarak kelas.
-Orientation portrait ↔ landscape tidak boleh menghilangkan score, progress, jawaban, atau state permainan.
-Gunakan meta viewport:
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-Pertimbangkan safe-area. Hindari 100vh naif pada browser mobile; gunakan 100dvh dengan fallback aman bila sesuai.`;
-
-  const universalInputNote=`INPUT UNIVERSAL
-Game harus dapat digunakan dengan touch, mouse/pointer, dan keyboard jika relevan.
-Untuk mekanik drag, prioritaskan Pointer Events atau implementasi yang kompatibel dengan touch.
-Jangan membuat fitur penting bergantung pada hover atau mouse saja.
-Jika input keyboard tidak cocok untuk anak/HP, pilih mekanik tap/drag yang lebih nyaman.`;
-
-  const microPerfNote=`MICRO-INTERACTION & PERFORMANCE
-Tambahkan animasi ringan bila relevan: karakter bergerak, item terkumpul, bintang/poin bertambah, lokasi terbuka, progress berubah, feedback benar/salah.
-Animasi harus singkat, ringan, tidak berlebihan, tidak menghambat siswa, dan tidak menyebabkan layout shift mengganggu.
-Hormati prefers-reduced-motion jika memungkinkan.
-Prioritaskan kelancaran pada HP sekolah/guru spesifikasi rendah.
-Hindari canvas animation berat, particle berlebihan, DOM sangat besar, loop JavaScript terus-menerus tanpa kebutuhan, gambar embedded besar, efek blur/shadow berlebihan, dan animasi berat.`;
-
-  const mudaNote=muda?`KHUSUS SISWA USIA DINI (${jenjang} ${kelas})
-Siswa belum lancar membaca. Setiap instruksi dan soal WAJIB punya tombol "Dengarkan" (ikon speaker) yang membacakan teks dengan Web Speech API (speechSynthesis, lang "id-ID"). Jika suara bahasa Indonesia tidak tersedia, tombol disembunyikan dan game tetap jalan.
-Gunakan gambar/ikon besar sebagai pilihan jawaban, bukan teks panjang.
-Tanpa timer, tanpa pengurangan nilai, tanpa kata "salah" yang keras; cukup animasi lembut + "Ayo coba lagi".
-Tidak ada input mengetik; semua jawaban cukup tap/seret.
-Hasil akhir cukup bintang (1–3) + pujian singkat. JANGAN tampilkan persentase, akurasi, atau daftar "yang perlu dipelajari".
-Aturan usia dini ini MENGALAHKAN aturan lain di prompt ini bila bertentangan.`:'';
-
-  const aksesGameNote=`AKSESIBILITAS GAME
-<html lang="id">. Semua tombol pakai elemen <button> dengan teks/aria-label yang jelas.
-Feedback benar/salah diumumkan lewat elemen aria-live="polite" dan tidak hanya dibedakan warna (pakai ikon + teks).
-Fokus keyboard terlihat jelas (outline), urutan Tab logis, Enter/Spasi mengaktifkan pilihan.
-Ukuran teks isi minimal 16px di HP; kontras teks minimal 4.5:1.`;
-
-  const outputFormatNote=`FORMAT JAWABAN (PENTING)
-Balas HANYA dengan satu blok kode HTML lengkap, dimulai <!DOCTYPE html> dan diakhiri </html>.
-Tanpa penjelasan sebelum/sesudah kode, tanpa memecah menjadi beberapa file.
-Jika jawaban terpotong karena batas panjang, berhenti di akhir baris dan tunggu pengguna mengetik "lanjut", lalu teruskan persis dari baris terakhir tanpa mengulang.`;
+  const mudaNote=muda?`- Usia dini: belum lancar membaca. Tiap instruksi/soal ada tombol "Dengarkan" (speechSynthesis, lang id-ID; sembunyikan bila suara Indonesia tidak ada). Jawaban berupa gambar/ikon besar, tanpa mengetik, tanpa timer, tanpa pengurangan nilai. Aturan ini mengalahkan aturan lain.`:'';
 
   const paletteNote=temaBebas
-    ?`Palet warna mengikuti gaya "${vGaya}" di atas. Warna BGY berikut hanya dipakai sebagai aksen kecil (mis. tombol utama) bila cocok, JANGAN memaksa latar terang jika gaya meminta latar gelap.`
-    :`Gunakan palet BGY berikut sebagai warna utama.`;
+    ?`Warna mengikuti gaya ini; teal BGY #0EA5A0 boleh jadi aksen tombol utama bila cocok.`
+    :`Warna BGY: teal #0EA5A0, teal tua #0D7A8A, amber #F59E0B, latar #F0F4F8, kartu putih, teks #1E293B; sudut membulat 10–16px.`;
 
-  const antiSlopNote=`ANTI-SLOP GATE — JANGAN HASILKAN GAME GENERIK AI
-Game harus terasa dibuat khusus untuk materi "${materi}", jenjang ${jenjang} ${kelas}, dan gaya visual "${vGaya}".
-Hindari UI/copy generik yang sering muncul pada output AI:
-□ Jangan memakai statistik, badge, testimoni, klaim keamanan, atau angka yang tidak diminta dan tidak punya sumber.
-□ Jangan membuat dekorasi hanya agar terlihat ramai: glow, blob, grid, glassmorphism, kartu berlebihan, atau gradient mencolok harus punya fungsi jelas.
-□ Jangan membuat "3 langkah", "fitur", "FAQ", atau section template yang tidak dibutuhkan game.
-□ Jangan memakai placeholder, TODO, tombol palsu, menu palsu, level palsu, atau elemen yang tidak berfungsi.
-□ Jangan membuat copy terasa seperti iklan AI. Gunakan bahasa guru/siswa yang natural, singkat, dan sesuai usia.
-□ Jangan memakai ikon/dekorasi yang tidak terhubung ke materi, reward, status, atau aksi permainan.
-□ Setiap elemen visual harus membantu salah satu hal ini: memahami materi, memainkan game, melihat progress, menerima feedback, atau bernavigasi.
-Tes identitas: jika materi, nama game, dan konteks guru diganti, game ini tidak boleh tetap terasa seperti template yang sama.`;
+  const hasilNote=muda
+    ?'bintang 1–3, pujian singkat yang dibacakan, tombol Main Lagi besar (tanpa persentase)'
+    :'skor & akurasi, konsep yang sudah dikuasai & yang perlu diulang, saran belajar berikutnya, pesan positif, tombol Main Lagi';
 
+  const lineIf=(x)=>x?x+'\n':'';
 
+  const prompt=`PROMPT GAME INTERAKTIF — Bantu Guru Yuk
 
-  const prompt=`═══════════════════════════════════════════════════════
-🎮 PROMPT GAME INTERAKTIF — BANTU GURU YUK v1.3
-═══════════════════════════════════════════════════════
+PERAN: Kamu desainer game edukasi sekaligus developer front-end. Buat SATU file HTML (CSS & JS inline, tanpa library/CDN/internet) berisi game belajar yang langsung bisa dimainkan offline.
 
-▌ROLE AI
-Kamu adalah instructional game designer, guru yang memahami pedagogi,
-UX designer, dan front-end developer. Tugasmu: membuat game pembelajaran
-HTML single-file yang dapat langsung dimainkan di browser.
+1. KONTEKS
+- Jenjang/Kelas: ${jenjang} ${kelas}
+- Mapel: ${mapel}
+- Materi: ${materi}
+- Tujuan: ${tujuan||'turunkan dari materi, sesuai usia siswa'}
+- Siswa: ${usiaNote}
+${lineIf(mudaNote)}- ${noEmo(kondisiMap[kondisi]||kondisiMap['🤖 AI Menentukan'])}
 
-${planningNote}
-
-═══════════════════════════════════════════════════════
-1. KONTEKS PEMBELAJARAN
-═══════════════════════════════════════════════════════
-
-Jenjang        : ${jenjang}
-Kelas          : ${kelas}
-Mata Pelajaran : ${mapel}
-Materi         : ${materi}${tujuan?'\nTujuan         : '+tujuan:''}
-Kondisi Kelas  : ${vKondisi}
-
-═══════════════════════════════════════════════════════
 2. DESAIN GAME
-═══════════════════════════════════════════════════════
+- Tipe: ${tipe}${namaGame?' | Nama: '+namaGame:''}${temaGame?' | Tema: '+temaGame:''}
+- Jumlah tantangan: ${jml}
+- ${diffMap[difficulty]||diffMap['✨ AI Menentukan']}
+- ${durasiNote}
+- ${noEmo(modeMap[mode]||modeMap['🤖 AI Menentukan'])}
+- ${soalNote}
 
-Tipe Game         : ${tipe}${namaGame?'\nNama Game         : '+namaGame:''}${temaGame?'\nTema Cerita       : '+temaGame:''}
-Jumlah Tantangan  : ${jml}
-Tingkat Kesulitan : ${vDiff}
-Durasi            : ${vDurasi}
-Mode Bermain      : ${vMode}
-Gaya Visual       : ${vGaya}
-
-═══════════════════════════════════════════════════════
-3. PRINSIP GAMEPLAY
-═══════════════════════════════════════════════════════
-
-${gameFirstNote}
-
-${gameLoopNote}
-
-${alignmentNote}
-
-${feedbackSalahNote}
-
-═══════════════════════════════════════════════════════
-4. SPESIFIKASI GAME
-═══════════════════════════════════════════════════════
-
-▌TIPE GAME: ${tipe}
 ${tipeSection}
 
-▌ADAPTASI USIA & JENJANG
-${usiaNote}
-${mudaNote?'\n'+mudaNote+'\n':''}
-▌${diffMap[difficulty]||diffMap['✨ AI Menentukan']}
+3. ATURAN GAMEPLAY
+- Game dulu, kuis kedua: materi harus jadi AKSI (tap, seret, cocokkan, urutkan, pilih jalur, kumpulkan item). Pilihan ganda boleh, tapi bukan satu-satunya mekanik.${Number(jml)>=5?' Pakai minimal 3 jenis interaksi bila cocok dengan materi.':''}
+- Tiap tantangan: aksi siswa → respons game → feedback belajar → reward/progress.
+- Saat salah: beri petunjuk dulu, izinkan coba lagi, baru jelaskan. Bahasa positif, tanpa "gagal" atau "salah terus".
+- Konten akurat: kunci jawaban benar, tidak ambigu, tidak ada soal berulang, bahasa sesuai usia.
+- Hasil akhir: ${hasilNote}.
 
-▌${durasiNote}
+4. TAMPILAN & TEKNIS
+- Gaya visual: ${gayaMap[gaya]||gayaMap['✨ AI Memilih']} ${paletteNote}
+- Narasi pendek (maks 2–3 kalimat per layar). Keterbacaan lebih penting dari dekorasi. Dilarang: statistik/badge/menu/level palsu, placeholder, TODO, dekorasi tanpa fungsi.
+- Responsif HP 360px sampai IFP 4K: layout fluid (flex/grid/clamp), meta viewport, 100dvh, tanpa scroll horizontal. Di IFP area game terpusat dan teks terbaca dari belakang kelas.
+- Tombol min ${muda?'60':'44'}px; bisa touch, mouse, dan keyboard; drag pakai Pointer Events.
+- Aksesibilitas: <html lang="id">, <button> berlabel, feedback lewat aria-live + ikon/teks (bukan warna saja), fokus terlihat, kontras ≥4.5:1, teks isi ≥16px, hormati prefers-reduced-motion.
+- Suara opsional via Web Audio (klik, benar, salah, selesai) + tombol mute, tanpa autoplay.
+- Navigasi: Home, Kembali, Bantuan, Main Lagi. Tidak ada jalan buntu; skor tidak hilang tanpa konfirmasi.
+- Ringan untuk HP spek rendah: animasi singkat, tanpa canvas/partikel berat.
 
-▌${modeMap[mode]||modeMap['🤖 AI Menentukan']}
+5. CEK SEBELUM KIRIM
+Jalankan di kepala: Cover → Mulai → ${jml} tantangan → Hasil → Main Lagi. Semua tombol berfungsi, tidak ada error JavaScript, semua ${jml} tantangan ada.
 
-▌${kondisiMap[kondisi]||kondisiMap['🤖 AI Menentukan']}
+6. FORMAT JAWABAN
+Balas HANYA satu blok kode HTML dari <!DOCTYPE html> sampai </html>, tanpa penjelasan. Jika terpotong, berhenti di akhir baris; saat pengguna mengetik "lanjut", teruskan persis dari baris terakhir.
 
-═══════════════════════════════════════════════════════
-5. KONTEN PEMBELAJARAN (WAJIB AKURAT)
-═══════════════════════════════════════════════════════
-
-${soalNote}
-Konten harus akurat secara keilmuan dan sesuai jenjang ${jenjang} ${kelas}.
-Jika CP/TP spesifik tidak diberikan, sesuaikan dengan materi dan karakteristik umum jenjang tanpa mengklaim telah memverifikasi CP/TP tertentu.
-Jika tujuan pembelajaran/CP/TP diberikan, jadikan itu anchor utama.
-Jangan buat soal yang tidak relevan dengan materi.
-Jangan mengulang soal yang sama.
-Setiap tantangan harus memiliki feedback yang mendidik dan penjelasan singkat.
-Verifikasi internal: tidak ada jawaban ambigu, kunci jawaban benar, angka/data konsisten, tingkat bahasa sesuai usia, dan feedback menjelaskan konsep dengan benar.
-
-═══════════════════════════════════════════════════════
-6. HASIL AKHIR — LEARNING FEEDBACK (WAJIB)
-═══════════════════════════════════════════════════════
-
-${muda?`Layar Hasil Akhir untuk usia dini: bintang 1–3, pujian singkat yang dibacakan, tombol Main Lagi besar. Tanpa persentase.`:`Layar Hasil Akhir WAJIB menampilkan:
-- Skor total & akurasi (%)
-- "Yang sudah kamu kuasai" — konsep yang dijawab benar
-- "Yang perlu kamu pelajari lagi" — konsep yang perlu diulang
-- Progress/level yang sudah diselesaikan
-- Pesan motivasi positif (JANGAN gunakan kata "gagal" atau "kamu tidak bisa")
-- Rekomendasi belajar berikutnya
-- Tombol Ulangi / Main Lagi`}
-
-Gunakan bahasa positif: "Mari coba lagi" bukan "Kamu gagal", "Hampir sempurna!" bukan "Masih banyak yang salah".
-
-═══════════════════════════════════════════════════════
-7. QUALITY CONTROL
-═══════════════════════════════════════════════════════
-
-${qcNote.replace(/^QUALITY CONTROL( — MODE KETAT)?:?\n?/,'').trim()}
-
-═══════════════════════════════════════════════════════
-8. BGY DESIGN SYSTEM
-═══════════════════════════════════════════════════════
-
-${paletteNote}
-Primary    : #0EA5A0  (teal utama)
-Secondary  : #0D7A8A
-Accent     : #F59E0B  (amber/emas)
-Background : #F0F4F8
-Card       : #FFFFFF
-Text       : #1E293B
-
-Gaya visual: ${gayaMap[gaya]||gayaMap['✨ AI Memilih']}
-${temaBebas?'Bentuk, sudut, dan bayangan mengikuti gaya di atas; spacing tetap lega dan teks mudah dibaca.':'Style: rounded corners (10–16px), soft shadow, spacing lega, typography mudah dibaca.'}
-
-${visualNarasiNote}
-
-═══════════════════════════════════════════════════════
-9. PERSYARATAN TEKNIS
-═══════════════════════════════════════════════════════
-
-- HTML5 + CSS3 + Vanilla JavaScript dalam SATU file (CSS & JS inline), tanpa framework/build/server
-- Bisa dibuka langsung di browser secara offline
-- Semua tombol & interaksi berfungsi, tanpa dead-end, tanpa error JavaScript
-- Skor & progress tercatat; Restart bekerja sempurna
-- Kode lengkap tanpa TODO, pseudo-code, atau placeholder
-
-${assetOfflineNote}
-
-${audioFeedbackNote}
-
-${gameNavigationNote}
-
-${responsiveNote}
-
-${universalInputNote}
-
-${microPerfNote}
-
-${aksesGameNote}
-
-${antiSlopNote}
-
-═══════════════════════════════════════════════════════
-10. FILOSOFI PEMBELAJARAN
-═══════════════════════════════════════════════════════
-
-Ini bukan game arcade — ini adalah LKPD INTERAKTIF + GAMIFIKASI.
-Media pembelajaran menyenangkan namun fokus pada tujuan.
-Setiap siswa yang memainkan harus aktif berlatih materi "${materi}".
-Prioritaskan: relevansi → pedagogi → gameplay → feedback → aksesibilitas.
-Jangan overengineer. Buat game sederhana, jelas, langsung dipakai guru, tetapi tetap terasa playable dan bermakna.
-
-═══════════════════════════════════════════════════════
-11. CEK AKHIR SEBELUM MENGIRIM KODE
-═══════════════════════════════════════════════════════
-
-Simulasikan alur: Cover → Mulai → Petunjuk → ${jml} tantangan → Feedback → Hasil Akhir → Main Lagi.
-Cek di 360×640, 390×844, 768×1024, 1366×768, 1920×1080, dan 3840×2160:
-□ Semua ${jml} tantangan hadir, materi & kunci jawaban benar
-□ Bukan sekadar kuis berkulit game; mekanik sesuai materi
-□ Tidak ada overflow horizontal, teks terpotong, atau tombol di luar layar
-□ Touch, mouse, dan keyboard bekerja; tombol Home/Kembali/Bantuan/Main Lagi berfungsi
-□ Tampilan IFP tidak "mini di tengah layar", tampilan HP tidak seperti desktop diperkecil
-□ Tidak ada error JavaScript, tidak ada dependency eksternal
-
-═══════════════════════════════════════════════════════
-12. FORMAT JAWABAN
-═══════════════════════════════════════════════════════
-
-${outputFormatNote.replace(/^FORMAT JAWABAN \(PENTING\)\n/,'')}
-
-═══════════════════════════════════════════════════════
-Dibuat dengan BGY - Buat Prompt Game
-bantuguruyuk.web.id · @pak.choyy · Berorientasi Kurikulum Merdeka
-═══════════════════════════════════════════════════════`;
+— Dibuat dengan Bantu Guru Yuk · bantuguruyuk.web.id`;
 
   currentPrompt=prompt;
   incrementLimit();
