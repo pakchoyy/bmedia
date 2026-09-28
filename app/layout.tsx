@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import InstallBanner from "@/components/InstallBanner";
 
 export const metadata: Metadata = {
   title: {
@@ -20,13 +21,14 @@ export const metadata: Metadata = {
     title: "Bantu Guru Yuk | Media Belajar",
     description: "Media Belajar Interaktif Karya Guru Indonesia.",
     type: "website",
-    images: ["/icon.png"],
+    images: ["/guru-cibisd2.png"],
   },
   themeColor: "#0ea5a0",
   icons: {
-    icon: "/icon.png",
-    apple: "/icon.png",
+    icon: "/guru-cibisd2.png",
+    apple: "/guru-cibisd2.png",
   },
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
@@ -43,7 +45,10 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        {children}
+        <InstallBanner />
+      </body>
     </html>
   );
 }
