@@ -11,5 +11,5 @@ export default async function AdminProtectedLayout({
   children: React.ReactNode;
 }>) {
   const session = await requireAdmin();
-  return <AdminShell email={session.profile.email}>{children}</AdminShell>;
+  return <AdminShell email={session.email}>{children}</AdminShell>;
 }

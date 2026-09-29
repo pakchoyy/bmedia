@@ -1,31 +1,22 @@
 import { redirect } from "next/navigation";
 import type { Media } from "@/types/media";
-import type { AdminStats, Profile } from "@/types/admin";
-import { isSupabaseConfigured } from "./supabase";
-import { createServerSideClient } from "./supabase-server";
+import type { AdminStats } from "@/types/admin";
+import { sql } from "./db";
+import { getSession } from "./session";
 
 export interface AdminSession {
-  profile: Profile;
+  adminId: string;
+  email: string;
 }
 
 export async function getCurrentAdmin(): Promise<AdminSession | null> {
-  if (!isSupabaseConfigured()) return null;
-  const supabase = createServerSideClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  if (!profile || profile.role !== "admin") return null;
-
-  return { profile: profile as Profile };
+  try {
+    const session = await getSession();
+    if (!session.adminId || !session.email) return null;
+    return { adminId: session.adminId, email: session.email };
+  } catch {
+    return null;
+  }
 }
 
 export async function requireAdmin(): Promise<AdminSession> {
@@ -35,49 +26,35 @@ export async function requireAdmin(): Promise<AdminSession> {
 }
 
 export async function getAdminStats(): Promise<AdminStats> {
-  const supabase = createServerSideClient();
-  const { data, error } = await supabase.from("media").select("status, plays");
-
-  if (error) {
-    console.error("getAdminStats error:", error.message);
+  try {
+    const rows = await sql`SELECT status, plays FROM media`;
+    const list = rows as { status: string; plays: number }[];
+    return {
+      totalMedia: list.length,
+      pending: list.filter((m) => m.status === "pending").length,
+      approved: list.filter((m) => m.status === "approved").length,
+      rejected: list.filter((m) => m.status === "rejected").length,
+      totalPlays: list.reduce((acc, m) => acc + (m.plays || 0), 0),
+    };
+  } catch {
     return { totalMedia: 0, pending: 0, approved: 0, rejected: 0, totalPlays: 0 };
   }
-
-  const list = data ?? [];
-  return {
-    totalMedia: list.length,
-    pending: list.filter((m) => m.status === "pending").length,
-    approved: list.filter((m) => m.status === "approved").length,
-    rejected: list.filter((m) => m.status === "rejected").length,
-    totalPlays: list.reduce((acc, m) => acc + (m.plays || 0), 0),
-  };
 }
 
 export async function getAllMediaForAdmin(): Promise<Media[]> {
-  const supabase = createServerSideClient();
-  const { data, error } = await supabase
-    .from("media")
-    .select("*")
-    .order("submitted_at", { ascending: false });
-
-  if (error) {
-    console.error("getAllMediaForAdmin error:", error.message);
+  try {
+    const rows = await sql`SELECT * FROM media ORDER BY submitted_at DESC`;
+    return rows as Media[];
+  } catch {
     return [];
   }
-  return (data ?? []) as Media[];
 }
 
 export async function getMediaForAdmin(id: string): Promise<Media | null> {
-  const supabase = createServerSideClient();
-  const { data, error } = await supabase
-    .from("media")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
-
-  if (error) {
-    console.error("getMediaForAdmin error:", error.message);
+  try {
+    const rows = await sql`SELECT * FROM media WHERE id = ${id} LIMIT 1`;
+    return (rows[0] as Media) ?? null;
+  } catch {
     return null;
   }
-  return (data as Media) ?? null;
 }

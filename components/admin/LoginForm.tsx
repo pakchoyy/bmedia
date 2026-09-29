@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient, isSupabaseConfigured } from "@/lib/supabase";
 import Icon from "../Icon";
 
 export default function LoginForm() {
@@ -10,83 +9,25 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [info, setInfo] = useState("");
   const router = useRouter();
-
-  const handleForgot = async () => {
-    setError("");
-    setInfo("");
-    if (!email) {
-      setError("Isi email admin dulu, lalu klik Lupa password.");
-      return;
-    }
-    if (!isSupabaseConfigured()) return;
-    setLoading(true);
-    const { error: resetError } = await createClient().auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/admin/reset`,
-    });
-    setLoading(false);
-    if (resetError) {
-      setError(resetError.message);
-      return;
-    }
-    setInfo("Jika email terdaftar, link reset password sudah dikirim. Cek inbox/spam, lalu buka link di browser ini.");
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-
-    if (!isSupabaseConfigured()) {
-      setError(
-        "Supabase belum dikonfigurasi. Tambahkan NEXT_PUBLIC_SUPABASE_URL dan NEXT_PUBLIC_SUPABASE_ANON_KEY di .env.local."
-      );
-      return;
-    }
-
     setLoading(true);
-    const supabase = createClient();
-    const { data: signInData, error: authError } =
-      await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
 
-    if (authError) {
-      setError(
-        authError.message === "Invalid login credentials"
-          ? "Email atau password salah."
-          : authError.message
-      );
-      setLoading(false);
+    const res = await fetch("/api/admin/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await res.json();
+    setLoading(false);
+
+    if (!res.ok) {
+      setError(data.error ?? "Login gagal.");
       return;
-    }
-
-    const user = signInData.user;
-    if (user) {
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .maybeSingle();
-
-      if (profileError) {
-        await supabase.auth.signOut();
-        setError("Gagal memeriksa role admin: " + profileError.message);
-        setLoading(false);
-        return;
-      }
-
-      if (!profile || profile.role !== "admin") {
-        await supabase.auth.signOut();
-        setError(
-          "Akun ini belum terdaftar sebagai admin. Jalankan: update profiles set role = 'admin' where email = '" +
-            email +
-            "';  lalu verifikasi: select email, role from profiles;"
-        );
-        setLoading(false);
-        return;
-      }
     }
 
     router.push("/admin");
@@ -106,9 +47,7 @@ export default function LoginForm() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block font-semibold mb-2 text-primary text-sm">
-              Email
-            </label>
+            <label htmlFor="email" className="block font-semibold mb-2 text-primary text-sm">Email</label>
             <input
               id="email"
               type="email"
@@ -121,9 +60,7 @@ export default function LoginForm() {
             />
           </div>
           <div>
-            <label htmlFor="password" className="block font-semibold mb-2 text-primary text-sm">
-              Password
-            </label>
+            <label htmlFor="password" className="block font-semibold mb-2 text-primary text-sm">Password</label>
             <input
               id="password"
               type="password"
@@ -135,12 +72,6 @@ export default function LoginForm() {
               className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base outline-none focus:border-primary-light focus:ring-2 focus:ring-primary-light/20 transition"
             />
           </div>
-
-          {info && (
-            <div role="status" className="bg-success/10 text-success border border-success/30 rounded-lg px-4 py-3 text-sm">
-              {info}
-            </div>
-          )}
 
           {error && (
             <div role="alert" className="bg-danger/10 text-danger border border-danger/30 rounded-lg px-4 py-3 text-sm">
@@ -156,20 +87,9 @@ export default function LoginForm() {
           >
             {loading ? "Memproses..." : "Masuk"}
           </button>
-          <button
-            type="button"
-            onClick={handleForgot}
-            disabled={loading}
-            className="w-full text-sm font-semibold text-primary-light hover:text-primary py-2 disabled:opacity-60"
-          >
-            Lupa password?
-          </button>
         </form>
 
-        <a
-          href="/"
-          className="block text-center text-sm text-gray-500 mt-6 hover:text-primary-light transition-colors"
-        >
+        <a href="/" className="block text-center text-sm text-gray-500 mt-6 hover:text-primary-light transition-colors">
           &larr; Kembali ke website
         </a>
       </div>
