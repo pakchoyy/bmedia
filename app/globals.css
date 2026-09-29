@@ -50,6 +50,11 @@ button {
   text-wrap: balance;
 }
 
+/* Hide "Prompt Game" from bgy-info.js menu — /buat is already in main nav */
+[data-bgy-menu] .bgym-item[href*="bmedia.bantuguruyuk.web.id/buat"] {
+  display: none;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;

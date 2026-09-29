@@ -15,7 +15,7 @@ export default function PublicLayout({
       <Footer />
       <Script
         src="https://www.bantuguruyuk.web.id/bgy-info.js"
-        strategy="lazyOnload"
+        strategy="afterInteractive"
       />
     </div>
   );

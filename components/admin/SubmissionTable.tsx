@@ -37,10 +37,17 @@ export default function SubmissionTable({
       : "pending"
   );
   const [query, setQuery] = useState("");
+  const [mapelFilter, setMapelFilter] = useState("");
+  const [kategoriFilter, setKategoriFilter] = useState("");
+  const [jenjangFilter, setJenjangFilter] = useState("");
   const [rejectTarget, setRejectTarget] = useState<Media | null>(null);
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState("");
   const [toastError, setToastError] = useState(false);
+
+  const mapelOptions = useMemo(() => Array.from(new Set(media.map((m) => m.mapel))).sort(), [media]);
+  const kategoriOptions = useMemo(() => Array.from(new Set(media.map((m) => m.category))).sort(), [media]);
+  const jenjangOptions = useMemo(() => Array.from(new Set(media.map((m) => m.jenjang))).sort(), [media]);
 
   const filtered = useMemo(() => {
     let list = [...media];
@@ -55,8 +62,13 @@ export default function SubmissionTable({
           m.sekolah.toLowerCase().includes(q)
       );
     }
+    if (mapelFilter) list = list.filter((m) => m.mapel === mapelFilter);
+    if (kategoriFilter) list = list.filter((m) => m.category === kategoriFilter);
+    if (jenjangFilter) list = list.filter((m) => m.jenjang === jenjangFilter);
     return list;
-  }, [media, filter, query]);
+  }, [media, filter, query, mapelFilter, kategoriFilter, jenjangFilter]);
+
+  const hasExtraFilter = !!mapelFilter || !!kategoriFilter || !!jenjangFilter;
 
   const notify = (msg: string, isError = false) => {
     setToastError(isError);
@@ -91,31 +103,70 @@ export default function SubmissionTable({
 
   return (
     <div>
-      {/* Filter + Search */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
-        <div className="flex gap-2 flex-wrap">
-          {FILTERS.map((f) => (
-            <button
-              key={f.value}
-              onClick={() => setFilter(f.value)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                filter === f.value
-                  ? "bg-primary-light text-white"
-                  : "bg-white text-ink border border-gray-300 hover:bg-gray-50"
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
+      {/* Status filter + Search */}
+      <div className="flex flex-col gap-3 mb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          <div className="flex gap-2 flex-wrap">
+            {FILTERS.map((f) => (
+              <button
+                key={f.value}
+                onClick={() => setFilter(f.value)}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                  filter === f.value
+                    ? "bg-primary-light text-white"
+                    : "bg-white text-ink border border-gray-300 hover:bg-gray-50"
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+          <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg px-3 py-1.5 sm:ml-auto flex-1 sm:max-w-xs">
+            <Icon name="magnifying-glass" className="text-gray-400 shrink-0 text-sm" />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Cari judul, guru, sekolah..."
+              className="w-full bg-transparent outline-none text-sm"
+            />
+          </div>
         </div>
-        <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full px-4 py-2 sm:ml-auto flex-1 sm:max-w-xs">
-          <Icon name="magnifying-glass" className="text-gray-400 shrink-0" />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Cari judul, guru, sekolah..."
-            className="w-full bg-transparent outline-none text-sm"
-          />
+
+        {/* Extra filters */}
+        <div className="flex flex-wrap gap-2 items-center">
+          <select
+            value={mapelFilter}
+            onChange={(e) => setMapelFilter(e.target.value)}
+            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-white border border-gray-300 outline-none"
+          >
+            <option value="">Semua Mapel</option>
+            {mapelOptions.map((m) => <option key={m} value={m}>{m}</option>)}
+          </select>
+          <select
+            value={kategoriFilter}
+            onChange={(e) => setKategoriFilter(e.target.value)}
+            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-white border border-gray-300 outline-none"
+          >
+            <option value="">Semua Kategori</option>
+            {kategoriOptions.map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
+          <select
+            value={jenjangFilter}
+            onChange={(e) => setJenjangFilter(e.target.value)}
+            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-white border border-gray-300 outline-none"
+          >
+            <option value="">Semua Jenjang</option>
+            {jenjangOptions.map((j) => <option key={j} value={j}>{j}</option>)}
+          </select>
+          {hasExtraFilter && (
+            <button
+              onClick={() => { setMapelFilter(""); setKategoriFilter(""); setJenjangFilter(""); }}
+              className="px-3 py-1.5 rounded-lg text-xs font-semibold text-danger border border-danger/30 hover:bg-danger/10 transition-colors"
+            >
+              Reset Filter
+            </button>
+          )}
+          <span className="text-xs text-gray-500 ml-auto">{filtered.length} media</span>
         </div>
       </div>
 
@@ -152,6 +203,9 @@ export default function SubmissionTable({
                         </Link>
                         <div className="text-xs text-gray-500 md:hidden">
                           {m.guru_name} &middot; {m.sekolah}
+                        </div>
+                        <div className="text-xs text-gray-400 lg:hidden">
+                          {m.mapel}
                         </div>
                       </div>
                     </div>
