@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { allowRequest, clientIp } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,9 @@ const s3 = new S3Client({
 });
 
 export async function POST(request: Request) {
+  if (!(await allowRequest(`upload:${clientIp()}`, 20, 60 * 60))) {
+    return NextResponse.json({ error: "Terlalu banyak unggahan. Coba lagi nanti." }, { status: 429 });
+  }
   const form = await request.formData();
   const file = form.get("file");
   if (!(file instanceof File)) {

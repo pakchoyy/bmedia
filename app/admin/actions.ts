@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getCurrentAdmin } from "@/lib/admin";
+import bcrypt from "bcryptjs";
 import { sql } from "@/lib/db";
 import { normalizeUrl, isValidUrl } from "@/lib/utils";
 import { isStoredThumbnail } from "@/lib/storage";
@@ -144,3 +145,17 @@ const categoryOptions: MediaCategory[] = [
   "Laboratorium Maya", "Multimedia Interaktif", "Game Edukasi",
   "Quiz Interaktif", "Modul Digital", "Video Pembelajaran Interaktif", "Lainnya",
 ];
+
+export async function changePassword(current: string, next: string): Promise<ActionResult> {
+  const session = await getCurrentAdmin();
+  if (!session) return { ok: false, error: "Tidak memiliki akses admin. Silakan login ulang." };
+  if (next.length < 8) return { ok: false, error: "Password baru minimal 8 karakter." };
+  const rows = await sql`SELECT password_hash FROM admins WHERE id = ${session.adminId} LIMIT 1`;
+  const hash = rows[0]?.password_hash as string | undefined;
+  if (!hash || !(await bcrypt.compare(current, hash))) {
+    return { ok: false, error: "Password lama salah." };
+  }
+  const newHash = await bcrypt.hash(next, 10);
+  await sql`UPDATE admins SET password_hash = ${newHash} WHERE id = ${session.adminId}`;
+  return { ok: true };
+}

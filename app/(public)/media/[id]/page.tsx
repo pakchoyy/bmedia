@@ -6,6 +6,7 @@ import MediaThumb from "@/components/MediaThumb";
 import MediaPlayPanel from "@/components/MediaPlayPanel";
 import GameCard from "@/components/GameCard";
 import Icon from "@/components/Icon";
+import { MEDIA_SITE_ORIGIN } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -67,6 +68,16 @@ export default async function MediaDetailPage({ params }: Props) {
             linkUrl={media.link_url}
             initialPlays={media.plays}
           />
+
+          <a
+            href={`https://wa.me/?text=${encodeURIComponent(`${media.title}\n${media.description}\n\n${MEDIA_SITE_ORIGIN}/media/${media.id}`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 mt-4 text-sm font-semibold text-[#128C7E] hover:underline"
+          >
+            <Icon name="whatsapp" />
+            Bagikan ke grup WA
+          </a>
 
           <p className="text-sm text-gray-500 dark:text-slate-400 mt-6 pt-4 border-t border-gray-200 dark:border-slate-700">
             Dibuat oleh <strong className="text-primary dark:text-primary-light">{media.guru_name}</strong>

@@ -11,8 +11,8 @@ import {
   updateMedia,
   type MediaEditInput,
 } from "@/app/admin/actions";
-import { CATEGORIES, JENJANG_OPTIONS, KELAS_OPTIONS } from "@/lib/constants";
-import { formatDate, formatPlays, normalizeUrl } from "@/lib/utils";
+import { CATEGORIES, JENJANG_OPTIONS, KELAS_OPTIONS, MEDIA_SITE_ORIGIN } from "@/lib/constants";
+import { formatDate, formatPlays, normalizeUrl, waNumber } from "@/lib/utils";
 import StatusBadge from "./StatusBadge";
 import RejectDialog from "./RejectDialog";
 import ConfirmDialog from "./ConfirmDialog";
@@ -87,6 +87,14 @@ export default function SubmissionDetail({ media }: { media: Media }) {
       thumbnail_pos_y: 50,
       thumbnail_zoom: 1,
     }));
+
+  const waTo = waNumber(media.guru_wa);
+  const waText =
+    media.status === "approved"
+      ? `Halo ${media.guru_name}, karya "${media.title}" sudah tayang di Bantu Guru Yuk. Terima kasih sudah berbagi!\n\n${MEDIA_SITE_ORIGIN}/media/${media.id}`
+      : media.status === "rejected"
+        ? `Halo ${media.guru_name}, karya "${media.title}" belum bisa ditayangkan di Bantu Guru Yuk.\n\nAlasan: ${media.rejection_reason ?? "-"}\n\nSilakan perbaiki lalu kirim ulang ya. Terima kasih!`
+        : null;
 
   const handleApprove = async () => {
     setBusy(true);
@@ -182,6 +190,16 @@ export default function SubmissionDetail({ media }: { media: Media }) {
                 >
                   <Icon name="xmark" /> Reject
                 </button>
+              )}
+              {waTo && waText && (
+                <a
+                  href={`https://wa.me/${waTo}?text=${encodeURIComponent(waText)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#25D366] text-white text-sm font-semibold hover:opacity-90 transition-opacity"
+                >
+                  <Icon name="whatsapp" /> Kabari via WA
+                </a>
               )}
               <button
                 onClick={() => setEditing((v) => !v)}

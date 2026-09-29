@@ -950,16 +950,9 @@ body.dark .prompt-raw{background:#0f172a;}
   <div class="footer-sub">Bantu Guru Yuk © 2026 by <a href="https://www.tiktok.com/@pak.choyy" target="_blank" rel="noopener">@pak.choyy</a> · v1.3.0</div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3"></script>
 <script>
-// ===== SUPABASE CONFIG (isi dengan project kamu) =====
-const SUPABASE_URL='https://gmcjnftmuarorjcjkdxd.supabase.co';
-const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtY2puZnRtdWFyb3JqY2prZHhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0NTE5NzgsImV4cCI6MjEwMjAyNzk3OH0.OdLClkPuJ_aVVY1zCgfhO6jX5BPrRMeiQEF40WMrjcQ';
-let __sb=null;
-function initSupabase(){
-  if(SUPABASE_URL.startsWith('YOUR')||SUPABASE_ANON.startsWith('YOUR'))return;
-  if(!window.supabase)return;
-  try{__sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON);}catch(e){console.error('Supabase init error:',e);}
+function trackStat(kind){
+  try{fetch('/api/buat-stats',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind}),keepalive:true}).catch(()=>{});}catch(e){}
 }
 
 // ===== STATE =====
@@ -994,9 +987,8 @@ function initCounter(){
   if(box)box.style.display='none';
   const cached=parseInt(localStorage.getItem(KEY)||'0');
   if(cached>0)show(cached);
-  if(!__sb)return;
-  __sb.from('buat_prompt_stats').select('prompt_count').eq('id',1).maybeSingle()
-    .then(({data})=>{
+  fetch('/api/buat-stats').then(r=>r.ok?r.json():null)
+    .then(data=>{
       if(data&&data.prompt_count!=null){
         const v=Number(data.prompt_count);
         if(v>0)show(v);
@@ -1008,7 +1000,7 @@ async function incrementCounter(){
   const KEY='bgy_pg_total';
   let n=parseInt(localStorage.getItem(KEY)||'0')||0;
   if(n>0){n++;localStorage.setItem(KEY,n);const el=document.getElementById('spCount');if(el)el.textContent=n.toLocaleString('id-ID');}
-  if(__sb){try{await __sb.rpc('bgy_buat_track',{p_prompt:1});}catch(e){}}
+  trackStat('prompt');
 }
 
 // ===== AUTOSAVE DRAFT =====
@@ -1739,7 +1731,7 @@ function voteFeedback(val){
   document.getElementById('fbDown').classList.toggle('voted',val==='down');
   const KEY='bgy_pg_feedback';
   try{const d=JSON.parse(localStorage.getItem(KEY)||'{"up":0,"down":0}');d[val]=(d[val]||0)+1;localStorage.setItem(KEY,JSON.stringify(d));}catch(e){}
-  if(__sb){__sb.rpc('bgy_buat_track',val==='up'?{p_up:1}:{p_down:1}).catch(()=>{});}
+  trackStat(val==='up'?'up':'down');
 }
 
 // ===== SANITIZE =====
@@ -2004,7 +1996,6 @@ window.addEventListener('load',()=>{
   initDark();
   renderHistori();
   updateHistoriBadge();
-  initSupabase();
   initCounter();
   selectedJml='5';
   loadDraft();

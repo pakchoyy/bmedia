@@ -2,11 +2,16 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { sql } from "@/lib/db";
 import { getSession } from "@/lib/session";
+import { allowRequest, clientIp } from "@/lib/rate-limit";
 
 export async function POST(req: Request) {
   const { email, password } = await req.json();
   if (!email || !password) {
     return NextResponse.json({ error: "Email dan password wajib diisi." }, { status: 400 });
+  }
+
+  if (!(await allowRequest(`login:${clientIp()}`, 10, 15 * 60))) {
+    return NextResponse.json({ error: "Terlalu banyak percobaan. Coba lagi 15 menit lagi." }, { status: 429 });
   }
 
   const rows = await sql`SELECT * FROM admins WHERE email = ${email} LIMIT 1`;

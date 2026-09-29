@@ -1,4 +1,4 @@
-const CACHE = 'bgy-buat-prompt-v7';
+const CACHE = 'bgy-buat-prompt-v8';
 const ASSETS = [
   './',
   './index.html',
@@ -25,7 +25,7 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
-  if (url.origin !== location.origin && !url.hostname.includes('supabase')) {
+  if (url.origin !== location.origin || url.pathname.startsWith('/api/')) {
     return;
   }
   e.respondWith(

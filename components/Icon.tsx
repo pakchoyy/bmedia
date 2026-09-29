@@ -1,4 +1,5 @@
 import {
+  FaKey,
   FaFlask,
   FaPhotoFilm,
   FaGamepad,
@@ -75,6 +76,7 @@ const icons: Record<string, IconType> = {
   "paper-plane": FaPaperPlane,
   envelope: FaEnvelope,
   whatsapp: FaWhatsapp,
+  key: FaKey,
   "circle-check": FaCircleCheck,
   "arrow-left": FaArrowLeft,
   "chalkboard-user": FaChalkboardUser,

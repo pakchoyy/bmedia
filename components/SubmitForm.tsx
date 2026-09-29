@@ -51,6 +51,7 @@ export default function SubmitForm() {
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [fromBuat, setFromBuat] = useState(false);
+  const [honeypot, setHoneypot] = useState("");
 
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
@@ -157,6 +158,7 @@ export default function SubmitForm() {
         guru_name: form.guru_name.trim(),
         sekolah: form.sekolah.trim() || "-",
         guru_wa: form.guru_wa.trim() || "-",
+        website: honeypot,
       });
       if (!result.ok) {
         setError("Gagal mengirim karya: " + result.error);
@@ -190,15 +192,24 @@ export default function SubmitForm() {
             Karya Berhasil Dikirim!
           </h2>
           <p className="text-gray-600 dark:text-slate-300 text-lg mb-6">
-            Terima kasih sudah berbagi media pembelajaran. Karya kamu akan ditinjau oleh admin sebelum ditampilkan di website.
+            Terima kasih sudah berbagi. Admin akan meninjau karyamu maksimal 1×24 jam. Kalau kamu mengisi nomor WA, kabar tayang atau revisi dikirim ke sana.
           </p>
-          <button
-            onClick={() => router.push("/catalog")}
-            className="inline-flex items-center gap-2 bg-primary-light hover:bg-primary text-white px-8 py-3 rounded-full font-semibold text-base transition-all"
-          >
-            <Icon name="arrow-left" />
-            Kembali ke Media Belajar
-          </button>
+          <div className="flex flex-wrap justify-center gap-3">
+            <button
+              onClick={() => router.push("/catalog")}
+              className="inline-flex items-center gap-2 bg-primary-light hover:bg-primary text-white px-6 py-3 rounded-full font-semibold text-base transition-all"
+            >
+              <Icon name="arrow-left" />
+              Lihat Koleksi
+            </button>
+            <button
+              onClick={() => setSuccess(false)}
+              className="inline-flex items-center gap-2 border-2 border-primary-light text-primary-light hover:bg-primary-light hover:text-white px-6 py-3 rounded-full font-semibold text-base transition-all"
+            >
+              <Icon name="plus" />
+              Kirim Karya Lain
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -212,6 +223,16 @@ export default function SubmitForm() {
         </div>
       )}
       <form onSubmit={handleSubmit} noValidate className="rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-slate-800">
+        <input
+          type="text"
+          name="website"
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+          value={honeypot}
+          onChange={(e) => setHoneypot(e.target.value)}
+          className="absolute -left-[9999px] w-px h-px opacity-0"
+        />
         {/* Section: Tentang Media */}
         <div className={`${rowWhite} px-8 py-5 max-md:px-5`}>
           <h3 className="text-lg font-bold text-primary dark:text-primary-light flex items-center gap-2">

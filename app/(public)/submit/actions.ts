@@ -3,6 +3,7 @@
 import { sql } from "@/lib/db";
 import { normalizeUrl, isValidUrl } from "@/lib/utils";
 import { isStoredThumbnail } from "@/lib/storage";
+import { allowRequest, clientIp } from "@/lib/rate-limit";
 import type { Jenjang, MediaCategory } from "@/types/media";
 
 export interface SubmitInput {
@@ -11,9 +12,14 @@ export interface SubmitInput {
   thumbnail_url: string | null; thumbnail_position: number;
   thumbnail_pos_y: number; thumbnail_zoom: number;
   description: string; guru_name: string; sekolah: string; guru_wa: string;
+  website?: string;
 }
 
 export async function submitMedia(input: SubmitInput): Promise<{ ok: true } | { ok: false; error: string }> {
+  if (input.website) return { ok: true };
+  if (!(await allowRequest(`submit:${clientIp()}`, 5, 60 * 60))) {
+    return { ok: false, error: "Terlalu banyak kiriman. Coba lagi dalam 1 jam." };
+  }
   const normalizedLink = normalizeUrl(input.link_url);
   if (!normalizedLink) return { ok: false, error: "Link media tidak valid." };
   const thumbnail = input.thumbnail_url?.trim() || null;

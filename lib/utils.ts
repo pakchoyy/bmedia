@@ -58,3 +58,12 @@ export function normalizeUrl(raw: string): string | null {
 export function normalizeTool(tool: string): string {
   return tool.trim().toLowerCase();
 }
+
+export function waNumber(raw: string | null | undefined): string | null {
+  const digits = (raw ?? "").replace(/\D/g, "");
+  if (digits.length < 9) return null;
+  if (digits.startsWith("62")) return digits;
+  if (digits.startsWith("0")) return "62" + digits.slice(1);
+  if (digits.startsWith("8")) return "62" + digits;
+  return digits;
+}

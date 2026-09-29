@@ -17,6 +17,7 @@ export default function AdminSidebar({ email, onNavigate }: AdminSidebarProps) {
     { href: "/admin/media", label: "Semua Media", icon: "book" },
     { href: "/admin/media/new", label: "Tambah Media", icon: "plus" },
     { href: "/admin/submissions", label: "Submission", icon: "clipboard" },
+    { href: "/admin/password", label: "Ganti Password", icon: "key" },
   ];
 
   const isActive = (item: (typeof items)[number]) => {
