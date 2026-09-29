@@ -3,8 +3,8 @@
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { CATEGORIES, JENJANG_OPTIONS, KELAS_OPTIONS } from "@/lib/constants";
-import { createClient, isSupabaseConfigured } from "@/lib/supabase";
 import { normalizeUrl } from "@/lib/utils";
+import { submitMedia } from "@/app/(public)/submit/actions";
 import type { Jenjang, MediaCategory } from "@/types/media";
 import type { ThumbCrop } from "@/lib/storage";
 import Icon from "./Icon";
@@ -134,32 +134,21 @@ export default function SubmitForm() {
     e.preventDefault();
     setError("");
     setSuccess(false);
-    if (!isSupabaseConfigured()) {
-      setError("Sistem belum siap. Silakan hubungi administrator.");
-      return;
-    }
     if (!validate()) {
       setError("Mohon lengkapi semua field yang wajib diisi.");
       return;
     }
     setSubmitting(true);
     try {
-      const supabase = createClient();
       const finalMapel = form.mapel === "Lainnya" ? form.mapelCustom.trim() : form.mapel;
-      const normalizedLink = normalizeUrl(form.link_url);
-      if (!normalizedLink) {
-        setError("Link media tidak valid.");
-        setSubmitting(false);
-        return;
-      }
-      const { error: insertError } = await supabase.from("media").insert({
+      const result = await submitMedia({
         title: form.title.trim(),
         mapel: finalMapel,
         jenjang: form.jenjang as Jenjang,
         kelas: form.kelas.trim(),
         category: form.category as MediaCategory,
         tool: form.tool.trim() || "Lainnya",
-        link_url: normalizedLink,
+        link_url: form.link_url,
         thumbnail_url: form.thumbnail_url,
         thumbnail_position: form.thumbnail_position,
         thumbnail_pos_y: form.thumbnail_pos_y,
@@ -168,12 +157,9 @@ export default function SubmitForm() {
         guru_name: form.guru_name.trim(),
         sekolah: form.sekolah.trim() || "-",
         guru_wa: form.guru_wa.trim() || "-",
-        status: "pending",
-        plays: 0,
       });
-      if (insertError) {
-        console.error("Insert error:", insertError);
-        setError("Gagal mengirim karya: " + insertError.message);
+      if (!result.ok) {
+        setError("Gagal mengirim karya: " + result.error);
         return;
       }
       setSuccess(true);
