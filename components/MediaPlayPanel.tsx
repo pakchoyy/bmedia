@@ -19,14 +19,14 @@ export default function MediaPlayPanel({
   const [plays, setPlays] = useState(initialPlays);
 
   return (
-    <div className="w-[300px] bg-pagebg dark:bg-slate-800 p-6 rounded-xl shrink-0 max-md:w-full">
+    <div className="max-w-sm">
       <PlayButton
         mediaId={mediaId}
         linkUrl={linkUrl}
         onOpened={() => setPlays((p) => p + 1)}
       />
-      <div className="text-sm text-gray-600 dark:text-slate-400 border-t border-gray-300 dark:border-slate-700 pt-3">
-        <Icon name="chart-simple" className="mr-1" />
+      <div className="text-sm text-gray-500 dark:text-slate-400 mt-2 flex items-center gap-1.5">
+        <Icon name="chart-simple" />
         Digunakan: <strong>{formatPlays(plays)}</strong> kali
       </div>
     </div>

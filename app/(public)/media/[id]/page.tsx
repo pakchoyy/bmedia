@@ -45,70 +45,34 @@ export default async function MediaDetailPage({ params }: Props) {
           <MediaThumb media={media} className="w-full h-full" />
         </div>
 
-        <div className="p-8 flex flex-wrap justify-between items-start gap-8">
-          <div className="flex-1 min-w-[300px]">
-            <div className="flex flex-wrap gap-2.5 mb-4">
-              <span className="bg-primary-bg text-primary px-3 py-1 rounded-full text-sm font-semibold">
-                <Icon name="layer-group" className="mr-1" />
-                {media.category}
-              </span>
-              <span className="bg-primary-bg text-primary px-3 py-1 rounded-full text-sm font-semibold">
-                <Icon name="book" className="mr-1" />
-                {media.mapel}
-              </span>
-              <span className="bg-primary-bg text-primary px-3 py-1 rounded-full text-sm font-semibold">
-                <Icon name="graduation-cap" className="mr-1" />
-                {media.jenjang} - {media.kelas}
-              </span>
-              <span className="bg-white border border-gray-300 text-gray-600 px-3 py-1 rounded-full text-sm font-semibold">
-                <Icon name="wrench" className="mr-1" />
-                Dibuat dengan: {media.tool}
-              </span>
-            </div>
-
-            <h2 className="text-[2.5rem] font-bold text-primary dark:text-primary-light leading-tight mb-3 max-md:text-3xl">
-              {media.title}
-            </h2>
-
-            <p className="my-5 text-lg text-gray-600 dark:text-slate-300 leading-relaxed">
-              {media.description}
-            </p>
-
-            <a
-              href={`/buat?${new URLSearchParams({
-                ...(media.jenjang !== "Umum" ? { jenjang: media.jenjang } : {}),
-                mapel: media.mapel,
-                materi: media.title,
-                dari: "media",
-              }).toString()}`}
-              className="inline-flex items-center gap-2 min-h-[44px] bg-primary-light text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-primary transition-colors mb-2"
-            >
-              <Icon name="gamepad" />
-              Buat Game dari Materi Ini
-            </a>
-            <p className="text-sm text-gray-500 dark:text-slate-400 mb-2">
-              Gratis. Isian jenjang, mapel, dan materi langsung terisi.
-            </p>
-
-            <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-200 dark:border-slate-700">
-              <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center text-xl font-bold shrink-0">
-                {media.guru_name.charAt(0).toUpperCase()}
-              </div>
-              <div>
-                <h4 className="text-primary dark:text-primary-light font-bold">{media.guru_name}</h4>
-                <p className="text-sm text-gray-600 dark:text-slate-400">
-                  <Icon name="school" className="mr-1" />
-                  {media.sekolah}
-                </p>
-              </div>
-            </div>
+        <div className="p-8 max-md:p-5">
+          <div className="flex flex-wrap gap-2 mb-3 text-xs font-semibold">
+            <span className="bg-primary-bg text-primary px-2.5 py-1 rounded-full">{media.category}</span>
+            <span className="bg-primary-bg text-primary px-2.5 py-1 rounded-full">{media.mapel}</span>
+            <span className="bg-primary-bg text-primary px-2.5 py-1 rounded-full">
+              {media.jenjang === "Umum" ? "Semua jenjang" : `${media.jenjang} · ${media.kelas}`}
+            </span>
           </div>
+
+          <h2 className="text-3xl font-bold text-primary dark:text-primary-light leading-tight mb-3 max-md:text-2xl">
+            {media.title}
+          </h2>
+
+          <p className="text-base text-gray-600 dark:text-slate-300 leading-relaxed mb-5 max-w-2xl">
+            {media.description}
+          </p>
 
           <MediaPlayPanel
             mediaId={media.id}
             linkUrl={media.link_url}
             initialPlays={media.plays}
           />
+
+          <p className="text-sm text-gray-500 dark:text-slate-400 mt-6 pt-4 border-t border-gray-200 dark:border-slate-700">
+            Dibuat oleh <strong className="text-primary dark:text-primary-light">{media.guru_name}</strong>
+            {media.sekolah && media.sekolah !== "-" ? ` · ${media.sekolah}` : ""}
+            {media.tool && media.tool !== "Lainnya" ? ` · ${media.tool}` : ""}
+          </p>
         </div>
       </div>
 

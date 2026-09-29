@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { normalizeUrl } from "@/lib/utils";
 import Icon from "./Icon";
 
@@ -19,43 +18,25 @@ export default function PlayButton({
   className = "",
   onOpened,
 }: PlayButtonProps) {
-  const [loading, setLoading] = useState(false);
-
-  const handleClick = async () => {
+  const handleClick = () => {
     const target = normalizeUrl(linkUrl);
     if (!target) return;
-    setLoading(true);
-    let ok = false;
-    try {
-      const res = await fetch(`/api/play/${mediaId}`, { method: "POST" });
-      ok = res.ok;
-    } catch (e) {
-      console.error("Gagal menambah plays:", e);
-    } finally {
-      setLoading(false);
-    }
-    if (ok && onOpened) onOpened();
     window.open(target, "_blank", "noopener,noreferrer");
+    fetch(`/api/play/${mediaId}`, { method: "POST", keepalive: true })
+      .then((res) => {
+        if (res.ok && onOpened) onOpened();
+      })
+      .catch(() => {});
   };
 
   if (size === "lg") {
     return (
       <button
         onClick={handleClick}
-        disabled={loading}
-        className={`w-full bg-accent text-white py-4 rounded-lg text-xl font-bold mb-4 flex items-center justify-center gap-2.5 transition-transform hover:bg-[#e06c0d] hover:scale-[1.02] disabled:opacity-70 ${className}`}
+        className={`w-full bg-accent text-white min-h-[52px] py-3 rounded-xl text-lg font-bold flex items-center justify-center gap-2 transition-colors hover:bg-[#e06c0d] ${className}`}
       >
-        {loading ? (
-          <>
-            <Icon name="hourglass" className="animate-pulse" />
-            Menyiapkan...
-          </>
-        ) : (
-          <>
-            <Icon name="arrow-up-right-from-square" />
-            Buka Media
-          </>
-        )}
+        <Icon name="arrow-up-right-from-square" />
+        Buka Media
       </button>
     );
   }
@@ -63,17 +44,9 @@ export default function PlayButton({
   return (
     <button
       onClick={handleClick}
-      disabled={loading}
-      className={`w-full mt-4 py-2 bg-primary-light text-white rounded-lg font-semibold text-sm transition-colors hover:bg-primary disabled:opacity-70 ${className}`}
+      className={`w-full mt-4 py-2 bg-primary-light text-white rounded-lg font-semibold text-sm transition-colors hover:bg-primary ${className}`}
     >
-      {loading ? (
-        <span className="flex items-center justify-center gap-2">
-          <Icon name="hourglass" className="animate-pulse" />
-          Menyiapkan...
-        </span>
-      ) : (
-        "Buka Media"
-      )}
+      Buka Media
     </button>
   );
 }
