@@ -89,7 +89,7 @@ export default function SearchFilter({
       {/* Search + Filters */}
       <section className="px-4 mb-6 pt-4">
         <div className="container mx-auto max-w-[1200px]">
-          <div className="flex items-center gap-4 bg-white dark:bg-slate-900 rounded-full shadow-md px-8 py-4 max-w-[800px] mx-auto border border-gray-100 dark:border-slate-800 max-md:flex-col max-md:rounded-[15px] max-md:py-4 max-md:gap-3">
+          <div className="flex items-center gap-3 bg-white dark:bg-slate-900 rounded-xl sm:rounded-full shadow-md px-4 sm:px-8 py-3 sm:py-4 max-w-[800px] mx-auto border border-gray-100 dark:border-slate-800">
             <Icon name="magnifying-glass" className="text-primary-light text-xl shrink-0" />
             <input
               type="text"
@@ -100,11 +100,11 @@ export default function SearchFilter({
             />
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5 justify-center mt-6">
+          <div className="flex flex-wrap items-center gap-2 justify-center mt-4">
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="px-4 py-3 rounded-full text-sm font-medium bg-white dark:bg-slate-900 dark:text-slate-100 border border-gray-300 dark:border-slate-700 outline-none focus:border-primary-light min-h-[44px]"
+              className="px-3 py-2 rounded-lg text-xs sm:text-sm font-medium bg-white dark:bg-slate-900 dark:text-slate-100 border border-gray-300 dark:border-slate-700 outline-none focus:border-primary-light"
             >
               <option value="">Semua Kategori</option>
               {CATEGORIES.map((c) => (
@@ -117,7 +117,7 @@ export default function SearchFilter({
             <select
               value={jenjang}
               onChange={(e) => setJenjang(e.target.value)}
-              className="px-4 py-3 rounded-full text-sm font-medium bg-white dark:bg-slate-900 dark:text-slate-100 border border-gray-300 dark:border-slate-700 outline-none focus:border-primary-light min-h-[44px]"
+              className="px-3 py-2 rounded-lg text-xs sm:text-sm font-medium bg-white dark:bg-slate-900 dark:text-slate-100 border border-gray-300 dark:border-slate-700 outline-none focus:border-primary-light"
             >
               <option value="">Semua Jenjang</option>
               {JENJANG_OPTIONS.map((j) => (
@@ -130,7 +130,7 @@ export default function SearchFilter({
             <select
               value={tool}
               onChange={(e) => setTool(e.target.value)}
-              className="px-4 py-3 rounded-full text-sm font-medium bg-white dark:bg-slate-900 dark:text-slate-100 border border-gray-300 dark:border-slate-700 outline-none focus:border-primary-light min-h-[44px]"
+              className="px-3 py-2 rounded-lg text-xs sm:text-sm font-medium bg-white dark:bg-slate-900 dark:text-slate-100 border border-gray-300 dark:border-slate-700 outline-none focus:border-primary-light"
             >
               <option value="">Semua Tool</option>
               {tools.map((t) => (
@@ -143,13 +143,13 @@ export default function SearchFilter({
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as "terbaru" | "populer")}
-              className="px-4 py-3 rounded-full text-sm font-medium bg-white dark:bg-slate-900 dark:text-slate-100 border border-gray-300 dark:border-slate-700 outline-none focus:border-primary-light min-h-[44px]"
+              className="px-3 py-2 rounded-lg text-xs sm:text-sm font-medium bg-white dark:bg-slate-900 dark:text-slate-100 border border-gray-300 dark:border-slate-700 outline-none focus:border-primary-light"
             >
               <option value="terbaru">Terbaru</option>
               <option value="populer">Terpopuler</option>
             </select>
 
-            <span className="text-sm text-gray-500 dark:text-slate-400">
+            <span className="text-xs text-gray-500 dark:text-slate-400">
               {filtered.length} media
             </span>
           </div>
@@ -157,8 +157,8 @@ export default function SearchFilter({
       </section>
 
       {/* Grid */}
-      <section className="container mx-auto max-w-[1200px] px-6 pb-10">
-        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      <section className="container mx-auto max-w-[1200px] px-4 sm:px-6 pb-10">
+        <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {visible.map((m) => (
             <GameCard key={m.id} media={m} />
           ))}

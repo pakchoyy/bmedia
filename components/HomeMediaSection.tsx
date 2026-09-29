@@ -1,17 +1,20 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import type { Media, MediaCategory } from "@/types/media";
 import { JENJANG_OPTIONS, KELAS_OPTIONS, CATEGORIES } from "@/lib/constants";
 import GameCard from "./GameCard";
 import Icon from "./Icon";
 
+const INITIAL_SHOW = 8;
+
 const MAPEL_CHIPS = [
   { name: "Matematika", icon: "book", color: "#3b82f6" },
   { name: "Bahasa Indonesia", icon: "book-open", color: "#10b981" },
   { name: "IPAS", icon: "flask", color: "#8b5cf6" },
-  { name: "Pendidikan Pancasila", icon: "book", color: "#ef4444" },
-  { name: "Seni", icon: "photo-video", color: "#f59e0b" },
+  { name: "Bahasa Inggris", icon: "globe", color: "#0ea5e9" },
+  { name: "Informatika", icon: "laptop-code", color: "#6366f1" },
 ];
 
 const MAPEL_NAMES = MAPEL_CHIPS.map((c) => c.name);
@@ -57,11 +60,14 @@ export default function HomeMediaSection({ media }: HomeMediaSectionProps) {
 
   const isFiltering = !!query || !!jenjang || !!kelas || !!mapel || !!kategori;
   const isLainnya = mapel === MAPEL_LAINNYA;
+  const showAll = isFiltering;
+  const visible = showAll ? filtered : filtered.slice(0, INITIAL_SHOW);
+  const hasMore = !showAll && filtered.length > INITIAL_SHOW;
 
   return (
-    <section className="px-4 pt-6 pb-6">
+    <section className="px-4 pt-5 pb-6">
       <div className="container mx-auto max-w-[1200px]">
-        {/* Search + filters — compact inline, centered */}
+        {/* Search + filters */}
         <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 p-3 mb-4 mx-auto max-w-[720px]">
           <div className="flex items-center gap-2 mb-2">
             <Icon name="magnifying-glass" className="text-gray-400 shrink-0" />
@@ -128,52 +134,46 @@ export default function HomeMediaSection({ media }: HomeMediaSectionProps) {
 
         {/* Mata Pelajaran chips */}
         <div className="mb-4 text-center">
-          <h3 className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wide mb-2">
-            Berdasarkan Mata Pelajaran
-          </h3>
-          <div className="flex flex-wrap gap-2 justify-center">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center">
             <button
               onClick={() => setMapel("")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+              className={`flex items-center gap-1 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-semibold border transition-all ${
                 mapel === ""
                   ? "bg-primary-bg border-primary-light text-primary scale-105 shadow-sm"
-                  : "bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-ink dark:text-slate-200 hover:border-primary-light hover:shadow-sm"
+                  : "bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-ink dark:text-slate-200 hover:border-primary-light"
               }`}
             >
-              <Icon name="layer-group" className="text-sm" style={{ color: "#64748b" }} />
               Semua
             </button>
             {MAPEL_CHIPS.map((chip) => (
               <button
                 key={chip.name}
                 onClick={() => setMapel(mapel === chip.name ? "" : chip.name)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+                className={`flex items-center gap-1 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-semibold border transition-all ${
                   mapel === chip.name
                     ? "bg-primary-bg border-primary-light text-primary scale-105 shadow-sm"
-                    : "bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-ink dark:text-slate-200 hover:border-primary-light hover:shadow-sm"
+                    : "bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-ink dark:text-slate-200 hover:border-primary-light"
                 }`}
               >
-                <Icon name={chip.icon} className="text-sm" style={{ color: chip.color }} />
                 {chip.name}
               </button>
             ))}
             <button
               onClick={() => setMapel(isLainnya ? "" : MAPEL_LAINNYA)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+              className={`flex items-center gap-1 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-semibold border transition-all ${
                 isLainnya
                   ? "bg-primary-bg border-primary-light text-primary scale-105 shadow-sm"
-                  : "bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-ink dark:text-slate-200 hover:border-primary-light hover:shadow-sm"
+                  : "bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-ink dark:text-slate-200 hover:border-primary-light"
               }`}
             >
-              <Icon name="tags" className="text-sm" style={{ color: "#64748b" }} />
               Lainnya
             </button>
           </div>
         </div>
 
-        {/* Media grid */}
+        {/* Media heading */}
         <div className="flex items-center justify-center gap-3 mb-3">
-          <h2 className="text-xl font-bold text-ink dark:text-slate-100">
+          <h2 className="text-lg sm:text-xl font-bold text-ink dark:text-slate-100">
             {isFiltering ? "Hasil Pencarian" : "Media Terbaru"}
           </h2>
           <span className="text-xs text-gray-500 dark:text-slate-400">
@@ -189,11 +189,25 @@ export default function HomeMediaSection({ media }: HomeMediaSectionProps) {
             </p>
           </div>
         ) : (
-          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filtered.map((m) => (
-              <GameCard key={m.id} media={m} categoryColor={CATEGORY_COLORS[m.category]} />
-            ))}
-          </div>
+          <>
+            <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {visible.map((m) => (
+                <GameCard key={m.id} media={m} categoryColor={CATEGORY_COLORS[m.category]} />
+              ))}
+            </div>
+
+            {hasMore && (
+              <div className="text-center mt-6">
+                <Link
+                  href="/catalog"
+                  className="inline-flex items-center gap-2 bg-primary-light text-white px-6 py-2.5 rounded-full font-semibold text-sm hover:bg-primary transition-colors shadow-sm"
+                >
+                  Lihat Semua Media
+                  <Icon name="arrow-right" />
+                </Link>
+              </div>
+            )}
+          </>
         )}
       </div>
     </section>

@@ -8,11 +8,10 @@ import ThemeToggle from "./ThemeToggle";
 const links = [
   { label: "Home", href: "/", icon: "house" },
   { label: "Katalog", href: "/catalog", icon: "magnifying-glass" },
-  { label: "Tentang & Kontak", href: "/about", icon: "info" },
+  { label: "Buat Game", href: "/buat", icon: "gamepad" },
   { label: "Kirim Karya", href: "/submit", icon: "paper-plane" },
+  { label: "Tentang", href: "/about", icon: "info" },
 ];
-
-const EKOSISTEM_URL = "https://bantuguruyuk.web.id";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -62,17 +61,6 @@ export default function Navbar() {
                   {l.label}
                 </Link>
               ))}
-              <div className="border-t border-gray-100 dark:border-slate-800 my-1" />
-              <a
-                href={EKOSISTEM_URL}
-                target="_blank"
-                rel="noreferrer"
-                onClick={() => setOpen(false)}
-                className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-ink dark:text-slate-200 hover:bg-primary-bg hover:text-primary-light transition-colors"
-              >
-                <Icon name="arrow-up-right-from-square" className="w-4 text-primary-light" />
-                bantuguruyuk.web.id
-              </a>
               <div data-bgy-menu="" />
             </div>
           </div>
