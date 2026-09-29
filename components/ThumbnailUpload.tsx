@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { createClient, isSupabaseConfigured } from "@/lib/supabase";
-import { THUMBNAIL_BUCKET, thumbnailPublicUrl } from "@/lib/storage";
 import { thumbCropStyle, clampCrop, type ThumbCrop } from "@/lib/storage";
 import Icon from "./Icon";
 
@@ -33,11 +31,6 @@ async function compressImage(file: File): Promise<File> {
   }
 }
 const ALLOWED_MIME = ["image/jpeg", "image/png", "image/webp"];
-const EXT_BY_MIME: Record<string, string> = {
-  "image/jpeg": "jpg",
-  "image/png": "png",
-  "image/webp": "webp",
-};
 
 interface ThumbnailUploadProps {
   value: string | null;
@@ -101,10 +94,6 @@ export default function ThumbnailUpload({
 
   const uploadFile = async (original: File) => {
     let file = original;
-    if (!isSupabaseConfigured()) {
-      setError("Sistem penyimpanan belum siap. Silakan hubungi administrator.");
-      return;
-    }
     setUploading(true);
     try {
       file = await compressImage(file);
@@ -112,23 +101,15 @@ export default function ThumbnailUpload({
         setError("Gambar masih terlalu besar setelah dikompres. Coba gambar lain.");
         return;
       }
-      const ext = EXT_BY_MIME[file.type] ?? "jpg";
-      const name = `thumb-${crypto.randomUUID()}.${ext}`;
-      const supabase = createClient();
-      const { error } = await supabase.storage
-        .from(THUMBNAIL_BUCKET)
-        .upload(name, file, {
-          contentType: file.type,
-          cacheControl: "3600",
-        });
-      if (error) {
-        console.error("Thumbnail upload error:", error.message);
-        setError(
-          "Gagal mengunggah thumbnail. Pastikan bucket storage sudah dibuat atau coba lagi."
-        );
+      const body = new FormData();
+      body.append("file", file);
+      const res = await fetch("/api/upload-thumbnail", { method: "POST", body });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.url) {
+        setError(data.error || "Gagal mengunggah thumbnail. Silakan coba lagi.");
         return;
       }
-      onChange(thumbnailPublicUrl(name));
+      onChange(data.url);
     } catch (err) {
       console.error("Thumbnail upload exception:", err);
       setError("Gagal mengunggah thumbnail. Silakan coba lagi.");

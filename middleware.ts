@@ -10,7 +10,7 @@ const sessionOptions = {
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
-  const isPublicAdminPath = pathname === "/admin/login" || pathname === "/admin/reset";
+  const isPublicAdminPath = pathname === "/admin/login";
 
   if (!isPublicAdminPath) {
     const res = NextResponse.next({ request });

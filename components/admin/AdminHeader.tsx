@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase";
 import Icon from "../Icon";
 
 interface AdminHeaderProps {
@@ -15,8 +14,7 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
 
   const handleLogout = async () => {
     setLoggingOut(true);
-    const supabase = createClient();
-    await supabase.auth.signOut();
+    await fetch("/api/admin/logout", { method: "POST" });
     router.push("/admin/login");
     router.refresh();
   };

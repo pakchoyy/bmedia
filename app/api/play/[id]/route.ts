@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { isSupabaseConfigured } from "@/lib/supabase";
-import { createServerSideClient } from "@/lib/supabase-server";
+import { sql } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -9,24 +8,14 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
-
   if (!id) {
     return NextResponse.json({ error: "ID media tidak valid" }, { status: 400 });
   }
-
-  if (!isSupabaseConfigured()) {
-    return NextResponse.json({ error: "Supabase belum dikonfigurasi" }, { status: 500 });
-  }
-
-  const supabase = createServerSideClient();
-  const { error } = await supabase.rpc("increment_plays", {
-    media_id: id,
-  });
-
-  if (error) {
-    console.error("increment_plays error:", error.message);
+  try {
+    await sql`UPDATE media SET plays = plays + 1 WHERE id = ${id} AND status = 'approved'`;
+  } catch (e) {
+    console.error("increment plays error:", e);
     return NextResponse.json({ error: "Gagal menambah plays" }, { status: 500 });
   }
-
   return NextResponse.json({ ok: true });
 }
