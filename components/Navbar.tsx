@@ -44,7 +44,7 @@ export default function Navbar() {
           {/* Dropdown menu */}
           <div
             id="navbarMenu"
-            className={`absolute right-0 top-full mt-2 w-56 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-gray-100 dark:border-slate-800 z-50 transition-all duration-200 ease-out origin-top-right ${
+            className={`absolute right-0 top-full mt-2 w-56 max-h-[80vh] overflow-y-auto bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-gray-100 dark:border-slate-800 z-50 transition-all duration-200 ease-out origin-top-right ${
               open
                 ? "scale-100 opacity-100 pointer-events-auto"
                 : "scale-95 opacity-0 pointer-events-none"
@@ -73,6 +73,7 @@ export default function Navbar() {
                 <Icon name="arrow-up-right-from-square" className="w-4 text-primary-light" />
                 bantuguruyuk.web.id
               </a>
+              <div data-bgy-menu="" />
             </div>
           </div>
         </div>
