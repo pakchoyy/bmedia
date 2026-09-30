@@ -39,45 +39,45 @@ export default async function HomePage() {
         </div>
         <div className="absolute inset-y-0 right-[29%] w-[23%] bg-gradient-to-r from-[#0d7a8a] via-[#0d7a8a]/25 to-transparent pointer-events-none max-lg:hidden" />
 
-        <div className="relative z-10 container mx-auto max-w-[1200px] px-6 py-5 max-md:py-4">
+        <div className="relative z-10 container mx-auto max-w-[1200px] px-6 py-5 max-md:py-3">
           <div className="w-[48%] max-lg:w-full max-lg:text-center">
-            <div className="flex flex-wrap justify-start gap-2 mb-2 max-lg:justify-center">
+            <div className="flex flex-wrap justify-start gap-1.5 mb-1.5 max-lg:justify-center">
               {["✓ Gratis", "✓ Karya Guru Indonesia", "✓ Interaktif"].map((b) => (
-                <span key={b} className="bg-white/15 rounded-full px-3 py-1 text-xs font-medium">
+                <span key={b} className="bg-white/15 rounded-full px-2.5 py-0.5 text-[11px] sm:text-xs font-medium">
                   {b}
                 </span>
               ))}
             </div>
 
-            <h1 className="text-white text-4xl leading-tight font-extrabold mb-1 max-md:text-3xl max-sm:text-2xl">
+            <h1 className="text-white text-4xl leading-tight font-extrabold mb-0.5 max-md:text-2xl max-sm:text-xl">
               Bantu Guru Yuk
             </h1>
-            <h2 className="text-white text-lg leading-relaxed font-medium mb-2 max-md:text-base text-balance">
+            <h2 className="text-white text-lg leading-relaxed font-medium mb-1.5 max-md:text-sm text-balance">
               Media Belajar Interaktif Karya Guru Indonesia
             </h2>
 
-            <p className="text-sm mb-3 opacity-90 leading-relaxed max-w-[440px] max-lg:mx-auto">
+            <p className="text-xs sm:text-sm mb-2.5 opacity-90 leading-relaxed max-w-[440px] max-lg:mx-auto">
               Temukan, gunakan, dan bagikan media pembelajaran untuk membuat pembelajaran lebih menarik.
             </p>
 
-            <div className="flex flex-wrap items-center gap-3 max-lg:justify-center">
+            <div className="flex flex-wrap items-center gap-2 max-lg:justify-center">
               <a
                 href="#media"
-                className="bg-accent text-white rounded-full px-5 py-2.5 text-sm font-bold inline-flex items-center gap-2 hover:bg-[#e06c0d] hover:scale-105 transition-all shadow-lg"
+                className="bg-accent text-white rounded-full px-4 py-2 text-xs sm:text-sm font-bold inline-flex items-center gap-1.5 hover:bg-[#e06c0d] hover:scale-105 transition-all shadow-lg"
               >
                 <Icon name="compass" />
                 Jelajahi Media
               </a>
               <Link
                 href="/buat"
-                className="bg-white/15 border border-white/30 text-white rounded-full px-4 py-2 text-sm font-semibold inline-flex items-center gap-2 hover:bg-white/25 transition-colors"
+                className="bg-white/15 border border-white/30 text-white rounded-full px-3 py-1.5 text-xs sm:text-sm font-semibold inline-flex items-center gap-1.5 hover:bg-white/25 transition-colors"
               >
                 <Icon name="gamepad" />
-                Buat Game Sendiri
+                Buat Game
               </Link>
               <Link
                 href="/submit"
-                className="bg-success text-white rounded-full px-5 py-2.5 text-sm font-semibold inline-flex items-center gap-2 hover:bg-green-700 hover:scale-105 transition-all shadow-md"
+                className="bg-success text-white rounded-full px-4 py-2 text-xs sm:text-sm font-semibold inline-flex items-center gap-1.5 hover:bg-green-700 hover:scale-105 transition-all shadow-md"
               >
                 <Icon name="plus" />
                 Kirim Karya
@@ -86,7 +86,7 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <div className="lg:hidden relative z-10 px-6 pb-4 max-w-[300px] mx-auto">
+        <div className="lg:hidden relative z-10 px-6 pb-2 max-w-[220px] mx-auto">
           <img
             src="/hero-banner.webp"
             alt="Ilustrasi media belajar interaktif bersama guru"

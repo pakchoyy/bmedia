@@ -8,7 +8,6 @@ import ThemeToggle from "./ThemeToggle";
 const links = [
   { label: "Home", href: "/", icon: "house" },
   { label: "Katalog", href: "/catalog", icon: "magnifying-glass" },
-  { label: "Buat Game", href: "/buat", icon: "gamepad" },
   { label: "Kirim Karya", href: "/submit", icon: "paper-plane" },
   { label: "Tentang", href: "/about", icon: "info" },
 ];
