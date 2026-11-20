@@ -27,7 +27,7 @@ export interface ImportResult {
 }
 
 const RE_QUESTION = /^(\d{1,3})\s*[.)]\s*(.*)$/;
-const RE_OPTION = /^(\*?)\s*\(?([a-eA-E])\s*[.)]\s+(.*)$/;
+const RE_OPTION = /^(\*?)\s*\(?([a-hA-H])\s*[.)]\s+(.*)$/;
 const RE_INLINE_KEY = /^(?:kunci(?:\s+jawaban)?|jawaban|jawab|jwb|kunci jwb)\s*[:=]?\s*\(?([a-eA-E])\b/i;
 const RE_KEY_HEADER = /^kunci(?:\s+jawaban)?\s*:?\s*$/i;
 const RE_KEY_PAIR = /(\d{1,3})\s*[.)\-:=]?\s*\(?([a-eA-E])\b\)?/g;
@@ -50,14 +50,14 @@ function cleanStar(text: string): { text: string; star: boolean } {
 
 /** Pecah "a. X  b. Y  c. Z  d. W" dalam satu baris menjadi beberapa pilihan. */
 function splitInlineOptions(text: string): string[] | null {
-  const re = /(?:^|\s)\*?\(?([a-eA-E])[.)]\s+/g;
+  const re = /(?:^|\s)\*?\(?([a-hA-H])[.)]\s+/g;
   const hits: { idx: number; len: number }[] = [];
   let m: RegExpExecArray | null;
   while ((m = re.exec(text))) hits.push({ idx: m.index + (m[0].startsWith(" ") || m[0].startsWith("\t") ? 1 : 0), len: m[0].trimStart().length });
   if (hits.length < 2 || hits[0].idx !== 0) return null;
   const letters = hits.map((h) => text.slice(h.idx, h.idx + h.len).replace(/[^a-eA-E]/g, "").toLowerCase());
   // Harus berurutan a, b, c, ...
-  if (!letters.every((l, i) => l === "abcde"[i])) return null;
+  if (!letters.every((l, i) => l === "abcdefgh"[i])) return null;
   return hits.map((h, i) => text.slice(h.idx, i + 1 < hits.length ? hits[i + 1].idx : undefined).trim());
 }
 
@@ -127,8 +127,8 @@ export function parseSoalLines(input: ImportLine[]): ImportResult {
     const label = `Soal ${d.num ?? i + 1}`;
     const q = d.q.join(" ").trim();
     if (!q) { skipped.push(`${label}: pertanyaan kosong`); return; }
-    if (d.opts.length !== 4) {
-      skipped.push(`${label}: punya ${d.opts.length} pilihan (game butuh tepat 4: a–d)`);
+    if (d.opts.length !== 4 && d.opts.length !== 5) {
+      skipped.push(`${label}: punya ${d.opts.length} pilihan (harus 4 atau 5: a–d atau a–e)`);
       return;
     }
     let a = d.key ?? (d.num != null && keyByNum.has(d.num) ? keyByNum.get(d.num)! : -1);
@@ -137,10 +137,10 @@ export function parseSoalLines(input: ImportLine[]): ImportResult {
       const bolds = d.opts.map((o, k) => (o.bold ? k : -1)).filter((k) => k >= 0);
       if (bolds.length === 1) a = bolds[0];
     }
-    if (a < 0 || a > 3) { a = 0; noKey.push(soal.length + 1); }
+    if (a < 0 || a >= d.opts.length) { a = 0; noKey.push(soal.length + 1); }
     soal.push({
       q: q.slice(0, 300),
-      o: d.opts.map((o) => o.text.slice(0, 300)) as Soal["o"],
+      o: d.opts.map((o) => o.text.slice(0, 300)),
       a,
     });
   });

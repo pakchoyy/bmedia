@@ -9,6 +9,7 @@ const inputCls =
   "w-full px-3 py-2 nb-flat dark:bg-slate-950 rounded-lg text-sm outline-none focus:ring-4 focus:ring-nb-yellow/60";
 
 const emptySoal = (): Soal => ({ q: "", o: ["", "", "", ""], a: 0 });
+const LETTERS = "ABCDE";
 
 export default function SetEditor({ set }: { set: QuestionSet }) {
   const [title, setTitle] = useState(set.title);
@@ -30,7 +31,7 @@ export default function SetEditor({ set }: { set: QuestionSet }) {
     setDirty(true);
   }
   function setOpt(i: number, j: number, v: string) {
-    setSoal((prev) => prev.map((s, k) => (k === i ? { ...s, o: s.o.map((x, m) => (m === j ? v : x)) as Soal["o"] } : s)));
+    setSoal((prev) => prev.map((s, k) => (k === i ? { ...s, o: s.o.map((x, m) => (m === j ? v : x)) } : s)));
     setDirty(true);
   }
 
@@ -51,7 +52,7 @@ export default function SetEditor({ set }: { set: QuestionSet }) {
     if (!r.soal.length) {
       setMsg({
         type: "err",
-        text: `Tidak ada soal yang terbaca dari ${sumber}. Pastikan soal bernomor (1., 2., …) dengan 4 pilihan a–d.` +
+        text: `Tidak ada soal yang terbaca dari ${sumber}. Pastikan soal bernomor (1., 2., …) dengan 4 atau 5 pilihan (a–d atau a–e).` +
           (r.skipped.length ? ` (${r.skipped.slice(0, 2).join("; ")})` : ""),
       });
       return;
@@ -138,7 +139,7 @@ export default function SetEditor({ set }: { set: QuestionSet }) {
       <div className="nb-sm bg-nb-yellow/30 dark:bg-slate-900 rounded-2xl p-4 text-sm">
         <p className="font-extrabold">📥 Sudah punya soal? Impor saja</p>
         <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
-          Tidak perlu template. Tulis soal bernomor (1., 2., …) dengan pilihan a–d, lalu tandai jawaban benar
+          Tidak perlu template. Tulis soal bernomor (1., 2., …) dengan pilihan a–d (boleh a–e), lalu tandai jawaban benar
           dengan <b>Kunci: A</b>, huruf <b>tebal</b>, atau tanda <b>*</b>.
         </p>
         <div className="flex flex-wrap gap-2 mt-3">
@@ -200,14 +201,23 @@ export default function SetEditor({ set }: { set: QuestionSet }) {
             {s.o.map((opt, j) => (
               <label key={j} className={`flex items-center gap-2 rounded-lg border px-2 py-1.5 ${s.a === j ? "border-success bg-success/10" : "border-gray-200 dark:border-slate-700"}`}>
                 <input type="radio" name={`ans-${i}`} checked={s.a === j} onChange={() => update(i, { a: j })}
-                  className="accent-green-600" aria-label={`Jawaban benar ${"ABCD"[j]}`} />
-                <span className="text-xs font-bold w-3">{"ABCD"[j]}</span>
+                  className="accent-green-600" aria-label={`Jawaban benar ${LETTERS[j]}`} />
+                <span className="text-xs font-bold w-3">{LETTERS[j]}</span>
                 <input value={opt} maxLength={300} onChange={(e) => setOpt(i, j, e.target.value)}
-                  placeholder={`Pilihan ${"ABCD"[j]}`} className="flex-1 min-w-0 bg-transparent outline-none text-sm py-1" />
+                  placeholder={`Pilihan ${LETTERS[j]}`} className="flex-1 min-w-0 bg-transparent outline-none text-sm py-1" />
               </label>
             ))}
           </div>
-          <p className="text-[11px] text-gray-400 mt-1.5">Pilih bulatan di samping jawaban yang benar.</p>
+          <div className="flex items-center gap-3 mt-1.5">
+            <p className="text-[11px] text-gray-400">Pilih bulatan di samping jawaban yang benar.</p>
+            {s.o.length === 4 ? (
+              <button type="button" onClick={() => { update(i, { o: [...s.o, ""] }); }}
+                className="ml-auto text-xs font-bold underline text-nb-ink dark:text-slate-200">+ Pilihan E</button>
+            ) : (
+              <button type="button" onClick={() => { update(i, { o: s.o.slice(0, 4), a: s.a === 4 ? 0 : s.a }); }}
+                className="ml-auto text-xs font-bold underline text-nb-ink dark:text-slate-200">− Hapus pilihan E</button>
+            )}
+          </div>
         </div>
       ))}
 
