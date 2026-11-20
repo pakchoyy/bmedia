@@ -16,12 +16,14 @@ interface Row {
   code: string;
   plays: number;
   n: number;
+  hasil: number;
 }
 
 export default async function GuruDashboard() {
   const guru = await requireGuru();
   const sets = (await sql`
-    SELECT id, title, subject, grade, code, plays, jsonb_array_length(questions)::int AS n
+    SELECT id, title, subject, grade, code, plays, jsonb_array_length(questions)::int AS n,
+      (SELECT count(*)::int FROM play_results r WHERE r.set_id = question_sets.id) AS hasil
     FROM question_sets WHERE teacher_id = ${guru.guruId}
     ORDER BY updated_at DESC
   `) as Row[];
@@ -68,7 +70,7 @@ export default async function GuruDashboard() {
                 <div className="min-w-0">
                   <h3 className="font-bold text-nb-ink dark:text-slate-100 truncate">{s.title}</h3>
                   <p className="text-xs text-gray-500 mt-0.5">
-                    {[s.subject, s.grade].filter(Boolean).join(" · ") || "Tanpa mapel"} · {s.n} soal · dimainkan {s.plays}×
+                    {[s.subject, s.grade].filter(Boolean).join(" · ") || "Tanpa mapel"} · {s.n} soal · dimainkan {s.plays}× · {s.hasil} hasil murid
                   </p>
                 </div>
                 <span className="shrink-0 font-mono font-extrabold tracking-widest text-nb-ink bg-nb-yellow nb-flat rounded-lg px-2 py-1 text-sm">

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { getGame } from "@/lib/games";
 
-export default function SharePanel({ code, game }: { code: string; game: string }) {
+export default function SharePanel({ id, code, game }: { id: string; code: string; game: string }) {
   const [origin, setOrigin] = useState("");
   const [qr, setQr] = useState("");
   const [copied, setCopied] = useState("");
@@ -51,6 +51,10 @@ export default function SharePanel({ code, game }: { code: string; game: string 
           className="w-full nb-flat rounded-lg py-2.5 text-sm font-semibold ">
           {copied === "link" ? "Link disalin ✓" : "🔗 Salin link untuk murid"}
         </button>
+        <a href={`/guru/set/${id}/hasil`}
+          className="nb-sm nb-press w-full bg-nb-mint text-nb-ink rounded-lg py-2.5 text-sm font-extrabold block">
+          📊 Lihat hasil murid
+        </a>
         <a href={`/game/${game}?set=${code}`} target="_blank" rel="noopener"
           className="w-full nb-sm nb-press bg-nb-yellow text-nb-ink rounded-lg py-2.5 text-sm font-extrabold">
           ▶ Coba main / tampilkan di IFP
