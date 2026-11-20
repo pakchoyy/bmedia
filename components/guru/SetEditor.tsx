@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { saveSet, deleteSet } from "@/app/(public)/guru/actions";
 import { CSV_TEMPLATE, MAX_SOAL, parseCsvSoal, type QuestionSet, type Soal } from "@/lib/soal";
+import { GAMES } from "@/lib/games";
 import { htmlToLines, parsePlainText, parseSoalLines, type ImportResult } from "@/lib/soal-import";
 
 const inputCls =
@@ -15,6 +16,7 @@ export default function SetEditor({ set }: { set: QuestionSet }) {
   const [title, setTitle] = useState(set.title);
   const [subject, setSubject] = useState(set.subject ?? "");
   const [grade, setGrade] = useState(set.grade ?? "");
+  const [game, setGame] = useState(set.game || "kupu-kupu");
   const [soal, setSoal] = useState<Soal[]>(set.questions.length ? set.questions : [emptySoal()]);
   const [msg, setMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
   const [dirty, setDirty] = useState(false);
@@ -38,7 +40,7 @@ export default function SetEditor({ set }: { set: QuestionSet }) {
   function save() {
     setMsg(null);
     start(async () => {
-      const res = await saveSet(set.id, { title, subject, grade, questions: soal });
+      const res = await saveSet(set.id, { title, subject, grade, questions: soal, game });
       if (res.ok) {
         setDirty(false);
         setMsg({ type: "ok", text: `Tersimpan ✓ (${soal.length} soal)` });
@@ -120,6 +122,13 @@ export default function SetEditor({ set }: { set: QuestionSet }) {
           <label className="block text-xs font-bold mb-1">Judul set soal</label>
           <input value={title} maxLength={120} onChange={(e) => { setTitle(e.target.value); setDirty(true); }}
             placeholder="Contoh: IPA Kelas 5 – Metamorfosis" className={inputCls} />
+        </div>
+        <div>
+          <label className="block text-xs font-bold mb-1">Game untuk murid</label>
+          <select value={game} onChange={(e) => { setGame(e.target.value); setDirty(true); }} className={inputCls}>
+            {GAMES.map((g) => <option key={g.slug} value={g.slug}>{g.title}</option>)}
+          </select>
+          <p className="text-[11px] text-gray-500 mt-1">Game yang terbuka saat murid memasukkan kode kelas. Di panel kanan kamu bisa mencoba semua game dengan soal ini.</p>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>

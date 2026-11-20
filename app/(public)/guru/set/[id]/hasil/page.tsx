@@ -12,6 +12,7 @@ export const dynamic = "force-dynamic";
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const fmtTgl = (iso: string) =>
   new Date(iso).toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jakarta" });
+const MODE_LABEL: Record<string, string> = { free: "Bebas", edu: "Edukasi", race: "Balap" };
 const pct = (r: number, w: number) => (r + w ? `${Math.round((r / (r + w)) * 100)}%` : "–");
 
 export default async function HasilPage({ params }: { params: { id: string } }) {
@@ -112,10 +113,10 @@ export default async function HasilPage({ params }: { params: { id: string } }) 
                     <tr key={x.id} className="border-b border-gray-100 dark:border-slate-800 last:border-0">
                       <td className="p-3 text-gray-500 whitespace-nowrap">{fmtTgl(x.created_at)}</td>
                       <td className="p-3 font-bold">{x.player_name}</td>
-                      <td className="p-3">{x.mode === "edu" ? "Edukasi" : "Bebas"}</td>
+                      <td className="p-3">{MODE_LABEL[x.mode] ?? x.mode}</td>
                       <td className="p-3 text-right font-extrabold">{x.score}</td>
                       <td className="p-3 text-right">{x.caught}</td>
-                      <td className="p-3 text-right">{x.mode === "edu" ? `${x.quiz_right}/${x.quiz_right + x.quiz_wrong}` : "–"}</td>
+                      <td className="p-3 text-right">{x.mode === "free" ? "–" : `${x.quiz_right}/${x.quiz_right + x.quiz_wrong}`}</td>
                     </tr>
                   ))}
                 </tbody>

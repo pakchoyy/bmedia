@@ -2,7 +2,7 @@
 
 export interface HasilInput {
   name: string;
-  mode: "free" | "edu";
+  mode: "free" | "edu" | "race";
   score: number;
   caught: number;
   quizRight: number;
@@ -29,7 +29,7 @@ export function parseHasil(body: unknown): { ok: true; data: HasilInput } | { ok
   const b = (body ?? {}) as Record<string, unknown>;
   const name = cleanName(b.name);
   if (!name) return { ok: false, error: "Nama wajib diisi." };
-  const mode = b.mode === "free" || b.mode === "edu" ? b.mode : null;
+  const mode = b.mode === "free" || b.mode === "edu" || b.mode === "race" ? b.mode : null;
   if (!mode) return { ok: false, error: "Mode tidak valid." };
   const score = int(b.score, 0, 20000);
   const caught = int(b.caught, 0, 500);

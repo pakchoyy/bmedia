@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { sql } from "@/lib/db";
 import { getCurrentGuru } from "@/lib/guru";
 import { randomCode, validateSoal } from "@/lib/soal";
+import { getGame } from "@/lib/games";
 
 export type SaveResult = { ok: true } | { ok: false; error: string };
 
@@ -33,7 +34,7 @@ export async function createSet(): Promise<void> {
 
 export async function saveSet(
   id: string,
-  data: { title: string; subject: string; grade: string; questions: unknown }
+  data: { title: string; subject: string; grade: string; questions: unknown; game?: string }
 ): Promise<SaveResult> {
   const guru = await getCurrentGuru();
   if (!guru) return { ok: false, error: "Sesi berakhir. Silakan masuk lagi." };
@@ -44,13 +45,14 @@ export async function saveSet(
   const subject = String(data.subject ?? "").trim().slice(0, 60) || null;
   const grade = String(data.grade ?? "").trim().slice(0, 40) || null;
 
+  const game = data.game && getGame(data.game) ? data.game : "kupu-kupu";
   const v = validateSoal(data.questions);
   if (!v.ok) return v;
   if (!v.soal.length) return { ok: false, error: "Tambahkan minimal 1 soal." };
 
   const rows = await sql`
     UPDATE question_sets
-    SET title = ${title}, subject = ${subject}, grade = ${grade},
+    SET title = ${title}, subject = ${subject}, grade = ${grade}, game = ${game},
         questions = ${JSON.stringify(v.soal)}::jsonb, updated_at = now()
     WHERE id = ${id} AND teacher_id = ${guru.guruId}
     RETURNING id

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Balap Kupu · Main-yuk</title>
+<style>
+  :root { --ink:#1b1a3a; --cream:#fff6dc; --yellow:#ffd23f; --orange:#ff7a1a; --pink:#ff5d8f; --mint:#2ec4b6; }
+  * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html, body { width:100%; height:100%; overflow:hidden; background:var(--cream); color:var(--ink);
+    font-family: ui-rounded, "Nunito", "Segoe UI", system-ui, -apple-system, sans-serif; touch-action:manipulation; }
+  button { font:inherit; color:inherit; cursor:pointer; border:0; background:none; }
+  .hidden { display:none !important; }
+  .nb { border:3px solid var(--ink); box-shadow:4px 4px 0 var(--ink); }
+  .nb-sm { border:2px solid var(--ink); box-shadow:2px 2px 0 var(--ink); }
+  .press:active { transform:translate(3px,3px); box-shadow:1px 1px 0 var(--ink); }
+
+  /* ===== Menu ===== */
+  #menu { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:10px; overflow:auto;
+    background: radial-gradient(circle at 12% 18%, #ffe38a 0 90px, transparent 91px), radial-gradient(circle at 90% 85%, #bfe7ff 0 110px, transparent 111px), var(--cream); }
+  .card { background:#fff; border-radius:22px; padding:18px 20px; width:min(100%, 640px); text-align:center; }
+  .card h1 { font-size:clamp(26px, 5vh, 40px); line-height:1.05; font-weight:900; letter-spacing:-.5px; }
+  .card h1 span { color:var(--orange); }
+  .sub { font-size:13px; font-weight:700; opacity:.75; margin-top:4px; }
+  .setinfo { margin-top:8px; font-size:12px; font-weight:800; background:#fff3c4; border:2px solid var(--ink); border-radius:10px; padding:3px 10px; display:inline-block; }
+  .setinfo.ok { background:#c8f7dc; } .setinfo.err { background:#ffd6d6; }
+  .row { margin-top:10px; display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; }
+  .lbl { font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.6px; }
+  .seg button { padding:8px 16px; border-radius:12px; font-weight:900; font-size:16px; background:#fff; min-width:48px; }
+  .seg button.on { background:var(--yellow); }
+  .names { display:grid; gap:6px; grid-template-columns:repeat(2, 1fr); margin-top:10px; }
+  .names label { display:flex; align-items:center; gap:6px; font-size:12px; font-weight:900; }
+  .names i { width:14px; height:14px; border-radius:50%; border:2px solid var(--ink); flex:none; background:var(--c); }
+  .names input { flex:1; min-width:0; font:inherit; font-weight:800; border:2px solid var(--ink); border-radius:9px; padding:5px 8px; }
+  #start { margin-top:14px; width:100%; padding:13px; border-radius:16px; background:var(--orange); font-size:20px; font-weight:900; }
+
+  /* ===== Balapan ===== */
+  #race { position:absolute; inset:0; display:flex; flex-direction:column; background:var(--ink); }
+  .lanes { flex:1 1 auto; min-height:0; display:flex; gap:5px; }
+  .topbar { flex:0 0 auto; display:grid; grid-template-columns:1fr auto 1fr; align-items:center; padding:3px 8px; color:#fff; font-weight:900; }
+  .topbar .brand { font-size:12px; opacity:.8; }
+  .topbar .tb { justify-self:end; display:flex; gap:6px; }
+  .topbar .tb button { color:var(--ink); background:#fff; border-radius:99px; width:30px; height:30px; font-size:14px; line-height:1; }
+  .lane { --c:#ff7675; position:relative; flex:1 1 0; min-width:0; display:flex; flex-direction:column; background:var(--cream); }
+  .lane header { background:var(--c); border-bottom:3px solid var(--ink); display:flex; align-items:center; justify-content:space-between; gap:6px; padding:5px 10px; font-weight:900; }
+  .lane .name { font-size:clamp(13px, 2.4vh, 20px); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .lane .score { font-size:clamp(13px, 2.4vh, 20px); background:#fff; border:2px solid var(--ink); border-radius:99px; padding:0 9px; }
+  .qcard { margin:8px 8px 6px; background:#fff; border-radius:14px; padding:8px 10px; text-align:center; flex:0 0 auto; }
+  .qno { font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.6px; opacity:.6; }
+  .q { font-weight:900; line-height:1.2; font-size:clamp(14px, 3.2vh, 26px); margin-top:2px; max-height:6.2em; overflow:auto; }
+  .opts { flex:1 1 auto; min-height:0; display:flex; flex-direction:column; gap:6px; padding:0 8px 6px; }
+  .opt { flex:1 1 0; min-height:34px; background:#fff; border-radius:12px; font-weight:800; font-size:clamp(13px, 2.8vh, 22px); padding:4px 8px; display:flex; align-items:center; justify-content:flex-start; gap:8px; text-align:left; line-height:1.15; }
+  .opt b { flex:none; width:1.7em; height:1.7em; border-radius:50%; background:var(--c); border:2px solid var(--ink); display:flex; align-items:center; justify-content:center; font-size:.8em; }
+  .opt.good { background:#8cf0b8; } .opt.bad { background:#ff9aa8; }
+  .opt:disabled { cursor:default; }
+  .track { flex:0 0 clamp(56px, 12vh, 96px); border-top:3px solid var(--ink); background:linear-gradient(#bfe7ff 0 55%, #8fd66f 55%); position:relative; overflow:hidden; }
+  .road { position:absolute; left:26px; right:44px; top:0; bottom:0; }
+  .flag { position:absolute; right:6px; bottom:10%; font-size:clamp(22px, 5vh, 36px); line-height:1; }
+  .bf { position:absolute; left:0; top:22%; width:clamp(30px, 7vh, 52px); height:clamp(30px, 7vh, 52px); transform:translateX(0); transition:left .6s cubic-bezier(.3,1.4,.5,1); }
+  .bf svg { width:100%; height:100%; animation:flap .35s ease-in-out infinite alternate; transform-origin:50% 60%; }
+  @keyframes flap { from { transform:scaleX(1); } to { transform:scaleX(.55); } }
+  .count { position:absolute; left:8px; bottom:4px; font-size:11px; font-weight:900; background:#fff; border:2px solid var(--ink); border-radius:99px; padding:0 8px; }
+  .lane.frozen .qcard, .lane.frozen .opts { opacity:.55; filter:saturate(.4); }
+  .ov { position:absolute; inset:0; display:none; align-items:center; justify-content:center; flex-direction:column; gap:6px; text-align:center; font-weight:900; font-size:clamp(20px, 5vh, 36px); background:rgba(27,26,58,.55); color:#fff; padding:10px; z-index:4; }
+  .lane.frozen .ov.freeze { display:flex; background:rgba(120,200,255,.45); color:var(--ink); }
+  .lane.win .ov.win { display:flex; background:rgba(255,210,63,.88); color:var(--ink); }
+  .lane.lose .ov.lose { display:flex; }
+  .timer { background:#fff; color:var(--ink); border-radius:99px; padding:1px 16px; font-weight:900; font-size:clamp(13px, 2.4vh, 20px); }
+
+  /* ===== Hasil ===== */
+  #result { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:10px; background:rgba(27,26,58,.78); z-index:20; overflow:auto; }
+  #result .card { width:min(100%, 560px); }
+  .rank { margin-top:10px; display:grid; gap:6px; text-align:left; }
+  .rk { display:flex; align-items:center; gap:10px; background:var(--cream); border-radius:12px; padding:6px 10px; font-weight:800; }
+  .rk .pos { width:30px; height:30px; border-radius:50%; background:var(--c); border:2px solid var(--ink); display:flex; align-items:center; justify-content:center; font-weight:900; flex:none; }
+  .rk .nm { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .rk small { font-size:11px; opacity:.7; display:block; font-weight:700; }
+  .btns { margin-top:12px; display:flex; gap:8px; }
+  .btns button { flex:1; padding:12px; border-radius:14px; font-weight:900; font-size:16px; }
+  #saved { margin-top:8px; font-size:12px; font-weight:800; }
+  @media (max-height:480px) {
+    .card { padding:10px 14px; border-radius:16px; } .card h1 { font-size:24px; }
+    .row { margin-top:6px; } .names { margin-top:6px; } #start { margin-top:8px; padding:8px; font-size:17px; }
+    .qcard { margin:4px 5px 3px; padding:4px 6px; } .opts { gap:3px; padding:0 5px 3px; } .opt { min-height:26px; border-radius:9px; padding:2px 6px; }
+    .lane header { padding:2px 8px; } .topbar { padding:1px 8px; } .topbar .tb button { width:24px; height:24px; font-size:12px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .bf svg { animation:none; } .bf { transition:none; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="butterfly" viewBox="0 0 64 64">
+    <path d="M32 30 C 30 10, 6 6, 6 24 C 6 36, 20 38, 32 32 Z" fill="var(--c)" stroke="#1b1a3a" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M32 30 C 34 10, 58 6, 58 24 C 58 36, 44 38, 32 32 Z" fill="var(--c)" stroke="#1b1a3a" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M32 33 C 22 36, 10 44, 18 54 C 26 60, 32 48, 32 38 Z" fill="#fff" stroke="#1b1a3a" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M32 33 C 42 36, 54 44, 46 54 C 38 60, 32 48, 32 38 Z" fill="#fff" stroke="#1b1a3a" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="19" cy="22" r="4" fill="#fff"/><circle cx="45" cy="22" r="4" fill="#fff"/>
+    <rect x="29.5" y="22" width="5" height="26" rx="2.5" fill="#1b1a3a"/>
+    <path d="M30 22 C 27 12, 22 10, 20 11 M34 22 C 37 12, 42 10, 44 11" stroke="#1b1a3a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  </symbol>
+</svg>
+
+<div id="menu">
+  <div class="card nb">
+    <h1>Balap <span>Kupu</span> 🦋</h1>
+    <div class="sub">Jawab soal paling cepat dan benar, terbangkan kupu-kupumu ke bunga!</div>
+    <div class="setinfo" id="setinfo">📚 Soal bawaan (12 soal)</div>
+    <div class="row"><span class="lbl">Pemain</span>
+      <div class="seg" id="segPlayers"><button class="nb-sm press" data-n="2">2</button> <button class="nb-sm press" data-n="3">3</button> <button class="nb-sm press" data-n="4">4</button></div></div>
+    <div class="row"><span class="lbl">Target jawaban benar</span>
+      <div class="seg" id="segTarget"><button class="nb-sm press" data-n="5">5</button> <button class="nb-sm press" data-n="8">8</button> <button class="nb-sm press" data-n="10">10</button> <button class="nb-sm press" data-n="15">15</button></div></div>
+    <div class="names" id="names"></div>
+    <button id="start" class="nb press">▶ MULAI BALAPAN</button>
+  </div>
+</div>
+
+<div id="race" class="hidden"></div>
+<div id="result" class="hidden"></div>
+
+<script>
+(function () {
+  'use strict';
+  var COLORS = ['#ff7675', '#4aa8ff', '#55efc4', '#feca57'];
+  var DEFAULT_Q = [
+    { q: 'Hewan yang mengalami metamorfosis sempurna adalah ...', o: ['Kupu-kupu', 'Kucing', 'Ayam', 'Kambing'], a: 0 },
+    { q: 'Bagian tumbuhan yang berfotosintesis adalah ...', o: ['Akar', 'Daun', 'Bunga', 'Buah'], a: 1 },
+    { q: 'Hasil dari 8 × 7 adalah ...', o: ['54', '56', '64', '48'], a: 1 },
+    { q: 'Planet tempat manusia tinggal adalah ...', o: ['Mars', 'Venus', 'Bumi', 'Jupiter'], a: 2 },
+    { q: 'Lawan kata "tinggi" adalah ...', o: ['Besar', 'Rendah', 'Panjang', 'Lebar'], a: 1 },
+    { q: 'Tahap setelah telur pada metamorfosis kupu-kupu adalah ...', o: ['Kepompong', 'Ulat', 'Dewasa', 'Larva kecil'], a: 1 },
+    { q: '15 + 27 = ...', o: ['41', '42', '43', '52'], a: 1 },
+    { q: 'Alat untuk mengukur suhu adalah ...', o: ['Barometer', 'Termometer', 'Penggaris', 'Timbangan'], a: 1 },
+    { q: 'Sumber energi utama bagi bumi adalah ...', o: ['Bulan', 'Matahari', 'Angin', 'Air'], a: 1 },
+    { q: 'Kupu-kupu menghisap nektar dengan ...', o: ['Gigi', 'Probosis', 'Sayap', 'Kaki'], a: 1 },
+    { q: 'Persegi memiliki sisi sebanyak ...', o: ['3', '4', '5', '6'], a: 1 },
+    { q: 'Ibu kota Indonesia saat ini (2024) secara resmi adalah ...', o: ['Bandung', 'Surabaya', 'Jakarta', 'Medan'], a: 2 }
+  ];
+  var $ = function (id) { return document.getElementById(id); };
+  var questions = DEFAULT_Q, setCode = null, nPlayers = 2, target = 8;
+  var lanes = [], running = false, startAt = 0, timerId = 0, finished = false;
+
+  // ---------- Suara ----------
+  var actx = null, muted = false;
+  try { muted = localStorage.getItem('bgy_muted') === '1'; } catch (e) {}
+  function tone(f, t, d, type, v) {
+    if (muted) return;
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      if (actx.state === 'suspended') actx.resume();
+      var o = actx.createOscillator(), g = actx.createGain(), s = actx.currentTime + t;
+      o.type = type || 'sine'; o.frequency.setValueAtTime(f, s);
+      g.gain.setValueAtTime(0.0001, s); g.gain.linearRampToValueAtTime(v || 0.14, s + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, s + d);
+      o.connect(g); g.connect(actx.destination); o.start(s); o.stop(s + d + 0.02);
+    } catch (e) {}
+  }
+  function sGood() { tone(660, 0, .12, 'triangle'); tone(880, .08, .16, 'triangle'); }
+  function sBad() { tone(240, 0, .22, 'sawtooth', .09); tone(180, .1, .25, 'sawtooth', .09); }
+  function sWin() { [523, 659, 784, 1047, 784, 1047].forEach(function (f, i) { tone(f, i * .12, .22, 'triangle', .16); }); }
+  function sTick() { tone(520, 0, .06, 'square', .05); }
+
+  // ---------- Soal guru ----------
+  (function loadSet() {
+    var code = (new URLSearchParams(location.search).get('set') || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (!code) return;
+    var info = $('setinfo'); info.textContent = '⏳ Memuat soal dari guru...';
+    fetch('/api/set/' + code).then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); }).then(function (d) {
+      var qs = (Array.isArray(d.questions) ? d.questions : []).filter(function (q) {
+        return q && typeof q.q === 'string' && Array.isArray(q.o) && (q.o.length === 4 || q.o.length === 5) && q.a >= 0 && q.a < q.o.length;
+      });
+      if (!qs.length) throw new Error('kosong');
+      questions = qs; setCode = code;
+      info.textContent = '📚 Soal guru: ' + d.title + ' (' + qs.length + ' soal)'; info.className = 'setinfo ok';
+    }).catch(function () { info.textContent = '⚠️ Kode soal tidak ditemukan. Memakai soal bawaan.'; info.className = 'setinfo err'; });
+  })();
+
+  // ---------- Menu ----------
+  function renderNames() {
+    var box = $('names'); box.innerHTML = '';
+    for (var i = 0; i < nPlayers; i++) {
+      var l = document.createElement('label'); l.style.setProperty('--c', COLORS[i]);
+      l.innerHTML = '<i></i><input maxlength="14" placeholder="Pemain ' + (i + 1) + '" data-i="' + i + '" autocomplete="off">';
+      box.appendChild(l);
+    }
+  }
+  function seg(id, fn, initial) {
+    var el = $(id);
+    el.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      fn(parseInt(b.dataset.n, 10)); mark(); tone(600, 0, .06, 'sine', .08);
+    });
+    function mark() { [].forEach.call(el.children, function (b) { b.classList.toggle('on', parseInt(b.dataset.n, 10) === initial()); }); }
+    mark(); return mark;
+  }
+  var markP = seg('segPlayers', function (n) { nPlayers = n; renderNames(); }, function () { return nPlayers; });
+  var markT = seg('segTarget', function (n) { target = n; }, function () { return target; });
+  renderNames();
+
+  // ---------- Balapan ----------
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function nextIndex(L) {
+    if (!L.bag.length) L.bag = shuffle(questions.map(function (_, i) { return i; }));
+    return L.bag.pop();
+  }
+
+  function buildLane(i, name) {
+    var el = document.createElement('section'); el.className = 'lane'; el.style.setProperty('--c', COLORS[i]);
+    el.innerHTML =
+      '<header><span class="name"></span><span class="score">0</span></header>' +
+      '<div class="qcard nb-sm"><div class="qno"></div><div class="q"></div></div>' +
+      '<div class="opts"></div>' +
+      '<div class="track"><div class="road"><div class="bf"><svg viewBox="0 0 64 64"><use href="#butterfly"/></svg></div></div><div class="flag">🌸</div><div class="count">0/' + target + '</div></div>' +
+      '<div class="ov freeze">❄️ Salah!<small style="font-size:.5em">tunggu sebentar…</small></div>' +
+      '<div class="ov win">🏆<div>' + '<span class="wn"></span> MENANG!</div></div>';
+    el.querySelector('.name').textContent = name;
+    return {
+      i: i, name: name, el: el, bag: [], cur: null, correct: 0, wrong: 0, score: 0, locked: false, shownAt: 0, lastCorrectAt: 0, qstats: {}
+    };
+  }
+
+  function showQuestion(L) {
+    var idx = nextIndex(L), item = questions[idx];
+    L.cur = { idx: idx, item: item };
+    L.shownAt = performance.now(); L.locked = false;
+    L.el.querySelector('.qno').textContent = 'Soal ' + (L.correct + L.wrong + 1);
+    L.el.querySelector('.q').textContent = item.q;
+    var box = L.el.querySelector('.opts'); box.innerHTML = '';
+    item.o.forEach(function (text, k) {
+      var b = document.createElement('button'); b.className = 'opt nb-sm press'; b.type = 'button';
+      var lt = document.createElement('b'); lt.textContent = 'ABCDE'[k];
+      var tx = document.createElement('span'); tx.textContent = text;
+      b.appendChild(lt); b.appendChild(tx);
+      // pointerdown: respons cepat & mendukung sentuhan banyak jari bersamaan
+      b.addEventListener('pointerdown', function (e) { e.preventDefault(); answer(L, k, b); });
+      box.appendChild(b);
+    });
+  }
+
+  function answer(L, k, btn) {
+    if (!running || L.locked || finished) return;
+    L.locked = true;
+    var item = L.cur.item, ok = k === item.a, t = performance.now() - L.shownAt;
+    var qs = L.qstats[L.cur.idx] || (L.qstats[L.cur.idx] = [0, 0]); qs[ok ? 0 : 1]++;
+    var btns = L.el.querySelectorAll('.opt'); [].forEach.call(btns, function (b) { b.disabled = true; });
+    btns[item.a].classList.add('good');
+    if (ok) {
+      sGood(); L.correct++; L.lastCorrectAt = performance.now();
+      L.score += 100 + Math.max(0, Math.round((5000 - t) / 100));
+      L.el.querySelector('.score').textContent = L.score;
+      L.el.querySelector('.count').textContent = L.correct + '/' + target;
+      L.el.querySelector('.bf').style.left = 'calc((100% - clamp(30px, 7vh, 52px)) * ' + (L.correct / target) + ')';
+      if (L.correct >= target) { finish(L); return; }
+      setTimeout(function () { if (!finished) showQuestion(L); }, 650);
+    } else {
+      sBad(); btn.classList.add('bad'); L.wrong++;
+      L.el.classList.add('frozen');
+      setTimeout(function () { L.el.classList.remove('frozen'); if (!finished) showQuestion(L); }, 1700);
+    }
+  }
+
+  function tickTimer() {
+    var s = Math.floor((performance.now() - startAt) / 1000);
+    $('timer').textContent = '⏱ ' + String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+  }
+
+  function start() {
+    var names = [].map.call($('names').querySelectorAll('input'), function (inp, i) { return (inp.value || '').trim().replace(/[<>]/g, '') || ('Pemain ' + (i + 1)); });
+    finished = false; running = true;
+    var race = $('race'); race.innerHTML = ''; race.classList.remove('hidden');
+    $('menu').classList.add('hidden'); $('result').classList.add('hidden');
+    lanes = names.map(function (n, i) { return buildLane(i, n); });
+    var bar = document.createElement('div'); bar.className = 'topbar';
+    bar.innerHTML = '<span class="brand">Main-yuk · Balap Kupu</span><span id="timer" class="timer nb-sm">⏱ 00:00</span>' +
+      '<span class="tb"><button class="nb-sm press" id="bMute" aria-label="Suara">' + (muted ? '🔇' : '🔊') + '</button><button class="nb-sm press" id="bExit" aria-label="Keluar">✖</button></span>';
+    race.appendChild(bar);
+    var wrap = document.createElement('div'); wrap.className = 'lanes'; race.appendChild(wrap);
+    lanes.forEach(function (L) { wrap.appendChild(L.el); showQuestion(L); });
+    $('bMute').onclick = function () { muted = !muted; try { localStorage.setItem('bgy_muted', muted ? '1' : '0'); } catch (e) {} this.textContent = muted ? '🔇' : '🔊'; };
+    $('bExit').onclick = function () { if (confirm('Keluar dari balapan?')) toMenu(); };
+    // hitung mundur 3-2-1
+    running = false; var n = 3, ov = document.createElement('div');
+    ov.style.cssText = 'position:absolute;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:rgba(27,26,58,.6);color:#fff;font-weight:900;font-size:22vh';
+    race.appendChild(ov);
+    (function cd() {
+      if (n > 0) { ov.textContent = n; sTick(); n--; setTimeout(cd, 800); }
+      else { ov.textContent = 'GO!'; tone(880, 0, .3, 'triangle', .18); setTimeout(function () { ov.remove(); }, 450); running = true; startAt = performance.now(); timerId = setInterval(tickTimer, 250); tickTimer(); }
+    })();
+  }
+
+  function finish(winner) {
+    finished = true; running = false; clearInterval(timerId); sWin();
+    var dur = Math.round((performance.now() - startAt) / 1000);
+    winner.el.classList.add('win'); winner.el.querySelector('.wn').textContent = winner.name;
+    setTimeout(function () { showResult(winner, dur); }, 1500);
+  }
+
+  function showResult(winner, dur) {
+    var order = lanes.slice().sort(function (a, b) {
+      if (a === winner) return -1; if (b === winner) return 1;
+      return b.correct - a.correct || a.lastCorrectAt - b.lastCorrectAt;
+    });
+    var medals = ['🥇', '🥈', '🥉', '4'];
+    var res = $('result'); res.classList.remove('hidden');
+    res.innerHTML = '<div class="card nb"><h1>🏆 <span></span> menang!</h1><div class="sub">Waktu ' + dur + ' detik · target ' + target + ' jawaban benar</div><div class="rank"></div><div id="saved"></div>' +
+      '<div class="btns"><button id="again" class="nb press" style="background:var(--orange)">🔄 Main Lagi</button><button id="toMenu" class="nb press" style="background:var(--yellow)">🏠 Menu</button></div></div>';
+    res.querySelector('h1 span').textContent = winner.name;
+    var box = res.querySelector('.rank');
+    order.forEach(function (L, r) {
+      var d = document.createElement('div'); d.className = 'rk'; d.style.setProperty('--c', COLORS[L.i]);
+      var pos = document.createElement('span'); pos.className = 'pos'; pos.textContent = medals[r] || (r + 1);
+      var nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = L.name;
+      var sm = document.createElement('small'); sm.textContent = L.correct + ' benar · ' + L.wrong + ' salah';
+      nm.appendChild(sm);
+      var sc = document.createElement('b'); sc.textContent = L.score;
+      d.appendChild(pos); d.appendChild(nm); d.appendChild(sc); box.appendChild(d);
+    });
+    $('again').onclick = start; $('toMenu').onclick = toMenu;
+    submitResults(dur);
+  }
+
+  function submitResults(dur) {
+    if (!setCode) return;
+    var saved = $('saved'); saved.textContent = '⏳ Menyimpan hasil ke kelas...';
+    var jobs = lanes.map(function (L) {
+      return fetch('/api/set/' + setCode + '/hasil', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true,
+        body: JSON.stringify({ name: L.name, mode: 'race', score: L.score, caught: L.correct, quizRight: L.correct, quizWrong: L.wrong, durationS: dur, qStats: L.qstats })
+      }).then(function (r) { if (!r.ok) throw new Error(r.status); });
+    });
+    Promise.all(jobs).then(function () { saved.textContent = '✅ Hasil tersimpan di kelas'; }).catch(function () { saved.textContent = '⚠️ Hasil belum tersimpan (periksa internet)'; });
+  }
+
+  function toMenu() {
+    running = false; finished = true; clearInterval(timerId);
+    $('race').classList.add('hidden'); $('result').classList.add('hidden'); $('menu').classList.remove('hidden');
+  }
+
+  $('start').addEventListener('click', function () { tone(700, 0, .08, 'sine', .1); start(); });
+  window.addEventListener('keydown', function (e) {
+    // pintasan keyboard untuk uji di laptop: lajur 1 = 1-5, lajur 2 = 6-0 (opsional)
+    if (!running) return;
+  });
+})();
+</script>
+</body>
+</html>

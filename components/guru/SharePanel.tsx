@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import QRCode from "qrcode";
-import { getGame } from "@/lib/games";
+import { GAMES, getGame } from "@/lib/games";
 
 export default function SharePanel({ id, code, game }: { id: string; code: string; game: string }) {
   const [origin, setOrigin] = useState("");
@@ -55,10 +55,12 @@ export default function SharePanel({ id, code, game }: { id: string; code: strin
           className="nb-sm nb-press w-full bg-nb-mint text-nb-ink rounded-lg py-2.5 text-sm font-extrabold block">
           📊 Lihat hasil murid
         </a>
-        <a href={`/game/${game}?set=${code}`} target="_blank" rel="noopener"
-          className="w-full nb-sm nb-press bg-nb-yellow text-nb-ink rounded-lg py-2.5 text-sm font-extrabold">
-          ▶ Coba main / tampilkan di IFP
-        </a>
+        {GAMES.map((g) => (
+          <a key={g.slug} href={`/game/${g.slug}?set=${code}`} target="_blank" rel="noopener"
+            className="w-full nb-sm nb-press bg-nb-yellow text-nb-ink rounded-lg py-2.5 text-sm font-extrabold block">
+            ▶ Coba: {g.title}{g.slug === "balap-kupu" ? " (IFP)" : ""}
+          </a>
+        ))}
       </div>
       <p className="text-[11px] text-gray-400 mt-3">Simpan perubahan soal dulu sebelum murid bermain.</p>
     </aside>

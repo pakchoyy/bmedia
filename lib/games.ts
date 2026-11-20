@@ -16,6 +16,14 @@ export const GAMES: GameInfo[] = [
     preview: "/games/kupu-kupu/preview.webp",
     modes: ["Main Bebas", "Edukasi", "Duel 2 Pemain"],
   },
+  {
+    slug: "balap-kupu",
+    title: "Balap Kupu",
+    src: "/games/balap-kupu/index.html",
+    tagline: "Layar dibagi per pemain. Jawab soal paling cepat, terbangkan kupu-kupumu ke bunga lebih dulu!",
+    preview: "/games/balap-kupu/preview.webp",
+    modes: ["2–4 Pemain", "Satu Layar", "Cocok untuk IFP"],
+  },
 ];
 
 export function getGame(slug: string): GameInfo | undefined {
