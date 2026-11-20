@@ -168,6 +168,7 @@
 
         /* ===== Mode Duel ===== */
         .duel-only, .p2-ctl { display: none; }
+        #game-container:not(.is-duel) .p2-ctl, #game-container:not(.is-duel) .duel-only { display: none !important; }
         .is-duel .duel-only { display: flex; }
         .is-duel .solo-only, .is-duel .badge-title, .is-duel #hud-combo { display: none !important; }
         .is-duel #timer-card { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); z-index: 11; }
