@@ -79,7 +79,7 @@ export default function AuthForm({ mode }: { mode: "daftar" | "masuk" }) {
         )}
 
         <button type="submit" disabled={loading}
-          className="w-full nb-sm nb-press bg-nb-orange text-white py-3 rounded-lg font-bold disabled:opacity-60">
+          className="w-full nb-sm nb-press bg-nb-orange text-nb-ink py-3 rounded-lg font-bold disabled:opacity-60">
           {loading ? "Memproses..." : daftar ? "Daftar" : "Masuk"}
         </button>
       </form>

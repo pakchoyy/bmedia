@@ -21,18 +21,14 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 bg-nb-cream dark:bg-[#1d1a3d] border-b-[3px] border-nb-ink dark:border-[var(--nb-ink)]">
       <div className="container mx-auto max-w-[1200px] pl-5 pr-4 flex items-center justify-between h-14 w-full">
         <Link href="/" className="flex items-center gap-2.5 font-display font-bold text-nb-ink dark:text-white">
-          <img
-            src="/guru-cibisd2.png"
-            alt="BGY"
-            className="w-9 h-9 rounded-full object-cover shrink-0 nb-flat bg-white"
-          />
-          <span className="whitespace-nowrap text-[15px] sm:text-base">Bantu Guru Yuk <span className="max-sm:hidden text-nb-orange">· Media Belajar</span></span>
+          <span aria-hidden="true" className="nb-sm w-10 h-10 rounded-xl bg-nb-yellow text-nb-ink flex items-center justify-center -rotate-6"><Icon name="gamepad" className="text-xl" /></span>
+          <span className="whitespace-nowrap text-xl">Main<span className="text-nb-orange">-yuk</span></span>
         </Link>
 
         <div className="relative flex items-center gap-2">
           <ThemeToggle />
           <button
-            className="nb-sm nb-press w-9 h-9 flex items-center justify-center rounded-lg text-nb-ink bg-nb-yellow"
+            className="nb-sm nb-press w-11 h-11 flex items-center justify-center rounded-lg text-nb-ink bg-nb-yellow"
             onClick={() => setOpen(!open)}
             aria-label="Menu"
             aria-expanded={open}

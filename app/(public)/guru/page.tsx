@@ -5,7 +5,7 @@ import { requireGuru } from "@/lib/guru";
 import { createSet } from "./actions";
 import LogoutButton from "@/components/guru/LogoutButton";
 
-export const metadata: Metadata = { title: "Ruang Guru | BGY" };
+export const metadata: Metadata = { title: "Ruang Guru" };
 export const dynamic = "force-dynamic";
 
 interface Row {
@@ -48,7 +48,7 @@ export default async function GuruDashboard() {
       <div className="flex items-center justify-between mb-3">
         <h2 className="font-display font-bold text-xl text-nb-ink dark:text-slate-100">Set Soal Saya</h2>
         <form action={createSet}>
-          <button className="nb-sm nb-press bg-nb-orange text-white font-bold px-4 py-2.5 rounded-lg text-sm">
+          <button className="nb-sm nb-press bg-nb-orange text-nb-ink font-bold px-4 py-2.5 rounded-lg text-sm">
             + Buat Set Soal
           </button>
         </form>

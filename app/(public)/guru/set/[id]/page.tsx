@@ -7,7 +7,7 @@ import type { QuestionSet } from "@/lib/soal";
 import SetEditor from "@/components/guru/SetEditor";
 import SharePanel from "@/components/guru/SharePanel";
 
-export const metadata: Metadata = { title: "Edit Set Soal | BGY" };
+export const metadata: Metadata = { title: "Edit Set Soal" };
 export const dynamic = "force-dynamic";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

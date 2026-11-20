@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import AuthForm from "@/components/guru/AuthForm";
 import { getCurrentGuru } from "@/lib/guru";
 
-export const metadata: Metadata = { title: "Masuk Guru | BGY" };
+export const metadata: Metadata = { title: "Masuk Guru" };
 export const dynamic = "force-dynamic";
 
 export default async function MasukGuruPage() {

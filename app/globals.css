@@ -80,6 +80,11 @@ button {
 
 
 /* ===== Neo-brutalism ===== */
+:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
 .nb {
   border: 3px solid var(--nb-ink);
   box-shadow: 5px 5px 0 var(--nb-ink);

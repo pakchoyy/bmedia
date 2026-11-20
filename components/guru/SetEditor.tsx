@@ -168,7 +168,7 @@ export default function SetEditor({ set }: { set: QuestionSet }) {
               className={inputCls + " font-mono text-xs"} />
             <div className="flex gap-2 mt-2">
               <button onClick={importPaste} disabled={!pasteText.trim()}
-                className="px-3 py-2 rounded-lg nb-sm nb-press bg-nb-orange text-white font-bold disabled:opacity-50">
+                className="px-3 py-2 rounded-lg nb-sm nb-press bg-nb-orange text-nb-ink font-bold disabled:opacity-50">
                 Baca soal
               </button>
               <button onClick={() => setPasteOpen(false)} className="px-3 py-2 text-xs font-semibold text-slate-500">Batal</button>
@@ -219,7 +219,7 @@ export default function SetEditor({ set }: { set: QuestionSet }) {
       {/* Bar simpan */}
       <div className="sticky bottom-3 z-10 nb bg-white dark:bg-slate-900 rounded-2xl p-3 flex flex-wrap items-center gap-3">
         <button onClick={save} disabled={pending}
-          className="nb-sm nb-press bg-nb-orange text-white font-bold px-5 py-2.5 rounded-lg disabled:opacity-60">
+          className="nb-sm nb-press bg-nb-orange text-nb-ink font-bold px-5 py-2.5 rounded-lg disabled:opacity-60">
           {pending ? "Menyimpan..." : "Simpan"}
         </button>
         <span className={`text-sm ${msg?.type === "err" ? "text-danger" : "text-success"}`} role="status">

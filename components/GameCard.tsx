@@ -21,9 +21,9 @@ export default function GameCard({ media, categoryColor }: { media: Media; categ
     >
       <div className="relative h-32 sm:h-44 overflow-hidden border-b-[3px] border-nb-ink dark:border-[var(--nb-ink)]">
         <div
-          className="absolute top-2 left-2 z-10 nb-flat rounded-full px-2 sm:px-2.5 py-0.5 text-[10px] sm:text-[11px] font-extrabold text-white"
-          style={{ backgroundColor: categoryColor || "#16a34a" }}
+          className="absolute top-2 left-2 z-10 nb-flat rounded-full bg-white px-2 sm:px-2.5 py-0.5 text-[10px] sm:text-[11px] font-extrabold text-nb-ink inline-flex items-center gap-1"
         >
+          <span aria-hidden="true" className="w-2 h-2 rounded-full border border-nb-ink" style={{ backgroundColor: categoryColor || "#16a34a" }} />
           {media.category}
         </div>
         <MediaThumb media={media} className="transition-transform duration-500 group-hover:scale-105" />
@@ -61,7 +61,7 @@ export default function GameCard({ media, categoryColor }: { media: Media; categ
           </span>
         </div>
 
-        <div className="nb-sm mt-3 py-1.5 sm:py-2 rounded-xl bg-nb-orange text-white font-extrabold text-xs sm:text-sm text-center group-hover:bg-nb-ink transition-colors">
+        <div className="nb-sm mt-3 py-1.5 sm:py-2 rounded-xl bg-nb-orange text-nb-ink font-extrabold text-xs sm:text-sm text-center group-hover:bg-nb-ink group-hover:text-white transition-colors">
           Buka Media →
         </div>
       </div>

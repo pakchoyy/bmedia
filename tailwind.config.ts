@@ -27,7 +27,7 @@ const config: Config = {
           cream: "#fff6dc",
           yellow: "#ffd23f",
           orange: "#ff7a1a",
-          blue: "#3a86ff",
+          blue: "#2563eb",
           pink: "#ff5d8f",
           mint: "#2ec4b6",
           lilac: "#b79cff",

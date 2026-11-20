@@ -12,7 +12,7 @@ export default function CTAKirimKarya() {
       <p className="mb-5 max-w-[440px] text-nb-ink/80">
         Bagikan karyamu dan bantu guru lain. Media ditinjau dulu sebelum dipublikasikan.
       </p>
-      <Link href="/submit" className="nb nb-hover nb-press mt-auto bg-nb-orange text-white font-extrabold rounded-xl px-5 py-3 inline-flex items-center gap-2">
+      <Link href="/submit" className="nb nb-hover nb-press mt-auto bg-nb-orange text-nb-ink font-extrabold rounded-xl px-5 py-3 inline-flex items-center gap-2">
         <Icon name="plus" /> Kirim Karya
       </Link>
     </div>

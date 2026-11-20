@@ -131,7 +131,7 @@ export default function HomeMediaSection({ media }: HomeMediaSectionProps) {
             {isFiltering && (
               <button
                 onClick={() => { setQuery(""); setJenjang(""); setKelas(""); setMapel(""); setKategori(""); }}
-                className="nb-flat px-3 py-1.5 rounded-lg text-xs font-extrabold bg-nb-pink text-white"
+                className="nb-flat px-3 py-1.5 rounded-lg text-xs font-extrabold bg-nb-pink text-nb-ink"
               >
                 Reset
               </button>

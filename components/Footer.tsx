@@ -11,7 +11,7 @@ export default function Footer() {
             <span className="w-9 h-9 rounded-xl bg-nb-yellow text-nb-ink flex items-center justify-center border-2 border-white">
               <Icon name="gamepad" />
             </span>
-            Bantu Guru Yuk
+            Main<span className="text-nb-yellow">-yuk</span>
           </div>
           <p className="mt-3 text-sm text-white/75 max-w-[360px]">
             Ruang berbagi media pembelajaran interaktif karya guru Indonesia. Belajar jadi seru, mengajar jadi lebih mudah.
@@ -44,7 +44,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="border-t-2 border-white/15 text-center py-3 text-xs text-white/60">
-        © Bantu Guru Yuk · dibuat oleh Pak Choyy
+        © Main-yuk · dibuat oleh Pak Choyy untuk guru Indonesia
       </div>
     </footer>
   );

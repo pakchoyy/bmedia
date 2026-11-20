@@ -51,7 +51,7 @@ export default function GameFrame({ title, src }: { title: string; src: string }
           href="/"
           className="absolute left-2 bottom-2 z-10 rounded-full bg-black/55 text-white text-xs font-bold px-3 py-1.5"
         >
-          ← BGY
+          ← Main-yuk
         </Link>
       )}
       <button
