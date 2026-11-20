@@ -165,6 +165,38 @@
         .quiz-opt:disabled { cursor: default; }
         .quiz-feedback { min-height: 22px; margin-top: 10px; font-weight: 900; font-size: 15px; color: #594a42; }
 
+
+        /* ===== Mode Duel ===== */
+        .duel-only, .p2-ctl { display: none; }
+        .is-duel .duel-only { display: flex; }
+        .is-duel .solo-only, .is-duel .badge-title, .is-duel #hud-combo { display: none !important; }
+        .is-duel #timer-card { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); z-index: 11; }
+        .is-duel .hud-top { justify-content: space-between; }
+        .controls-bottom { position: relative; }
+        .is-duel .p2-ctl { display: flex; }
+        .is-duel .desktop-hint { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); font-size: 11px; white-space: nowrap; }
+        .is-duel #catch-zone-1 { position: absolute; left: 160px; bottom: 18px; }
+        .is-duel #joystick-zone-2 { position: absolute; right: 16px; bottom: 18px; }
+        .is-duel #catch-zone-2 { position: absolute; right: 160px; bottom: 18px; }
+        .catch-btn.catch-btn-p2 { background: radial-gradient(circle at 30% 30%, #9bd8ff, #3498db); }
+        .joystick-stick.stick-p2, .is-duel .joystick-stick.stick-p2 { background: radial-gradient(circle at 30% 30%, #9bd8ff, #4aa8ff); }
+        .is-duel .joystick-stick:not(.stick-p2) { background: radial-gradient(circle at 30% 30%, #ffb3ad, #ff7675); }
+
+        .dq { display: none; position: absolute; top: 70px; width: calc(50% - 20px); max-width: 430px; z-index: 20;
+              background: #fffdf4; border: 4px solid #4a3b32; border-radius: 20px; padding: 10px 12px; text-align: center;
+              box-shadow: 0 6px 0 #4a3b32, 0 12px 24px rgba(0,0,0,.3); }
+        .dq.show { display: block; }
+        .dq-p1 { left: 10px; border-color: #e0524f; box-shadow: 0 6px 0 #e0524f, 0 12px 24px rgba(0,0,0,.3); }
+        .dq-p2 { right: 10px; border-color: #2d8fe0; box-shadow: 0 6px 0 #2d8fe0, 0 12px 24px rgba(0,0,0,.3); }
+        .dq-head { font-size: 12px; font-weight: 900; color: #4a3b32; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .dq-who { color: #fff; border: 2px solid #4a3b32; border-radius: 99px; padding: 1px 9px; }
+        .dq-bar { height: 7px; border-radius: 99px; background: rgba(74,59,50,.2); margin: 6px 0 8px; overflow: hidden; }
+        .dq-bar > i { display: block; height: 100%; width: 100%; background: #feca57; transition: width .1s linear; }
+        .dq .quiz-q { font-size: 15px; margin-bottom: 8px; }
+        .dq .quiz-opts { gap: 6px; }
+        .dq .quiz-opt { padding: 6px 4px; font-size: 13px; min-height: 40px; border-width: 3px; border-radius: 12px; }
+        .dq .quiz-feedback { min-height: 16px; margin-top: 6px; font-size: 12px; }
+
         @keyframes pulseText {
             from { transform: scale(1); }
             to { transform: scale(1.15); }
@@ -542,6 +574,15 @@
         }
 
         @media (max-height: 480px) {
+            .is-duel .joystick-zone { width: 104px; height: 104px; }
+            .is-duel .joystick-base { width: 96px; height: 96px; }
+            .is-duel .catch-btn { width: 78px; height: 78px; font-size: 11px; }
+            .is-duel .catch-btn svg { width: 26px; height: 26px; }
+            .is-duel #catch-zone-1 { left: 126px; bottom: 10px; }
+            .is-duel #catch-zone-2 { right: 126px; bottom: 10px; }
+            .is-duel #joystick-zone-2 { bottom: 8px; right: 10px; }
+            .is-duel .controls-bottom { padding-bottom: 8px; }
+            .dq { top: 54px; padding: 6px 8px; border-width: 3px; }
             .mode-buttons { flex-direction: row; gap: 8px; }
             .mode-buttons .primary-btn, .mode-buttons .secondary-btn { margin-top: 0; padding: 8px 6px; font-size: 13px; }
             .edu-opts { margin-top: 6px; font-size: 11px; }
@@ -566,22 +607,28 @@
                 <div class="badge-card badge-title">
                     <span>🦋 BUTTERFLY CATCHER</span>
                 </div>
-                <div class="badge-card">
+                <div class="badge-card solo-only">
                     <div>
                         <span class="badge-label">Skor</span>
                         <span class="badge-value" id="hud-score">0</span>
                     </div>
                 </div>
-                <div class="badge-card">
+                <div class="badge-card solo-only">
                     <div>
                         <span class="badge-label">Rekor</span>
                         <span class="badge-value" id="hud-best">0</span>
                     </div>
                 </div>
-                <div class="badge-card">
+                <div class="badge-card solo-only">
                     <div>
                         <span class="badge-label">Level</span>
                         <span class="badge-value" id="hud-level">1</span>
+                    </div>
+                </div>
+                <div class="badge-card duel-only" style="border-color:#e0524f;">
+                    <div>
+                        <span class="badge-label" style="color:#e0524f;">P1 🔴</span>
+                        <span class="badge-value" id="duel-s1">0</span>
                     </div>
                 </div>
             </div>
@@ -595,6 +642,12 @@
             </div>
 
             <div class="hud-group">
+                <div class="badge-card duel-only" style="border-color:#2d8fe0;">
+                    <div>
+                        <span class="badge-label" style="color:#2d8fe0;">P2 🔵</span>
+                        <span class="badge-value" id="duel-s2">0</span>
+                    </div>
+                </div>
                 <div class="badge-card" id="timer-card">
                     <div>
                         <span class="badge-label">Waktu</span>
@@ -618,7 +671,7 @@
                 💻 WASD / Panah: Jalan &nbsp;|&nbsp; SPASI: Tangkap
             </div>
 
-            <div class="catch-btn-zone">
+            <div class="catch-btn-zone" id="catch-zone-1">
                 <button class="catch-btn" id="btn-catch" aria-label="Tangkap Kupu-Kupu">
                     <svg viewBox="0 0 64 64" fill="none">
                         <ellipse cx="42" cy="22" rx="16" ry="12" transform="rotate(-30 42 22)" fill="#fff" stroke="#4a3b32" stroke-width="4"/>
@@ -629,7 +682,41 @@
                     TANGKAP
                 </button>
             </div>
+
+            <!-- Kontrol Pemain 2 (hanya tampil saat Duel) -->
+            <div class="catch-btn-zone p2-ctl" id="catch-zone-2">
+                <button class="catch-btn catch-btn-p2" id="btn-catch-2" aria-label="Tangkap Pemain 2">
+                    <svg viewBox="0 0 64 64" fill="none">
+                        <ellipse cx="42" cy="22" rx="16" ry="12" transform="rotate(-30 42 22)" fill="#fff" stroke="#4a3b32" stroke-width="4"/>
+                        <path d="M30 28 C34 42, 52 38, 54 20" fill="rgba(255,255,255,0.6)" stroke="#4a3b32" stroke-width="3.5" stroke-dasharray="4 3"/>
+                        <line x1="10" y1="54" x2="32" y2="30" stroke="#feca57" stroke-width="6" stroke-linecap="round"/>
+                        <line x1="10" y1="54" x2="32" y2="30" stroke="#4a3b32" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    TANGKAP
+                </button>
+            </div>
+            <div class="joystick-zone p2-ctl" id="joystick-zone-2">
+                <div class="joystick-base" id="joystick-base-2">
+                    <div class="joystick-stick stick-p2" id="joystick-stick-2"></div>
+                </div>
+            </div>
         </div>
+    </div>
+
+    <!-- Panel kuis Duel (satu per pemain, lawan tetap bermain) -->
+    <div class="dq dq-p1" id="dq-0">
+        <div class="dq-head"><span class="dq-who" style="background:#ff7675;">P1</span> 📖 <b class="dq-reward"></b> poin jika benar</div>
+        <div class="dq-bar"><i></i></div>
+        <div class="dq-q quiz-q"></div>
+        <div class="dq-opts quiz-opts"></div>
+        <div class="dq-fb quiz-feedback"></div>
+    </div>
+    <div class="dq dq-p2" id="dq-1">
+        <div class="dq-head"><span class="dq-who" style="background:#4aa8ff;">P2</span> 📖 <b class="dq-reward"></b> poin jika benar</div>
+        <div class="dq-bar"><i></i></div>
+        <div class="dq-q quiz-q"></div>
+        <div class="dq-opts quiz-opts"></div>
+        <div class="dq-fb quiz-feedback"></div>
     </div>
 
     <!-- START MENU MODAL -->
@@ -664,9 +751,9 @@
             <div class="mode-buttons">
                 <button class="primary-btn" id="btn-mode-free">🌿 MAIN BEBAS</button>
                 <button class="secondary-btn" id="btn-mode-edu">📖 EDUKASI</button>
-                <button class="secondary-btn" id="btn-mode-duel" disabled>⚔️ DUEL (segera)</button>
+                <button class="secondary-btn" id="btn-mode-duel">⚔️ DUEL 2 PEMAIN</button>
             </div>
-            <div class="edu-opts">Mode Edukasi: soal muncul tiap
+            <div class="edu-opts">Edukasi &amp; Duel: soal muncul tiap
                 <select id="sel-every"><option value="2">2</option><option value="3" selected>3</option><option value="5">5</option></select>
                 kupu-kupu
             </div>
@@ -699,7 +786,7 @@
     <!-- GAME OVER MODAL -->
     <div class="modal-overlay" id="modal-gameover">
         <div class="modal-card">
-            <h2 class="game-logo-title" style="font-size:32px;">WAKTU HABIS!</h2>
+            <h2 class="game-logo-title" id="gameover-title" style="font-size:32px;">WAKTU HABIS!</h2>
             <div class="game-subtitle" id="gameover-badge">🎉 Kerja Bagus, Penangkap Handal!</div>
 
             <div class="stats-grid">
@@ -966,6 +1053,7 @@
         canvas.height = window.innerHeight;
         CAMERA.width = canvas.width;
         CAMERA.height = canvas.height;
+        if (window.__bcReady) applyView();
     }
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
@@ -1171,13 +1259,9 @@
     };
 
     let currentState = STATE.MENU;
-    let score = 0;
     let highScore = 0;
     let timeLeft = 60;
     let level = 1;
-    let butterfliesCaught = 0;
-    let comboCount = 0;
-    let comboTimer = 0;
     const COMBO_MAX_TIME = 3.6; // detik untuk mempertahankan combo
 
     // Load Highscore dengan aman dari localStorage
@@ -1188,22 +1272,53 @@
         highScore = 0;
     }
 
-    // Karakter Pemain
-    const player = {
-        x: 900,
-        y: 700,
-        vx: 0,
-        vy: 0,
-        speed: 275,
-        radius: 22,
-        angle: Math.PI / 2,
-        walkCycle: 0,
-        isMoving: false,
-        swinging: false,
-        swingTimer: 0,
-        swingDuration: 0.26,
-        swingCooldown: 0
-    };
+    // Karakter Pemain (1 pemain, atau 2 pemain pada mode Duel)
+    const LOOKS = [
+        { tag: 'P1', color: '#ff7675', shirt: '#ff7675', shorts: '#5b72e0', hair: '#7a4a2b', band: '#ff4f6d' },
+        { tag: 'P2', color: '#4aa8ff', shirt: '#4aa8ff', shorts: '#6c5ce7', hair: '#2d2438', band: '#2d98da' }
+    ];
+
+    function makePlayer(i) {
+        return {
+            idx: i, look: LOOKS[i],
+            x: 900, y: 700, vx: 0, vy: 0,
+            speed: 275, radius: 22,
+            angle: Math.PI / 2, walkCycle: 0, isMoving: false,
+            swinging: false, swingTimer: 0, swingDuration: 0.26, swingCooldown: 0,
+            keys: { up: false, down: false, left: false, right: false },
+            joy: { active: false, touchId: null, dx: 0, dy: 0, maxRadius: 42 },
+            score: 0, caught: 0, combo: 0, comboTimer: 0,
+            sinceQuiz: 0, pendingQuiz: null,
+            inQuiz: false, quizItem: null, quizTime: 0, frozen: 0,
+            quizRight: 0, quizWrong: 0
+        };
+    }
+
+    const player = makePlayer(0);
+    const player2 = makePlayer(1);
+    let players = [player];
+
+    // Arena tetap untuk mode Duel (seluruh arena terlihat di layar, tanpa kamera mengikuti)
+    const ARENA = { x: 350, y: 390, w: 1100, h: 620 };
+    let viewScale = 1;
+
+    function isDuel() { return gameMode === 'duel'; }
+
+    // Batas gerak pemain & kupu-kupu: seluruh dunia, atau arena saat Duel
+    function bounds() {
+        if (isDuel()) return { minX: ARENA.x, maxX: ARENA.x + ARENA.w, minY: ARENA.y, maxY: ARENA.y + ARENA.h };
+        return { minX: WORLD.padding, maxX: WORLD.width - WORLD.padding, minY: WORLD.padding, maxY: WORLD.height - WORLD.padding };
+    }
+
+    function applyView() {
+        if (isDuel() && currentState !== STATE.MENU) {
+            viewScale = Math.min(canvas.width / ARENA.w, canvas.height / ARENA.h);
+        } else {
+            viewScale = 1;
+        }
+        CAMERA.width = canvas.width / viewScale;
+        CAMERA.height = canvas.height / viewScale;
+    }
 
     // Array Kupu-kupu, Partikel, dan Teks Mengambang
     let butterflies = [];
@@ -1213,9 +1328,10 @@
 
     function createButterfly(customX, customY) {
         const spec = pickRandomSpecies();
-        const margin = 130;
-        const x = customX !== undefined ? customX : margin + Math.random() * (WORLD.width - margin * 2);
-        const y = customY !== undefined ? customY : margin + Math.random() * (WORLD.height - margin * 2);
+        const margin = 70;
+        const bd = isDuel() ? bounds() : { minX: 130, maxX: WORLD.width - 130, minY: 130, maxY: WORLD.height - 130 };
+        const x = customX !== undefined ? customX : bd.minX + margin * (isDuel() ? 1 : 0) + Math.random() * (bd.maxX - bd.minX - margin * (isDuel() ? 2 : 0));
+        const y = customY !== undefined ? customY : bd.minY + margin * (isDuel() ? 1 : 0) + Math.random() * (bd.maxY - bd.minY - margin * (isDuel() ? 2 : 0));
         const angle = Math.random() * Math.PI * 2;
 
         return {
@@ -1247,161 +1363,127 @@
     // ==========================================
     // 6. INPUT HANDLER (KEYBOARD + TOUCH JOYSTICK)
     // ==========================================
-    const keys = {
-        up: false,
-        down: false,
-        left: false,
-        right: false
-    };
+    // Kontrol per pemain. Solo: WASD/Panah + Spasi. Duel: P1 = WASD + Spasi, P2 = Panah + Enter.
+    const KEYMAPS = [
+        { up: ['KeyW'], down: ['KeyS'], left: ['KeyA'], right: ['KeyD'], catch: ['Space'], quiz: ['Digit1', 'Digit2', 'Digit3', 'Digit4'] },
+        { up: ['ArrowUp'], down: ['ArrowDown'], left: ['ArrowLeft'], right: ['ArrowRight'], catch: ['Enter', 'NumpadEnter'], quiz: ['Digit7', 'Digit8', 'Digit9', 'Digit0'] }
+    ];
 
-    const joystick = {
-        active: false,
-        touchId: null,
-        baseX: 0,
-        baseY: 0,
-        dx: 0,
-        dy: 0,
-        maxRadius: 42
-    };
+    function playerKeyMaps(pl) {
+        // Saat solo, panah juga menggerakkan pemain 1
+        if (pl.idx === 0 && !isDuel()) {
+            return {
+                up: ['KeyW', 'ArrowUp'], down: ['KeyS', 'ArrowDown'], left: ['KeyA', 'ArrowLeft'], right: ['KeyD', 'ArrowRight'],
+                catch: ['Space'], quiz: KEYMAPS[0].quiz
+            };
+        }
+        return KEYMAPS[pl.idx];
+    }
+
+    function setKeys(code, down) {
+        players.forEach(pl => {
+            const km = playerKeyMaps(pl);
+            ['up', 'down', 'left', 'right'].forEach(d => { if (km[d].includes(code)) pl.keys[d] = down; });
+        });
+    }
+
+    const BLOCK_KEYS = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'Enter', 'KeyW', 'KeyA', 'KeyS', 'KeyD'];
 
     window.addEventListener('keydown', (e) => {
-        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'KeyW', 'KeyA', 'KeyS', 'KeyD'].includes(e.code)) {
-            e.preventDefault();
-        }
-        if (e.code === 'KeyW' || e.code === 'ArrowUp') keys.up = true;
-        if (e.code === 'KeyS' || e.code === 'ArrowDown') keys.down = true;
-        if (e.code === 'KeyA' || e.code === 'ArrowLeft') keys.left = true;
-        if (e.code === 'KeyD' || e.code === 'ArrowRight') keys.right = true;
+        if (BLOCK_KEYS.includes(e.code)) e.preventDefault();
+        setKeys(e.code, true);
 
         if (currentState === STATE.QUIZ) {
-            const idx = ['Digit1', 'Digit2', 'Digit3', 'Digit4'].indexOf(e.code);
+            const idx = KEYMAPS[0].quiz.indexOf(e.code);
             const btn = idx >= 0 ? document.getElementById('quiz-opts').children[idx] : null;
             if (btn && !btn.disabled) btn.click();
             return;
         }
-        if (e.code === 'Space' && currentState === STATE.PLAYING && !e.repeat) {
-            triggerCatchAction();
+        if (currentState === STATE.PLAYING && !e.repeat) {
+            players.forEach(pl => {
+                const km = playerKeyMaps(pl);
+                if (pl.inQuiz) {
+                    const qi = km.quiz.indexOf(e.code);
+                    if (qi >= 0) duelAnswer(pl, qi);
+                } else if (km.catch.includes(e.code)) {
+                    triggerCatchAction(pl);
+                }
+            });
         }
         if (e.code === 'Escape' && (currentState === STATE.PLAYING || currentState === STATE.PAUSED)) {
             togglePause();
         }
     });
 
-    window.addEventListener('keyup', (e) => {
-        if (e.code === 'KeyW' || e.code === 'ArrowUp') keys.up = false;
-        if (e.code === 'KeyS' || e.code === 'ArrowDown') keys.down = false;
-        if (e.code === 'KeyA' || e.code === 'ArrowLeft') keys.left = false;
-        if (e.code === 'KeyD' || e.code === 'ArrowRight') keys.right = false;
-    });
+    window.addEventListener('keyup', (e) => setKeys(e.code, false));
 
-    // Virtual Joystick Setup
-    const joystickZone = document.getElementById('joystick-zone');
-    const joystickBase = document.getElementById('joystick-base');
-    const joystickStick = document.getElementById('joystick-stick');
+    // Joystick virtual (satu per pemain)
+    function setupJoystick(pl, zoneId, baseId, stickId) {
+        const zone = document.getElementById(zoneId);
+        const base = document.getElementById(baseId);
+        const stick = document.getElementById(stickId);
+        const joy = pl.joy;
 
-    function updateJoystickVisual(clientX, clientY) {
-        const rect = joystickBase.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-
-        let vx = clientX - centerX;
-        let vy = clientY - centerY;
-        const dist = Math.hypot(vx, vy);
-
-        if (dist > joystick.maxRadius) {
-            vx = (vx / dist) * joystick.maxRadius;
-            vy = (vy / dist) * joystick.maxRadius;
+        function visual(clientX, clientY) {
+            const rect = base.getBoundingClientRect();
+            let vx = clientX - (rect.left + rect.width / 2);
+            let vy = clientY - (rect.top + rect.height / 2);
+            const dist = Math.hypot(vx, vy);
+            if (dist > joy.maxRadius) { vx = (vx / dist) * joy.maxRadius; vy = (vy / dist) * joy.maxRadius; }
+            joy.dx = vx / joy.maxRadius;
+            joy.dy = vy / joy.maxRadius;
+            stick.style.transform = `translate(${vx}px, ${vy}px)`;
         }
-
-        joystick.dx = vx / joystick.maxRadius;
-        joystick.dy = vy / joystick.maxRadius;
-        joystickStick.style.transform = `translate(${vx}px, ${vy}px)`;
+        function reset() {
+            joy.active = false; joy.touchId = null; joy.dx = 0; joy.dy = 0;
+            stick.style.transform = 'translate(0px, 0px)';
+        }
+        zone.addEventListener('touchstart', (e) => {
+            e.preventDefault(); sound.init();
+            if (!joy.active && e.changedTouches.length > 0) {
+                const t = e.changedTouches[0];
+                joy.active = true; joy.touchId = t.identifier; visual(t.clientX, t.clientY);
+            }
+        }, { passive: false });
+        zone.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (!joy.active) return;
+            for (let i = 0; i < e.changedTouches.length; i++) {
+                const t = e.changedTouches[i];
+                if (t.identifier === joy.touchId) { visual(t.clientX, t.clientY); break; }
+            }
+        }, { passive: false });
+        zone.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            for (let i = 0; i < e.changedTouches.length; i++) {
+                if (e.changedTouches[i].identifier === joy.touchId) { reset(); break; }
+            }
+        }, { passive: false });
+        zone.addEventListener('touchcancel', reset);
+        // Fallback mouse untuk desktop
+        zone.addEventListener('mousedown', (e) => {
+            e.preventDefault(); sound.init();
+            joy.active = true; joy.touchId = null; visual(e.clientX, e.clientY);
+        });
+        window.addEventListener('mousemove', (e) => { if (joy.active && joy.touchId === null) visual(e.clientX, e.clientY); });
+        window.addEventListener('mouseup', () => { if (joy.active && joy.touchId === null) reset(); });
+        return { reset };
     }
 
-    function resetJoystick() {
-        joystick.active = false;
-        joystick.touchId = null;
-        joystick.dx = 0;
-        joystick.dy = 0;
-        joystickStick.style.transform = `translate(0px, 0px)`;
+    function setupCatchButton(pl, btnId) {
+        const btn = document.getElementById(btnId);
+        const fire = () => { if (currentState === STATE.PLAYING && !pl.inQuiz) triggerCatchAction(pl); };
+        btn.addEventListener('touchstart', (e) => { e.preventDefault(); sound.init(); btn.classList.add('pressed'); fire(); }, { passive: false });
+        btn.addEventListener('touchend', (e) => { e.preventDefault(); btn.classList.remove('pressed'); }, { passive: false });
+        btn.addEventListener('mousedown', (e) => { e.preventDefault(); sound.init(); fire(); });
     }
 
-    joystickZone.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        sound.init();
-        if (!joystick.active && e.changedTouches.length > 0) {
-            const t = e.changedTouches[0];
-            joystick.active = true;
-            joystick.touchId = t.identifier;
-            updateJoystickVisual(t.clientX, t.clientY);
-        }
-    }, { passive: false });
-
-    joystickZone.addEventListener('touchmove', (e) => {
-        e.preventDefault();
-        if (!joystick.active) return;
-        for (let i = 0; i < e.changedTouches.length; i++) {
-            const t = e.changedTouches[i];
-            if (t.identifier === joystick.touchId) {
-                updateJoystickVisual(t.clientX, t.clientY);
-                break;
-            }
-        }
-    }, { passive: false });
-
-    joystickZone.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        for (let i = 0; i < e.changedTouches.length; i++) {
-            if (e.changedTouches[i].identifier === joystick.touchId) {
-                resetJoystick();
-                break;
-            }
-        }
-    }, { passive: false });
-
-    joystickZone.addEventListener('touchcancel', resetJoystick);
-
-    // Mouse fallback untuk mengetes joystick di Desktop
-    joystickZone.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        sound.init();
-        joystick.active = true;
-        updateJoystickVisual(e.clientX, e.clientY);
-    });
-    window.addEventListener('mousemove', (e) => {
-        if (joystick.active && joystick.touchId === null) {
-            updateJoystickVisual(e.clientX, e.clientY);
-        }
-    });
-    window.addEventListener('mouseup', () => {
-        if (joystick.active && joystick.touchId === null) {
-            resetJoystick();
-        }
-    });
-
-    // Tombol Tangkap Mobile & Desktop Click
-    const btnCatch = document.getElementById('btn-catch');
-    btnCatch.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        sound.init();
-        btnCatch.classList.add('pressed');
-        if (currentState === STATE.PLAYING) {
-            triggerCatchAction();
-        }
-    }, { passive: false });
-
-    btnCatch.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        btnCatch.classList.remove('pressed');
-    }, { passive: false });
-
-    btnCatch.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        sound.init();
-        if (currentState === STATE.PLAYING) {
-            triggerCatchAction();
-        }
-    });
+    const joyReset = [
+        setupJoystick(player, 'joystick-zone', 'joystick-base', 'joystick-stick'),
+        setupJoystick(player2, 'joystick-zone-2', 'joystick-base-2', 'joystick-stick-2')
+    ];
+    setupCatchButton(player, 'btn-catch');
+    setupCatchButton(player2, 'btn-catch-2');
 
     // Cegah gesture scroll di mobile selama bermain
     document.addEventListener('touchmove', (e) => {
@@ -1446,9 +1528,12 @@
     }
 
     // ==========================================
-    // MODE & KUIS (Edukasi)
+    // MODE & KUIS (Edukasi / Duel)
     // ==========================================
     const QUIZ_BONUS = 25;
+    const DUEL_TIME = 75;        // detik
+    const DUEL_QUIZ_TIME = 12;   // batas waktu menjawab (duel)
+    const DUEL_FREEZE = 2.0;     // detik beku jika salah (duel)
     const DEFAULT_QUESTIONS = [
         { q: 'Hewan yang mengalami metamorfosis sempurna adalah ...', o: ['Kupu-kupu', 'Kucing', 'Ayam', 'Kambing'], a: 0 },
         { q: 'Bagian tumbuhan yang paling banyak berperan dalam fotosintesis adalah ...', o: ['Akar', 'Daun', 'Bunga', 'Buah'], a: 1 },
@@ -1483,31 +1568,32 @@
 
     let gameMode = 'free';
     let quizEvery = 3;
-    let sinceQuiz = 0;
-    let pendingQuiz = null;
     let quizBag = [];
-    let quizStats = { right: 0, wrong: 0 };
+
+    function isEdu() { return gameMode === 'edu' || gameMode === 'duel'; }
 
     function nextQuestion() {
         if (!quizBag.length) quizBag = shuffle(loadQuestions().slice());
         return quizBag.pop();
     }
 
-    function addScore(n) {
-        score += n;
-        if (score > highScore) {
-            highScore = score;
+    function addScore(pl, n) {
+        pl.score += n;
+        if (!isDuel() && pl.score > highScore) {
+            highScore = pl.score;
             try { localStorage.setItem('butterfly_catcher_best_v1', String(highScore)); } catch (err) {}
         }
     }
 
     const modalQuiz = document.getElementById('modal-quiz');
 
-    function openQuiz() {
+    // ---- Kuis solo (modal layar penuh, game berhenti) ----
+    function openQuiz(pl) {
+        if (isDuel()) { openDuelQuiz(pl); return; }
         const item = nextQuestion();
         currentState = STATE.QUIZ;
         document.getElementById('quiz-q').textContent = item.q;
-        document.getElementById('quiz-reward').textContent = `+${pendingQuiz.points + QUIZ_BONUS} poin jika benar`;
+        document.getElementById('quiz-reward').textContent = `+${pl.pendingQuiz.points + QUIZ_BONUS} poin jika benar`;
         document.getElementById('quiz-feedback').textContent = 'Pilih jawaban yang tepat!';
         const wrap = document.getElementById('quiz-opts');
         wrap.innerHTML = '';
@@ -1515,31 +1601,31 @@
             const btn = document.createElement('button');
             btn.className = 'quiz-opt';
             btn.textContent = `${String.fromCharCode(65 + i)}. ${text}`;
-            btn.addEventListener('click', () => answerQuiz(i, item));
+            btn.addEventListener('click', () => answerQuiz(pl, i, item));
             wrap.appendChild(btn);
         });
         modalQuiz.classList.add('visible');
     }
 
-    function answerQuiz(i, item) {
-        if (!pendingQuiz) return;
+    function answerQuiz(pl, i, item) {
+        if (!pl.pendingQuiz) return;
         const btns = [...document.getElementById('quiz-opts').children];
         btns.forEach(b => (b.disabled = true));
         const fb = document.getElementById('quiz-feedback');
-        const q = pendingQuiz;
-        pendingQuiz = null;
+        const q = pl.pendingQuiz;
+        pl.pendingQuiz = null;
         if (i === item.a) {
             btns[i].classList.add('correct');
-            addScore(q.points + QUIZ_BONUS);
-            quizStats.right++;
-            sound.playCatch(true, comboCount);
+            addScore(pl, q.points + QUIZ_BONUS);
+            pl.quizRight++;
+            sound.playCatch(true, pl.combo);
             fb.textContent = `✅ Benar! +${q.points + QUIZ_BONUS} poin`;
         } else {
             btns[i].classList.add('wrong');
             btns[item.a].classList.add('correct');
-            quizStats.wrong++;
-            comboCount = 0;
-            comboTimer = 0;
+            pl.quizWrong++;
+            pl.combo = 0;
+            pl.comboTimer = 0;
             sound.playWrong();
             fb.textContent = '❌ Belum tepat. Poin tangkapan hangus.';
         }
@@ -1550,18 +1636,90 @@
         }, 1400);
     }
 
-    function triggerCatchAction() {
-        if (player.swinging || player.swingCooldown > 0) return;
+    // ---- Kuis duel (panel per pemain, lawan tetap bermain) ----
+    function dqEl(pl) { return document.getElementById('dq-' + pl.idx); }
 
-        player.swinging = true;
-        player.swingTimer = player.swingDuration;
-        player.swingCooldown = 0.30;
+    function openDuelQuiz(pl) {
+        const item = nextQuestion();
+        pl.inQuiz = true;
+        pl.answered = false;
+        pl.quizItem = item;
+        pl.quizTime = DUEL_QUIZ_TIME;
+        pl.keys.up = pl.keys.down = pl.keys.left = pl.keys.right = false;
+        const el = dqEl(pl);
+        el.querySelector('.dq-reward').textContent = `+${pl.pendingQuiz.points + QUIZ_BONUS}`;
+        el.querySelector('.dq-q').textContent = item.q;
+        el.querySelector('.dq-fb').textContent = '';
+        el.querySelector('.dq-bar > i').style.width = '100%';
+        const wrap = el.querySelector('.dq-opts');
+        wrap.innerHTML = '';
+        item.o.forEach((text, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'quiz-opt';
+            btn.textContent = `${String.fromCharCode(65 + i)}. ${text}`;
+            btn.addEventListener('click', () => duelAnswer(pl, i));
+            btn.addEventListener('touchstart', (e) => { e.stopPropagation(); }, { passive: true });
+            wrap.appendChild(btn);
+        });
+        el.classList.add('show');
+    }
+
+    function duelAnswer(pl, i) {
+        if (!pl.inQuiz || pl.answered || !pl.pendingQuiz) return;
+        pl.answered = true;
+        const item = pl.quizItem;
+        const el = dqEl(pl);
+        const btns = [...el.querySelector('.dq-opts').children];
+        btns.forEach(b => (b.disabled = true));
+        const fb = el.querySelector('.dq-fb');
+        const q = pl.pendingQuiz;
+        pl.pendingQuiz = null;
+        if (i === item.a) {
+            btns[i].classList.add('correct');
+            addScore(pl, q.points + QUIZ_BONUS);
+            pl.quizRight++;
+            sound.playCatch(true, pl.combo);
+            fb.textContent = `✅ Benar! +${q.points + QUIZ_BONUS}`;
+            spawnFloatingText(pl.x, pl.y - 70, `+${q.points + QUIZ_BONUS}`, '#55efc4', 1.3);
+        } else {
+            if (i >= 0) btns[i].classList.add('wrong');
+            btns[item.a].classList.add('correct');
+            pl.quizWrong++;
+            pl.combo = 0;
+            pl.comboTimer = 0;
+            pl.frozen = DUEL_FREEZE + 0.9;
+            sound.playWrong();
+            fb.textContent = i < 0 ? '⏰ Waktu habis! Beku...' : '❌ Salah! Beku...';
+            spawnFloatingText(pl.x, pl.y - 70, '❄ BEKU!', '#74b9ff', 1.3);
+        }
+        updateHUD();
+        setTimeout(() => {
+            el.classList.remove('show');
+            pl.inQuiz = false;
+            pl.answered = false;
+            pl.quizItem = null;
+        }, 900);
+    }
+
+    function closeAllDuelQuiz() {
+        [player, player2].forEach(pl => {
+            pl.inQuiz = false; pl.answered = false; pl.quizItem = null; pl.pendingQuiz = null;
+            dqEl(pl).classList.remove('show');
+        });
+    }
+
+    function triggerCatchAction(pl) {
+        if (pl.swinging || pl.swingCooldown > 0 || pl.frozen > 0 || pl.inQuiz) return;
+
+        pl.swinging = true;
+        pl.swingTimer = pl.swingDuration;
+        pl.swingCooldown = 0.30;
         sound.playSwing();
 
         // Hitbox area jaring di depan karakter + sekitar tubuh
         const netReach = 52;
-        const netCenterX = player.x + Math.cos(player.angle) * netReach;
-        const netCenterY = player.y + Math.sin(player.angle) * netReach;
+        const netCenterX = pl.x + Math.cos(pl.angle) * netReach;
+        const netCenterY = pl.y + Math.sin(pl.angle) * netReach;
         const catchRadius = 68;
 
         let caughtInThisSwing = 0;
@@ -1570,36 +1728,36 @@
         for (let i = butterflies.length - 1; i >= 0; i--) {
             const b = butterflies[i];
             const distToNet = Math.hypot(b.x - netCenterX, b.y - netCenterY);
-            const distToPlayer = Math.hypot(b.x - player.x, b.y - player.y);
+            const distToPlayer = Math.hypot(b.x - pl.x, b.y - pl.y);
 
             if (distToNet <= catchRadius || distToPlayer <= 48) {
                 caughtInThisSwing++;
-                butterfliesCaught++;
+                pl.caught++;
                 if (b.species.rare) caughtRare = true;
 
                 // Sistem Combo
-                comboCount++;
-                comboTimer = COMBO_MAX_TIME;
-                const multiplier = Math.min(1 + Math.floor((comboCount - 1) / 2) * 0.5, 4.0);
+                pl.combo++;
+                pl.comboTimer = COMBO_MAX_TIME;
+                const multiplier = Math.min(1 + Math.floor((pl.combo - 1) / 2) * 0.5, 4.0);
                 const gainedPoints = Math.round(b.species.points * multiplier);
 
-                // Mode edukasi: tiap N tangkapan, poin ditahan sampai kuis dijawab
+                // Mode edukasi/duel: tiap N tangkapan, poin ditahan sampai kuis dijawab
                 let isQuizCatch = false;
-                if (gameMode === 'edu' && !pendingQuiz) {
-                    sinceQuiz++;
-                    if (sinceQuiz >= quizEvery) {
-                        sinceQuiz = 0;
+                if (isEdu() && !pl.pendingQuiz) {
+                    pl.sinceQuiz++;
+                    if (pl.sinceQuiz >= quizEvery) {
+                        pl.sinceQuiz = 0;
                         isQuizCatch = true;
-                        pendingQuiz = { points: gainedPoints };
+                        pl.pendingQuiz = { points: gainedPoints };
                     }
                 }
-                if (!isQuizCatch) addScore(gainedPoints);
+                if (!isQuizCatch) addScore(pl, gainedPoints);
 
                 // Efek Partikel & Teks Skor
                 spawnParticles(b.x, b.y - b.z, b.species.primary, b.species.rare ? 24 : 14);
                 spawnParticles(b.x, b.y - b.z, b.species.secondary, 8);
 
-                let label = comboCount >= 2 ? `+${gainedPoints} (x${multiplier})` : `+${gainedPoints}`;
+                let label = pl.combo >= 2 ? `+${gainedPoints} (x${multiplier})` : `+${gainedPoints}`;
                 if (isQuizCatch) label = '❓ Jawab!';
                 const txtColor = b.species.rare ? '#feca57' : '#ffffff';
                 spawnFloatingText(b.x, b.y - 25, label, txtColor, b.species.rare ? 1.3 : 1.0);
@@ -1611,23 +1769,24 @@
         }
 
         if (caughtInThisSwing > 0) {
-            sound.playCatch(caughtRare, comboCount);
+            sound.playCatch(caughtRare, pl.combo);
 
-            // Cek Kenaikan Level (setiap 6 kupu-kupu tertangkap)
-            const newLevel = 1 + Math.floor(butterfliesCaught / 6);
-            if (newLevel > level) {
-                level = newLevel;
-                sound.playLevelUp();
-                spawnFloatingText(player.x, player.y - 50, `LEVEL UP! LV.${level}`, '#55efc4', 1.35);
-                // Tambah populasi kupu-kupu sedikit setiap naik level
-                if (butterflies.length + respawnQueue.length < 26) {
-                    butterflies.push(createButterfly());
+            // Kenaikan level hanya untuk mode solo (setiap 6 kupu-kupu tertangkap)
+            if (!isDuel()) {
+                const newLevel = 1 + Math.floor(pl.caught / 6);
+                if (newLevel > level) {
+                    level = newLevel;
+                    sound.playLevelUp();
+                    spawnFloatingText(pl.x, pl.y - 50, `LEVEL UP! LV.${level}`, '#55efc4', 1.35);
+                    if (butterflies.length + respawnQueue.length < 26) {
+                        butterflies.push(createButterfly());
+                    }
                 }
             }
             updateHUD();
         }
 
-        if (pendingQuiz) openQuiz();
+        if (pl.pendingQuiz) openQuiz(pl);
     }
 
     // ==========================================
@@ -1646,10 +1805,17 @@
     const modalPause = document.getElementById('modal-pause');
     const modalGameOver = document.getElementById('modal-gameover');
 
+    const elDuelS1 = document.getElementById('duel-s1');
+    const elDuelS2 = document.getElementById('duel-s2');
+    const gameContainer = document.getElementById('game-container');
+
     function updateHUD() {
-        elScore.textContent = score;
+        const p = player;
+        elScore.textContent = p.score;
         elBest.textContent = highScore;
         elLevel.textContent = level;
+        elDuelS1.textContent = player.score;
+        elDuelS2.textContent = player2.score;
         const sec = Math.ceil(Math.max(0, timeLeft));
         elTimer.textContent = `${sec}s`;
 
@@ -1659,50 +1825,67 @@
             elTimerCard.classList.remove('timer-warning');
         }
 
-        if (comboCount >= 2 && comboTimer > 0) {
+        if (!isDuel() && p.combo >= 2 && p.comboTimer > 0) {
             elComboBanner.classList.add('active');
-            elComboText.textContent = `COMBO x${comboCount}!`;
-            const pct = Math.max(0, Math.min(100, (comboTimer / COMBO_MAX_TIME) * 100));
+            elComboText.textContent = `COMBO x${p.combo}!`;
+            const pct = Math.max(0, Math.min(100, (p.comboTimer / COMBO_MAX_TIME) * 100));
             elComboBar.style.width = `${pct}%`;
         } else {
             elComboBanner.classList.remove('active');
         }
     }
 
+    function resetPlayer(pl, x, y, angle) {
+        pl.x = x; pl.y = y; pl.vx = 0; pl.vy = 0; pl.angle = angle;
+        pl.isMoving = false; pl.swinging = false; pl.swingCooldown = 0; pl.walkCycle = 0;
+        pl.score = 0; pl.caught = 0; pl.combo = 0; pl.comboTimer = 0;
+        pl.sinceQuiz = 0; pl.pendingQuiz = null;
+        pl.inQuiz = false; pl.answered = false; pl.quizItem = null; pl.frozen = 0;
+        pl.quizRight = 0; pl.quizWrong = 0;
+        pl.keys.up = pl.keys.down = pl.keys.left = pl.keys.right = false;
+    }
+
     function startNewGame(m) {
-        if (m === 'free' || m === 'edu') gameMode = m;
-        if (gameMode === 'edu') quizEvery = parseInt(document.getElementById('sel-every').value, 10) || 3;
-        sinceQuiz = 0;
-        pendingQuiz = null;
-        quizStats = { right: 0, wrong: 0 };
+        if (m === 'free' || m === 'edu' || m === 'duel') gameMode = m;
+        if (isEdu()) quizEvery = parseInt(document.getElementById('sel-every').value, 10) || 3;
+        players = isDuel() ? [player, player2] : [player];
         modalQuiz.classList.remove('visible');
+        closeAllDuelQuiz();
+        joyReset.forEach(j => j.reset());
+        gameContainer.classList.toggle('is-duel', isDuel());
+        document.querySelector('.desktop-hint').innerHTML = isDuel()
+            ? '🔴 P1: WASD + Spasi &nbsp;|&nbsp; 🔵 P2: Panah + Enter'
+            : '💻 WASD / Panah: Jalan &nbsp;|&nbsp; SPASI: Tangkap';
         sound.init();
         sound.playButton();
         sound.stopMusic();
         sound.startMusic();
 
-        score = 0;
-        timeLeft = 60;
+        timeLeft = isDuel() ? DUEL_TIME : 60;
         level = 1;
-        butterfliesCaught = 0;
-        comboCount = 0;
-        comboTimer = 0;
 
-        player.x = 900;
-        player.y = 700;
-        player.angle = Math.PI / 2;
-        player.swinging = false;
-        player.swingCooldown = 0;
+        if (isDuel()) {
+            const cy = ARENA.y + ARENA.h / 2;
+            resetPlayer(player, ARENA.x + 210, cy, 0);
+            resetPlayer(player2, ARENA.x + ARENA.w - 210, cy, Math.PI);
+        } else {
+            resetPlayer(player, 900, 700, Math.PI / 2);
+        }
 
         particles = [];
         floatingTexts = [];
-        initButterflies(18);
+        currentState = STATE.PLAYING;
+        applyView();
+        if (isDuel()) {
+            CAMERA.x = ARENA.x + ARENA.w / 2 - CAMERA.width / 2;
+            CAMERA.y = ARENA.y + ARENA.h / 2 - CAMERA.height / 2;
+        }
+        initButterflies(isDuel() ? 16 : 18);
 
         modalStart.classList.remove('visible');
         modalPause.classList.remove('visible');
         modalGameOver.classList.remove('visible');
 
-        currentState = STATE.PLAYING;
         updateHUD();
     }
 
@@ -1720,32 +1903,59 @@
         }
     }
 
+    function setStatLabel(strongId, label) {
+        const el = document.getElementById(strongId);
+        if (el && el.previousElementSibling) el.previousElementSibling.textContent = label;
+    }
+
     function triggerGameOver() {
         currentState = STATE.GAMEOVER;
         sound.stopMusic();
         sound.playGameOver();
-
-        document.getElementById('final-score').textContent = score;
-        document.getElementById('final-best').textContent = highScore;
-        document.getElementById('final-caught').textContent = `${butterfliesCaught} 🦋`;
-        document.getElementById('final-level').textContent = level;
+        closeAllDuelQuiz();
+        joyReset.forEach(j => j.reset());
 
         const badge = document.getElementById('gameover-badge');
-        if (score >= 500) {
-            badge.textContent = '👑 Master Penangkap Kupu-Kupu Legendaris!';
-        } else if (score >= 250) {
-            badge.textContent = '🌟 Luar Biasa! Kolektor Kupu-Kupu Hebat!';
-        } else {
-            badge.textContent = '🎉 Kerja Bagus! Ayo Coba Pecahkan Rekormu!';
-        }
-
         const fq = document.getElementById('final-quiz');
-        if (gameMode === 'edu') {
-            const tot = quizStats.right + quizStats.wrong;
-            fq.textContent = `📖 Kuis: ${quizStats.right} benar dari ${tot} soal`;
+        const title = document.getElementById('gameover-title');
+
+        if (isDuel()) {
+            title.textContent = player.score === player2.score ? '🤝 SERI!' : (player.score > player2.score ? '🏆 P1 MENANG!' : '🏆 P2 MENANG!');
+            setStatLabel('final-score', 'Skor P1');
+            setStatLabel('final-best', 'Skor P2');
+            setStatLabel('final-caught', 'Tangkapan P1');
+            setStatLabel('final-level', 'Tangkapan P2');
+            document.getElementById('final-score').textContent = player.score;
+            document.getElementById('final-best').textContent = player2.score;
+            document.getElementById('final-caught').textContent = `${player.caught} 🦋`;
+            document.getElementById('final-level').textContent = `${player2.caught} 🦋`;
+            badge.textContent = player.score === player2.score ? 'Sama kuat! Main lagi untuk menentukan juara.' : '🎉 Selamat untuk sang juara!';
+            fq.textContent = `📖 Kuis benar: P1 ${player.quizRight}/${player.quizRight + player.quizWrong} • P2 ${player2.quizRight}/${player2.quizRight + player2.quizWrong}`;
             fq.style.display = '';
         } else {
-            fq.style.display = 'none';
+            title.textContent = 'WAKTU HABIS!';
+            setStatLabel('final-score', 'Skor Akhir');
+            setStatLabel('final-best', 'Rekor Terbaik');
+            setStatLabel('final-caught', 'Tertangkap');
+            setStatLabel('final-level', 'Level Tercapai');
+            document.getElementById('final-score').textContent = player.score;
+            document.getElementById('final-best').textContent = highScore;
+            document.getElementById('final-caught').textContent = `${player.caught} 🦋`;
+            document.getElementById('final-level').textContent = level;
+            if (player.score >= 500) {
+                badge.textContent = '👑 Master Penangkap Kupu-Kupu Legendaris!';
+            } else if (player.score >= 250) {
+                badge.textContent = '🌟 Luar Biasa! Kolektor Kupu-Kupu Hebat!';
+            } else {
+                badge.textContent = '🎉 Kerja Bagus! Ayo Coba Pecahkan Rekormu!';
+            }
+            if (gameMode === 'edu') {
+                const tot = player.quizRight + player.quizWrong;
+                fq.textContent = `📖 Kuis: ${player.quizRight} benar dari ${tot} soal`;
+                fq.style.display = '';
+            } else {
+                fq.style.display = 'none';
+            }
         }
 
         modalGameOver.classList.add('visible');
@@ -1755,17 +1965,25 @@
         sound.init();
         sound.playButton();
         sound.stopMusic();
-        pendingQuiz = null;
+        closeAllDuelQuiz();
+        player.pendingQuiz = null;
+        joyReset.forEach(j => j.reset());
         modalQuiz.classList.remove('visible');
         modalPause.classList.remove('visible');
         modalGameOver.classList.remove('visible');
         modalStart.classList.add('visible');
         currentState = STATE.MENU;
+        gameMode = 'free';
+        players = [player];
+        gameContainer.classList.remove('is-duel');
+        applyView();
+        initButterflies(18);
     }
 
     // Event Listeners Tombol UI
     document.getElementById('btn-mode-free').addEventListener('click', () => startNewGame('free'));
     document.getElementById('btn-mode-edu').addEventListener('click', () => startNewGame('edu'));
+    document.getElementById('btn-mode-duel').addEventListener('click', () => startNewGame('duel'));
     document.getElementById('btn-resume').addEventListener('click', togglePause);
     document.getElementById('btn-restart-pause').addEventListener('click', () => startNewGame());
     document.getElementById('btn-play-again').addEventListener('click', () => startNewGame());
@@ -1815,6 +2033,92 @@
         return { x: px, y: py };
     }
 
+    function updatePlayer(pl, dt) {
+        // Input Gerakan Karakter (Keyboard + Virtual Joystick)
+        let moveX = 0;
+        let moveY = 0;
+        const locked = pl.frozen > 0 || pl.inQuiz;
+
+        if (!locked && pl.keys.left) moveX -= 1;
+        if (!locked && pl.keys.right) moveX += 1;
+        if (!locked && pl.keys.up) moveY -= 1;
+        if (!locked && pl.keys.down) moveY += 1;
+
+        if (!locked && pl.joy.active) {
+            moveX += pl.joy.dx;
+            moveY += pl.joy.dy;
+        }
+
+        const mag = Math.hypot(moveX, moveY);
+        if (mag > 0.08) {
+            if (mag > 1) {
+                moveX /= mag;
+                moveY /= mag;
+            }
+            pl.vx = moveX * pl.speed;
+            pl.vy = moveY * pl.speed;
+            pl.angle = Math.atan2(moveY, moveX);
+            pl.isMoving = true;
+            pl.walkCycle += dt * 11 * Math.min(1, mag);
+        } else {
+            pl.vx = 0;
+            pl.vy = 0;
+            pl.isMoving = false;
+        }
+
+        pl.x += pl.vx * dt;
+        pl.y += pl.vy * dt;
+
+        // Batas Dunia
+        const bd = bounds();
+        const inset = isDuel() ? 30 : 0;
+        pl.x = Math.max(bd.minX + inset, Math.min(bd.maxX - inset, pl.x));
+        pl.y = Math.max(bd.minY + inset, Math.min(bd.maxY - inset, pl.y));
+
+        // Kolisi dengan Rumah Kecil
+        let pos = resolveCircleCollision(
+            pl.x, pl.y, pl.radius,
+            environment.cottage.x, environment.cottage.y, environment.cottage.radius
+        );
+        pl.x = pos.x;
+        pl.y = pos.y;
+
+        // Kolisi dengan Kolam Air
+        pos = resolveCircleCollision(
+            pl.x, pl.y, pl.radius,
+            environment.pond.x, environment.pond.y, environment.pond.ry
+        );
+        pl.x = pos.x;
+        pl.y = pos.y;
+
+        // Kolisi dengan Batu
+        for (let i = 0; i < environment.rocks.length; i++) {
+            const rk = environment.rocks[i];
+            pos = resolveCircleCollision(pl.x, pl.y, pl.radius, rk.x, rk.y, rk.radius * 0.85);
+            pl.x = pos.x;
+            pl.y = pos.y;
+        }
+
+        // Kolisi dengan Batang Pohon
+        for (let i = 0; i < environment.trees.length; i++) {
+            const tr = environment.trees[i];
+            pos = resolveCircleCollision(pl.x, pl.y, pl.radius, tr.x, tr.y, tr.collideRadius);
+            pl.x = pos.x;
+            pl.y = pos.y;
+        }
+
+        // Update Animasi Ayunan Jaring
+        if (pl.swinging) {
+            pl.swingTimer -= dt;
+            if (pl.swingTimer <= 0) {
+                pl.swinging = false;
+            }
+        }
+        if (pl.swingCooldown > 0) {
+            pl.swingCooldown -= dt;
+        }
+    }
+
     function updateGame(dt) {
         // Timer & Combo ketika sedang bermain
         if (currentState === STATE.PLAYING) {
@@ -1826,13 +2130,22 @@
                 return;
             }
 
-            if (comboTimer > 0) {
-                comboTimer -= dt;
-                if (comboTimer <= 0) {
-                    comboCount = 0;
-                    comboTimer = 0;
+            players.forEach(pl => {
+                if (pl.comboTimer > 0) {
+                    pl.comboTimer -= dt;
+                    if (pl.comboTimer <= 0) {
+                        pl.combo = 0;
+                        pl.comboTimer = 0;
+                    }
                 }
-            }
+                if (pl.frozen > 0) pl.frozen = Math.max(0, pl.frozen - dt);
+                if (pl.inQuiz && !pl.answered) {
+                    pl.quizTime -= dt;
+                    const bar = dqEl(pl).querySelector('.dq-bar > i');
+                    bar.style.width = `${Math.max(0, pl.quizTime / DUEL_QUIZ_TIME) * 100}%`;
+                    if (pl.quizTime <= 0) duelAnswer(pl, -1);
+                }
+            });
 
             // Respawn kupu-kupu yang telah ditangkap
             for (let i = respawnQueue.length - 1; i >= 0; i--) {
@@ -1843,85 +2156,14 @@
                 }
             }
 
-            // Input Gerakan Karakter (Keyboard + Virtual Joystick)
-            let moveX = 0;
-            let moveY = 0;
+            players.forEach(pl => updatePlayer(pl, dt));
 
-            if (keys.left) moveX -= 1;
-            if (keys.right) moveX += 1;
-            if (keys.up) moveY -= 1;
-            if (keys.down) moveY += 1;
-
-            if (joystick.active) {
-                moveX += joystick.dx;
-                moveY += joystick.dy;
-            }
-
-            const mag = Math.hypot(moveX, moveY);
-            if (mag > 0.08) {
-                if (mag > 1) {
-                    moveX /= mag;
-                    moveY /= mag;
-                }
-                player.vx = moveX * player.speed;
-                player.vy = moveY * player.speed;
-                player.angle = Math.atan2(moveY, moveX);
-                player.isMoving = true;
-                player.walkCycle += dt * 11 * Math.min(1, mag);
-            } else {
-                player.vx = 0;
-                player.vy = 0;
-                player.isMoving = false;
-            }
-
-            player.x += player.vx * dt;
-            player.y += player.vy * dt;
-
-            // Batas Dunia
-            player.x = Math.max(WORLD.padding, Math.min(WORLD.width - WORLD.padding, player.x));
-            player.y = Math.max(WORLD.padding, Math.min(WORLD.height - WORLD.padding, player.y));
-
-            // Kolisi dengan Rumah Kecil
-            let pos = resolveCircleCollision(
-                player.x, player.y, player.radius,
-                environment.cottage.x, environment.cottage.y, environment.cottage.radius
-            );
-            player.x = pos.x;
-            player.y = pos.y;
-
-            // Kolisi dengan Kolam Air
-            pos = resolveCircleCollision(
-                player.x, player.y, player.radius,
-                environment.pond.x, environment.pond.y, environment.pond.ry
-            );
-            player.x = pos.x;
-            player.y = pos.y;
-
-            // Kolisi dengan Batu
-            for (let i = 0; i < environment.rocks.length; i++) {
-                const rk = environment.rocks[i];
-                pos = resolveCircleCollision(player.x, player.y, player.radius, rk.x, rk.y, rk.radius * 0.85);
-                player.x = pos.x;
-                player.y = pos.y;
-            }
-
-            // Kolisi dengan Batang Pohon
-            for (let i = 0; i < environment.trees.length; i++) {
-                const tr = environment.trees[i];
-                pos = resolveCircleCollision(player.x, player.y, player.radius, tr.x, tr.y, tr.collideRadius);
-                player.x = pos.x;
-                player.y = pos.y;
-            }
-
-            // Update Animasi Ayunan Jaring
-            if (player.swinging) {
-                player.swingTimer -= dt;
-                if (player.swingTimer <= 0) {
-                    player.swinging = false;
-                }
-            }
-            if (player.swingCooldown > 0) {
-                player.swingCooldown -= dt;
+            // Tabrakan antar pemain (duel): saling dorong lembut
+            if (players.length === 2) {
+                const pos = resolveCircleCollision(player.x, player.y, player.radius, player2.x, player2.y, player2.radius);
+                const dx = pos.x - player.x, dy = pos.y - player.y;
+                player.x += dx / 2; player.y += dy / 2;
+                player2.x -= dx / 2; player2.y -= dy / 2;
             }
 
             updateHUD();
@@ -1946,18 +2188,21 @@
 
             // Kupu-kupu langka sedikit menghindar jika pemain terlalu dekat tanpa mengayun
             if (b.species.rare && currentState === STATE.PLAYING) {
-                const distToP = Math.hypot(b.x - player.x, b.y - player.y);
+                const distToP = Math.min(...players.map(pp => Math.hypot(b.x - pp.x, b.y - pp.y)));
                 if (distToP < 150) {
-                    b.targetAngle = Math.atan2(b.y - player.y, b.x - player.x);
+                    const near = players.reduce((a, c) => Math.hypot(b.x - c.x, b.y - c.y) < Math.hypot(b.x - a.x, b.y - a.y) ? c : a, players[0]);
+                    b.targetAngle = Math.atan2(b.y - near.y, b.x - near.x);
                 }
             }
 
             // Pantul lembut jika mendekati tepi dunia
-            const margin = 120;
-            if (b.x < margin) b.targetAngle = 0;
-            if (b.x > WORLD.width - margin) b.targetAngle = Math.PI;
-            if (b.y < margin) b.targetAngle = Math.PI / 2;
-            if (b.y > WORLD.height - margin) b.targetAngle = -Math.PI / 2;
+            const bdB = bounds();
+            const loX = isDuel() ? bdB.minX + 60 : 120, hiX = isDuel() ? bdB.maxX - 60 : WORLD.width - 120;
+            const loY = isDuel() ? bdB.minY + 60 : 120, hiY = isDuel() ? bdB.maxY - 60 : WORLD.height - 120;
+            if (b.x < loX) b.targetAngle = 0;
+            if (b.x > hiX) b.targetAngle = Math.PI;
+            if (b.y < loY) b.targetAngle = Math.PI / 2;
+            if (b.y > hiY) b.targetAngle = -Math.PI / 2;
 
             // Interpolasi sudut terbang halus
             let diff = b.targetAngle - b.angle;
@@ -2012,13 +2257,19 @@
         }
 
         // Smooth Camera Follow Player
-        const targetCamX = player.x - CAMERA.width / 2;
-        const targetCamY = player.y - CAMERA.height / 2;
-        CAMERA.x += (targetCamX - CAMERA.x) * Math.min(1, dt * 7);
-        CAMERA.y += (targetCamY - CAMERA.y) * Math.min(1, dt * 7);
+        if (isDuel() && currentState !== STATE.MENU) {
+            // Duel: kamera tetap, seluruh arena terlihat
+            CAMERA.x = ARENA.x + ARENA.w / 2 - CAMERA.width / 2;
+            CAMERA.y = ARENA.y + ARENA.h / 2 - CAMERA.height / 2;
+        } else {
+            const targetCamX = player.x - CAMERA.width / 2;
+            const targetCamY = player.y - CAMERA.height / 2;
+            CAMERA.x += (targetCamX - CAMERA.x) * Math.min(1, dt * 7);
+            CAMERA.y += (targetCamY - CAMERA.y) * Math.min(1, dt * 7);
 
-        CAMERA.x = Math.max(0, Math.min(WORLD.width - CAMERA.width, CAMERA.x));
-        CAMERA.y = Math.max(0, Math.min(WORLD.height - CAMERA.height, CAMERA.y));
+            CAMERA.x = Math.max(0, Math.min(WORLD.width - CAMERA.width, CAMERA.x));
+            CAMERA.y = Math.max(0, Math.min(WORLD.height - CAMERA.height, CAMERA.y));
+        }
     }
 
     // ==========================================
@@ -2280,11 +2531,11 @@
     }
 
     // Karakter chibi tampak 3/4: menghadap 4 arah (bawah/atas/kiri/kanan)
-    function drawNet() {
+    function drawNet(pl) {
         // Digambar dalam koordinat yang diputar mengikuti arah hadap
         let netSwingAngle = 0.45;
-        if (player.swinging) {
-            const progress = 1 - (player.swingTimer / player.swingDuration);
+        if (pl.swinging) {
+            const progress = 1 - (pl.swingTimer / pl.swingDuration);
             netSwingAngle = -1.25 + Math.sin(progress * Math.PI) * 2.6;
             ctx.save();
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
@@ -2318,15 +2569,15 @@
         ctx.restore();
     }
 
-    function drawPlayerCharacter() {
-        const ca = Math.cos(player.angle), sa = Math.sin(player.angle);
+    function drawPlayerCharacter(pl) {
+        const ca = Math.cos(pl.angle), sa = Math.sin(pl.angle);
         const dir = Math.abs(ca) > Math.abs(sa) ? (ca > 0 ? 'right' : 'left') : (sa > 0 ? 'down' : 'up');
 
-        const INK = '#4a3b32', SKIN = '#ffdcb8', HAIR = '#7a4a2b';
-        const SHIRT = '#ff7675', SHORTS = '#5b72e0', HAT = '#f9ca5b', BAND = '#ff4f6d';
+        const INK = '#4a3b32', SKIN = '#ffdcb8', HAIR = pl.look.hair;
+        const SHIRT = pl.look.shirt, SHORTS = pl.look.shorts, HAT = '#f9ca5b', BAND = pl.look.band;
 
         ctx.save();
-        ctx.translate(player.x - CAMERA.x, player.y - CAMERA.y);
+        ctx.translate(pl.x - CAMERA.x, pl.y - CAMERA.y);
 
         // Bayangan di tanah
         ctx.fillStyle = 'rgba(0, 0, 0, 0.24)';
@@ -2334,12 +2585,12 @@
         ctx.ellipse(0, 20, 20, 8, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        const step = player.isMoving ? Math.sin(player.walkCycle) : 0;
-        const bob = player.isMoving ? Math.abs(Math.sin(player.walkCycle)) * 3 : 0;
-        const netBehind = player.swinging && dir === 'up';
+        const step = pl.isMoving ? Math.sin(pl.walkCycle) : 0;
+        const bob = pl.isMoving ? Math.abs(Math.sin(pl.walkCycle)) * 3 : 0;
+        const netBehind = pl.swinging && dir === 'up';
 
         // Jaring di belakang badan jika menghadap ke atas
-        if (netBehind) { ctx.save(); ctx.translate(0, -8); ctx.rotate(player.angle); drawNet(); ctx.restore(); }
+        if (netBehind) { ctx.save(); ctx.translate(0, -8); ctx.rotate(pl.angle); drawNet(pl); ctx.restore(); }
 
         ctx.lineJoin = 'round';
         ctx.lineWidth = 3.2;
@@ -2375,7 +2626,7 @@
 
         // Tangan
         ctx.fillStyle = SKIN;
-        const armSwing = player.isMoving ? step * 3 : 0;
+        const armSwing = pl.isMoving ? step * 3 : 0;
         if (dir === 'left' || dir === 'right') {
             ctx.beginPath(); ctx.arc(0 + armSwing, -2, 5.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
         } else {
@@ -2455,12 +2706,12 @@
         ctx.restore(); // bob
 
         // Jaring di depan badan jika tidak menghadap ke atas
-        if (player.swinging) {
-            if (!netBehind) { ctx.save(); ctx.translate(0, -8 - bob); ctx.rotate(player.angle); drawNet(); ctx.restore(); }
+        if (pl.swinging) {
+            if (!netBehind) { ctx.save(); ctx.translate(0, -8 - bob); ctx.rotate(pl.angle); drawNet(pl); ctx.restore(); }
         } else {
             // Pose diam/jalan: jaring disandarkan di bahu
             const sd = dir === 'left' ? -1 : 1;
-            const sway = player.isMoving ? Math.sin(player.walkCycle) * 2 : 0;
+            const sway = pl.isMoving ? Math.sin(pl.walkCycle) * 2 : 0;
             ctx.save();
             ctx.translate(0, -bob);
             ctx.lineCap = 'round';
@@ -2479,6 +2730,27 @@
             ctx.fillStyle = SKIN; ctx.strokeStyle = INK; ctx.lineWidth = 3;
             ctx.beginPath(); ctx.arc(sd * 14, -4, 5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
             ctx.restore();
+        }
+
+
+        if (isDuel()) {
+            // Label pemain di atas kepala
+            ctx.font = "900 13px 'Segoe UI', sans-serif";
+            ctx.textAlign = 'center';
+            const tw = 30;
+            ctx.fillStyle = pl.look.color;
+            ctx.strokeStyle = INK; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.roundRect(-tw / 2, -82, tw, 18, 9); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = '#fff';
+            ctx.fillText(pl.look.tag, 0, -69);
+        }
+        if (pl.frozen > 0) {
+            // Efek beku
+            ctx.fillStyle = 'rgba(140, 210, 255, 0.55)';
+            ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.roundRect(-24, -66, 48, 88, 16); ctx.fill(); ctx.stroke();
+            ctx.font = '20px sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = '#fff';
+            ctx.fillText('❄', 0, -20);
         }
 
         ctx.restore();
@@ -2730,6 +3002,7 @@
     // ==========================================
     // 11. MAIN REQUESTANIMATIONFRAME LOOP
     // ==========================================
+    window.__bcReady = true;
     initButterflies(18);
     let lastTimestamp = performance.now();
 
@@ -2742,11 +3015,14 @@
             updateGame(dt);
         }
 
+        // Skala tampilan (Duel: seluruh arena muat di layar)
+        ctx.setTransform(viewScale, 0, 0, viewScale, 0, 0);
+
         // 1. Gambar Latar Padang Rumput, Kolam, Bunga, dan Rumah
         drawMeadowBackground(elapsedSeconds);
 
-        // 2. Gambar Karakter Pemain
-        drawPlayerCharacter();
+        // 2. Gambar Karakter Pemain (diurutkan berdasarkan posisi y agar tumpang tindih benar)
+        [...players].sort((a, b) => a.y - b.y).forEach(drawPlayerCharacter);
 
         // 3. Gambar Seluruh Kupu-Kupu
         ctx.save();
