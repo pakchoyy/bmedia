@@ -38,7 +38,7 @@ export default function GameFrame({ title, src }: { title: string; src: string }
   }
 
   return (
-    <div ref={box} className="fixed inset-0 bg-slate-900">
+    <div ref={box} className="fixed inset-0 bg-slate-900" style={{ zIndex: 2147483000 }}>
       <iframe
         src={src}
         title={title}

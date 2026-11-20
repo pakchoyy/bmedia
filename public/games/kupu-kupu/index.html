@@ -148,6 +148,10 @@
         .mode-buttons { display: flex; flex-direction: column; gap: 2px; }
         .mode-buttons .secondary-btn { margin-top: 8px; }
         .mode-buttons button:disabled { opacity: .5; cursor: not-allowed; filter: grayscale(.4); }
+        .set-info { margin-top: 8px; font-size: 13px; font-weight: 800; color: #4a3b32; background: #fff3c4;
+                    border: 3px solid #4a3b32; border-radius: 12px; padding: 4px 10px; }
+        .set-info.set-ok { background: #c8f7dc; }
+        .set-info.set-err { background: #ffd6d6; }
         .edu-opts { font-size: 13px; font-weight: 700; color: #594a42; margin-top: 10px; }
         .edu-opts select { font: inherit; font-weight: 800; border: 3px solid #4a3b32; border-radius: 10px;
                            padding: 2px 6px; background: #fff; color: #4a3b32; }
@@ -575,6 +579,7 @@
         }
 
         @media (max-height: 480px) {
+            .set-info { margin-top: 4px; font-size: 10px; padding: 2px 8px; border-width: 2px; }
             .is-duel .joystick-zone { width: 104px; height: 104px; }
             .is-duel .joystick-base { width: 96px; height: 96px; }
             .is-duel .catch-btn { width: 78px; height: 78px; font-size: 11px; }
@@ -726,6 +731,7 @@
             <canvas id="logoButterflyCanvas" width="120" height="90" style="width:120px;height:90px;margin:0 auto 4px auto;"></canvas>
             <h1 class="game-logo-title">BUTTERFLY <br>CATCHER</h1>
             <div class="game-subtitle">✨ Petualangan Padang Rumput Ceria ✨</div>
+            <div class="set-info" id="set-info" style="display:none;"></div>
             <p style="font-size:14px; color:#594a42; font-weight:600; line-height:1.4;">
                 Dekati kupu-kupu di taman dan ayunkan jaringmu sebelum waktu habis! Pertahankan kombo untuk poin berlipat!
             </p>
@@ -1550,8 +1556,11 @@
         { q: 'Persegi memiliki jumlah sisi sebanyak ...', o: ['3', '4', '5', '6'], a: 1 }
     ];
 
+    // Set soal dari guru (?set=KODE), diambil dari server
+    let teacherSet = null;
+
     function loadQuestions() {
-        // Nanti sumbernya dipindah ke server; format tetap sama: {q, o:[4], a:index}
+        if (teacherSet && teacherSet.questions.length) return teacherSet.questions;
         try {
             const saved = JSON.parse(localStorage.getItem('bgy_questions_v1') || 'null');
             if (Array.isArray(saved) && saved.length) return saved;
@@ -1570,6 +1579,29 @@
     let gameMode = 'free';
     let quizEvery = 3;
     let quizBag = [];
+
+    (function loadTeacherSet() {
+        const code = (new URLSearchParams(location.search).get('set') || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+        if (!code) return;
+        const info = document.getElementById('set-info');
+        info.style.display = '';
+        info.textContent = '⏳ Memuat soal dari guru...';
+        fetch('/api/set/' + code)
+            .then(r => r.ok ? r.json() : Promise.reject(r.status))
+            .then(data => {
+                const qs = Array.isArray(data.questions) ? data.questions.filter(q =>
+                    q && typeof q.q === 'string' && Array.isArray(q.o) && q.o.length === 4 && q.a >= 0 && q.a <= 3) : [];
+                if (!qs.length) throw new Error('kosong');
+                teacherSet = { title: data.title, questions: qs };
+                quizBag = [];
+                info.textContent = `📚 Soal guru: ${data.title} (${qs.length} soal)`;
+                info.classList.add('set-ok');
+            })
+            .catch(() => {
+                info.textContent = '⚠️ Kode soal tidak ditemukan. Memakai soal bawaan.';
+                info.classList.add('set-err');
+            });
+    })();
 
     function isEdu() { return gameMode === 'edu' || gameMode === 'duel'; }
 
