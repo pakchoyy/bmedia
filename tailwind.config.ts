@@ -47,8 +47,8 @@ const config: Config = {
         header: "0 2px 10px rgba(0,0,0,.18)",
       },
       fontFamily: {
-        sans: ["'Segoe UI'", "system-ui", "-apple-system", "sans-serif"],
-        display: ["var(--font-display)", "'Segoe UI'", "system-ui", "sans-serif"],
+        sans: ["var(--font-body)", "'Segoe UI'", "system-ui", "-apple-system", "sans-serif"],
+        display: ["var(--font-display)", "ui-rounded", "'Segoe UI'", "system-ui", "sans-serif"],
       },
     },
   },

@@ -41,25 +41,25 @@ export default async function MediaDetailPage({ params }: Props) {
   return (
     <div className="container mx-auto max-w-[1200px] px-6 py-6 fade-in">
       {/* Detail header */}
-      <div className="bg-white dark:bg-slate-900 rounded-[15px] overflow-hidden shadow-md mb-8 border border-gray-100 dark:border-slate-800">
-        <div className="w-full h-[400px] max-md:h-[220px]">
+      <div className="nb bg-white dark:bg-slate-900 rounded-2xl overflow-hidden mb-8">
+        <div className="w-full h-[400px] max-md:h-[220px] border-b-[3px] border-nb-ink dark:border-[var(--nb-ink)]">
           <MediaThumb media={media} className="w-full h-full" />
         </div>
 
         <div className="p-8 max-md:p-5">
           <div className="flex flex-wrap gap-2 mb-3 text-xs font-semibold">
-            <span className="bg-primary-bg text-primary px-2.5 py-1 rounded-full">{media.category}</span>
-            <span className="bg-primary-bg text-primary px-2.5 py-1 rounded-full">{media.mapel}</span>
-            <span className="bg-primary-bg text-primary px-2.5 py-1 rounded-full">
+            <span className="nb-flat bg-nb-mint/40 text-nb-ink dark:text-white px-2.5 py-1 rounded-full">{media.category}</span>
+            <span className="nb-flat bg-nb-yellow/50 text-nb-ink dark:text-white px-2.5 py-1 rounded-full">{media.mapel}</span>
+            <span className="nb-flat bg-nb-blue/15 text-nb-ink dark:text-white px-2.5 py-1 rounded-full">
               {media.jenjang === "Umum" ? "Semua jenjang" : `${media.jenjang} · ${media.kelas}`}
             </span>
           </div>
 
-          <h2 className="text-3xl font-bold text-primary dark:text-primary-light leading-tight mb-3 max-md:text-2xl">
+          <h2 className="font-display text-3xl font-bold text-nb-ink dark:text-white leading-tight mb-3 max-md:text-2xl">
             {media.title}
           </h2>
 
-          <p className="text-base text-gray-600 dark:text-slate-300 leading-relaxed mb-5 max-w-2xl">
+          <p className="text-base text-slate-700 dark:text-slate-300 leading-relaxed mb-5 max-w-2xl">
             {media.description}
           </p>
 
@@ -73,14 +73,14 @@ export default async function MediaDetailPage({ params }: Props) {
             href={`https://wa.me/?text=${encodeURIComponent(`${media.title}\n${media.description}\n\n${MEDIA_SITE_ORIGIN}/media/${media.id}`)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 mt-4 text-sm font-semibold text-[#128C7E] hover:underline"
+            className="inline-flex items-center gap-2 mt-4 text-sm font-bold text-nb-ink dark:text-white underline decoration-nb-mint decoration-4 underline-offset-4"
           >
             <Icon name="whatsapp" />
             Bagikan ke grup WA
           </a>
 
           <p className="text-sm text-gray-500 dark:text-slate-400 mt-6 pt-4 border-t border-gray-200 dark:border-slate-700">
-            Dibuat oleh <strong className="text-primary dark:text-primary-light">{media.guru_name}</strong>
+            Dibuat oleh <strong className="text-nb-ink dark:text-white">{media.guru_name}</strong>
             {media.sekolah && media.sekolah !== "-" ? ` · ${media.sekolah}` : ""}
             {media.tool && media.tool !== "Lainnya" ? ` · ${media.tool}` : ""}
           </p>
@@ -89,14 +89,14 @@ export default async function MediaDetailPage({ params }: Props) {
 
       <Link
         href="/catalog"
-        className="inline-flex items-center gap-2 text-primary border-2 border-primary rounded-full px-5 py-2 font-semibold my-6 hover:bg-primary hover:text-white transition-colors"
+        className="nb-sm nb-press inline-flex items-center gap-2 bg-white dark:bg-slate-900 text-nb-ink dark:text-white rounded-xl px-5 py-2.5 font-extrabold my-6"
       >
         <Icon name="arrow-left" />
         Kembali ke Koleksi
       </Link>
 
       {/* Recommendations */}
-      <h3 className="text-3xl font-bold text-primary mt-6 mb-6">
+      <h3 className="font-display text-3xl font-bold text-nb-ink dark:text-white mt-6 mb-6">
         Rekomendasi Media Serupa
       </h3>
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">

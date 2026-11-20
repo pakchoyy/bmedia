@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Butterfly Catcher 2D - Indie Adventure</title>
+    <title>Butterfly Catcher · Main-yuk</title>
     <style>
         /* ==========================================
            1. CSS RESET & BASE STYLING (OFFLINE SAFE)
@@ -148,6 +148,8 @@
         .mode-buttons { display: flex; flex-direction: column; gap: 2px; }
         .mode-buttons .secondary-btn { margin-top: 8px; }
         .mode-buttons button:disabled { opacity: .5; cursor: not-allowed; filter: grayscale(.4); }
+        .brand-tag { display: inline-block; margin: -2px 0 8px; font-size: 12px; font-weight: 900; color: #4a3b32; letter-spacing: .3px; }
+        .brand-tag b { color: #ff7a1a; }
         .set-info { margin-top: 8px; font-size: 13px; font-weight: 800; color: #4a3b32; background: #fff3c4;
                     border: 3px solid #4a3b32; border-radius: 12px; padding: 4px 10px; }
         .set-info.set-ok { background: #c8f7dc; }
@@ -579,6 +581,7 @@
         }
 
         @media (max-height: 480px) {
+            .brand-tag { display: none; }
             .set-info { margin-top: 4px; font-size: 10px; padding: 2px 8px; border-width: 2px; }
             .is-duel .joystick-zone { width: 104px; height: 104px; }
             .is-duel .joystick-base { width: 96px; height: 96px; }
@@ -731,6 +734,7 @@
             <canvas id="logoButterflyCanvas" width="120" height="90" style="width:120px;height:90px;margin:0 auto 4px auto;"></canvas>
             <h1 class="game-logo-title">BUTTERFLY <br>CATCHER</h1>
             <div class="game-subtitle">✨ Petualangan Padang Rumput Ceria ✨</div>
+            <div class="brand-tag">🎮 Main<b>-yuk</b> · game belajar seru</div>
             <div class="set-info" id="set-info" style="display:none;"></div>
             <p style="font-size:14px; color:#594a42; font-weight:600; line-height:1.4;">
                 Dekati kupu-kupu di taman dan ayunkan jaringmu sebelum waktu habis! Pertahankan kombo untuk poin berlipat!

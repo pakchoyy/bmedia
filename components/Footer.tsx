@@ -8,9 +8,7 @@ export default function Footer() {
       <div className="container mx-auto max-w-[1200px] px-5 py-8 grid gap-6 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <div className="flex items-center gap-2 font-display font-bold text-xl">
-            <span className="w-9 h-9 rounded-xl bg-nb-yellow text-nb-ink flex items-center justify-center border-2 border-white">
-              <Icon name="gamepad" />
-            </span>
+            <img src="/logo-main-yuk.png" alt="" width={36} height={36} className="w-9 h-9" />
             Main<span className="text-nb-yellow">-yuk</span>
           </div>
           <p className="mt-3 text-sm text-white/75 max-w-[360px]">
