@@ -25,7 +25,7 @@ export default function ThemeToggle() {
     <button
       onClick={toggle}
       aria-label={dark ? "Mode terang" : "Mode gelap"}
-      className="p-1.5 rounded-md text-white bg-black/10 border border-white/30 hover:bg-black/20 transition-colors"
+      className="nb-sm nb-press w-9 h-9 flex items-center justify-center rounded-lg text-nb-ink dark:text-white bg-white dark:bg-slate-800"
     >
       <Icon name={dark ? "sun" : "moon"} className="text-lg" />
     </button>

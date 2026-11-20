@@ -17,56 +17,52 @@ export default function GameCard({ media, categoryColor }: { media: Media; categ
     <Link
       href={`/media/${media.id}`}
       onClick={trackOpen}
-      className="group bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-slate-800 hover:-translate-y-1 hover:shadow-md hover:border-primary-light transition-all duration-300 flex flex-col"
+      className="group nb nb-hover bg-white dark:bg-slate-900 rounded-2xl overflow-hidden flex flex-col"
     >
-      <div className="relative h-32 sm:h-44 overflow-hidden">
+      <div className="relative h-32 sm:h-44 overflow-hidden border-b-[3px] border-nb-ink dark:border-[var(--nb-ink)]">
         <div
-          className="absolute top-1.5 right-1.5 sm:top-2.5 sm:right-2.5 text-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold z-10"
+          className="absolute top-2 left-2 z-10 nb-flat rounded-full px-2 sm:px-2.5 py-0.5 text-[10px] sm:text-[11px] font-extrabold text-white"
           style={{ backgroundColor: categoryColor || "#16a34a" }}
         >
           {media.category}
         </div>
-        <MediaThumb media={media} className="transition-transform duration-500 group-hover:scale-110" />
+        <MediaThumb media={media} className="transition-transform duration-500 group-hover:scale-105" />
       </div>
 
       <div className="p-3 sm:p-4 flex flex-col flex-1">
-        <h3 className="text-sm sm:text-base font-bold text-ink dark:text-slate-100 leading-snug mb-1.5 line-clamp-2">
+        <h3 className="font-display font-semibold text-[15px] sm:text-lg text-nb-ink dark:text-slate-100 leading-snug mb-1.5 line-clamp-2">
           {media.title}
         </h3>
-        <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-[11px] sm:text-xs text-gray-600 dark:text-slate-400 mb-1.5">
-          <span className="flex items-center gap-1">
-            <Icon name="book" className="text-primary-light" />
+
+        <div className="flex flex-wrap gap-1.5 mb-2">
+          <span className="nb-flat rounded-md bg-nb-yellow/40 px-1.5 py-0.5 text-[10px] sm:text-[11px] font-bold text-nb-ink dark:text-slate-100">
             {media.mapel}
           </span>
-          <span className="hidden sm:flex items-center gap-1">
-            <Icon name="graduation-cap" className="text-primary-light" />
+          <span className="hidden sm:inline nb-flat rounded-md bg-nb-blue/15 px-1.5 py-0.5 text-[11px] font-bold text-nb-ink dark:text-slate-100">
             {media.kelas}
+          </span>
+          <span className="hidden sm:inline nb-flat rounded-md bg-nb-mint/20 px-1.5 py-0.5 text-[11px] font-bold text-nb-ink dark:text-slate-100">
+            {media.tool}
           </span>
         </div>
 
-        <div className="hidden sm:inline-flex text-xs bg-primary-bg text-primary px-2 py-1 rounded-md items-center gap-1.5 font-semibold mb-2 w-fit">
-          <Icon name="wrench" className="text-[0.7rem]" />
-          {media.tool}
-        </div>
-
-        <div className="text-xs sm:text-sm text-primary font-medium mt-auto border-t border-gray-200 dark:border-slate-800 pt-2">
-          <Icon name="user-tie" className="text-gray-400 mr-1" />
+        <div className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 mt-auto truncate">
+          <Icon name="user-tie" className="mr-1 text-nb-orange" />
           {media.guru_name}
         </div>
-
-        <div className="hidden sm:flex justify-between items-center mt-1.5 text-xs text-gray-500 dark:text-slate-400">
-          <span>
+        <div className="hidden sm:flex justify-between items-center gap-2 mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+          <span className="truncate">
             <Icon name="school" className="mr-1" />
             {media.sekolah}
           </span>
-          <span>
-            <Icon name="users" className="text-accent mr-1" />
-            {formatPlays(media.plays)} digunakan
+          <span className="shrink-0">
+            <Icon name="users" className="mr-1 text-nb-orange" />
+            {formatPlays(media.plays)}×
           </span>
         </div>
 
-        <div className="w-full mt-2 sm:mt-3 py-1.5 sm:py-2 bg-primary-light text-white rounded-lg font-semibold text-xs sm:text-sm text-center transition-colors group-hover:bg-primary">
-          Buka Media
+        <div className="nb-sm mt-3 py-1.5 sm:py-2 rounded-xl bg-nb-orange text-white font-extrabold text-xs sm:text-sm text-center group-hover:bg-nb-ink transition-colors">
+          Buka Media →
         </div>
       </div>
     </Link>

@@ -3,20 +3,17 @@ import Icon from "./Icon";
 
 export default function CTAKirimKarya() {
   return (
-    <div className="h-full flex flex-col items-center justify-center text-center rounded-2xl bg-gradient-to-br from-accent/10 to-accent/5 dark:from-accent/20 dark:to-accent/10 p-8 max-md:p-6 border border-accent/20">
-      <Icon name="cloud-arrow-up" className="text-5xl text-accent mx-auto mb-4" />
-      <h2 className="text-3xl font-bold text-ink dark:text-slate-100 mb-3">
-        Punya media pembelajaran sendiri?
-      </h2>
-      <p className="text-lg text-gray-600 dark:text-slate-300 mb-6 max-w-[440px] leading-relaxed">
-        Bagikan karya kamu dan bantu guru lainnya. Media Anda akan ditinjau terlebih dahulu sebelum dipublikasikan.
+    <div className="nb h-full rounded-2xl bg-nb-yellow text-nb-ink p-6 sm:p-8 flex flex-col items-start relative overflow-hidden">
+      <div aria-hidden="true" className="absolute -right-6 -bottom-6 w-28 h-28 rounded-full bg-white/40" />
+      <span className="nb-sm rounded-xl bg-white w-12 h-12 flex items-center justify-center mb-4">
+        <Icon name="cloud-arrow-up" className="text-2xl" />
+      </span>
+      <h2 className="font-display font-bold text-2xl sm:text-3xl mb-2">Punya media pembelajaran?</h2>
+      <p className="mb-5 max-w-[440px] text-nb-ink/80">
+        Bagikan karyamu dan bantu guru lain. Media ditinjau dulu sebelum dipublikasikan.
       </p>
-      <Link
-        href="/submit"
-        className="inline-flex items-center gap-2 bg-accent hover:bg-[#e06c0d] text-white px-8 py-3.5 rounded-full font-bold transition-all hover:scale-105 shadow-md"
-      >
-        <Icon name="plus" />
-        Kirim Karya
+      <Link href="/submit" className="nb nb-hover nb-press mt-auto bg-nb-orange text-white font-extrabold rounded-xl px-5 py-3 inline-flex items-center gap-2">
+        <Icon name="plus" /> Kirim Karya
       </Link>
     </div>
   );

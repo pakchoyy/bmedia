@@ -7,12 +7,14 @@
   --light-blue: #0ea5a0;
   --bg-blue: #e6f6f5;
   --dark-gray: #1e293b;
-  --page-bg: #f8fafc;
+  --page-bg: #fffaf0;
+  --nb-ink: #1b1a3a;
 }
 
 .dark {
   --dark-gray: #e2e8f0;
-  --page-bg: #0f172a;
+  --page-bg: #13112b;
+  --nb-ink: #e8dcc0;
 }
 
 body {
@@ -50,10 +52,6 @@ button {
   text-wrap: balance;
 }
 
-/* Hide "Prompt Game" from bgy-info.js menu — /buat is already in main nav */
-[data-bgy-menu] .bgym-item[href*="bmedia.bantuguruyuk.web.id/buat"] {
-  display: none;
-}
 
 @keyframes fadeIn {
   from {
@@ -78,4 +76,55 @@ button {
 @keyframes floatSlow {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-8px); }
+}
+
+
+/* ===== Neo-brutalism ===== */
+.nb {
+  border: 3px solid var(--nb-ink);
+  box-shadow: 5px 5px 0 var(--nb-ink);
+}
+.nb-sm {
+  border: 2px solid var(--nb-ink);
+  box-shadow: 3px 3px 0 var(--nb-ink);
+}
+.nb-flat {
+  border: 2px solid var(--nb-ink);
+}
+.nb-hover {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.nb-hover:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0 var(--nb-ink);
+}
+.nb-sm.nb-hover:hover {
+  box-shadow: 5px 5px 0 var(--nb-ink);
+}
+.nb-press:active {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0 var(--nb-ink);
+}
+.nb-mark {
+  background: linear-gradient(transparent 55%, #ffd23f 55%, #ffd23f 92%, transparent 92%);
+  padding: 0 0.12em;
+}
+.dark .nb-mark {
+  background: linear-gradient(transparent 55%, rgba(255, 210, 63, 0.55) 55%, rgba(255, 210, 63, 0.55) 92%, transparent 92%);
+}
+@keyframes nbBlink {
+  50% { opacity: 0; }
+}
+.nb-cursor {
+  animation: nbBlink 1s steps(1) infinite;
+}
+@keyframes nbWobble {
+  0%, 100% { transform: rotate(var(--r, -6deg)) translateY(0); }
+  50% { transform: rotate(var(--r, -6deg)) translateY(-6px); }
+}
+.nb-float {
+  animation: nbWobble 4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nb-float, .nb-cursor { animation: none; }
 }

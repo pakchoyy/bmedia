@@ -9,6 +9,13 @@ import Icon from "./Icon";
 
 const INITIAL_SHOW = 8;
 
+const SELECT_CLS =
+  "nb-flat px-3 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-800 text-nb-ink dark:text-slate-200 outline-none";
+const chipCls = (active: boolean) =>
+  `nb-sm nb-press px-3 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-extrabold transition-colors ${
+    active ? "bg-nb-yellow text-nb-ink" : "bg-white dark:bg-slate-900 text-nb-ink dark:text-slate-200 hover:bg-nb-yellow/40"
+  }`;
+
 const MAPEL_CHIPS = [
   { name: "Matematika", icon: "book", color: "#3b82f6" },
   { name: "Bahasa Indonesia", icon: "book-open", color: "#10b981" },
@@ -68,15 +75,15 @@ export default function HomeMediaSection({ media }: HomeMediaSectionProps) {
     <section className="px-4 pt-5 pb-6">
       <div className="container mx-auto max-w-[1200px]">
         {/* Search + filters */}
-        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 p-3 mb-4 mx-auto max-w-[720px]">
+        <div className="nb bg-white dark:bg-slate-900 rounded-2xl p-3 mb-5 mx-auto max-w-[720px]">
           <div className="flex items-center gap-2 mb-2">
-            <Icon name="magnifying-glass" className="text-gray-400 shrink-0" />
+            <Icon name="magnifying-glass" className="text-nb-orange shrink-0" />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Cari judul, guru, mapel..."
-              className="flex-1 bg-transparent outline-none text-sm dark:text-slate-100 placeholder:text-gray-400"
+              className="flex-1 bg-transparent outline-none text-sm font-semibold dark:text-slate-100 placeholder:text-gray-400"
             />
             {query && (
               <button onClick={() => setQuery("")} className="text-gray-400 hover:text-gray-600">
@@ -88,7 +95,7 @@ export default function HomeMediaSection({ media }: HomeMediaSectionProps) {
             <select
               value={jenjang}
               onChange={(e) => { setJenjang(e.target.value); setKelas(""); }}
-              className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-50 dark:bg-slate-800 dark:text-slate-200 border border-gray-200 dark:border-slate-700 outline-none"
+              className={SELECT_CLS}
             >
               <option value="">Semua Jenjang</option>
               {JENJANG_OPTIONS.map((j) => <option key={j} value={j}>{j}</option>)}
@@ -96,7 +103,7 @@ export default function HomeMediaSection({ media }: HomeMediaSectionProps) {
             <select
               value={kelas}
               onChange={(e) => setKelas(e.target.value)}
-              className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-50 dark:bg-slate-800 dark:text-slate-200 border border-gray-200 dark:border-slate-700 outline-none"
+              className={SELECT_CLS}
             >
               <option value="">Semua Kelas</option>
               {KELAS_OPTIONS
@@ -106,7 +113,7 @@ export default function HomeMediaSection({ media }: HomeMediaSectionProps) {
             <select
               value={mapel}
               onChange={(e) => setMapel(e.target.value)}
-              className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-50 dark:bg-slate-800 dark:text-slate-200 border border-gray-200 dark:border-slate-700 outline-none"
+              className={SELECT_CLS}
             >
               <option value="">Semua Mapel</option>
               {Array.from(new Set(media.map((m) => m.mapel))).sort().map((m) => (
@@ -116,7 +123,7 @@ export default function HomeMediaSection({ media }: HomeMediaSectionProps) {
             <select
               value={kategori}
               onChange={(e) => setKategori(e.target.value)}
-              className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-50 dark:bg-slate-800 dark:text-slate-200 border border-gray-200 dark:border-slate-700 outline-none"
+              className={SELECT_CLS}
             >
               <option value="">Semua Kategori</option>
               {CATEGORIES.map((c) => <option key={c.name} value={c.name}>{c.name}</option>)}
@@ -124,7 +131,7 @@ export default function HomeMediaSection({ media }: HomeMediaSectionProps) {
             {isFiltering && (
               <button
                 onClick={() => { setQuery(""); setJenjang(""); setKelas(""); setMapel(""); setKategori(""); }}
-                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-danger border border-danger/30 hover:bg-danger/10 transition-colors"
+                className="nb-flat px-3 py-1.5 rounded-lg text-xs font-extrabold bg-nb-pink text-white"
               >
                 Reset
               </button>
@@ -133,15 +140,11 @@ export default function HomeMediaSection({ media }: HomeMediaSectionProps) {
         </div>
 
         {/* Mata Pelajaran chips */}
-        <div className="mb-4 text-center">
+        <div className="mb-5 text-center">
           <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center">
             <button
               onClick={() => setMapel("")}
-              className={`flex items-center gap-1 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-semibold border transition-all ${
-                mapel === ""
-                  ? "bg-primary-bg border-primary-light text-primary scale-105 shadow-sm"
-                  : "bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-ink dark:text-slate-200 hover:border-primary-light"
-              }`}
+              className={chipCls(mapel === "")}
             >
               Semua
             </button>
@@ -149,22 +152,14 @@ export default function HomeMediaSection({ media }: HomeMediaSectionProps) {
               <button
                 key={chip.name}
                 onClick={() => setMapel(mapel === chip.name ? "" : chip.name)}
-                className={`flex items-center gap-1 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-semibold border transition-all ${
-                  mapel === chip.name
-                    ? "bg-primary-bg border-primary-light text-primary scale-105 shadow-sm"
-                    : "bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-ink dark:text-slate-200 hover:border-primary-light"
-                }`}
+                className={chipCls(mapel === chip.name)}
               >
                 {chip.name}
               </button>
             ))}
             <button
               onClick={() => setMapel(isLainnya ? "" : MAPEL_LAINNYA)}
-              className={`flex items-center gap-1 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-semibold border transition-all ${
-                isLainnya
-                  ? "bg-primary-bg border-primary-light text-primary scale-105 shadow-sm"
-                  : "bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-ink dark:text-slate-200 hover:border-primary-light"
-              }`}
+              className={chipCls(isLainnya)}
             >
               Lainnya
             </button>
@@ -172,11 +167,11 @@ export default function HomeMediaSection({ media }: HomeMediaSectionProps) {
         </div>
 
         {/* Media heading */}
-        <div className="flex items-center justify-center gap-3 mb-3">
-          <h2 className="text-lg sm:text-xl font-bold text-ink dark:text-slate-100">
-            {isFiltering ? "Hasil Pencarian" : "Media Terbaru"}
+        <div className="flex items-center justify-center gap-3 mb-5">
+          <h2 className="font-display font-bold text-2xl sm:text-3xl text-nb-ink dark:text-slate-100">
+            {isFiltering ? "Hasil Pencarian" : <>Media <span className="nb-mark">Terbaru</span></>}
           </h2>
-          <span className="text-xs text-gray-500 dark:text-slate-400">
+          <span className="nb-flat rounded-full bg-white dark:bg-slate-900 px-2 py-0.5 text-xs font-extrabold text-nb-ink dark:text-slate-200">
             {filtered.length} media
           </span>
         </div>
@@ -190,17 +185,17 @@ export default function HomeMediaSection({ media }: HomeMediaSectionProps) {
           </div>
         ) : (
           <>
-            <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid gap-4 sm:gap-5 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {visible.map((m) => (
                 <GameCard key={m.id} media={m} categoryColor={CATEGORY_COLORS[m.category]} />
               ))}
             </div>
 
             {hasMore && (
-              <div className="text-center mt-6">
+              <div className="text-center mt-8">
                 <Link
                   href="/catalog"
-                  className="inline-flex items-center gap-2 bg-primary-light text-white px-6 py-2.5 rounded-full font-semibold text-sm hover:bg-primary transition-colors shadow-sm"
+                  className="nb nb-hover nb-press inline-flex items-center gap-2 bg-nb-ink text-white px-6 py-3 rounded-xl font-extrabold text-sm"
                 >
                   Lihat Semua Media
                   <Icon name="arrow-right" />

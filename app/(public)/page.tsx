@@ -21,77 +21,68 @@ export default async function HomePage() {
 
   return (
     <div className="fade-in">
-      {/* Hero */}
-      <section className="bg-bgy-hero text-white overflow-hidden relative">
-        <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-          <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/5 rounded-full blur-3xl" style={{animation:'float 8s ease-in-out infinite'}} />
-          <div className="absolute top-1/3 -left-16 w-40 h-40 bg-white/5 rounded-full blur-2xl" style={{animation:'floatSlow 6s ease-in-out infinite'}} />
-          <div className="absolute bottom-8 right-1/4 w-24 h-24 bg-white/[0.04] rounded-full blur-xl" style={{animation:'float 10s ease-in-out infinite'}} />
-          <div className="absolute top-8 left-1/3 w-16 h-16 bg-white/[0.06] rounded-full blur-lg" style={{animation:'floatSlow 7s ease-in-out infinite'}} />
+      {/* Hero — neo-brutalism */}
+      <section className="relative overflow-hidden bg-nb-cream dark:bg-[#1d1a3d] border-b-[3px] border-nb-ink dark:border-[var(--nb-ink)]">
+        {/* Hiasan bentuk */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-10 -left-10 w-40 h-40 rounded-full bg-nb-yellow/60 dark:bg-nb-yellow/20" />
+          <div className="absolute bottom-6 left-[42%] w-10 h-10 rotate-12 bg-nb-pink nb-sm max-lg:hidden" />
+          <div className="absolute top-10 right-8 w-24 h-24 rounded-full bg-nb-blue/20" />
         </div>
 
-        <div className="absolute inset-y-0 right-0 w-[52%] max-lg:hidden">
-          <img
-            src="/hero-banner.webp"
-            alt="Ilustrasi media belajar interaktif bersama guru"
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <div className="absolute inset-y-0 right-[29%] w-[23%] bg-gradient-to-r from-[#0d7a8a] via-[#0d7a8a]/25 to-transparent pointer-events-none max-lg:hidden" />
+        <div className="relative container mx-auto max-w-[1200px] px-5 py-8 sm:py-12 grid gap-8 lg:grid-cols-[1.05fr_1fr] items-center">
+          <div className="max-lg:text-center">
+            <span className="inline-block bg-white dark:bg-slate-900 nb-sm rounded-full px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-nb-ink dark:text-slate-100">
+              🎒 Media Belajar · SD – SMA
+            </span>
 
-        <div className="relative z-10 container mx-auto max-w-[1200px] px-6 py-5 max-md:py-3">
-          <div className="w-[48%] max-lg:w-full max-lg:text-center">
-            <div className="flex flex-wrap justify-start gap-1.5 mb-1.5 max-lg:justify-center">
-              {["✓ Gratis", "✓ Karya Guru Indonesia", "✓ Interaktif"].map((b) => (
-                <span key={b} className="bg-white/15 rounded-full px-2.5 py-0.5 text-[11px] sm:text-xs font-medium">
-                  {b}
-                </span>
-              ))}
-            </div>
-
-            <h1 className="text-white text-4xl leading-tight font-extrabold mb-0.5 max-md:text-2xl max-sm:text-xl">
-              Bantu Guru Yuk
+            <h1 className="font-display font-bold text-nb-ink dark:text-white text-[2.1rem] leading-[1.1] sm:text-5xl mt-4">
+              Belajar Jadi <span className="nb-mark">Seru</span>
+              <br className="max-sm:hidden" /> Bareng <span className="text-nb-blue">Guru Indonesia</span>
+              <span className="nb-cursor text-nb-blue">_</span>
             </h1>
-            <h2 className="text-white text-lg leading-relaxed font-medium mb-1.5 max-md:text-sm text-balance">
-              Media Belajar Interaktif Karya Guru Indonesia
-            </h2>
 
-            <p className="text-xs sm:text-sm mb-2.5 opacity-90 leading-relaxed max-w-[440px] max-lg:mx-auto">
-              Temukan, gunakan, dan bagikan media pembelajaran untuk membuat pembelajaran lebih menarik.
+            <p className="mt-3 text-[15px] sm:text-base text-slate-700 dark:text-slate-300 max-w-[480px] max-lg:mx-auto">
+              Ratusan game, kuis, dan lab maya <b>karya guru</b>. Gratis dipakai di kelas, bisa main pakai kode dari guru.
             </p>
 
-            <div className="flex flex-wrap items-center gap-2 max-lg:justify-center">
-              <a
-                href="#media"
-                className="bg-accent text-white rounded-full px-4 py-2 text-xs sm:text-sm font-bold inline-flex items-center gap-1.5 hover:bg-[#e06c0d] hover:scale-105 transition-all shadow-lg"
-              >
-                <Icon name="compass" />
-                Jelajahi Media
+            <div className="mt-5 flex flex-wrap gap-3 max-lg:justify-center">
+              <a href="#media" className="nb nb-hover nb-press bg-nb-orange text-white font-extrabold rounded-xl px-5 py-3 inline-flex items-center gap-2">
+                <Icon name="compass" /> Jelajahi Media
               </a>
-              <Link
-                href="/buat"
-                className="bg-white/15 border border-white/30 text-white rounded-full px-3 py-1.5 text-xs sm:text-sm font-semibold inline-flex items-center gap-1.5 hover:bg-white/25 transition-colors"
-              >
-                <Icon name="gamepad" />
-                Buat Game
+              <Link href="/main" className="nb nb-hover nb-press bg-nb-yellow text-nb-ink font-extrabold rounded-xl px-5 py-3 inline-flex items-center gap-2">
+                <Icon name="gamepad" /> Masuk Kelas
               </Link>
-              <Link
-                href="/submit"
-                className="bg-success text-white rounded-full px-4 py-2 text-xs sm:text-sm font-semibold inline-flex items-center gap-1.5 hover:bg-green-700 hover:scale-105 transition-all shadow-md"
-              >
-                <Icon name="plus" />
-                Kirim Karya
+              <Link href="/submit" className="nb-sm nb-hover nb-press bg-white dark:bg-slate-900 text-nb-ink dark:text-white font-bold rounded-xl px-4 py-3 inline-flex items-center gap-2">
+                <Icon name="plus" /> Kirim Karya
               </Link>
             </div>
-          </div>
-        </div>
 
-        <div className="lg:hidden relative z-10 px-6 pb-2 max-w-[220px] mx-auto">
-          <img
-            src="/hero-banner.webp"
-            alt="Ilustrasi media belajar interaktif bersama guru"
-            className="w-full h-auto"
-          />
+            <div className="mt-5 flex flex-wrap gap-2 max-lg:justify-center text-xs font-bold">
+              <span className="nb-flat rounded-full bg-nb-mint/25 px-2.5 py-1 text-nb-ink dark:text-white">✓ Gratis</span>
+              <span className="nb-flat rounded-full bg-nb-lilac/30 px-2.5 py-1 text-nb-ink dark:text-white">✓ Karya Guru Indonesia</span>
+              <span className="nb-flat rounded-full bg-nb-pink/25 px-2.5 py-1 text-nb-ink dark:text-white">✓ Interaktif</span>
+            </div>
+          </div>
+
+          {/* Jendela ilustrasi */}
+          <div className="relative max-w-[520px] w-full mx-auto">
+            <div className="nb rounded-2xl bg-white dark:bg-slate-900 overflow-hidden">
+              <div className="flex items-center gap-1.5 px-3 py-2 border-b-[3px] border-nb-ink dark:border-[var(--nb-ink)] bg-nb-yellow">
+                <span className="w-3 h-3 rounded-full bg-nb-pink border-2 border-nb-ink" />
+                <span className="w-3 h-3 rounded-full bg-nb-orange border-2 border-nb-ink" />
+                <span className="w-3 h-3 rounded-full bg-nb-mint border-2 border-nb-ink" />
+                <span className="ml-auto text-[10px] font-extrabold uppercase tracking-wider text-nb-ink">bantuguruyuk</span>
+              </div>
+              <img src="/hero-banner.webp" alt="Ilustrasi media belajar interaktif bersama guru" className="w-full h-auto block" />
+            </div>
+            <div className="nb-sm nb-float absolute -left-3 -top-4 sm:-left-6 bg-nb-mint text-nb-ink rounded-xl px-3 py-1.5 text-xs font-extrabold" style={{ ["--r" as string]: "-8deg" }}>
+              🎮 Game Edukasi
+            </div>
+            <div className="nb-sm nb-float absolute -right-2 -bottom-4 sm:-right-5 bg-nb-pink text-white rounded-xl px-3 py-1.5 text-xs font-extrabold" style={{ ["--r" as string]: "6deg", animationDelay: "1.2s" }}>
+              🧪 Lab Maya
+            </div>
+          </div>
         </div>
       </section>
 
