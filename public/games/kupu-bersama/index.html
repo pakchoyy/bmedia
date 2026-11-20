@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Balap Kupu · Main-yuk</title>
+<title>Tangkap Kupu · Layar Bersama · Main-yuk</title>
 <style>
   :root { --ink:#1b1a3a; --cream:#fff6dc; --yellow:#ffd23f; --orange:#ff7a1a; --pink:#ff5d8f; --mint:#2ec4b6; }
   * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
@@ -22,6 +22,7 @@
   .card h1 { font-size:clamp(26px, 5vh, 40px); line-height:1.05; font-weight:900; letter-spacing:-.5px; }
   .card h1 span { color:var(--orange); }
   .sub { font-size:13px; font-weight:700; opacity:.75; margin-top:4px; }
+  .chip { display:inline-block; margin-top:6px; background:var(--yellow); border:2px solid var(--ink); border-radius:99px; padding:1px 12px; font-size:12px; font-weight:900; }
   .setinfo { margin-top:8px; font-size:12px; font-weight:800; background:#fff3c4; border:2px solid var(--ink); border-radius:10px; padding:3px 10px; display:inline-block; }
   .setinfo.ok { background:#c8f7dc; } .setinfo.err { background:#ffd6d6; }
   .row { margin-top:10px; display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; }
@@ -34,7 +35,7 @@
   .names input { flex:1; min-width:0; font:inherit; font-weight:800; border:2px solid var(--ink); border-radius:9px; padding:5px 8px; }
   #start { margin-top:14px; width:100%; padding:13px; border-radius:16px; background:var(--orange); font-size:20px; font-weight:900; }
 
-  /* ===== Balapan ===== */
+  /* ===== Permainan ===== */
   #race { position:absolute; inset:0; display:flex; flex-direction:column; background:var(--ink); }
   .lanes { flex:1 1 auto; min-height:0; display:flex; gap:5px; }
   .topbar { flex:0 0 auto; display:grid; grid-template-columns:1fr auto 1fr; align-items:center; padding:3px 8px; color:#fff; font-weight:900; }
@@ -53,13 +54,17 @@
   .opt b { flex:none; width:1.7em; height:1.7em; border-radius:50%; background:var(--c); border:2px solid var(--ink); display:flex; align-items:center; justify-content:center; font-size:.8em; }
   .opt.good { background:#8cf0b8; } .opt.bad { background:#ff9aa8; }
   .opt:disabled { cursor:default; }
-  .track { flex:0 0 clamp(56px, 12vh, 96px); border-top:3px solid var(--ink); background:linear-gradient(#bfe7ff 0 55%, #8fd66f 55%); position:relative; overflow:hidden; }
-  .road { position:absolute; left:26px; right:44px; top:0; bottom:0; }
-  .flag { position:absolute; right:6px; bottom:10%; font-size:clamp(22px, 5vh, 36px); line-height:1; }
-  .bf { position:absolute; left:0; top:22%; width:clamp(30px, 7vh, 52px); height:clamp(30px, 7vh, 52px); transform:translateX(0); transition:left .6s cubic-bezier(.3,1.4,.5,1); }
-  .bf svg { width:100%; height:100%; animation:flap .35s ease-in-out infinite alternate; transform-origin:50% 60%; }
-  @keyframes flap { from { transform:scaleX(1); } to { transform:scaleX(.55); } }
-  .count { position:absolute; left:8px; bottom:4px; font-size:11px; font-weight:900; background:#fff; border:2px solid var(--ink); border-radius:99px; padding:0 8px; }
+  .track { flex:0 0 clamp(60px, 13vh, 104px); border-top:3px solid var(--ink); background:linear-gradient(#bfe7ff 0 60%, #8fd66f 60%); position:relative; overflow:hidden; display:flex; align-items:center; gap:6px; padding:4px 8px; }
+  .jar { flex:1 1 auto; min-width:0; display:grid; grid-template-columns:repeat(auto-fill, minmax(clamp(16px, 3.4vh, 30px), 1fr)); gap:2px; align-content:center; background:rgba(255,255,255,.6); border:3px solid var(--ink); border-radius:12px; padding:3px; }
+  .slot { aspect-ratio:1; display:flex; align-items:center; justify-content:center; }
+  .slot svg { width:100%; height:100%; opacity:.2; filter:grayscale(1); }
+  .slot.full svg { opacity:1; filter:none; animation:pop .5s cubic-bezier(.3,1.6,.5,1); }
+  @keyframes pop { 0% { transform:scale(.2) rotate(-30deg); } 100% { transform:scale(1) rotate(0); } }
+  .netbox { flex:none; width:clamp(34px, 8vh, 56px); height:clamp(34px, 8vh, 56px); }
+  .netbox svg { width:100%; height:100%; transform-origin:20% 90%; }
+  .netbox.swing svg { animation:swing .5s ease-out; }
+  @keyframes swing { 0% { transform:rotate(-50deg); } 50% { transform:rotate(25deg); } 100% { transform:rotate(0); } }
+  .count { position:absolute; right:8px; top:3px; font-size:11px; font-weight:900; background:#fff; border:2px solid var(--ink); border-radius:99px; padding:0 8px; z-index:2; }
   .lane.frozen .qcard, .lane.frozen .opts { opacity:.55; filter:saturate(.4); }
   .ov { position:absolute; inset:0; display:none; align-items:center; justify-content:center; flex-direction:column; gap:6px; text-align:center; font-weight:900; font-size:clamp(20px, 5vh, 36px); background:rgba(27,26,58,.55); color:#fff; padding:10px; z-index:4; }
   .lane.frozen .ov.freeze { display:flex; background:rgba(120,200,255,.45); color:var(--ink); }
@@ -84,7 +89,7 @@
     .qcard { margin:4px 5px 3px; padding:4px 6px; } .opts { gap:3px; padding:0 5px 3px; } .opt { min-height:26px; border-radius:9px; padding:2px 6px; }
     .lane header { padding:2px 8px; } .topbar { padding:1px 8px; } .topbar .tb button { width:24px; height:24px; font-size:12px; }
   }
-  @media (prefers-reduced-motion: reduce) { .bf svg { animation:none; } .bf { transition:none; } }
+  @media (prefers-reduced-motion: reduce) { .slot.full svg, .netbox.swing svg { animation:none; } }
 </style>
 </head>
 <body>
@@ -98,19 +103,26 @@
     <rect x="29.5" y="22" width="5" height="26" rx="2.5" fill="#1b1a3a"/>
     <path d="M30 22 C 27 12, 22 10, 20 11 M34 22 C 37 12, 42 10, 44 11" stroke="#1b1a3a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
   </symbol>
+  <symbol id="net" viewBox="0 0 64 64">
+    <line x1="10" y1="58" x2="36" y2="30" stroke="#1b1a3a" stroke-width="9" stroke-linecap="round"/>
+    <line x1="10" y1="58" x2="36" y2="30" stroke="#feca57" stroke-width="5" stroke-linecap="round"/>
+    <ellipse cx="42" cy="22" rx="17" ry="14" transform="rotate(-35 42 22)" fill="rgba(255,255,255,.85)" stroke="#1b1a3a" stroke-width="4"/>
+    <path d="M32 24 L52 18 M34 14 L48 30 M40 12 L42 32" stroke="#1b1a3a" stroke-opacity=".35" stroke-width="2" fill="none"/>
+  </symbol>
 </svg>
 
 <div id="menu">
   <div class="card nb">
-    <h1>Balap <span>Kupu</span> 🦋</h1>
-    <div class="sub">Jawab soal paling cepat dan benar, terbangkan kupu-kupumu ke bunga!</div>
+    <h1>Tangkap <span>Kupu</span> 🦋</h1>
+    <div class="chip">Layar Bersama · 2–4 pemain</div>
+    <div class="sub">Jawab soal dengan benar untuk menangkap kupu. Siapa paling dulu memenuhi toplesnya, dia menang!</div>
     <div class="setinfo" id="setinfo">📚 Soal bawaan (12 soal)</div>
     <div class="row"><span class="lbl">Pemain</span>
       <div class="seg" id="segPlayers"><button class="nb-sm press" data-n="2">2</button> <button class="nb-sm press" data-n="3">3</button> <button class="nb-sm press" data-n="4">4</button></div></div>
-    <div class="row"><span class="lbl">Target jawaban benar</span>
+    <div class="row"><span class="lbl">Target kupu tertangkap</span>
       <div class="seg" id="segTarget"><button class="nb-sm press" data-n="5">5</button> <button class="nb-sm press" data-n="8">8</button> <button class="nb-sm press" data-n="10">10</button> <button class="nb-sm press" data-n="15">15</button></div></div>
     <div class="names" id="names"></div>
-    <button id="start" class="nb press">▶ MULAI BALAPAN</button>
+    <button id="start" class="nb press">▶ MULAI</button>
   </div>
 </div>
 
@@ -195,7 +207,7 @@
   var markT = seg('segTarget', function (n) { target = n; }, function () { return target; });
   renderNames();
 
-  // ---------- Balapan ----------
+  // ---------- Permainan ----------
   function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
   function nextIndex(L) {
     if (!L.bag.length) L.bag = shuffle(questions.map(function (_, i) { return i; }));
@@ -203,12 +215,13 @@
   }
 
   function buildLane(i, name) {
+    var slots = ''; for (var k = 0; k < target; k++) slots += '<span class="slot"><svg viewBox="0 0 64 64"><use href="#butterfly"/></svg></span>';
     var el = document.createElement('section'); el.className = 'lane'; el.style.setProperty('--c', COLORS[i]);
     el.innerHTML =
       '<header><span class="name"></span><span class="score">0</span></header>' +
       '<div class="qcard nb-sm"><div class="qno"></div><div class="q"></div></div>' +
       '<div class="opts"></div>' +
-      '<div class="track"><div class="road"><div class="bf"><svg viewBox="0 0 64 64"><use href="#butterfly"/></svg></div></div><div class="flag">🌸</div><div class="count">0/' + target + '</div></div>' +
+      '<div class="track"><div class="count">🦋 0/' + target + '</div><div class="netbox"><svg viewBox="0 0 64 64"><use href="#net"/></svg></div><div class="jar">' + slots + '</div></div>' +
       '<div class="ov freeze">❄️ Salah!<small style="font-size:.5em">tunggu sebentar…</small></div>' +
       '<div class="ov win">🏆<div>' + '<span class="wn"></span> MENANG!</div></div>';
     el.querySelector('.name').textContent = name;
@@ -246,8 +259,9 @@
       sGood(); L.correct++; L.lastCorrectAt = performance.now();
       L.score += 100 + Math.max(0, Math.round((5000 - t) / 100));
       L.el.querySelector('.score').textContent = L.score;
-      L.el.querySelector('.count').textContent = L.correct + '/' + target;
-      L.el.querySelector('.bf').style.left = 'calc((100% - clamp(30px, 7vh, 52px)) * ' + (L.correct / target) + ')';
+      L.el.querySelector('.count').textContent = '🦋 ' + L.correct + '/' + target;
+      var slotEl = L.el.querySelectorAll('.slot')[L.correct - 1]; if (slotEl) slotEl.classList.add('full');
+      var nb = L.el.querySelector('.netbox'); nb.classList.remove('swing'); void nb.offsetWidth; nb.classList.add('swing');
       if (L.correct >= target) { finish(L); return; }
       setTimeout(function () { if (!finished) showQuestion(L); }, 650);
     } else {
@@ -269,13 +283,13 @@
     $('menu').classList.add('hidden'); $('result').classList.add('hidden');
     lanes = names.map(function (n, i) { return buildLane(i, n); });
     var bar = document.createElement('div'); bar.className = 'topbar';
-    bar.innerHTML = '<span class="brand">Main-yuk · Balap Kupu</span><span id="timer" class="timer nb-sm">⏱ 00:00</span>' +
+    bar.innerHTML = '<span class="brand">Main-yuk · Tangkap Kupu</span><span id="timer" class="timer nb-sm">⏱ 00:00</span>' +
       '<span class="tb"><button class="nb-sm press" id="bMute" aria-label="Suara">' + (muted ? '🔇' : '🔊') + '</button><button class="nb-sm press" id="bExit" aria-label="Keluar">✖</button></span>';
     race.appendChild(bar);
     var wrap = document.createElement('div'); wrap.className = 'lanes'; race.appendChild(wrap);
     lanes.forEach(function (L) { wrap.appendChild(L.el); showQuestion(L); });
     $('bMute').onclick = function () { muted = !muted; try { localStorage.setItem('bgy_muted', muted ? '1' : '0'); } catch (e) {} this.textContent = muted ? '🔇' : '🔊'; };
-    $('bExit').onclick = function () { if (confirm('Keluar dari balapan?')) toMenu(); };
+    $('bExit').onclick = function () { if (confirm('Keluar dari permainan?')) toMenu(); };
     // hitung mundur 3-2-1
     running = false; var n = 3, ov = document.createElement('div');
     ov.style.cssText = 'position:absolute;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:rgba(27,26,58,.6);color:#fff;font-weight:900;font-size:22vh';
@@ -308,7 +322,7 @@
       var d = document.createElement('div'); d.className = 'rk'; d.style.setProperty('--c', COLORS[L.i]);
       var pos = document.createElement('span'); pos.className = 'pos'; pos.textContent = medals[r] || (r + 1);
       var nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = L.name;
-      var sm = document.createElement('small'); sm.textContent = L.correct + ' benar · ' + L.wrong + ' salah';
+      var sm = document.createElement('small'); sm.textContent = '🦋 ' + L.correct + ' kupu · ' + L.wrong + ' salah';
       nm.appendChild(sm);
       var sc = document.createElement('b'); sc.textContent = L.score;
       d.appendChild(pos); d.appendChild(nm); d.appendChild(sc); box.appendChild(d);

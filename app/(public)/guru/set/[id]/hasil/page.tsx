@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const fmtTgl = (iso: string) =>
   new Date(iso).toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jakarta" });
-const MODE_LABEL: Record<string, string> = { free: "Bebas", edu: "Edukasi", race: "Balap", online: "Mabar" };
+const MODE_LABEL: Record<string, string> = { free: "Bebas", edu: "Edukasi", race: "Layar Bersama", online: "Mabar" };
 const pct = (r: number, w: number) => (r + w ? `${Math.round((r / (r + w)) * 100)}%` : "–");
 
 export default async function HasilPage({ params }: { params: { id: string } }) {

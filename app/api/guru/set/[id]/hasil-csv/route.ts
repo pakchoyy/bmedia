@@ -25,7 +25,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
   const lines = [["Waktu (WIB)", "Nama", "Mode", "Skor", "Kupu tertangkap", "Kuis benar", "Kuis salah", "Durasi (detik)"].map(cell).join(",")];
   for (const r of rows) {
     const t = new Date(r.created_at).toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
-    lines.push([t, r.player_name, ({ free: "Bebas", edu: "Edukasi", race: "Balap", online: "Mabar" } as Record<string, string>)[r.mode] ?? r.mode, r.score, r.caught, r.quiz_right, r.quiz_wrong, r.duration_s].map(cell).join(","));
+    lines.push([t, r.player_name, ({ free: "Bebas", edu: "Edukasi", race: "Layar Bersama", online: "Mabar" } as Record<string, string>)[r.mode] ?? r.mode, r.score, r.caught, r.quiz_right, r.quiz_wrong, r.duration_s].map(cell).join(","));
   }
   const body = "﻿" + lines.join("\r\n");
   const safe = set.title.replace(/[^\w\- ]+/g, "").trim().replace(/\s+/g, "-").slice(0, 40) || "hasil";

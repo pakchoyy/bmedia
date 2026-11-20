@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getGame } from "@/lib/games";
+import { gameLabel, getGame } from "@/lib/games";
 import GameFrame from "@/components/GameFrame";
 import { isValidCode, normalizeCode } from "@/lib/soal";
 
@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export function generateMetadata({ params }: { params: { slug: string } }) {
   const game = getGame(params.slug);
-  return { title: game ? `${game.title}` : "Game" };
+  return { title: game ? gameLabel(game) : "Game" };
 }
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

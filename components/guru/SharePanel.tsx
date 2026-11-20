@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import QRCode from "qrcode";
-import { GAMES, getGame } from "@/lib/games";
+import { GAMES, gameLabel, getGame } from "@/lib/games";
 import { startRoom } from "@/app/(public)/guru/actions";
 
 export default function SharePanel({ id, code, game }: { id: string; code: string; game: string }) {
@@ -32,7 +32,7 @@ export default function SharePanel({ id, code, game }: { id: string; code: strin
 
   return (
     <aside className="lg:sticky lg:top-20 h-fit nb-sm bg-white dark:bg-slate-900 rounded-2xl p-5 text-center">
-      <p className="text-xs font-bold uppercase tracking-wider text-gray-500">Kode Kelas · {getGame(game)?.title ?? game}</p>
+      <p className="text-xs font-bold uppercase tracking-wider text-gray-500">Kode Kelas · {getGame(game) ? gameLabel(getGame(game)!) : game}</p>
       <button onClick={() => copy(code, "kode")} title="Salin kode"
         className="mt-1 font-mono text-4xl font-extrabold tracking-[0.25em] text-nb-ink dark:text-white">
         {code}
@@ -64,7 +64,7 @@ export default function SharePanel({ id, code, game }: { id: string; code: strin
         {GAMES.map((g) => (
           <a key={g.slug} href={`/game/${g.slug}?set=${code}`} target="_blank" rel="noopener"
             className="w-full nb-sm nb-press bg-nb-yellow text-nb-ink rounded-lg py-2.5 text-sm font-extrabold block">
-            ▶ Coba: {g.title}{g.slug === "balap-kupu" ? " (IFP)" : ""}
+            ▶ Coba: {gameLabel(g)}
           </a>
         ))}
       </div>

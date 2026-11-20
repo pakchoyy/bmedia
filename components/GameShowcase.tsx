@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Icon from "./Icon";
-import type { GameInfo } from "@/lib/games";
+import { variantsOf, type GameInfo } from "@/lib/games";
 
 /** Kartu besar satu game: pratinjau, mode, dan tombol main / pakai soal sendiri. */
 export default function GameShowcase({ game, compact = false }: { game: GameInfo; compact?: boolean }) {
@@ -37,6 +37,11 @@ export default function GameShowcase({ game, compact = false }: { game: GameInfo
           <Link href={`/game/${game.slug}`} className="nb nb-hover nb-press bg-nb-orange text-nb-ink font-extrabold rounded-xl px-5 py-3 inline-flex items-center gap-2">
             <Icon name="play" /> Main Sekarang
           </Link>
+          {variantsOf(game.slug).map((v) => (
+            <Link key={v.slug} href={`/game/${v.slug}`} className="nb-sm nb-hover nb-press bg-nb-mint text-nb-ink font-extrabold rounded-xl px-4 py-3 inline-flex items-center gap-2">
+              <Icon name="users" /> Layar Bersama (IFP)
+            </Link>
+          ))}
           <Link href="/guru" className="nb-sm nb-hover nb-press bg-nb-yellow text-nb-ink font-extrabold rounded-xl px-4 py-3 inline-flex items-center gap-2">
             <Icon name="chalkboard-user" /> Pakai Soal Sendiri
           </Link>
