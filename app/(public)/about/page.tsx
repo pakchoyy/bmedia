@@ -4,10 +4,10 @@ import { CONTACT_WA, CONTACT_TIKTOK } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: {
-    absolute: "Tentang BGY - Media Belajar",
+    absolute: "Tentang Main-yuk",
   },
   description:
-    "BGY - Media Belajar adalah tempat untuk menemukan, menggunakan, dan berbagi media pembelajaran interaktif karya guru Indonesia.",
+    "Main-yuk adalah tempat untuk menemukan, menggunakan, dan berbagi media pembelajaran interaktif karya guru Indonesia.",
 };
 
 const values = [
@@ -32,13 +32,13 @@ export default function AboutPage() {
   return (
     <div className="fade-in">
       <div className="bg-bgy-hero text-white py-8 text-center px-4">
-        <h1 className="text-2xl md:text-3xl font-bold">Tentang BGY - Media Belajar</h1>
+        <h1 className="text-2xl md:text-3xl font-bold">Tentang Main-yuk</h1>
       </div>
 
       <div className="container mx-auto max-w-[1200px] px-6 py-6">
         <div className="max-w-[750px] mx-auto text-center space-y-3">
           <p className="text-gray-600 leading-relaxed text-base">
-            BGY - Media Belajar adalah tempat untuk menemukan, menggunakan, dan
+            Main-yuk adalah tempat untuk menemukan, menggunakan, dan
             berbagi media pembelajaran interaktif karya guru Indonesia.
           </p>
           <p className="text-gray-600 leading-relaxed text-base">

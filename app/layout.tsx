@@ -11,8 +11,8 @@ const display = Fredoka({
 
 export const metadata: Metadata = {
   title: {
-    default: "BGY - Media Belajar",
-    template: "%s | BGY - Media Belajar",
+    default: "Main-yuk — Belajar Jadi Seru",
+    template: "%s · Main-yuk",
   },
   description:
     "Media Belajar Interaktif Karya Guru Indonesia — menemukan, menggunakan, dan berbagi media pembelajaran.",
@@ -22,10 +22,10 @@ export const metadata: Metadata = {
     "guru Indonesia",
     "game edukasi",
     "quiz interaktif",
-    "Bantu Guru Yuk",
+    "Main-yuk",
   ],
   openGraph: {
-    title: "BGY - Media Belajar",
+    title: "Main-yuk — Belajar Jadi Seru",
     description: "Media Belajar Interaktif Karya Guru Indonesia.",
     type: "website",
     images: ["/icon.png"],

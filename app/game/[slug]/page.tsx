@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export function generateMetadata({ params }: { params: { slug: string } }) {
   const game = getGame(params.slug);
-  return { title: game ? `${game.title} | BGY` : "Game" };
+  return { title: game ? `${game.title}` : "Game" };
 }
 
 export default function GamePage({

@@ -33,7 +33,7 @@ export default async function HomePage() {
         <div className="relative container mx-auto max-w-[1200px] px-5 py-8 sm:py-12 grid gap-8 lg:grid-cols-[1.05fr_1fr] items-center">
           <div className="max-lg:text-center">
             <span className="inline-block bg-white dark:bg-slate-900 nb-sm rounded-full px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-nb-ink dark:text-slate-100">
-              🎒 Media Belajar · SD – SMA
+              <Icon name="school" className="mr-1.5 inline -mt-0.5" />Game &amp; Media Belajar · SD – SMA
             </span>
 
             <h1 className="font-display font-bold text-nb-ink dark:text-white text-[2.1rem] leading-[1.1] sm:text-5xl mt-4">
@@ -47,7 +47,7 @@ export default async function HomePage() {
             </p>
 
             <div className="mt-5 flex flex-wrap gap-3 max-lg:justify-center">
-              <a href="#media" className="nb nb-hover nb-press bg-nb-orange text-white font-extrabold rounded-xl px-5 py-3 inline-flex items-center gap-2">
+              <a href="#media" className="nb nb-hover nb-press bg-nb-orange text-nb-ink font-extrabold rounded-xl px-5 py-3 inline-flex items-center gap-2">
                 <Icon name="compass" /> Jelajahi Media
               </a>
               <Link href="/main" className="nb nb-hover nb-press bg-nb-yellow text-nb-ink font-extrabold rounded-xl px-5 py-3 inline-flex items-center gap-2">
@@ -72,15 +72,15 @@ export default async function HomePage() {
                 <span className="w-3 h-3 rounded-full bg-nb-pink border-2 border-nb-ink" />
                 <span className="w-3 h-3 rounded-full bg-nb-orange border-2 border-nb-ink" />
                 <span className="w-3 h-3 rounded-full bg-nb-mint border-2 border-nb-ink" />
-                <span className="ml-auto text-[10px] font-extrabold uppercase tracking-wider text-nb-ink">bantuguruyuk</span>
+                <span className="ml-auto text-[10px] font-extrabold uppercase tracking-wider text-nb-ink">main-yuk</span>
               </div>
               <img src="/hero-banner.webp" alt="Ilustrasi media belajar interaktif bersama guru" className="w-full h-auto block" />
             </div>
             <div className="nb-sm nb-float absolute -left-3 -top-4 sm:-left-6 bg-nb-mint text-nb-ink rounded-xl px-3 py-1.5 text-xs font-extrabold" style={{ ["--r" as string]: "-8deg" }}>
-              🎮 Game Edukasi
+              <Icon name="gamepad" className="mr-1 inline -mt-0.5" />Game Edukasi
             </div>
-            <div className="nb-sm nb-float absolute -right-2 -bottom-4 sm:-right-5 bg-nb-pink text-white rounded-xl px-3 py-1.5 text-xs font-extrabold" style={{ ["--r" as string]: "6deg", animationDelay: "1.2s" }}>
-              🧪 Lab Maya
+            <div className="nb-sm nb-float absolute -right-2 -bottom-4 sm:-right-5 bg-nb-pink text-nb-ink rounded-xl px-3 py-1.5 text-xs font-extrabold" style={{ ["--r" as string]: "6deg", animationDelay: "1.2s" }}>
+              <Icon name="flask" className="mr-1 inline -mt-0.5" />Lab Maya
             </div>
           </div>
         </div>

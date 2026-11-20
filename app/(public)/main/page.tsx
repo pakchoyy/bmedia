@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import JoinCodeForm from "@/components/JoinCodeForm";
 
-export const metadata: Metadata = { title: "Masuk Kelas | BGY" };
+export const metadata: Metadata = { title: "Masuk Kelas" };
 
 export default function MasukKelasPage({ searchParams }: { searchParams: { e?: string } }) {
   const err = searchParams.e === "notfound" ? "Kode tidak ditemukan. Periksa lagi kode dari gurumu." : "";

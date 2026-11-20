@@ -32,7 +32,7 @@ export default function JoinCodeForm({ initialError = "" }: { initialError?: str
         className="w-full text-center font-mono text-3xl font-extrabold tracking-[0.3em] uppercase px-4 py-4 nb-sm dark:bg-slate-950 rounded-xl outline-none focus:ring-4 focus:ring-nb-yellow/60"
       />
       {error && <p role="alert" className="text-sm text-danger">{error}</p>}
-      <button className="w-full nb-sm nb-press bg-nb-orange text-white font-extrabold py-3.5 rounded-xl text-lg">
+      <button className="w-full nb-sm nb-press bg-nb-orange text-nb-ink font-extrabold py-3.5 rounded-xl text-lg">
         Masuk ▶
       </button>
     </form>
