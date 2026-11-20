@@ -9,7 +9,7 @@ export default function Footer() {
         <div>
           <div className="flex items-center gap-2 font-display font-bold text-xl">
             <img src="/logo-main-yuk.png" alt="" width={36} height={36} className="w-9 h-9" />
-            Main<span className="text-nb-yellow">-yuk</span>
+            <span>Main<span className="text-nb-yellow">-yuk</span></span>
           </div>
           <p className="mt-3 text-sm text-white/75 max-w-[360px]">
             Ruang berbagi media pembelajaran interaktif karya guru Indonesia. Belajar jadi seru, mengajar jadi lebih mudah.
@@ -20,6 +20,7 @@ export default function Footer() {
           <h3 className="font-display font-bold text-nb-yellow mb-2">Jelajahi</h3>
           <ul className="space-y-1.5 text-sm font-semibold text-white/85">
             <li><Link href="/catalog" className="hover:text-nb-yellow">Katalog Media</Link></li>
+            <li><Link href="/game" className="hover:text-nb-yellow">Game</Link></li>
             <li><Link href="/main" className="hover:text-nb-yellow">Masuk Kelas</Link></li>
             <li><Link href="/guru" className="hover:text-nb-yellow">Ruang Guru</Link></li>
             <li><Link href="/submit" className="hover:text-nb-yellow">Kirim Karya</Link></li>

@@ -5,6 +5,8 @@ import HomeMediaSection from "@/components/HomeMediaSection";
 import CTABuatGame from "@/components/CTABuatGame";
 import CTAKirimKarya from "@/components/CTAKirimKarya";
 import Stats from "@/components/Stats";
+import GameShowcase from "@/components/GameShowcase";
+import { GAMES } from "@/lib/games";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -83,6 +85,13 @@ export default async function HomePage() {
               <Icon name="flask" className="mr-1 inline -mt-0.5" />Lab Maya
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Game unggulan */}
+      <section className="px-4 pt-8">
+        <div className="container mx-auto max-w-[1200px]">
+          <GameShowcase game={GAMES[0]} compact />
         </div>
       </section>
 
