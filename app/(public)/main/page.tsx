@@ -11,7 +11,7 @@ export default function MasukKelasPage({ searchParams }: { searchParams: { e?: s
       <div className="w-full max-w-sm mx-auto nb bg-white dark:bg-slate-900 rounded-2xl p-6 text-center">
         <div className="text-5xl mb-2">🎮</div>
         <h1 className="font-display text-3xl font-bold text-nb-ink dark:text-white">Masuk Kelas</h1>
-        <p className="text-sm text-gray-500 mt-1 mb-5">Ketik kode dari gurumu, atau scan QR yang ditampilkan guru.</p>
+        <p className="text-sm text-gray-500 mt-1 mb-5">Ketik kode dari gurumu (6 huruf/angka, atau 5 angka untuk Mabar), atau scan QR yang ditampilkan guru.</p>
         <JoinCodeForm initialError={err} />
         <p className="text-xs text-gray-400 mt-6">
           Tidak punya kode? <Link href="/game/kupu-kupu" className="font-semibold text-nb-orange">Latihan bebas</Link>

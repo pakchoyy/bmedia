@@ -6,6 +6,7 @@ import { sql } from "@/lib/db";
 import { getCurrentGuru } from "@/lib/guru";
 import { randomCode, validateSoal } from "@/lib/soal";
 import { getGame } from "@/lib/games";
+import { randomRoomCode } from "@/lib/ruang";
 
 export type SaveResult = { ok: true } | { ok: false; error: string };
 
@@ -69,4 +70,30 @@ export async function deleteSet(id: string): Promise<void> {
   await sql`DELETE FROM question_sets WHERE id = ${id} AND teacher_id = ${guru.guruId}`;
   revalidatePath("/guru");
   redirect("/guru");
+}
+
+// Mabar Online: buat ruang baru untuk set soal ini lalu buka layar pantau
+export async function startRoom(setId: string): Promise<void> {
+  const guru = await getCurrentGuru();
+  if (!guru) redirect("/guru/masuk");
+  const own = await sql`SELECT id FROM question_sets WHERE id = ${setId} AND teacher_id = ${guru.guruId} LIMIT 1`;
+  if (!own.length) redirect("/guru");
+
+  // Tutup ruang lama milik guru ini yang belum selesai agar tidak menumpuk
+  await sql`UPDATE rooms SET status = 'finished' WHERE teacher_id = ${guru.guruId} AND status = 'lobby'`;
+
+  let id: string | null = null;
+  for (let i = 0; i < 8 && !id; i++) {
+    try {
+      const rows = await sql`
+        INSERT INTO rooms (code, set_id, teacher_id) VALUES (${randomRoomCode()}, ${setId}, ${guru.guruId})
+        RETURNING id
+      `;
+      id = (rows[0] as { id: string }).id;
+    } catch (e) {
+      if (!String(e).includes("rooms_code_key")) throw e;
+    }
+  }
+  if (!id) throw new Error("Gagal membuat ruang. Coba lagi.");
+  redirect(`/guru/ruang/${id}`);
 }

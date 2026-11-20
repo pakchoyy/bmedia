@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { GAMES, getGame } from "@/lib/games";
+import { startRoom } from "@/app/(public)/guru/actions";
 
 export default function SharePanel({ id, code, game }: { id: string; code: string; game: string }) {
   const [origin, setOrigin] = useState("");
@@ -51,6 +52,11 @@ export default function SharePanel({ id, code, game }: { id: string; code: strin
           className="w-full nb-flat rounded-lg py-2.5 text-sm font-semibold ">
           {copied === "link" ? "Link disalin ✓" : "🔗 Salin link untuk murid"}
         </button>
+        <form action={startRoom.bind(null, id)}>
+          <button className="w-full nb nb-press bg-nb-orange text-nb-ink rounded-lg py-3 text-sm font-extrabold">
+            🌐 Mulai Mabar Online
+          </button>
+        </form>
         <a href={`/guru/set/${id}/hasil`}
           className="nb-sm nb-press w-full bg-nb-mint text-nb-ink rounded-lg py-2.5 text-sm font-extrabold block">
           📊 Lihat hasil murid

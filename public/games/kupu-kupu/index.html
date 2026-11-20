@@ -152,6 +152,9 @@
         .brand-tag b { color: #ff7a1a; }
         .set-info { margin-top: 8px; font-size: 13px; font-weight: 800; color: #4a3b32; background: #fff3c4;
                     border: 3px solid #4a3b32; border-radius: 12px; padding: 4px 10px; }
+        .rank-badge { position: absolute; top: 74px; left: 50%; transform: translateX(-50%); z-index: 12; background: #fffdf9; border: 3px solid #4a3b32; border-radius: 99px; padding: 3px 14px; font-weight: 900; font-size: 14px; color: #4a3b32; box-shadow: 0 3px 0 #4a3b32; pointer-events: none; }
+        .room-mode #btn-pause { display: none; }
+        .room-mode #btn-play-again, .room-mode #btn-menu-over { display: none; }
         .name-box { margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; font-weight: 800; color: #4a3b32; }
         .name-box input { font: inherit; font-weight: 800; border: 3px solid #4a3b32; border-radius: 10px; padding: 5px 10px; width: 170px; color: #4a3b32; background: #fff; }
         .name-box.need input { animation: nameShake .35s; border-color: #e0524f; background: #ffe9e9; }
@@ -600,6 +603,7 @@
             .final-board div:nth-child(n+5) { display: none; }
             #modal-gameover .primary-btn, #modal-gameover .secondary-btn { padding: 6px 10px; font-size: 13px; margin-top: 4px; }
             .brand-tag { display: none; }
+            .rank-badge { top: 52px; font-size: 11px; padding: 1px 10px; border-width: 2px; }
             .name-box { margin-top: 4px; font-size: 11px; }
             .name-box input { padding: 2px 8px; width: 130px; border-width: 2px; }
             .final-board { padding: 3px 10px; font-size: 11px; margin: 4px 0 0; }
@@ -808,6 +812,17 @@
             <button class="secondary-btn" id="btn-menu-pause">🏠 MENU</button>
         </div>
     </div>
+
+    <!-- MABAR: RUANG TUNGGU -->
+    <div class="modal-overlay" id="modal-room">
+        <div class="modal-card">
+            <h2 class="game-logo-title" style="font-size:30px;">🌐 MABAR</h2>
+            <div class="game-subtitle" id="room-who">Memuat…</div>
+            <p id="room-msg" style="font-size:16px; color:#594a42; font-weight:800; margin:10px 0 4px;">Menyambungkan ke ruang…</p>
+            <p id="room-count" style="font-size:13px; color:#8c7ae6; font-weight:800;"></p>
+        </div>
+    </div>
+    <div class="rank-badge" id="rank-badge" style="display:none;"></div>
 
     <!-- KUIS MODAL -->
     <div class="modal-overlay" id="modal-quiz">
@@ -1587,6 +1602,11 @@
         { q: 'Persegi memiliki jumlah sisi sebanyak ...', o: ['3', '4', '5', '6'], a: 1 }
     ];
 
+    // Mabar Online: ?room=KODE&pid=..&tok=..
+    const QP = new URLSearchParams(location.search);
+    const ROOM = (QP.get('room') && QP.get('pid') && QP.get('tok'))
+        ? { code: QP.get('room').replace(/\D/g, ''), pid: QP.get('pid'), tok: QP.get('tok') } : null;
+
     // Set soal dari guru (?set=KODE), diambil dari server
     let teacherSet = null;
 
@@ -1628,7 +1648,7 @@
                 info.textContent = `📚 Soal guru: ${data.title} (${qs.length} soal)`;
                 info.classList.add('set-ok');
                 const nb = document.getElementById('name-box');
-                nb.style.display = '';
+                if (!ROOM) nb.style.display = '';
                 try { document.getElementById('player-name').value = localStorage.getItem('bgy_player_name') || ''; } catch (e) {}
             })
             .catch(() => {
@@ -1970,6 +1990,7 @@
     }
 
     function togglePause() {
+        if (ROOM) return;
         sound.init();
         sound.playButton();
         if (currentState === STATE.PLAYING) {
@@ -2039,6 +2060,7 @@
         }
 
         modalGameOver.classList.add('visible');
+        if (ROOM) onRoomOver();
         submitResult();
     }
 
@@ -2053,7 +2075,7 @@
         const boardEl = document.getElementById('final-board');
         saved.style.display = 'none';
         boardEl.style.display = 'none';
-        if (!teacherSet || isDuel()) return;
+        if (!teacherSet || isDuel() || ROOM) return;
         const name = getPlayerName();
         if (!name) return;
         saved.style.display = '';
@@ -2106,6 +2128,100 @@
     }
 
     // Event Listeners Tombol UI
+    // ================= MABAR ONLINE =================
+    let roomOffset = 0, roomEndsAt = 0, roomStarted = false, roomPoll = 0, roomTimer = 0, roomSend = 0;
+    const elRoomMsg = document.getElementById('room-msg');
+    const elRoomWho = document.getElementById('room-who');
+    const elRoomCount = document.getElementById('room-count');
+    const modalRoom = document.getElementById('modal-room');
+    const rankBadge = document.getElementById('rank-badge');
+    const esc = t => String(t).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+
+    function sendRoomScore(final) {
+        return fetch('/api/ruang/' + ROOM.code + '/skor', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: !!final,
+            body: JSON.stringify({ pid: ROOM.pid, tok: ROOM.tok, final: !!final, score: player.score, caught: player.caught,
+                quizRight: player.quizRight, quizWrong: player.quizWrong })
+        }).then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d => {
+            if (d && d.rank) {
+                rankBadge.style.display = currentState === STATE.GAMEOVER ? 'none' : '';
+                rankBadge.textContent = '🏅 Peringkat ' + d.rank + ' dari ' + d.total + ' · ' + d.score + ' poin';
+            }
+            return d;
+        }).catch(() => null);
+    }
+
+    function renderRoomBoard(d) {
+        const boardEl = document.getElementById('final-board');
+        const saved = document.getElementById('final-saved');
+        if (!d) return;
+        saved.style.display = '';
+        saved.textContent = d.status === 'finished' ? '✅ Permainan selesai · peringkat kamu #' + d.rank + ' dari ' + d.total
+            : '⏳ Menunggu teman lain selesai · peringkat sementara #' + d.rank + ' dari ' + d.total;
+        boardEl.innerHTML = '<h4>🏆 Papan skor ruang</h4>' + d.top.map((b, i) =>
+            '<div class="' + (b.me ? 'me' : '') + '"><span>' + (i + 1) + '. ' + esc(b.name) + '</span><span>' + b.score + '</span></div>').join('');
+        boardEl.style.display = '';
+    }
+
+    function beginRoomGame(info) {
+        roomStarted = true;
+        clearInterval(roomPoll);
+        modalRoom.classList.remove('visible');
+        document.getElementById('game-container').classList.add('room-mode');
+        roomEndsAt = info.endsAt;
+        try { document.getElementById('sel-every').value = String(info.quizEvery); } catch (e) {}
+        startNewGame('edu');
+        timeLeft = Math.max(0, (roomEndsAt - (Date.now() + roomOffset)) / 1000);
+        // Timer mengikuti jam server (tidak berhenti saat kuis) supaya semua murid berakhir bersamaan
+        roomTimer = setInterval(() => {
+            if (currentState !== STATE.PLAYING && currentState !== STATE.QUIZ) return;
+            const remain = (roomEndsAt - (Date.now() + roomOffset)) / 1000;
+            timeLeft = Math.max(0, remain);
+            if (remain <= 0) {
+                if (currentState === STATE.QUIZ) { modalQuiz.classList.remove('visible'); player.pendingQuiz = null; currentState = STATE.PLAYING; }
+                triggerGameOver();
+            }
+        }, 250);
+        roomSend = setInterval(() => { if (currentState === STATE.PLAYING || currentState === STATE.QUIZ) sendRoomScore(false); }, 2500);
+    }
+
+    function onRoomOver() {
+        clearInterval(roomTimer); clearInterval(roomSend);
+        rankBadge.style.display = 'none';
+        // Kirim skor akhir lalu perbarui papan beberapa kali sampai semua murid selesai
+        let n = 0;
+        (function again() {
+            sendRoomScore(true).then(d => { renderRoomBoard(d); if (n++ < 4 && !(d && d.status === 'finished')) setTimeout(again, 4000); });
+        })();
+    }
+
+    function checkRoom() {
+        fetch('/api/ruang/' + ROOM.code + '/status?pid=' + encodeURIComponent(ROOM.pid) + '&tok=' + encodeURIComponent(ROOM.tok), { cache: 'no-store' })
+            .then(r => r.ok ? r.json() : Promise.reject(r.status))
+            .then(d => {
+                if (roomStarted) return;
+                roomOffset = d.serverNow - Date.now();
+                if (!d.me) { elRoomMsg.textContent = 'Kamu belum terdaftar di ruang ini. Kembali ke Masuk Kelas.'; clearInterval(roomPoll); return; }
+                elRoomWho.textContent = '👋 Halo, ' + d.me + '!';
+                elRoomCount.textContent = d.players + ' murid di ruang';
+                if (d.status === 'lobby') { elRoomMsg.textContent = 'Menunggu guru memulai…'; return; }
+                if (d.status === 'finished') { elRoomMsg.textContent = 'Permainan sudah selesai.'; clearInterval(roomPoll); return; }
+                if (!teacherSet) { elRoomMsg.textContent = 'Memuat soal…'; return; }
+                const ms = d.startsAt - (Date.now() + roomOffset);
+                if (ms > 150) { elRoomMsg.textContent = 'Mulai dalam ' + Math.ceil(ms / 1000) + '…'; return; }
+                beginRoomGame(d);
+            })
+            .catch(() => { if (!roomStarted) elRoomMsg.textContent = 'Menyambungkan ulang…'; });
+    }
+
+    if (ROOM) {
+        modalStart.classList.remove('visible');
+        modalRoom.classList.add('visible');
+        document.getElementById('game-container').classList.add('room-mode');
+        checkRoom();
+        roomPoll = setInterval(checkRoom, 1000);
+    }
+
     // Dengan kode kelas, murid wajib mengisi nama sebelum bermain solo
     function requestStart(mode) {
         if (teacherSet) {

@@ -12,8 +12,13 @@ export default function JoinCodeForm({ initialError = "" }: { initialError?: str
       onSubmit={(e) => {
         e.preventDefault();
         const c = normalizeCode(code);
+        // 5 angka = ruang Mabar Online; 6 huruf/angka = kode set soal
+        if (/^\d{5}$/.test(c)) {
+          window.location.assign(`/ruang/${c}`);
+          return;
+        }
         if (c.length !== CODE_LENGTH) {
-          setError(`Kode terdiri dari ${CODE_LENGTH} huruf/angka.`);
+          setError(`Kode terdiri dari ${CODE_LENGTH} huruf/angka (atau 5 angka untuk Mabar).`);
           return;
         }
         // Muat halaman penuh agar elemen layout situs (bar navigasi) tidak ikut ke game
