@@ -42,5 +42,5 @@ export const CATEGORY_PLACEHOLDER_COLORS: Record<MediaCategory, string> = {
 export const CONTACT_EMAIL = "admin@bgy.id";
 export const CONTACT_WA = "085600410357";
 export const CONTACT_TIKTOK = "https://www.tiktok.com/@pak.choyy";
-export const SITE_URL = "bantuguruyuk.web.id";
-export const MEDIA_SITE_ORIGIN = "https://bmedia.bantuguruyuk.web.id";
+export const SITE_URL = "main-yuk.my.id";
+export const MEDIA_SITE_ORIGIN = "https://main-yuk.my.id";
