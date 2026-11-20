@@ -21,6 +21,17 @@ const config: Config = {
         danger: "#dc2626",
         ink: "#1e293b",
         pagebg: "#f8fafc",
+        // Palet neo-brutalism
+        nb: {
+          ink: "#1b1a3a",
+          cream: "#fff6dc",
+          yellow: "#ffd23f",
+          orange: "#ff7a1a",
+          blue: "#3a86ff",
+          pink: "#ff5d8f",
+          mint: "#2ec4b6",
+          lilac: "#b79cff",
+        },
       },
       backgroundImage: {
         "bgy-gradient":
@@ -37,6 +48,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["'Segoe UI'", "system-ui", "-apple-system", "sans-serif"],
+        display: ["var(--font-display)", "'Segoe UI'", "system-ui", "sans-serif"],
       },
     },
   },
