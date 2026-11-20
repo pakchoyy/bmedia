@@ -175,16 +175,16 @@ export default function SubmitForm() {
     }
   };
 
-  const inputClass = "w-full px-4 py-3 border border-gray-300 dark:border-slate-700 rounded-lg text-base bg-white dark:bg-slate-900 dark:text-slate-100 focus:border-primary-light focus:ring-2 focus:ring-primary-light/20 outline-none transition";
+  const inputClass = "nb-flat w-full px-4 py-3 rounded-lg text-base bg-white dark:bg-slate-900 dark:text-slate-100 focus:ring-4 focus:ring-nb-yellow/60 outline-none transition";
   const labelClass = "block font-semibold mb-2 text-ink dark:text-slate-200 text-sm";
   const errorClass = "text-danger text-sm mt-1";
   const rowWhite = "bg-white dark:bg-slate-900";
-  const rowGreen = "bg-primary/5 dark:bg-primary/10";
+  const rowGreen = "bg-nb-yellow/20 dark:bg-slate-800/60";
 
   if (success) {
     return (
       <div className="max-w-[700px] mx-auto">
-        <div className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-2xl p-10 text-center shadow-sm max-md:p-6">
+        <div className="nb bg-white dark:bg-slate-900 rounded-2xl p-10 text-center max-md:p-6">
           <div className="w-20 h-20 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-6">
             <Icon name="circle-check" className="text-5xl text-success" />
           </div>
@@ -197,14 +197,14 @@ export default function SubmitForm() {
           <div className="flex flex-wrap justify-center gap-3">
             <button
               onClick={() => router.push("/catalog")}
-              className="inline-flex items-center gap-2 bg-primary-light hover:bg-primary text-white px-6 py-3 rounded-full font-semibold text-base transition-all"
+              className="nb-sm nb-press inline-flex items-center gap-2 bg-nb-orange text-nb-ink px-6 py-3 rounded-xl font-extrabold text-base"
             >
               <Icon name="arrow-left" />
               Lihat Koleksi
             </button>
             <button
               onClick={() => setSuccess(false)}
-              className="inline-flex items-center gap-2 border-2 border-primary-light text-primary-light hover:bg-primary-light hover:text-white px-6 py-3 rounded-full font-semibold text-base transition-all"
+              className="nb-sm nb-press inline-flex items-center gap-2 bg-white text-nb-ink px-6 py-3 rounded-xl font-extrabold text-base"
             >
               <Icon name="plus" />
               Kirim Karya Lain
@@ -222,7 +222,7 @@ export default function SubmitForm() {
           Judul, mapel, jenjang, dan tipe sudah diisi dari Prompt Game. Tinggal tempel link game-mu, tambah gambar, lalu kirim.
         </div>
       )}
-      <form onSubmit={handleSubmit} noValidate className="rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-slate-800">
+      <form onSubmit={handleSubmit} noValidate className="nb rounded-2xl overflow-hidden">
         <input
           type="text"
           name="website"
@@ -235,8 +235,8 @@ export default function SubmitForm() {
         />
         {/* Section: Tentang Media */}
         <div className={`${rowWhite} px-8 py-5 max-md:px-5`}>
-          <h3 className="text-lg font-bold text-primary dark:text-primary-light flex items-center gap-2">
-            <Icon name="book-open" className="text-primary-light" />
+          <h3 className="text-lg font-bold font-display text-nb-ink dark:text-white flex items-center gap-2">
+            <Icon name="book-open" className="text-nb-orange" />
             Tentang Media
           </h3>
         </div>
@@ -322,8 +322,8 @@ export default function SubmitForm() {
 
         {/* Section: Tentang Pembuat */}
         <div className={`${rowWhite} px-8 py-5 max-md:px-5`}>
-          <h3 className="text-lg font-bold text-primary dark:text-primary-light flex items-center gap-2">
-            <Icon name="user-tie" className="text-primary-light" />
+          <h3 className="text-lg font-bold font-display text-nb-ink dark:text-white flex items-center gap-2">
+            <Icon name="user-tie" className="text-nb-orange" />
             Tentang Pembuat
           </h3>
         </div>
@@ -364,7 +364,7 @@ export default function SubmitForm() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-success hover:bg-green-700 text-white py-3.5 rounded-xl text-base font-bold transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md"
+            className="nb nb-press w-full bg-nb-orange text-nb-ink py-3.5 rounded-xl text-base font-extrabold disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {submitting ? (
               <><Icon name="hourglass" className="animate-pulse" /> Mengirim...</>
