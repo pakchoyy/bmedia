@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import QRCode from "qrcode";
+import { getGame } from "@/lib/games";
 
 export default function SharePanel({ code, game }: { code: string; game: string }) {
   const [origin, setOrigin] = useState("");
@@ -30,7 +31,7 @@ export default function SharePanel({ code, game }: { code: string; game: string 
 
   return (
     <aside className="lg:sticky lg:top-20 h-fit nb-sm bg-white dark:bg-slate-900 rounded-2xl p-5 text-center">
-      <p className="text-xs font-bold uppercase tracking-wider text-gray-500">Kode Kelas</p>
+      <p className="text-xs font-bold uppercase tracking-wider text-gray-500">Kode Kelas · {getGame(game)?.title ?? game}</p>
       <button onClick={() => copy(code, "kode")} title="Salin kode"
         className="mt-1 font-mono text-4xl font-extrabold tracking-[0.25em] text-nb-ink dark:text-white">
         {code}
