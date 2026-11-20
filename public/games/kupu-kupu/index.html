@@ -1,0 +1,2440 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Butterfly Catcher 2D - Indie Adventure</title>
+    <style>
+        /* ==========================================
+           1. CSS RESET & BASE STYLING (OFFLINE SAFE)
+           ========================================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #6ab04c;
+            font-family: 'Segoe UI', 'Fredoka', 'Comic Sans MS', Tahoma, Geneva, Verdana, sans-serif;
+            touch-action: none;
+        }
+
+        #game-container {
+            position: relative;
+            overflow: clip;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ==========================================
+           2. HUD & UI OVERLAYS (PASTEL CARTOON STYLE)
+           ========================================== */
+        .ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 14px 18px;
+            z-index: 10;
+        }
+
+        /* Top HUD Bar */
+        .hud-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .hud-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge-card {
+            background: #fffdf9;
+            border: 3.5px solid #4a3b32;
+            border-radius: 18px;
+            padding: 6px 14px;
+            box-shadow: 0 5px 0 #4a3b32, 0 8px 15px rgba(0,0,0,0.18);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #4a3b32;
+            font-weight: 800;
+            font-size: 15px;
+            pointer-events: auto;
+            transition: transform 0.15s ease;
+        }
+
+        .badge-title {
+            background: linear-gradient(135deg, #ff9ff3, #feca57);
+            color: #4a3b32;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #8c7ae6;
+            display: block;
+            line-height: 1;
+            margin-bottom: 2px;
+        }
+
+        .badge-value {
+            font-size: 19px;
+            font-weight: 900;
+            color: #2f3640;
+            line-height: 1;
+        }
+
+        .timer-warning .badge-value {
+            color: #eb4d4b;
+            animation: pulseText 0.6s infinite alternate;
+        }
+
+
+        /* HP landscape (layar pendek): HUD diperkecil agar muat satu baris */
+        @media (max-height: 480px) {
+            .ui-layer { padding: 6px 10px; }
+            .hud-top, .hud-group { flex-wrap: nowrap; gap: 6px; }
+            .badge-card { padding: 3px 9px; border-width: 2.5px; border-radius: 12px; gap: 5px;
+                          box-shadow: 0 3px 0 #4a3b32, 0 5px 8px rgba(0,0,0,0.15); }
+            .badge-title { font-size: 12px; }
+            .badge-label { font-size: 8px; margin-bottom: 1px; }
+            .badge-value { font-size: 14px; }
+            .icon-btn { width: 34px !important; height: 34px !important; font-size: 15px !important; }
+
+            /* Modal dipadatkan agar muat di layar pendek */
+            .modal-overlay { padding: 6px; }
+            .modal-card { max-height: 100%; overflow-y: auto; padding: 10px 18px; border-width: 4px;
+                          border-radius: 22px; box-shadow: 0 6px 0 #4a3b32, 0 10px 20px rgba(0,0,0,0.3); }
+            .modal-card canvas#logoButterflyCanvas { display: none; }
+            .modal-card > p { display: none; }
+            .game-logo-title { font-size: 24px; margin-bottom: 2px; }
+            .game-logo-title br { display: none; }
+            .game-subtitle { font-size: 11px; margin-bottom: 6px; padding: 2px 10px; }
+            .species-guide { padding: 6px 10px; margin-bottom: 8px; gap: 4px 10px; font-size: 11px; }
+            .primary-btn, .secondary-btn { padding: 8px 14px; font-size: 15px; }
+        }
+
+        @keyframes pulseText {
+            from { transform: scale(1); }
+            to { transform: scale(1.15); }
+        }
+
+        /* Combo Meter */
+        .combo-banner {
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            border: 3.5px solid #4a3b32;
+            border-radius: 20px;
+            padding: 6px 16px;
+            box-shadow: 0 5px 0 #4a3b32;
+            color: #fff;
+            text-shadow: 2px 2px 0 #4a3b32;
+            font-weight: 900;
+            font-size: 18px;
+            transform: scale(0);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .combo-banner.active {
+            transform: scale(1);
+        }
+
+        .combo-bar-bg {
+            width: 100%;
+            height: 6px;
+            background: rgba(74, 59, 50, 0.35);
+            border-radius: 4px;
+            margin-top: 4px;
+            overflow: hidden;
+        }
+
+        .combo-bar-fill {
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            transition: width 0.08s linear;
+        }
+
+        /* Action Icon Buttons */
+        .icon-btn {
+            background: #fffdf9;
+            border: 3.5px solid #4a3b32;
+            border-radius: 16px;
+            width: 46px;
+            height: 46px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #4a3b32;
+            pointer-events: auto;
+            transition: transform 0.1s, background-color 0.15s;
+            font-size: 20px;
+        }
+
+        .icon-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #4a3b32;
+        }
+
+        .icon-btn:hover {
+            background: #fef6e4;
+        }
+
+        /* ==========================================
+           3. MOBILE VIRTUAL CONTROLS
+           ========================================== */
+        .controls-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            width: 100%;
+            padding: 10px 16px 18px 16px;
+            pointer-events: none;
+        }
+
+        .joystick-zone {
+            position: relative;
+            width: 135px;
+            height: 135px;
+            pointer-events: auto;
+            touch-action: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .joystick-base {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255, 253, 249, 0.45);
+            border: 4px solid rgba(74, 59, 50, 0.65);
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.15), 0 4px 12px rgba(0,0,0,0.15);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(2px);
+        }
+
+        .joystick-stick {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ffdf7e, #feca57);
+            border: 3.5px solid #4a3b32;
+            box-shadow: 0 4px 0 #4a3b32, 0 6px 12px rgba(0,0,0,0.25);
+            position: absolute;
+            transform: translate(0px, 0px);
+            transition: transform 0.04s linear;
+        }
+
+        .catch-btn-zone {
+            pointer-events: auto;
+            touch-action: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .catch-btn {
+            width: 105px;
+            height: 105px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ff9ff3, #f368e0);
+            border: 4.5px solid #4a3b32;
+            box-shadow: 0 7px 0 #4a3b32, 0 10px 20px rgba(0,0,0,0.28);
+            color: #fff;
+            font-weight: 900;
+            font-size: 16px;
+            text-shadow: 1.5px 1.5px 0 #4a3b32;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.08s;
+            outline: none;
+        }
+
+        .catch-btn:active, .catch-btn.pressed {
+            transform: translateY(5px) scale(0.96);
+            box-shadow: 0 2px 0 #4a3b32, 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .catch-btn svg {
+            width: 38px;
+            height: 38px;
+            margin-bottom: 2px;
+            filter: drop-shadow(1.5px 2px 0 #4a3b32);
+        }
+
+        .desktop-hint {
+            background: rgba(74, 59, 50, 0.78);
+            color: #fffdf9;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            align-self: center;
+            margin-bottom: 6px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+        }
+
+        /* ==========================================
+           4. MODAL SCREENS (START, PAUSE, GAME OVER)
+           ========================================== */
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(34, 49, 39, 0.55);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 30;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: #fffdf7;
+            border: 5px solid #4a3b32;
+            border-radius: 32px;
+            padding: 28px 26px;
+            max-width: 440px;
+            width: 100%;
+            box-shadow: 0 12px 0 #4a3b32, 0 20px 40px rgba(0,0,0,0.35);
+            text-align: center;
+            transform: translateY(25px) scale(0.95);
+            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .modal-overlay.visible .modal-card {
+            transform: translateY(0) scale(1);
+        }
+
+        .game-logo-title {
+            font-size: 34px;
+            font-weight: 900;
+            color: #ff6b81;
+            text-shadow: 3px 3px 0 #4a3b32, -1.5px -1.5px 0 #4a3b32, 1.5px -1.5px 0 #4a3b32, -1.5px 1.5px 0 #4a3b32;
+            line-height: 1.05;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+
+        .game-subtitle {
+            font-size: 14px;
+            font-weight: 700;
+            color: #6c5ce7;
+            background: #efebff;
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 14px;
+            border: 2px solid #4a3b32;
+            margin-bottom: 16px;
+        }
+
+        .species-guide {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            background: #f7f1e3;
+            border: 3px solid #4a3b32;
+            border-radius: 18px;
+            padding: 12px;
+            margin: 12px 0 18px 0;
+            text-align: left;
+        }
+
+        .species-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 800;
+            color: #4a3b32;
+        }
+
+        .dot-swatch {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2.5px solid #4a3b32;
+            flex-shrink: 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 16px 0 22px 0;
+        }
+
+        .stat-box {
+            background: #fef6e4;
+            border: 3px solid #4a3b32;
+            border-radius: 18px;
+            padding: 10px;
+        }
+
+        .stat-box span {
+            display: block;
+            font-size: 12px;
+            font-weight: 800;
+            color: #8c7ae6;
+            text-transform: uppercase;
+        }
+
+        .stat-box strong {
+            font-size: 24px;
+            font-weight: 900;
+            color: #4a3b32;
+        }
+
+        .primary-btn {
+            background: linear-gradient(180deg, #55efc4, #00b894);
+            border: 4px solid #4a3b32;
+            border-radius: 22px;
+            padding: 14px 32px;
+            width: 100%;
+            font-size: 21px;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 2px 2px 0 #4a3b32;
+            box-shadow: 0 7px 0 #4a3b32;
+            cursor: pointer;
+            transition: transform 0.1s, filter 0.15s;
+            margin-top: 6px;
+        }
+
+        .primary-btn:hover {
+            filter: brightness(1.06);
+        }
+
+        .primary-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 2px 0 #4a3b32;
+        }
+
+        .secondary-btn {
+            background: linear-gradient(180deg, #ffeaa7, #fdcb6e);
+            border: 4px solid #4a3b32;
+            border-radius: 20px;
+            padding: 11px 24px;
+            width: 100%;
+            font-size: 17px;
+            font-weight: 900;
+            color: #4a3b32;
+            box-shadow: 0 5px 0 #4a3b32;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: transform 0.1s;
+        }
+
+        .secondary-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #4a3b32;
+        }
+
+        /* Responsive Tweaks for Smaller Phones */
+        @media (max-width: 600px) {
+            .ui-layer {
+                padding: 10px;
+            }
+            .badge-card {
+                padding: 5px 10px;
+                border-radius: 14px;
+            }
+            .badge-title {
+                display: none;
+            }
+            .badge-value {
+                font-size: 16px;
+            }
+            .desktop-hint {
+                display: none;
+            }
+            .joystick-zone {
+                width: 120px;
+                height: 120px;
+            }
+            .joystick-base {
+                width: 108px;
+                height: 108px;
+            }
+            .catch-btn {
+                width: 92px;
+                height: 92px;
+                font-size: 14px;
+            }
+            .game-logo-title {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <!-- Main 2D Adventure Canvas -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- HUD Layer -->
+    <div class="ui-layer">
+        <div class="hud-top">
+            <div class="hud-group">
+                <div class="badge-card badge-title">
+                    <span>🦋 BUTTERFLY CATCHER</span>
+                </div>
+                <div class="badge-card">
+                    <div>
+                        <span class="badge-label">Skor</span>
+                        <span class="badge-value" id="hud-score">0</span>
+                    </div>
+                </div>
+                <div class="badge-card">
+                    <div>
+                        <span class="badge-label">Rekor</span>
+                        <span class="badge-value" id="hud-best">0</span>
+                    </div>
+                </div>
+                <div class="badge-card">
+                    <div>
+                        <span class="badge-label">Level</span>
+                        <span class="badge-value" id="hud-level">1</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Combo Indicator -->
+            <div class="combo-banner" id="hud-combo">
+                <span id="hud-combo-text">COMBO x2!</span>
+                <div class="combo-bar-bg">
+                    <div class="combo-bar-fill" id="hud-combo-bar"></div>
+                </div>
+            </div>
+
+            <div class="hud-group">
+                <div class="badge-card" id="timer-card">
+                    <div>
+                        <span class="badge-label">Waktu</span>
+                        <span class="badge-value" id="hud-timer">60s</span>
+                    </div>
+                </div>
+                <button class="icon-btn" id="btn-sound" title="Suara On/Off" aria-label="Toggle Sound">🔊</button>
+                <button class="icon-btn" id="btn-pause" title="Jeda Permainan" aria-label="Pause Game">⏸️</button>
+            </div>
+        </div>
+
+        <!-- Bottom Controls (Virtual Joystick + Catch Button) -->
+        <div class="controls-bottom">
+            <div class="joystick-zone" id="joystick-zone">
+                <div class="joystick-base" id="joystick-base">
+                    <div class="joystick-stick" id="joystick-stick"></div>
+                </div>
+            </div>
+
+            <div class="desktop-hint">
+                💻 WASD / Panah: Jalan &nbsp;|&nbsp; SPASI: Tangkap
+            </div>
+
+            <div class="catch-btn-zone">
+                <button class="catch-btn" id="btn-catch" aria-label="Tangkap Kupu-Kupu">
+                    <svg viewBox="0 0 64 64" fill="none">
+                        <ellipse cx="42" cy="22" rx="16" ry="12" transform="rotate(-30 42 22)" fill="#fff" stroke="#4a3b32" stroke-width="4"/>
+                        <path d="M30 28 C34 42, 52 38, 54 20" fill="rgba(255,255,255,0.6)" stroke="#4a3b32" stroke-width="3.5" stroke-dasharray="4 3"/>
+                        <line x1="10" y1="54" x2="32" y2="30" stroke="#feca57" stroke-width="6" stroke-linecap="round"/>
+                        <line x1="10" y1="54" x2="32" y2="30" stroke="#4a3b32" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    TANGKAP
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- START MENU MODAL -->
+    <div class="modal-overlay visible" id="modal-start">
+        <div class="modal-card">
+            <canvas id="logoButterflyCanvas" width="120" height="90" style="width:120px;height:90px;margin:0 auto 4px auto;"></canvas>
+            <h1 class="game-logo-title">BUTTERFLY <br>CATCHER</h1>
+            <div class="game-subtitle">✨ Petualangan Padang Rumput Ceria ✨</div>
+            <p style="font-size:14px; color:#594a42; font-weight:600; line-height:1.4;">
+                Dekati kupu-kupu di taman dan ayunkan jaringmu sebelum waktu habis! Pertahankan kombo untuk poin berlipat!
+            </p>
+
+            <div class="species-guide">
+                <div class="species-item">
+                    <span class="dot-swatch" style="background:#ffeaa7;"></span>
+                    <span>Kuning (+10)</span>
+                </div>
+                <div class="species-item">
+                    <span class="dot-swatch" style="background:#74b9ff;"></span>
+                    <span>Biru Cepat (+20)</span>
+                </div>
+                <div class="species-item">
+                    <span class="dot-swatch" style="background:#fd79a8;"></span>
+                    <span>Merah Muda (+35)</span>
+                </div>
+                <div class="species-item">
+                    <span class="dot-swatch" style="background:linear-gradient(135deg,#feca57,#ff6b6b,#48dbfb);"></span>
+                    <span>Raja Emas (+75)</span>
+                </div>
+            </div>
+
+            <button class="primary-btn" id="btn-start-play">▶ PLAY SEKARANG</button>
+        </div>
+    </div>
+
+    <!-- PAUSE MODAL -->
+    <div class="modal-overlay" id="modal-pause">
+        <div class="modal-card">
+            <h2 class="game-logo-title" style="font-size:30px;">PERMAINAN DIJEDA</h2>
+            <p style="font-size:15px; color:#594a42; font-weight:700; margin: 14px 0 20px 0;">
+                Istirahat sejenak menikmati angin sepoi-sepoi padang rumput~
+            </p>
+            <button class="primary-btn" id="btn-resume">▶ LANJUTKAN (RESUME)</button>
+            <button class="secondary-btn" id="btn-restart-pause">🔄 MULAI ULANG</button>
+        </div>
+    </div>
+
+    <!-- GAME OVER MODAL -->
+    <div class="modal-overlay" id="modal-gameover">
+        <div class="modal-card">
+            <h2 class="game-logo-title" style="font-size:32px;">WAKTU HABIS!</h2>
+            <div class="game-subtitle" id="gameover-badge">🎉 Kerja Bagus, Penangkap Handal!</div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span>Skor Akhir</span>
+                    <strong id="final-score">0</strong>
+                </div>
+                <div class="stat-box">
+                    <span>Rekor Terbaik</span>
+                    <strong id="final-best">0</strong>
+                </div>
+                <div class="stat-box">
+                    <span>Tertangkap</span>
+                    <strong id="final-caught">0 🦋</strong>
+                </div>
+                <div class="stat-box">
+                    <span>Level Tercapai</span>
+                    <strong id="final-level">1</strong>
+                </div>
+            </div>
+
+            <button class="primary-btn" id="btn-play-again">🔄 PLAY AGAIN</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/**
+ * ============================================================================
+ * BUTTERFLY CATCHER 2D - COMPLETE SINGLE-FILE GAME ENGINE
+ * Dibuat dengan HTML5 Canvas murni & Web Audio API tanpa aset eksternal
+ * ============================================================================
+ */
+(function () {
+    'use strict';
+
+    // ==========================================
+    // 1. WEB AUDIO SYNTHESIZER (NO EXTERNAL FILES)
+    // ==========================================
+    class SoundSystem {
+        constructor() {
+            this.ctx = null;
+            this.muted = false;
+            try { this.muted = localStorage.getItem('bgy_muted') === '1'; } catch (e) {}
+            this.musicOn = false;
+            this.musicTimer = null;
+            this.step = 0;
+            this.nextTime = 0;
+        }
+
+        // --- Musik latar prosedural (tanpa file audio) ---
+        startMusic() {
+            if (!this.ctx || this.muted || this.musicOn) return;
+            this.musicOn = true;
+            this.step = 0;
+            this.nextTime = this.ctx.currentTime + 0.1;
+            this.musicTimer = setInterval(() => this._schedule(), 100);
+        }
+
+        stopMusic() {
+            this.musicOn = false;
+            if (this.musicTimer) clearInterval(this.musicTimer);
+            this.musicTimer = null;
+        }
+
+        _tone(freq, t, dur, type, vol) {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, t);
+            gain.gain.setValueAtTime(0.0001, t);
+            gain.gain.linearRampToValueAtTime(vol, t + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(t);
+            osc.stop(t + dur + 0.02);
+        }
+
+        _schedule() {
+            if (!this.ctx || !this.musicOn) return;
+            const beat = 0.26;
+            // Melodi pentatonik ceria (null = jeda), 32 langkah
+            const M = [523.25, null, 659.25, null, 783.99, null, 659.25, null,
+                       587.33, null, 659.25, 783.99, 880, null, 783.99, null,
+                       698.46, null, 880, null, 1046.5, null, 880, null,
+                       783.99, 659.25, 587.33, null, 523.25, null, null, null];
+            // Bass: C - Am - F - G, tiap 8 langkah
+            const B = [130.81, 110, 87.31, 98];
+            while (this.nextTime < this.ctx.currentTime + 0.4) {
+                const i = this.step;
+                const t = this.nextTime;
+                if (M[i]) this._tone(M[i], t, beat * 1.6, 'triangle', 0.07);
+                if (i % 4 === 0) this._tone(B[Math.floor(i / 8)], t, beat * 3, 'sine', 0.09);
+                if (i % 2 === 1) this._tone(1800, t, 0.03, 'square', 0.012);
+                this.nextTime += beat;
+                this.step = (this.step + 1) % 32;
+            }
+        }
+
+        init() {
+            if (!this.ctx) {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (AudioCtx) {
+                    this.ctx = new AudioCtx();
+                }
+            }
+            if (this.ctx && this.ctx.state === 'suspended') {
+                this.ctx.resume();
+            }
+        }
+
+        toggleMute() {
+            this.muted = !this.muted;
+            try { localStorage.setItem('bgy_muted', this.muted ? '1' : '0'); } catch (e) {}
+            if (this.muted) this.stopMusic();
+            return this.muted;
+        }
+
+        playSwing() {
+            if (this.muted || !this.ctx) return;
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(340, now);
+            osc.frequency.exponentialRampToValueAtTime(110, now + 0.14);
+
+            gain.gain.setValueAtTime(0.18, now);
+            gain.gain.linearRampToValueAtTime(0.01, now + 0.14);
+
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.15);
+        }
+
+        playCatch(isRare = false, combo = 1) {
+            if (this.muted || !this.ctx) return;
+            const now = this.ctx.currentTime;
+            const baseFreq = isRare ? 587.33 : 440 + Math.min(combo * 30, 300);
+            const notes = isRare ? [baseFreq, baseFreq * 1.25, baseFreq * 1.5, baseFreq * 2] : [baseFreq, baseFreq * 1.25, baseFreq * 1.5];
+
+            notes.forEach((freq, idx) => {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = isRare ? 'triangle' : 'sine';
+                const startTime = now + idx * 0.055;
+                osc.frequency.setValueAtTime(freq, startTime);
+
+                gain.gain.setValueAtTime(0.2, startTime);
+                gain.gain.exponentialRampToValueAtTime(0.008, startTime + 0.22);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(startTime);
+                osc.stop(startTime + 0.23);
+            });
+        }
+
+        playLevelUp() {
+            if (this.muted || !this.ctx) return;
+            const now = this.ctx.currentTime;
+            const freqs = [523.25, 659.25, 783.99, 1046.5];
+            freqs.forEach((f, i) => {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                const t = now + i * 0.08;
+                osc.frequency.setValueAtTime(f, t);
+                gain.gain.setValueAtTime(0.22, t);
+                gain.gain.exponentialRampToValueAtTime(0.008, t + 0.28);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(t);
+                osc.stop(t + 0.29);
+            });
+        }
+
+        playButton() {
+            if (this.muted || !this.ctx) return;
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, now);
+            osc.frequency.exponentialRampToValueAtTime(880, now + 0.08);
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.09);
+        }
+
+        playGameOver() {
+            if (this.muted || !this.ctx) return;
+            const now = this.ctx.currentTime;
+            const freqs = [783.99, 659.25, 587.33, 523.25];
+            freqs.forEach((f, i) => {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                const t = now + i * 0.12;
+                osc.frequency.setValueAtTime(f, t);
+                gain.gain.setValueAtTime(0.2, t);
+                gain.gain.exponentialRampToValueAtTime(0.008, t + 0.35);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(t);
+                osc.stop(t + 0.36);
+            });
+        }
+    }
+
+    const sound = new SoundSystem();
+
+    // ==========================================
+    // 2. CANVAS & WORLD CONFIGURATION
+    // ==========================================
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const logoCanvas = document.getElementById('logoButterflyCanvas');
+    const logoCtx = logoCanvas.getContext('2d');
+
+    // Ukuran Dunia Meadow Adventure
+    const WORLD = {
+        width: 1800,
+        height: 1350,
+        padding: 90
+    };
+
+    const CAMERA = {
+        x: 0,
+        y: 0,
+        width: window.innerWidth,
+        height: window.innerHeight
+    };
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        CAMERA.width = canvas.width;
+        CAMERA.height = canvas.height;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // ==========================================
+    // 3. BUTTERFLY SPECIES DEFINITIONS
+    // ==========================================
+    const SPECIES = [
+        {
+            id: 'sunny',
+            name: 'Kuning Cerah',
+            points: 10,
+            speed: 115,
+            scale: 1.0,
+            weight: 46,
+            primary: '#ffeaa7',
+            secondary: '#fdcb6e',
+            accent: '#e17055',
+            rare: false
+        },
+        {
+            id: 'azure',
+            name: 'Biru Angin',
+            points: 20,
+            speed: 165,
+            scale: 1.05,
+            weight: 30,
+            primary: '#74b9ff',
+            secondary: '#0984e3',
+            accent: '#dfe6e9',
+            rare: false
+        },
+        {
+            id: 'sakura',
+            name: 'Merah Muda',
+            points: 35,
+            speed: 205,
+            scale: 1.12,
+            weight: 17,
+            primary: '#ff9ff3',
+            secondary: '#f368e0',
+            accent: '#fff200',
+            rare: false
+        },
+        {
+            id: 'monarch_gold',
+            name: 'Raja Pelangi Langka',
+            points: 75,
+            speed: 255,
+            scale: 1.28,
+            weight: 7,
+            primary: '#feca57',
+            secondary: '#ff6b6b',
+            accent: '#48dbfb',
+            rare: true
+        }
+    ];
+
+    function pickRandomSpecies() {
+        const totalWeight = SPECIES.reduce((acc, s) => acc + s.weight, 0);
+        let rand = Math.random() * totalWeight;
+        for (let i = 0; i < SPECIES.length; i++) {
+            if (rand < SPECIES[i].weight) return SPECIES[i];
+            rand -= SPECIES[i].weight;
+        }
+        return SPECIES[0];
+    }
+
+    // ==========================================
+    // 4. PROCEDURAL MEADOW WORLD GENERATION
+    // ==========================================
+    const environment = {
+        cottage: { x: 900, y: 310, width: 230, height: 175, radius: 105 },
+        pond: { x: 450, y: 880, rx: 145, ry: 95 },
+        trees: [],
+        rocks: [],
+        bushes: [],
+        flowers: [],
+        grassTufts: [],
+        steppingStones: []
+    };
+
+    function buildWorldEnvironment() {
+        environment.trees = [];
+        environment.rocks = [];
+        environment.bushes = [];
+        environment.flowers = [];
+        environment.grassTufts = [];
+        environment.steppingStones = [];
+
+        // Jalan setapak batu dari rumah kecil
+        for (let i = 0; i < 9; i++) {
+            environment.steppingStones.push({
+                x: environment.cottage.x + Math.sin(i * 0.6) * 28,
+                y: environment.cottage.y + 115 + i * 48,
+                rx: 22 + (i % 3) * 4,
+                ry: 13 + (i % 2) * 3,
+                rot: (i * 0.3) - 0.4
+            });
+        }
+
+        // Helper jarak aman agar objek tidak bertumpuk dengan rumah/kolam
+        function isClearZone(x, y, minDist) {
+            const dc = Math.hypot(x - environment.cottage.x, y - environment.cottage.y);
+            if (dc < environment.cottage.radius + minDist + 40) return false;
+            const dp = Math.hypot(x - environment.pond.x, y - environment.pond.y);
+            if (dp < Math.max(environment.pond.rx, environment.pond.ry) + minDist + 20) return false;
+            // Area spawn tengah pemain
+            const ds = Math.hypot(x - 900, y - 700);
+            if (ds < 110) return false;
+            return true;
+        }
+
+        // Buat Batu
+        const rockPositions = [
+            { x: 320, y: 420, r: 34 }, { x: 1420, y: 460, r: 40 },
+            { x: 1280, y: 980, r: 36 }, { x: 640, y: 1120, r: 32 },
+            { x: 1520, y: 820, r: 38 }, { x: 260, y: 720, r: 30 }
+        ];
+        rockPositions.forEach(rp => {
+            environment.rocks.push({
+                x: rp.x,
+                y: rp.y,
+                radius: rp.r
+            });
+        });
+
+        // Buat Pepohonan Rindang di sekeliling & beberapa di dalam
+        const treeCoords = [
+            { x: 180, y: 200, r: 55 }, { x: 480, y: 190, r: 50 },
+            { x: 1320, y: 210, r: 58 }, { x: 1620, y: 260, r: 52 },
+            { x: 210, y: 1120, r: 56 }, { x: 1590, y: 1140, r: 55 },
+            { x: 1160, y: 580, r: 46 }, { x: 620, y: 520, r: 44 },
+            { x: 960, y: 1150, r: 52 }, { x: 1580, y: 580, r: 48 }
+        ];
+        treeCoords.forEach((tc, idx) => {
+            environment.trees.push({
+                x: tc.x,
+                y: tc.y,
+                canopyRadius: tc.r,
+                collideRadius: tc.r * 0.42,
+                hueShift: idx % 2 === 0 ? '#58b147' : '#4ca33d',
+                phase: Math.random() * Math.PI * 2
+            });
+        });
+
+        // Buat Semak-semak Berbunga
+        for (let i = 0; i < 24; i++) {
+            const bx = 120 + Math.random() * (WORLD.width - 240);
+            const by = 140 + Math.random() * (WORLD.height - 280);
+            if (isClearZone(bx, by, 40)) {
+                environment.bushes.push({
+                    x: bx,
+                    y: by,
+                    radius: 26 + Math.random() * 14,
+                    berryColor: ['#ff7675', '#fd79a8', '#ffeaa7'][i % 3],
+                    phase: Math.random() * Math.PI * 2
+                });
+            }
+        }
+
+        // Buat Rumput Goyang & Bunga Pastel
+        const flowerColors = ['#ff9ff3', '#ffeaa7', '#74b9ff', '#ff7675', '#ffffff', '#a29bfe'];
+        for (let i = 0; i < 150; i++) {
+            const gx = 80 + Math.random() * (WORLD.width - 160);
+            const gy = 80 + Math.random() * (WORLD.height - 160);
+            if (isClearZone(gx, gy, 10)) {
+                environment.grassTufts.push({
+                    x: gx,
+                    y: gy,
+                    size: 8 + Math.random() * 7,
+                    phase: Math.random() * Math.PI * 2
+                });
+            }
+        }
+
+        for (let i = 0; i < 110; i++) {
+            const fx = 90 + Math.random() * (WORLD.width - 180);
+            const fy = 90 + Math.random() * (WORLD.height - 180);
+            if (isClearZone(fx, fy, 15)) {
+                environment.flowers.push({
+                    x: fx,
+                    y: fy,
+                    color: flowerColors[i % flowerColors.length],
+                    size: 6 + Math.random() * 4,
+                    phase: Math.random() * Math.PI * 2
+                });
+            }
+        }
+    }
+
+    buildWorldEnvironment();
+
+    // ==========================================
+    // 5. GAME STATE & ENTITIES
+    // ==========================================
+    const STATE = {
+        MENU: 'MENU',
+        PLAYING: 'PLAYING',
+        PAUSED: 'PAUSED',
+        GAMEOVER: 'GAMEOVER'
+    };
+
+    let currentState = STATE.MENU;
+    let score = 0;
+    let highScore = 0;
+    let timeLeft = 60;
+    let level = 1;
+    let butterfliesCaught = 0;
+    let comboCount = 0;
+    let comboTimer = 0;
+    const COMBO_MAX_TIME = 3.6; // detik untuk mempertahankan combo
+
+    // Load Highscore dengan aman dari localStorage
+    try {
+        const saved = localStorage.getItem('butterfly_catcher_best_v1');
+        if (saved) highScore = parseInt(saved, 10) || 0;
+    } catch (e) {
+        highScore = 0;
+    }
+
+    // Karakter Pemain
+    const player = {
+        x: 900,
+        y: 700,
+        vx: 0,
+        vy: 0,
+        speed: 275,
+        radius: 22,
+        angle: Math.PI / 2,
+        walkCycle: 0,
+        isMoving: false,
+        swinging: false,
+        swingTimer: 0,
+        swingDuration: 0.26,
+        swingCooldown: 0
+    };
+
+    // Array Kupu-kupu, Partikel, dan Teks Mengambang
+    let butterflies = [];
+    let particles = [];
+    let floatingTexts = [];
+    let respawnQueue = []; // antrean kupu-kupu yang akan muncul kembali
+
+    function createButterfly(customX, customY) {
+        const spec = pickRandomSpecies();
+        const margin = 130;
+        const x = customX !== undefined ? customX : margin + Math.random() * (WORLD.width - margin * 2);
+        const y = customY !== undefined ? customY : margin + Math.random() * (WORLD.height - margin * 2);
+        const angle = Math.random() * Math.PI * 2;
+
+        return {
+            x: x,
+            y: y,
+            z: 16 + Math.random() * 14, // ketinggian terbang untuk efek bayangan
+            angle: angle,
+            targetAngle: angle,
+            turnTimer: 0.5 + Math.random() * 1.5,
+            wingPhase: Math.random() * Math.PI * 2,
+            wingSpeed: 15 + Math.random() * 5,
+            species: spec,
+            scale: 0.01, // animasi membesar saat baru muncul
+            targetScale: spec.scale,
+            sparkleTimer: 0
+        };
+    }
+
+    function initButterflies(count = 18) {
+        butterflies = [];
+        respawnQueue = [];
+        for (let i = 0; i < count; i++) {
+            const b = createButterfly();
+            b.scale = b.targetScale;
+            butterflies.push(b);
+        }
+    }
+
+    // ==========================================
+    // 6. INPUT HANDLER (KEYBOARD + TOUCH JOYSTICK)
+    // ==========================================
+    const keys = {
+        up: false,
+        down: false,
+        left: false,
+        right: false
+    };
+
+    const joystick = {
+        active: false,
+        touchId: null,
+        baseX: 0,
+        baseY: 0,
+        dx: 0,
+        dy: 0,
+        maxRadius: 42
+    };
+
+    window.addEventListener('keydown', (e) => {
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'KeyW', 'KeyA', 'KeyS', 'KeyD'].includes(e.code)) {
+            e.preventDefault();
+        }
+        if (e.code === 'KeyW' || e.code === 'ArrowUp') keys.up = true;
+        if (e.code === 'KeyS' || e.code === 'ArrowDown') keys.down = true;
+        if (e.code === 'KeyA' || e.code === 'ArrowLeft') keys.left = true;
+        if (e.code === 'KeyD' || e.code === 'ArrowRight') keys.right = true;
+
+        if (e.code === 'Space' && currentState === STATE.PLAYING && !e.repeat) {
+            triggerCatchAction();
+        }
+        if (e.code === 'Escape' && (currentState === STATE.PLAYING || currentState === STATE.PAUSED)) {
+            togglePause();
+        }
+    });
+
+    window.addEventListener('keyup', (e) => {
+        if (e.code === 'KeyW' || e.code === 'ArrowUp') keys.up = false;
+        if (e.code === 'KeyS' || e.code === 'ArrowDown') keys.down = false;
+        if (e.code === 'KeyA' || e.code === 'ArrowLeft') keys.left = false;
+        if (e.code === 'KeyD' || e.code === 'ArrowRight') keys.right = false;
+    });
+
+    // Virtual Joystick Setup
+    const joystickZone = document.getElementById('joystick-zone');
+    const joystickBase = document.getElementById('joystick-base');
+    const joystickStick = document.getElementById('joystick-stick');
+
+    function updateJoystickVisual(clientX, clientY) {
+        const rect = joystickBase.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        let vx = clientX - centerX;
+        let vy = clientY - centerY;
+        const dist = Math.hypot(vx, vy);
+
+        if (dist > joystick.maxRadius) {
+            vx = (vx / dist) * joystick.maxRadius;
+            vy = (vy / dist) * joystick.maxRadius;
+        }
+
+        joystick.dx = vx / joystick.maxRadius;
+        joystick.dy = vy / joystick.maxRadius;
+        joystickStick.style.transform = `translate(${vx}px, ${vy}px)`;
+    }
+
+    function resetJoystick() {
+        joystick.active = false;
+        joystick.touchId = null;
+        joystick.dx = 0;
+        joystick.dy = 0;
+        joystickStick.style.transform = `translate(0px, 0px)`;
+    }
+
+    joystickZone.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        sound.init();
+        if (!joystick.active && e.changedTouches.length > 0) {
+            const t = e.changedTouches[0];
+            joystick.active = true;
+            joystick.touchId = t.identifier;
+            updateJoystickVisual(t.clientX, t.clientY);
+        }
+    }, { passive: false });
+
+    joystickZone.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        if (!joystick.active) return;
+        for (let i = 0; i < e.changedTouches.length; i++) {
+            const t = e.changedTouches[i];
+            if (t.identifier === joystick.touchId) {
+                updateJoystickVisual(t.clientX, t.clientY);
+                break;
+            }
+        }
+    }, { passive: false });
+
+    joystickZone.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        for (let i = 0; i < e.changedTouches.length; i++) {
+            if (e.changedTouches[i].identifier === joystick.touchId) {
+                resetJoystick();
+                break;
+            }
+        }
+    }, { passive: false });
+
+    joystickZone.addEventListener('touchcancel', resetJoystick);
+
+    // Mouse fallback untuk mengetes joystick di Desktop
+    joystickZone.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        sound.init();
+        joystick.active = true;
+        updateJoystickVisual(e.clientX, e.clientY);
+    });
+    window.addEventListener('mousemove', (e) => {
+        if (joystick.active && joystick.touchId === null) {
+            updateJoystickVisual(e.clientX, e.clientY);
+        }
+    });
+    window.addEventListener('mouseup', () => {
+        if (joystick.active && joystick.touchId === null) {
+            resetJoystick();
+        }
+    });
+
+    // Tombol Tangkap Mobile & Desktop Click
+    const btnCatch = document.getElementById('btn-catch');
+    btnCatch.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        sound.init();
+        btnCatch.classList.add('pressed');
+        if (currentState === STATE.PLAYING) {
+            triggerCatchAction();
+        }
+    }, { passive: false });
+
+    btnCatch.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        btnCatch.classList.remove('pressed');
+    }, { passive: false });
+
+    btnCatch.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        sound.init();
+        if (currentState === STATE.PLAYING) {
+            triggerCatchAction();
+        }
+    });
+
+    // Cegah gesture scroll di mobile selama bermain
+    document.addEventListener('touchmove', (e) => {
+        if (e.target === canvas) e.preventDefault();
+    }, { passive: false });
+
+    // ==========================================
+    // 7. CATCH MECHANICS, PARTICLES & COMBO
+    // ==========================================
+    function spawnParticles(x, y, color, count = 14) {
+        for (let i = 0; i < count; i++) {
+            const ang = Math.random() * Math.PI * 2;
+            const spd = 45 + Math.random() * 140;
+            particles.push({
+                x: x,
+                y: y,
+                vx: Math.cos(ang) * spd,
+                vy: Math.sin(ang) * spd - 20,
+                size: 4 + Math.random() * 6,
+                color: color,
+                life: 1.0,
+                decay: 1.6 + Math.random() * 1.1,
+                isStar: Math.random() > 0.45
+            });
+        }
+        // Batasi jumlah partikel untuk optimasi Android menengah
+        if (particles.length > 120) {
+            particles.splice(0, particles.length - 120);
+        }
+    }
+
+    function spawnFloatingText(x, y, text, color = '#fff', scale = 1) {
+        floatingTexts.push({
+            x: x,
+            y: y,
+            text: text,
+            color: color,
+            scale: scale,
+            life: 1.0,
+            vy: -55
+        });
+    }
+
+    function triggerCatchAction() {
+        if (player.swinging || player.swingCooldown > 0) return;
+
+        player.swinging = true;
+        player.swingTimer = player.swingDuration;
+        player.swingCooldown = 0.30;
+        sound.playSwing();
+
+        // Hitbox area jaring di depan karakter + sekitar tubuh
+        const netReach = 52;
+        const netCenterX = player.x + Math.cos(player.angle) * netReach;
+        const netCenterY = player.y + Math.sin(player.angle) * netReach;
+        const catchRadius = 68;
+
+        let caughtInThisSwing = 0;
+        let caughtRare = false;
+
+        for (let i = butterflies.length - 1; i >= 0; i--) {
+            const b = butterflies[i];
+            const distToNet = Math.hypot(b.x - netCenterX, b.y - netCenterY);
+            const distToPlayer = Math.hypot(b.x - player.x, b.y - player.y);
+
+            if (distToNet <= catchRadius || distToPlayer <= 48) {
+                caughtInThisSwing++;
+                butterfliesCaught++;
+                if (b.species.rare) caughtRare = true;
+
+                // Sistem Combo
+                comboCount++;
+                comboTimer = COMBO_MAX_TIME;
+                const multiplier = Math.min(1 + Math.floor((comboCount - 1) / 2) * 0.5, 4.0);
+                const gainedPoints = Math.round(b.species.points * multiplier);
+                score += gainedPoints;
+
+                // Cek High Score
+                if (score > highScore) {
+                    highScore = score;
+                    try {
+                        localStorage.setItem('butterfly_catcher_best_v1', String(highScore));
+                    } catch (err) {}
+                }
+
+                // Efek Partikel & Teks Skor
+                spawnParticles(b.x, b.y - b.z, b.species.primary, b.species.rare ? 24 : 14);
+                spawnParticles(b.x, b.y - b.z, b.species.secondary, 8);
+
+                const label = comboCount >= 2 ? `+${gainedPoints} (x${multiplier})` : `+${gainedPoints}`;
+                const txtColor = b.species.rare ? '#feca57' : '#ffffff';
+                spawnFloatingText(b.x, b.y - 25, label, txtColor, b.species.rare ? 1.3 : 1.0);
+
+                // Hapus kupu-kupu & jadwalkan muncul kembali
+                butterflies.splice(i, 1);
+                respawnQueue.push(1.4 + Math.random() * 1.6);
+            }
+        }
+
+        if (caughtInThisSwing > 0) {
+            sound.playCatch(caughtRare, comboCount);
+
+            // Cek Kenaikan Level (setiap 6 kupu-kupu tertangkap)
+            const newLevel = 1 + Math.floor(butterfliesCaught / 6);
+            if (newLevel > level) {
+                level = newLevel;
+                sound.playLevelUp();
+                spawnFloatingText(player.x, player.y - 50, `LEVEL UP! LV.${level}`, '#55efc4', 1.35);
+                // Tambah populasi kupu-kupu sedikit setiap naik level
+                if (butterflies.length + respawnQueue.length < 26) {
+                    butterflies.push(createButterfly());
+                }
+            }
+            updateHUD();
+        }
+    }
+
+    // ==========================================
+    // 8. UI & HUD MANAGEMENT
+    // ==========================================
+    const elScore = document.getElementById('hud-score');
+    const elBest = document.getElementById('hud-best');
+    const elLevel = document.getElementById('hud-level');
+    const elTimer = document.getElementById('hud-timer');
+    const elTimerCard = document.getElementById('timer-card');
+    const elComboBanner = document.getElementById('hud-combo');
+    const elComboText = document.getElementById('hud-combo-text');
+    const elComboBar = document.getElementById('hud-combo-bar');
+
+    const modalStart = document.getElementById('modal-start');
+    const modalPause = document.getElementById('modal-pause');
+    const modalGameOver = document.getElementById('modal-gameover');
+
+    function updateHUD() {
+        elScore.textContent = score;
+        elBest.textContent = highScore;
+        elLevel.textContent = level;
+        const sec = Math.ceil(Math.max(0, timeLeft));
+        elTimer.textContent = `${sec}s`;
+
+        if (sec <= 10 && currentState === STATE.PLAYING) {
+            elTimerCard.classList.add('timer-warning');
+        } else {
+            elTimerCard.classList.remove('timer-warning');
+        }
+
+        if (comboCount >= 2 && comboTimer > 0) {
+            elComboBanner.classList.add('active');
+            elComboText.textContent = `COMBO x${comboCount}!`;
+            const pct = Math.max(0, Math.min(100, (comboTimer / COMBO_MAX_TIME) * 100));
+            elComboBar.style.width = `${pct}%`;
+        } else {
+            elComboBanner.classList.remove('active');
+        }
+    }
+
+    function startNewGame() {
+        sound.init();
+        sound.playButton();
+        sound.stopMusic();
+        sound.startMusic();
+
+        score = 0;
+        timeLeft = 60;
+        level = 1;
+        butterfliesCaught = 0;
+        comboCount = 0;
+        comboTimer = 0;
+
+        player.x = 900;
+        player.y = 700;
+        player.angle = Math.PI / 2;
+        player.swinging = false;
+        player.swingCooldown = 0;
+
+        particles = [];
+        floatingTexts = [];
+        initButterflies(18);
+
+        modalStart.classList.remove('visible');
+        modalPause.classList.remove('visible');
+        modalGameOver.classList.remove('visible');
+
+        currentState = STATE.PLAYING;
+        updateHUD();
+    }
+
+    function togglePause() {
+        sound.init();
+        sound.playButton();
+        if (currentState === STATE.PLAYING) {
+            currentState = STATE.PAUSED;
+            sound.stopMusic();
+            modalPause.classList.add('visible');
+        } else if (currentState === STATE.PAUSED) {
+            currentState = STATE.PLAYING;
+            sound.startMusic();
+            modalPause.classList.remove('visible');
+        }
+    }
+
+    function triggerGameOver() {
+        currentState = STATE.GAMEOVER;
+        sound.stopMusic();
+        sound.playGameOver();
+
+        document.getElementById('final-score').textContent = score;
+        document.getElementById('final-best').textContent = highScore;
+        document.getElementById('final-caught').textContent = `${butterfliesCaught} 🦋`;
+        document.getElementById('final-level').textContent = level;
+
+        const badge = document.getElementById('gameover-badge');
+        if (score >= 500) {
+            badge.textContent = '👑 Master Penangkap Kupu-Kupu Legendaris!';
+        } else if (score >= 250) {
+            badge.textContent = '🌟 Luar Biasa! Kolektor Kupu-Kupu Hebat!';
+        } else {
+            badge.textContent = '🎉 Kerja Bagus! Ayo Coba Pecahkan Rekormu!';
+        }
+
+        modalGameOver.classList.add('visible');
+    }
+
+    // Event Listeners Tombol UI
+    document.getElementById('btn-start-play').addEventListener('click', startNewGame);
+    document.getElementById('btn-resume').addEventListener('click', togglePause);
+    document.getElementById('btn-restart-pause').addEventListener('click', startNewGame);
+    document.getElementById('btn-play-again').addEventListener('click', startNewGame);
+    document.getElementById('btn-pause').addEventListener('click', () => {
+        if (currentState === STATE.PLAYING || currentState === STATE.PAUSED) {
+            togglePause();
+        }
+    });
+
+    const btnSound = document.getElementById('btn-sound');
+    btnSound.addEventListener('click', () => {
+        sound.init();
+        const isMuted = sound.toggleMute();
+        btnSound.textContent = isMuted ? '🔇' : '🔊';
+        if (!isMuted) {
+            sound.playButton();
+            if (currentState === STATE.PLAYING) sound.startMusic();
+        }
+    });
+    btnSound.textContent = sound.muted ? '🔇' : '🔊';
+
+    // Hentikan musik saat tab disembunyikan
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) sound.stopMusic();
+        else if (currentState === STATE.PLAYING) sound.startMusic();
+    });
+
+    updateHUD();
+
+    // ==========================================
+    // 9. UPDATE GAME LOGIC (PHYSICS & AI)
+    // ==========================================
+    function resolveCircleCollision(px, py, pRadius, ox, oy, oRadius) {
+        const dx = px - ox;
+        const dy = py - oy;
+        const dist = Math.hypot(dx, dy);
+        const minDist = pRadius + oRadius;
+        if (dist < minDist && dist > 0.001) {
+            const overlap = minDist - dist;
+            return {
+                x: px + (dx / dist) * overlap,
+                y: py + (dy / dist) * overlap
+            };
+        }
+        return { x: px, y: py };
+    }
+
+    function updateGame(dt) {
+        // Timer & Combo ketika sedang bermain
+        if (currentState === STATE.PLAYING) {
+            timeLeft -= dt;
+            if (timeLeft <= 0) {
+                timeLeft = 0;
+                updateHUD();
+                triggerGameOver();
+                return;
+            }
+
+            if (comboTimer > 0) {
+                comboTimer -= dt;
+                if (comboTimer <= 0) {
+                    comboCount = 0;
+                    comboTimer = 0;
+                }
+            }
+
+            // Respawn kupu-kupu yang telah ditangkap
+            for (let i = respawnQueue.length - 1; i >= 0; i--) {
+                respawnQueue[i] -= dt;
+                if (respawnQueue[i] <= 0) {
+                    respawnQueue.splice(i, 1);
+                    butterflies.push(createButterfly());
+                }
+            }
+
+            // Input Gerakan Karakter (Keyboard + Virtual Joystick)
+            let moveX = 0;
+            let moveY = 0;
+
+            if (keys.left) moveX -= 1;
+            if (keys.right) moveX += 1;
+            if (keys.up) moveY -= 1;
+            if (keys.down) moveY += 1;
+
+            if (joystick.active) {
+                moveX += joystick.dx;
+                moveY += joystick.dy;
+            }
+
+            const mag = Math.hypot(moveX, moveY);
+            if (mag > 0.08) {
+                if (mag > 1) {
+                    moveX /= mag;
+                    moveY /= mag;
+                }
+                player.vx = moveX * player.speed;
+                player.vy = moveY * player.speed;
+                player.angle = Math.atan2(moveY, moveX);
+                player.isMoving = true;
+                player.walkCycle += dt * 11 * Math.min(1, mag);
+            } else {
+                player.vx = 0;
+                player.vy = 0;
+                player.isMoving = false;
+            }
+
+            player.x += player.vx * dt;
+            player.y += player.vy * dt;
+
+            // Batas Dunia
+            player.x = Math.max(WORLD.padding, Math.min(WORLD.width - WORLD.padding, player.x));
+            player.y = Math.max(WORLD.padding, Math.min(WORLD.height - WORLD.padding, player.y));
+
+            // Kolisi dengan Rumah Kecil
+            let pos = resolveCircleCollision(
+                player.x, player.y, player.radius,
+                environment.cottage.x, environment.cottage.y, environment.cottage.radius
+            );
+            player.x = pos.x;
+            player.y = pos.y;
+
+            // Kolisi dengan Kolam Air
+            pos = resolveCircleCollision(
+                player.x, player.y, player.radius,
+                environment.pond.x, environment.pond.y, environment.pond.ry
+            );
+            player.x = pos.x;
+            player.y = pos.y;
+
+            // Kolisi dengan Batu
+            for (let i = 0; i < environment.rocks.length; i++) {
+                const rk = environment.rocks[i];
+                pos = resolveCircleCollision(player.x, player.y, player.radius, rk.x, rk.y, rk.radius * 0.85);
+                player.x = pos.x;
+                player.y = pos.y;
+            }
+
+            // Kolisi dengan Batang Pohon
+            for (let i = 0; i < environment.trees.length; i++) {
+                const tr = environment.trees[i];
+                pos = resolveCircleCollision(player.x, player.y, player.radius, tr.x, tr.y, tr.collideRadius);
+                player.x = pos.x;
+                player.y = pos.y;
+            }
+
+            // Update Animasi Ayunan Jaring
+            if (player.swinging) {
+                player.swingTimer -= dt;
+                if (player.swingTimer <= 0) {
+                    player.swinging = false;
+                }
+            }
+            if (player.swingCooldown > 0) {
+                player.swingCooldown -= dt;
+            }
+
+            updateHUD();
+        }
+
+        // Update AI Kupu-Kupu (Tetap bergerak hidup bahkan di latar menu)
+        const levelSpeedFactor = 1 + (level - 1) * 0.06;
+        for (let i = 0; i < butterflies.length; i++) {
+            const b = butterflies[i];
+
+            if (b.scale < b.targetScale) {
+                b.scale = Math.min(b.targetScale, b.scale + dt * 2.5);
+            }
+
+            b.wingPhase += dt * b.wingSpeed;
+            b.turnTimer -= dt;
+
+            if (b.turnTimer <= 0) {
+                b.turnTimer = 0.6 + Math.random() * 1.8;
+                b.targetAngle = b.angle + (Math.random() - 0.5) * 2.4;
+            }
+
+            // Kupu-kupu langka sedikit menghindar jika pemain terlalu dekat tanpa mengayun
+            if (b.species.rare && currentState === STATE.PLAYING) {
+                const distToP = Math.hypot(b.x - player.x, b.y - player.y);
+                if (distToP < 150) {
+                    b.targetAngle = Math.atan2(b.y - player.y, b.x - player.x);
+                }
+            }
+
+            // Pantul lembut jika mendekati tepi dunia
+            const margin = 120;
+            if (b.x < margin) b.targetAngle = 0;
+            if (b.x > WORLD.width - margin) b.targetAngle = Math.PI;
+            if (b.y < margin) b.targetAngle = Math.PI / 2;
+            if (b.y > WORLD.height - margin) b.targetAngle = -Math.PI / 2;
+
+            // Interpolasi sudut terbang halus
+            let diff = b.targetAngle - b.angle;
+            while (diff < -Math.PI) diff += Math.PI * 2;
+            while (diff > Math.PI) diff -= Math.PI * 2;
+            b.angle += diff * Math.min(1, dt * 4.5);
+
+            const spd = b.species.speed * levelSpeedFactor;
+            b.x += Math.cos(b.angle) * spd * dt;
+            b.y += Math.sin(b.angle) * spd * dt;
+            b.z = 16 + Math.sin(b.wingPhase * 0.5) * 5;
+
+            // Kilau partikel kecil untuk kupu-kupu langka
+            if (b.species.rare) {
+                b.sparkleTimer -= dt;
+                if (b.sparkleTimer <= 0) {
+                    b.sparkleTimer = 0.14;
+                    particles.push({
+                        x: b.x + (Math.random() - 0.5) * 14,
+                        y: b.y - b.z + (Math.random() - 0.5) * 14,
+                        vx: 0,
+                        vy: -15,
+                        size: 3.5,
+                        color: '#fff200',
+                        life: 0.7,
+                        decay: 1.5,
+                        isStar: true
+                    });
+                }
+            }
+        }
+
+        // Update Partikel
+        for (let i = particles.length - 1; i >= 0; i--) {
+            const p = particles[i];
+            p.x += p.vx * dt;
+            p.y += p.vy * dt;
+            p.life -= p.decay * dt;
+            if (p.life <= 0) {
+                particles.splice(i, 1);
+            }
+        }
+
+        // Update Floating Score Text
+        for (let i = floatingTexts.length - 1; i >= 0; i--) {
+            const ft = floatingTexts[i];
+            ft.y += ft.vy * dt;
+            ft.life -= dt * 1.15;
+            if (ft.life <= 0) {
+                floatingTexts.splice(i, 1);
+            }
+        }
+
+        // Smooth Camera Follow Player
+        const targetCamX = player.x - CAMERA.width / 2;
+        const targetCamY = player.y - CAMERA.height / 2;
+        CAMERA.x += (targetCamX - CAMERA.x) * Math.min(1, dt * 7);
+        CAMERA.y += (targetCamY - CAMERA.y) * Math.min(1, dt * 7);
+
+        CAMERA.x = Math.max(0, Math.min(WORLD.width - CAMERA.width, CAMERA.x));
+        CAMERA.y = Math.max(0, Math.min(WORLD.height - CAMERA.height, CAMERA.y));
+    }
+
+    // ==========================================
+    // 10. HAND-DRAWN CARTOON RENDERING ENGINE
+    // ==========================================
+    function drawMeadowBackground(time) {
+        // Warna dasar rumput cerah
+        ctx.fillStyle = '#88d46c';
+        ctx.fillRect(0, 0, CAMERA.width, CAMERA.height);
+
+        ctx.save();
+        ctx.translate(-CAMERA.x, -CAMERA.y);
+
+        // Pola bercak padang rumput lembut
+        ctx.fillStyle = '#7ec860';
+        for (let gx = 150; gx < WORLD.width; gx += 320) {
+            for (let gy = 150; gy < WORLD.height; gy += 280) {
+                ctx.beginPath();
+                ctx.ellipse(gx, gy, 110, 75, 0.2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Batas Pagar Kayu Keliling Taman
+        ctx.strokeStyle = '#5c4332';
+        ctx.lineWidth = 6;
+        ctx.strokeRect(WORLD.padding - 25, WORLD.padding - 25, WORLD.width - (WORLD.padding - 25) * 2, WORLD.height - (WORLD.padding - 25) * 2);
+
+        // Jalan Setapak Batu
+        environment.steppingStones.forEach(st => {
+            ctx.save();
+            ctx.translate(st.x, st.y);
+            ctx.rotate(st.rot);
+            ctx.fillStyle = '#d1ccc0';
+            ctx.strokeStyle = '#4a3b32';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, st.rx, st.ry, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
+        });
+
+        // Kolam Air Kecil yang Berkilau
+        const pond = environment.pond;
+        ctx.save();
+        ctx.translate(pond.x, pond.y);
+        // Tepian kolam
+        ctx.fillStyle = '#c8d6e5';
+        ctx.strokeStyle = '#4a3b32';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, pond.rx + 10, pond.ry + 10, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Air kolam
+        ctx.fillStyle = '#54a0ff';
+        ctx.beginPath();
+        ctx.ellipse(0, 0, pond.rx, pond.ry, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Riak air animasi
+        const ripple = Math.sin(time * 2.5) * 6;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.ellipse(-25, -10, 45 + ripple, 24 + ripple * 0.5, 0, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Daun Teratai
+        ctx.fillStyle = '#2ecc71';
+        ctx.strokeStyle = '#4a3b32';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(55, 22, 22, 0.3, Math.PI * 2 - 0.3);
+        ctx.lineTo(55, 22);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+
+        // Rumput Bergoyang (Hanya render yang masuk layar kamera)
+        ctx.strokeStyle = '#4a9e35';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        for (let i = 0; i < environment.grassTufts.length; i++) {
+            const g = environment.grassTufts[i];
+            if (g.x < CAMERA.x - 30 || g.x > CAMERA.x + CAMERA.width + 30 ||
+                g.y < CAMERA.y - 30 || g.y > CAMERA.y + CAMERA.height + 30) continue;
+
+            const sway = Math.sin(time * 3 + g.phase) * 4;
+            ctx.beginPath();
+            ctx.moveTo(g.x, g.y);
+            ctx.lineTo(g.x - 5 + sway, g.y - g.size);
+            ctx.moveTo(g.x, g.y);
+            ctx.lineTo(g.x + sway * 1.2, g.y - g.size - 3);
+            ctx.moveTo(g.x, g.y);
+            ctx.lineTo(g.x + 5 + sway, g.y - g.size);
+            ctx.stroke();
+        }
+
+        // Bunga-Bunga Pastel Bergoyang
+        for (let i = 0; i < environment.flowers.length; i++) {
+            const f = environment.flowers[i];
+            if (f.x < CAMERA.x - 30 || f.x > CAMERA.x + CAMERA.width + 30 ||
+                f.y < CAMERA.y - 30 || f.y > CAMERA.y + CAMERA.height + 30) continue;
+
+            const swayX = Math.sin(time * 2.6 + f.phase) * 3.5;
+            const fx = f.x + swayX;
+            const fy = f.y;
+
+            ctx.fillStyle = f.color;
+            ctx.strokeStyle = '#4a3b32';
+            ctx.lineWidth = 2;
+
+            for (let p = 0; p < 5; p++) {
+                const a = (p * Math.PI * 2) / 5;
+                ctx.beginPath();
+                ctx.arc(fx + Math.cos(a) * f.size * 0.75, fy + Math.sin(a) * f.size * 0.75, f.size * 0.55, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+            }
+            ctx.fillStyle = '#ffeaa7';
+            ctx.beginPath();
+            ctx.arc(fx, fy, f.size * 0.45, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        // Semak-Semak Imut
+        for (let i = 0; i < environment.bushes.length; i++) {
+            const b = environment.bushes[i];
+            if (b.x < CAMERA.x - 60 || b.x > CAMERA.x + CAMERA.width + 60 ||
+                b.y < CAMERA.y - 60 || b.y > CAMERA.y + CAMERA.height + 60) continue;
+
+            const puff = Math.sin(time * 2 + b.phase) * 1.5;
+            ctx.save();
+            ctx.translate(b.x, b.y);
+
+            // Bayangan Semak
+            ctx.fillStyle = 'rgba(0,0,0,0.16)';
+            ctx.beginPath();
+            ctx.ellipse(0, b.radius * 0.45, b.radius * 1.15, b.radius * 0.55, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#58b147';
+            ctx.strokeStyle = '#4a3b32';
+            ctx.lineWidth = 3.5;
+
+            ctx.beginPath();
+            ctx.arc(-b.radius * 0.45, 4, b.radius * 0.7 + puff, 0, Math.PI * 2);
+            ctx.arc(b.radius * 0.45, 4, b.radius * 0.7 + puff, 0, Math.PI * 2);
+            ctx.arc(0, -b.radius * 0.25, b.radius * 0.85 + puff, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Buah beri/bunga pada semak
+            ctx.fillStyle = b.berryColor;
+            ctx.beginPath();
+            ctx.arc(-8, -4, 4.5, 0, Math.PI * 2);
+            ctx.arc(10, -2, 4.5, 0, Math.PI * 2);
+            ctx.arc(2, -12, 4.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        // Batu-Batu Taman
+        for (let i = 0; i < environment.rocks.length; i++) {
+            const rk = environment.rocks[i];
+            ctx.save();
+            ctx.translate(rk.x, rk.y);
+
+            ctx.fillStyle = 'rgba(0,0,0,0.18)';
+            ctx.beginPath();
+            ctx.ellipse(0, rk.radius * 0.35, rk.radius * 1.1, rk.radius * 0.65, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#95afc0';
+            ctx.strokeStyle = '#4a3b32';
+            ctx.lineWidth = 3.8;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, rk.radius, rk.radius * 0.78, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Highlight batu
+            ctx.fillStyle = '#c7ecee';
+            ctx.beginPath();
+            ctx.ellipse(-rk.radius * 0.28, -rk.radius * 0.25, rk.radius * 0.35, rk.radius * 0.18, -0.3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        // Rumah Kecil (Cozy Meadow Cottage)
+        drawCottage(environment.cottage.x, environment.cottage.y);
+
+        ctx.restore();
+    }
+
+    function drawCottage(x, y) {
+        ctx.save();
+        ctx.translate(x, y);
+
+        // Bayangan Rumah
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
+        ctx.beginPath();
+        ctx.ellipse(0, 25, 130, 88, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Dinding Kayu/Krem Rumah
+        ctx.fillStyle = '#fff3d1';
+        ctx.strokeStyle = '#4a3b32';
+        ctx.lineWidth = 4.5;
+        ctx.beginPath();
+        ctx.roundRect(-95, -55, 190, 135, 16);
+        ctx.fill();
+        ctx.stroke();
+
+        // Pintu Kayu di sisi bawah
+        ctx.fillStyle = '#cd6133';
+        ctx.beginPath();
+        ctx.roundRect(-24, 35, 48, 45, [12, 12, 0, 0]);
+        ctx.fill();
+        ctx.stroke();
+
+        // Jendela Kiri & Kanan
+        ctx.fillStyle = '#74b9ff';
+        ctx.beginPath();
+        ctx.roundRect(-72, 30, 32, 30, 6);
+        ctx.roundRect(40, 30, 32, 30, 6);
+        ctx.fill();
+        ctx.stroke();
+
+        // Atap Genteng Merah Pastel (Top-Down)
+        ctx.fillStyle = '#ff6b6b';
+        ctx.beginPath();
+        ctx.roundRect(-112, -72, 224, 118, 22);
+        ctx.fill();
+        ctx.stroke();
+
+        // Puncak Atap
+        ctx.fillStyle = '#ee5253';
+        ctx.beginPath();
+        ctx.roundRect(-96, -24, 192, 22, 10);
+        ctx.fill();
+        ctx.stroke();
+
+        // Cerobong Asap Kecil
+        ctx.fillStyle = '#b33939';
+        ctx.beginPath();
+        ctx.roundRect(45, -52, 32, 28, 6);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.restore();
+    }
+
+    function drawPlayerCharacter() {
+        ctx.save();
+        ctx.translate(player.x - CAMERA.x, player.y - CAMERA.y);
+
+        // Bayangan Karakter
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
+        ctx.beginPath();
+        ctx.ellipse(0, 14, 22, 13, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.rotate(player.angle);
+
+        // Animasi Kaki Melangkah
+        const footOffset = player.isMoving ? Math.sin(player.walkCycle) * 9 : 0;
+        ctx.fillStyle = '#574b90';
+        ctx.strokeStyle = '#4a3b32';
+        ctx.lineWidth = 3.2;
+
+        // Kaki Kiri & Kanan
+        ctx.beginPath();
+        ctx.ellipse(footOffset, -11, 8, 5.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.ellipse(-footOffset, 11, 8, 5.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Jaring Penangkap Kupu-Kupu (Berayun saat tombol ditekan)
+        let netSwingAngle = 0.45;
+        if (player.swinging) {
+            const progress = 1 - (player.swingTimer / player.swingDuration);
+            netSwingAngle = -1.25 + Math.sin(progress * Math.PI) * 2.6;
+
+            // Efek kilatan busur ayunan
+            ctx.save();
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
+            ctx.lineWidth = 10;
+            ctx.beginPath();
+            ctx.arc(0, 0, 46, -1.1, 1.1);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        ctx.save();
+        ctx.rotate(netSwingAngle);
+        // Gagang Jaring
+        ctx.strokeStyle = '#e1b12c';
+        ctx.lineWidth = 6;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(6, 14);
+        ctx.lineTo(42, 22);
+        ctx.stroke();
+
+        ctx.strokeStyle = '#4a3b32';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Lingkaran Jaring
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.78)';
+        ctx.strokeStyle = '#4a3b32';
+        ctx.lineWidth = 3.5;
+        ctx.beginPath();
+        ctx.ellipse(52, 24, 15, 19, 0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Garis rajutan jaring
+        ctx.strokeStyle = 'rgba(74, 59, 50, 0.35)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(42, 18);
+        ctx.lineTo(62, 30);
+        ctx.moveTo(42, 30);
+        ctx.lineTo(62, 18);
+        ctx.stroke();
+        ctx.restore();
+
+        // Badan Baju Pastel Karakter
+        ctx.fillStyle = '#ff7675';
+        ctx.strokeStyle = '#4a3b32';
+        ctx.lineWidth = 3.5;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 16, 20, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Tangan Bulat Imut
+        ctx.fillStyle = '#ffeaa7';
+        ctx.beginPath();
+        ctx.arc(8, -17, 6, 0, Math.PI * 2);
+        ctx.arc(10, 16, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Topi Jerami Bundar Petualang (Tampak Atas)
+        ctx.fillStyle = '#feca57';
+        ctx.beginPath();
+        ctx.arc(0, 0, 21, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Pita Merah pada Topi
+        ctx.fillStyle = '#ff6b81';
+        ctx.beginPath();
+        ctx.arc(0, 0, 13.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Puncak Topi & Mata Mengintip di Depan
+        ctx.fillStyle = '#ffdf7e';
+        ctx.beginPath();
+        ctx.arc(-1, 0, 10.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Mata Lucu di arah hadap
+        ctx.fillStyle = '#2f3640';
+        ctx.beginPath();
+        ctx.arc(15, -5, 2.3, 0, Math.PI * 2);
+        ctx.arc(15, 5, 2.3, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+    }
+
+    function drawButterflyEntity(ctxTarget, x, y, z, angle, wingPhase, species, scale) {
+        ctxTarget.save();
+        ctxTarget.translate(x, y);
+
+        // Bayangan di rumput
+        if (z > 0) {
+            ctxTarget.fillStyle = 'rgba(0, 0, 0, 0.16)';
+            ctxTarget.beginPath();
+            ctxTarget.ellipse(0, 10, 11 * scale, 7 * scale, angle, 0, Math.PI * 2);
+            ctxTarget.fill();
+        }
+
+        // Posisi tubuh kupu-kupu melayang
+        ctxTarget.translate(0, -z);
+        ctxTarget.rotate(angle + Math.PI / 2);
+        ctxTarget.scale(scale, scale);
+
+        const flap = 0.28 + Math.abs(Math.sin(wingPhase)) * 0.72;
+
+        // Aura cahaya khusus kupu-kupu langka
+        if (species.rare) {
+            const grad = ctxTarget.createRadialGradient(0, 0, 4, 0, 0, 32);
+            grad.addColorStop(0, 'rgba(254, 202, 87, 0.65)');
+            grad.addColorStop(1, 'rgba(254, 202, 87, 0)');
+            ctxTarget.fillStyle = grad;
+            ctxTarget.beginPath();
+            ctxTarget.arc(0, 0, 32, 0, Math.PI * 2);
+            ctxTarget.fill();
+        }
+
+        ctxTarget.strokeStyle = '#4a3b32';
+        ctxTarget.lineWidth = 2.6;
+
+        // Fungsi gambar sepasang sayap (kiri/kanan)
+        [-1, 1].forEach(side => {
+            ctxTarget.save();
+            ctxTarget.scale(side * flap, 1);
+
+            // Sayap Bawah
+            ctxTarget.fillStyle = species.secondary;
+            ctxTarget.beginPath();
+            ctxTarget.ellipse(10, 7, 11, 8.5, 0.35, 0, Math.PI * 2);
+            ctxTarget.fill();
+            ctxTarget.stroke();
+
+            // Sayap Atas
+            ctxTarget.fillStyle = species.primary;
+            ctxTarget.beginPath();
+            ctxTarget.ellipse(13, -5, 15, 11, -0.3, 0, Math.PI * 2);
+            ctxTarget.fill();
+            ctxTarget.stroke();
+
+            // Corak bintik indah pada sayap
+            ctxTarget.fillStyle = species.accent;
+            ctxTarget.beginPath();
+            ctxTarget.arc(15, -6, 4, 0, Math.PI * 2);
+            ctxTarget.arc(10, 7, 2.8, 0, Math.PI * 2);
+            ctxTarget.fill();
+
+            ctxTarget.restore();
+        });
+
+        // Tubuh Kupu-kupu
+        ctxTarget.fillStyle = '#4a3b32';
+        ctxTarget.beginPath();
+        ctxTarget.ellipse(0, 0, 3.2, 11, 0, 0, Math.PI * 2);
+        ctxTarget.fill();
+
+        // Antena Melengkung
+        ctxTarget.strokeStyle = '#4a3b32';
+        ctxTarget.lineWidth = 1.8;
+        ctxTarget.beginPath();
+        ctxTarget.moveTo(-1.5, -9);
+        ctxTarget.quadraticCurveTo(-6, -16, -9, -14);
+        ctxTarget.moveTo(1.5, -9);
+        ctxTarget.quadraticCurveTo(6, -16, 9, -14);
+        ctxTarget.stroke();
+
+        ctxTarget.restore();
+    }
+
+    function drawTreesCanopy(time) {
+        ctx.save();
+        ctx.translate(-CAMERA.x, -CAMERA.y);
+
+        for (let i = 0; i < environment.trees.length; i++) {
+            const tr = environment.trees[i];
+            if (tr.x < CAMERA.x - 100 || tr.x > CAMERA.x + CAMERA.width + 100 ||
+                tr.y < CAMERA.y - 100 || tr.y > CAMERA.y + CAMERA.height + 100) continue;
+
+            const sway = Math.sin(time * 1.8 + tr.phase) * 2.5;
+            ctx.save();
+            ctx.translate(tr.x, tr.y);
+
+            // Bayangan Rindang Pohon
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.beginPath();
+            ctx.ellipse(6, 14, tr.canopyRadius * 1.05, tr.canopyRadius * 0.85, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Batang Pohon
+            ctx.fillStyle = '#8c583a';
+            ctx.strokeStyle = '#4a3b32';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(0, 4, tr.collideRadius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Daun Rindang Berlapis
+            ctx.fillStyle = tr.hueShift;
+            const r = tr.canopyRadius;
+            ctx.beginPath();
+            ctx.arc(-r * 0.4 + sway, -r * 0.2, r * 0.65, 0, Math.PI * 2);
+            ctx.arc(r * 0.4 + sway, -r * 0.2, r * 0.65, 0, Math.PI * 2);
+            ctx.arc(sway, r * 0.3, r * 0.68, 0, Math.PI * 2);
+            ctx.arc(sway, -r * 0.45, r * 0.68, 0, Math.PI * 2);
+            ctx.arc(sway, 0, r * 0.78, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Highlight Kanopi Pohon
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.16)';
+            ctx.beginPath();
+            ctx.arc(-r * 0.2 + sway, -r * 0.25, r * 0.45, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        ctx.restore();
+    }
+
+    function drawParticlesAndTexts() {
+        ctx.save();
+        ctx.translate(-CAMERA.x, -CAMERA.y);
+
+        // Render Partikel
+        for (let i = 0; i < particles.length; i++) {
+            const p = particles[i];
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, p.life);
+            ctx.translate(p.x, p.y);
+            ctx.fillStyle = p.color;
+            ctx.strokeStyle = '#4a3b32';
+            ctx.lineWidth = 1.8;
+
+            if (p.isStar) {
+                ctx.beginPath();
+                for (let s = 0; s < 5; s++) {
+                    const a = (s * Math.PI * 2) / 5 - Math.PI / 2;
+                    const rOuter = p.size * 1.4;
+                    const rInner = p.size * 0.6;
+                    ctx.lineTo(Math.cos(a) * rOuter, Math.sin(a) * rOuter);
+                    const a2 = a + Math.PI / 5;
+                    ctx.lineTo(Math.cos(a2) * rInner, Math.sin(a2) * rInner);
+                }
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            } else {
+                ctx.beginPath();
+                ctx.arc(0, 0, p.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        // Render Teks Poin (+10, +20, LEVEL UP!)
+        ctx.textAlign = 'center';
+        for (let i = 0; i < floatingTexts.length; i++) {
+            const ft = floatingTexts[i];
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, ft.life);
+            ctx.font = `900 ${Math.round(22 * ft.scale)}px 'Segoe UI', sans-serif`;
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = '#4a3b32';
+            ctx.strokeText(ft.text, ft.x, ft.y);
+            ctx.fillStyle = ft.color;
+            ctx.fillText(ft.text, ft.x, ft.y);
+            ctx.restore();
+        }
+
+        ctx.restore();
+    }
+
+    // Ilustrasi kupu-kupu di halaman awal (Modal Start)
+    function renderLogoButterfly(time) {
+        if (!modalStart.classList.contains('visible')) return;
+        logoCtx.clearRect(0, 0, logoCanvas.width, logoCanvas.height);
+        drawButterflyEntity(
+            logoCtx,
+            logoCanvas.width / 2,
+            logoCanvas.height / 2 + 8,
+            8,
+            -Math.PI / 2 + Math.sin(time * 2) * 0.2,
+            time * 14,
+            SPECIES[3],
+            1.65
+        );
+    }
+
+    // ==========================================
+    // 11. MAIN REQUESTANIMATIONFRAME LOOP
+    // ==========================================
+    initButterflies(18);
+    let lastTimestamp = performance.now();
+
+    function gameLoop(timestamp) {
+        const dt = Math.min(0.05, (timestamp - lastTimestamp) / 1000);
+        lastTimestamp = timestamp;
+        const elapsedSeconds = timestamp / 1000;
+
+        if (currentState !== STATE.PAUSED) {
+            updateGame(dt);
+        }
+
+        // 1. Gambar Latar Padang Rumput, Kolam, Bunga, dan Rumah
+        drawMeadowBackground(elapsedSeconds);
+
+        // 2. Gambar Karakter Pemain
+        drawPlayerCharacter();
+
+        // 3. Gambar Seluruh Kupu-Kupu
+        ctx.save();
+        ctx.translate(-CAMERA.x, -CAMERA.y);
+        for (let i = 0; i < butterflies.length; i++) {
+            const b = butterflies[i];
+            if (b.x < CAMERA.x - 60 || b.x > CAMERA.x + CAMERA.width + 60 ||
+                b.y < CAMERA.y - 60 || b.y > CAMERA.y + CAMERA.height + 60) continue;
+
+            drawButterflyEntity(ctx, b.x, b.y, b.z, b.angle, b.wingPhase, b.species, b.scale);
+        }
+        ctx.restore();
+
+        // 4. Gambar Kanopi Pepohonan (Memberi efek kedalaman top-down)
+        drawTreesCanopy(elapsedSeconds);
+
+        // 5. Gambar Partikel & Animasi Skor
+        drawParticlesAndTexts();
+
+        // 6. Gambar Animasi Kupu-kupu pada Menu Awal
+        renderLogoButterfly(elapsedSeconds);
+
+        requestAnimationFrame(gameLoop);
+    }
+
+    requestAnimationFrame(gameLoop);
+})();
+</script>
+</body>
+</html>
