@@ -6,6 +6,7 @@ import CTABuatGame from "@/components/CTABuatGame";
 import CTAKirimKarya from "@/components/CTAKirimKarya";
 import Stats from "@/components/Stats";
 import GameShowcase from "@/components/GameShowcase";
+import HomeCategories from "@/components/HomeCategories";
 import { GAMES } from "@/lib/games";
 
 export const dynamic = "force-dynamic";
@@ -87,6 +88,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Kategori */}
+      <HomeCategories />
 
       {/* Game unggulan */}
       <section className="px-4 pt-8">
