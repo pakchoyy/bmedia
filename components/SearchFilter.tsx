@@ -89,14 +89,14 @@ export default function SearchFilter({
       {/* Search + Filters */}
       <section className="px-4 mb-6 pt-4">
         <div className="container mx-auto max-w-[1200px]">
-          <div className="flex items-center gap-3 bg-white dark:bg-slate-900 rounded-xl sm:rounded-full shadow-md px-4 sm:px-8 py-3 sm:py-4 max-w-[800px] mx-auto border border-gray-100 dark:border-slate-800">
-            <Icon name="magnifying-glass" className="text-primary-light text-xl shrink-0" />
+          <div className="nb flex items-center gap-3 bg-white dark:bg-slate-900 rounded-2xl px-4 sm:px-6 py-3 sm:py-4 max-w-[800px] mx-auto">
+            <Icon name="magnifying-glass" className="text-nb-orange text-xl shrink-0" />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Cari judul, mata pelajaran, guru, atau jenjang..."
-              className="w-full bg-transparent outline-none text-base dark:text-slate-100"
+              className="w-full bg-transparent outline-none text-base font-semibold dark:text-slate-100"
             />
           </div>
 
@@ -104,7 +104,7 @@ export default function SearchFilter({
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="px-3 py-2 rounded-lg text-xs sm:text-sm font-medium bg-white dark:bg-slate-900 dark:text-slate-100 border border-gray-300 dark:border-slate-700 outline-none focus:border-primary-light"
+              className="nb-sm px-3 py-2 rounded-lg text-xs sm:text-sm font-bold bg-white dark:bg-slate-900 text-nb-ink dark:text-slate-100 outline-none"
             >
               <option value="">Semua Kategori</option>
               {CATEGORIES.map((c) => (
@@ -117,7 +117,7 @@ export default function SearchFilter({
             <select
               value={jenjang}
               onChange={(e) => setJenjang(e.target.value)}
-              className="px-3 py-2 rounded-lg text-xs sm:text-sm font-medium bg-white dark:bg-slate-900 dark:text-slate-100 border border-gray-300 dark:border-slate-700 outline-none focus:border-primary-light"
+              className="nb-sm px-3 py-2 rounded-lg text-xs sm:text-sm font-bold bg-white dark:bg-slate-900 text-nb-ink dark:text-slate-100 outline-none"
             >
               <option value="">Semua Jenjang</option>
               {JENJANG_OPTIONS.map((j) => (
@@ -130,7 +130,7 @@ export default function SearchFilter({
             <select
               value={tool}
               onChange={(e) => setTool(e.target.value)}
-              className="px-3 py-2 rounded-lg text-xs sm:text-sm font-medium bg-white dark:bg-slate-900 dark:text-slate-100 border border-gray-300 dark:border-slate-700 outline-none focus:border-primary-light"
+              className="nb-sm px-3 py-2 rounded-lg text-xs sm:text-sm font-bold bg-white dark:bg-slate-900 text-nb-ink dark:text-slate-100 outline-none"
             >
               <option value="">Semua Tool</option>
               {tools.map((t) => (
@@ -143,13 +143,13 @@ export default function SearchFilter({
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as "terbaru" | "populer")}
-              className="px-3 py-2 rounded-lg text-xs sm:text-sm font-medium bg-white dark:bg-slate-900 dark:text-slate-100 border border-gray-300 dark:border-slate-700 outline-none focus:border-primary-light"
+              className="nb-sm px-3 py-2 rounded-lg text-xs sm:text-sm font-bold bg-white dark:bg-slate-900 text-nb-ink dark:text-slate-100 outline-none"
             >
               <option value="terbaru">Terbaru</option>
               <option value="populer">Terpopuler</option>
             </select>
 
-            <span className="text-xs text-gray-500 dark:text-slate-400">
+            <span className="nb-flat rounded-full bg-white dark:bg-slate-900 px-2 py-0.5 text-xs font-extrabold text-nb-ink dark:text-slate-200">
               {filtered.length} media
             </span>
           </div>
@@ -158,7 +158,7 @@ export default function SearchFilter({
 
       {/* Grid */}
       <section className="container mx-auto max-w-[1200px] px-4 sm:px-6 pb-10">
-        <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-4 sm:gap-5 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {visible.map((m) => (
             <GameCard key={m.id} media={m} />
           ))}
@@ -176,7 +176,7 @@ export default function SearchFilter({
           <div className="text-center mt-6">
             <button
               onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
-              className="bg-primary-light text-white px-8 py-3 rounded-full font-semibold hover:bg-primary transition-colors"
+              className="nb nb-hover nb-press bg-nb-ink text-white px-8 py-3 rounded-xl font-extrabold"
             >
               Muat Lebih Banyak
             </button>

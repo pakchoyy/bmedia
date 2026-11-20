@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 const inputCls =
-  "w-full px-4 py-3 border border-gray-300 dark:border-slate-700 dark:bg-slate-900 rounded-lg text-base outline-none focus:border-primary-light focus:ring-2 focus:ring-primary-light/20 transition";
+  "w-full px-4 py-3 nb-flat dark:bg-slate-900 rounded-lg text-base outline-none focus:ring-4 focus:ring-nb-yellow/60 transition";
 
 export default function AuthForm({ mode }: { mode: "daftar" | "masuk" }) {
   const daftar = mode === "daftar";
@@ -41,10 +41,10 @@ export default function AuthForm({ mode }: { mode: "daftar" | "masuk" }) {
   }
 
   return (
-    <div className="w-full max-w-md mx-auto bg-white dark:bg-slate-900 rounded-2xl shadow-md border border-gray-200 dark:border-slate-800 p-6 sm:p-8">
+    <div className="w-full max-w-md mx-auto nb bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8">
       <div className="text-center mb-6">
         <div className="text-4xl mb-2">👩‍🏫</div>
-        <h1 className="text-xl font-extrabold text-primary dark:text-primary-light">
+        <h1 className="font-display text-2xl font-bold text-nb-ink dark:text-white">
           {daftar ? "Daftar Akun Guru" : "Masuk Ruang Guru"}
         </h1>
         <p className="text-sm text-gray-500 mt-1">
@@ -79,14 +79,14 @@ export default function AuthForm({ mode }: { mode: "daftar" | "masuk" }) {
         )}
 
         <button type="submit" disabled={loading}
-          className="w-full bg-primary-light text-white py-3 rounded-lg font-bold hover:bg-primary transition-colors disabled:opacity-60">
+          className="w-full nb-sm nb-press bg-nb-orange text-white py-3 rounded-lg font-bold disabled:opacity-60">
           {loading ? "Memproses..." : daftar ? "Daftar" : "Masuk"}
         </button>
       </form>
 
       <p className="text-center text-sm text-gray-500 mt-6">
         {daftar ? "Sudah punya akun? " : "Belum punya akun? "}
-        <Link href={daftar ? "/guru/masuk" : "/guru/daftar"} className="font-semibold text-primary-light hover:underline">
+        <Link href={daftar ? "/guru/masuk" : "/guru/daftar"} className="font-semibold text-nb-orange hover:underline">
           {daftar ? "Masuk" : "Daftar gratis"}
         </Link>
       </p>

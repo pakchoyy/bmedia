@@ -24,7 +24,7 @@ export default async function EditSetPage({ params }: { params: { id: string } }
 
   return (
     <div className="container mx-auto max-w-[1100px] px-4 py-6">
-      <Link href="/guru" className="text-sm text-gray-500 hover:text-primary-light">&larr; Set Soal Saya</Link>
+      <Link href="/guru" className="text-sm text-gray-500 hover:text-nb-orange">&larr; Set Soal Saya</Link>
       <div className="grid gap-6 lg:grid-cols-[1fr_320px] mt-3">
         <SetEditor set={set} />
         <SharePanel code={set.code} game={set.game} />

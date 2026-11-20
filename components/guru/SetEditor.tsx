@@ -5,7 +5,7 @@ import { saveSet, deleteSet } from "@/app/(public)/guru/actions";
 import { CSV_TEMPLATE, MAX_SOAL, parseCsvSoal, type QuestionSet, type Soal } from "@/lib/soal";
 
 const inputCls =
-  "w-full px-3 py-2 border border-gray-300 dark:border-slate-700 dark:bg-slate-950 rounded-lg text-sm outline-none focus:border-primary-light focus:ring-2 focus:ring-primary-light/20";
+  "w-full px-3 py-2 nb-flat dark:bg-slate-950 rounded-lg text-sm outline-none focus:ring-4 focus:ring-nb-yellow/60";
 
 const emptySoal = (): Soal => ({ q: "", o: ["", "", "", ""], a: 0 });
 
@@ -69,7 +69,7 @@ export default function SetEditor({ set }: { set: QuestionSet }) {
   return (
     <div className="space-y-4 min-w-0">
       {/* Info set */}
-      <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-2xl p-4 space-y-3">
+      <div className="nb-sm bg-white dark:bg-slate-900 rounded-2xl p-4 space-y-3">
         <div>
           <label className="block text-xs font-bold mb-1">Judul set soal</label>
           <input value={title} maxLength={120} onChange={(e) => { setTitle(e.target.value); setDirty(true); }}
@@ -90,12 +90,12 @@ export default function SetEditor({ set }: { set: QuestionSet }) {
       </div>
 
       {/* Impor */}
-      <div className="bg-primary-bg dark:bg-slate-900 border border-primary-light/30 rounded-2xl p-4 flex flex-wrap items-center gap-2 text-sm">
+      <div className="nb-sm bg-nb-yellow/30 dark:bg-slate-900 rounded-2xl p-4 flex flex-wrap items-center gap-2 text-sm">
         <span className="font-bold mr-auto">📥 Punya soal di Excel?</span>
-        <button onClick={downloadTemplate} className="px-3 py-2 rounded-lg bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 font-semibold">
+        <button onClick={downloadTemplate} className="px-3 py-2 rounded-lg bg-white dark:bg-slate-800 nb-flat font-semibold">
           Unduh template
         </button>
-        <label className="px-3 py-2 rounded-lg bg-primary-light text-white font-semibold cursor-pointer">
+        <label className="px-3 py-2 rounded-lg nb-sm nb-press bg-nb-orange text-white font-semibold cursor-pointer">
           Impor CSV
           <input type="file" accept=".csv,text/csv" className="hidden"
             onChange={(e) => { const f = e.target.files?.[0]; if (f) importCsv(f); e.target.value = ""; }} />
@@ -105,9 +105,9 @@ export default function SetEditor({ set }: { set: QuestionSet }) {
 
       {/* Daftar soal */}
       {soal.map((s, i) => (
-        <div key={i} className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-2xl p-4">
+        <div key={i} className="nb-sm bg-white dark:bg-slate-900 rounded-2xl p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-extrabold text-primary dark:text-primary-light">SOAL {i + 1}</span>
+            <span className="text-xs font-extrabold text-nb-ink dark:text-white">SOAL {i + 1}</span>
             <button onClick={() => { setSoal((p) => p.filter((_, k) => k !== i)); setDirty(true); }}
               className="text-xs font-semibold text-gray-400 hover:text-danger" aria-label={`Hapus soal ${i + 1}`}>
               Hapus
@@ -131,14 +131,14 @@ export default function SetEditor({ set }: { set: QuestionSet }) {
       ))}
 
       <button onClick={() => { setSoal((p) => [...p, emptySoal()].slice(0, MAX_SOAL)); setDirty(true); }}
-        className="w-full border-2 border-dashed border-gray-300 dark:border-slate-700 rounded-2xl py-3 font-bold text-gray-500 hover:border-primary-light hover:text-primary-light">
+        className="w-full border-[3px] border-dashed border-nb-ink/60 dark:border-[var(--nb-ink)] rounded-2xl py-3 font-bold text-gray-500  hover:text-nb-orange">
         + Tambah Soal
       </button>
 
       {/* Bar simpan */}
-      <div className="sticky bottom-3 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur border border-gray-200 dark:border-slate-800 rounded-2xl p-3 flex flex-wrap items-center gap-3 shadow-lg">
+      <div className="sticky bottom-3 z-10 nb bg-white dark:bg-slate-900 rounded-2xl p-3 flex flex-wrap items-center gap-3">
         <button onClick={save} disabled={pending}
-          className="bg-primary-light hover:bg-primary text-white font-bold px-5 py-2.5 rounded-lg disabled:opacity-60">
+          className="nb-sm nb-press bg-nb-orange text-white font-bold px-5 py-2.5 rounded-lg disabled:opacity-60">
           {pending ? "Menyimpan..." : "Simpan"}
         </button>
         <span className={`text-sm ${msg?.type === "err" ? "text-danger" : "text-success"}`} role="status">

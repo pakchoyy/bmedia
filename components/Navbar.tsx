@@ -62,7 +62,6 @@ export default function Navbar() {
                   {l.label}
                 </Link>
               ))}
-              <div data-bgy-menu="" />
             </div>
           </div>
         </div>

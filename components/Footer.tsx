@@ -1,72 +1,50 @@
+import Link from "next/link";
 import Icon from "./Icon";
 import { CONTACT_WA, CONTACT_TIKTOK } from "@/lib/constants";
 
 export default function Footer() {
   return (
-    <footer className="bg-white dark:bg-slate-900 text-ink dark:text-slate-200 border-t border-gray-200 dark:border-slate-800 mt-2">
-      <div className="container mx-auto max-w-[1200px] px-6 py-4">
-        <div className="grid gap-4 mb-2 grid-cols-1 md:grid-cols-2">
-          <div>
-            <h3 className="flex items-center gap-2 text-primary font-extrabold mb-2 text-sm">
-              <Icon name="laptop-code" className="text-primary-light text-lg" />
-              Bantu Guru Yuk - Media Belajar
-            </h3>
-            <p className="text-gray-600 dark:text-slate-400 text-sm leading-relaxed">
-              &ldquo;Ruang berbagi media pembelajaran interaktif untuk membantu
-              guru Indonesia mengajar dengan lebih mudah dan menarik.&rdquo;
-            </p>
+    <footer className="mt-6 bg-nb-ink text-white border-t-[3px] border-nb-ink dark:border-[var(--nb-ink)]">
+      <div className="container mx-auto max-w-[1200px] px-5 py-8 grid gap-6 md:grid-cols-[1.4fr_1fr_1fr]">
+        <div>
+          <div className="flex items-center gap-2 font-display font-bold text-xl">
+            <span className="w-9 h-9 rounded-xl bg-nb-yellow text-nb-ink flex items-center justify-center border-2 border-white">
+              <Icon name="gamepad" />
+            </span>
+            Bantu Guru Yuk
           </div>
-          <div>
-            <h3 className="text-primary font-extrabold mb-2 text-sm">
-              Kontak Pak Choy
-            </h3>
-            <ul className="text-sm space-y-1.5 mb-2">
-              <li>
-                <a
-                  href={CONTACT_TIKTOK}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-600 dark:text-slate-400 hover:text-primary-light transition-colors font-medium inline-flex items-center gap-2"
-                >
-                  <Icon name="tiktok" className="w-4 text-primary-light" />
-                  TikTok Pak Choyy
-                </a>
-              </li>
-              <li>
-                <a
-                  href={`https://wa.me/62${CONTACT_WA.slice(1)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-600 dark:text-slate-400 hover:text-primary-light transition-colors font-medium inline-flex items-center gap-2"
-                >
-                  <Icon name="whatsapp" className="w-4 text-primary-light" />
-                  WhatsApp Pak Choy
-                </a>
-              </li>
-            </ul>
-            <p className="text-xs text-danger leading-relaxed">
-              Ada data yang perlu diperbaiki atau ingin berbagi media? Hubungi
-              Pak Choy.
-            </p>
+          <p className="mt-3 text-sm text-white/75 max-w-[360px]">
+            Ruang berbagi media pembelajaran interaktif karya guru Indonesia. Belajar jadi seru, mengajar jadi lebih mudah.
+          </p>
+        </div>
+
+        <div>
+          <h3 className="font-display font-bold text-nb-yellow mb-2">Jelajahi</h3>
+          <ul className="space-y-1.5 text-sm font-semibold text-white/85">
+            <li><Link href="/catalog" className="hover:text-nb-yellow">Katalog Media</Link></li>
+            <li><Link href="/main" className="hover:text-nb-yellow">Masuk Kelas</Link></li>
+            <li><Link href="/guru" className="hover:text-nb-yellow">Ruang Guru</Link></li>
+            <li><Link href="/submit" className="hover:text-nb-yellow">Kirim Karya</Link></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="font-display font-bold text-nb-yellow mb-2">Kontak Pak Choy</h3>
+          <div className="flex flex-wrap gap-2">
+            <a href={CONTACT_TIKTOK} target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-xl bg-white text-nb-ink font-bold text-sm px-3 py-2 border-2 border-white shadow-[3px_3px_0_#ffd23f]">
+              <Icon name="tiktok" /> TikTok
+            </a>
+            <a href={`https://wa.me/62${CONTACT_WA.slice(1)}`} target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-xl bg-nb-mint text-nb-ink font-bold text-sm px-3 py-2 border-2 border-white shadow-[3px_3px_0_#ffd23f]">
+              <Icon name="whatsapp" /> WhatsApp
+            </a>
           </div>
+          <p className="text-xs text-white/60 mt-3">Ada data yang perlu diperbaiki? Hubungi Pak Choy.</p>
         </div>
       </div>
-      <div className="bg-primary text-center py-2">
-        <div className="container mx-auto max-w-[1200px] px-6">
-          <div className="text-white font-extrabold">Media Belajar</div>
-          <div className="text-xs text-white/75 mt-0.5">
-            Bantu Guru Yuk by{" "}
-            <a
-              href="https://bantuguruyuk.web.id"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-semibold hover:text-accent transition-colors"
-            >
-              Pak Choyy
-            </a>{" "}
-            &bull; v1.0.0
-          </div>
-        </div>
+      <div className="border-t-2 border-white/15 text-center py-3 text-xs text-white/60">
+        © Bantu Guru Yuk · dibuat oleh Pak Choyy
       </div>
     </footer>
   );

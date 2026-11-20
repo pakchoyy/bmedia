@@ -29,10 +29,10 @@ export default function SharePanel({ code, game }: { code: string; game: string 
   }
 
   return (
-    <aside className="lg:sticky lg:top-20 h-fit bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-2xl p-5 text-center">
+    <aside className="lg:sticky lg:top-20 h-fit nb-sm bg-white dark:bg-slate-900 rounded-2xl p-5 text-center">
       <p className="text-xs font-bold uppercase tracking-wider text-gray-500">Kode Kelas</p>
       <button onClick={() => copy(code, "kode")} title="Salin kode"
-        className="mt-1 font-mono text-4xl font-extrabold tracking-[0.25em] text-primary dark:text-primary-light">
+        className="mt-1 font-mono text-4xl font-extrabold tracking-[0.25em] text-nb-ink dark:text-white">
         {code}
       </button>
       <p className="text-xs text-gray-500 h-4">{copied === "kode" ? "Kode disalin ✓" : "Ketuk kode untuk menyalin"}</p>
@@ -47,11 +47,11 @@ export default function SharePanel({ code, game }: { code: string; game: string 
 
       <div className="grid gap-2 mt-4">
         <button onClick={() => joinUrl && copy(joinUrl, "link")}
-          className="w-full border border-gray-300 dark:border-slate-700 rounded-lg py-2.5 text-sm font-semibold hover:border-primary-light">
+          className="w-full nb-flat rounded-lg py-2.5 text-sm font-semibold ">
           {copied === "link" ? "Link disalin ✓" : "🔗 Salin link untuk murid"}
         </button>
         <a href={`/game/${game}?set=${code}`} target="_blank" rel="noopener"
-          className="w-full bg-accent text-white rounded-lg py-2.5 text-sm font-bold hover:opacity-90">
+          className="w-full nb-sm nb-press bg-nb-yellow text-nb-ink rounded-lg py-2.5 text-sm font-extrabold">
           ▶ Coba main / tampilkan di IFP
         </a>
       </div>
