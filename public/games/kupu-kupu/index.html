@@ -143,6 +143,28 @@
             .primary-btn, .secondary-btn { padding: 8px 14px; font-size: 15px; }
         }
 
+
+        /* ===== Pilih mode & Kuis ===== */
+        .mode-buttons { display: flex; flex-direction: column; gap: 2px; }
+        .mode-buttons .secondary-btn { margin-top: 8px; }
+        .mode-buttons button:disabled { opacity: .5; cursor: not-allowed; filter: grayscale(.4); }
+        .edu-opts { font-size: 13px; font-weight: 700; color: #594a42; margin-top: 10px; }
+        .edu-opts select { font: inherit; font-weight: 800; border: 3px solid #4a3b32; border-radius: 10px;
+                           padding: 2px 6px; background: #fff; color: #4a3b32; }
+        .quiz-card { max-width: 560px; }
+        .quiz-tag { display: inline-block; background: #ffeaa7; border: 3px solid #4a3b32; border-radius: 99px;
+                    padding: 3px 12px; font-size: 12px; font-weight: 900; color: #4a3b32; margin-bottom: 8px; }
+        .quiz-q { font-size: 20px; font-weight: 900; color: #4a3b32; line-height: 1.25; margin-bottom: 12px; }
+        .quiz-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .quiz-opt { background: #f1fbf4; border: 4px solid #4a3b32; border-radius: 16px; padding: 12px 8px;
+                    font: inherit; font-size: 16px; font-weight: 800; color: #4a3b32; cursor: pointer;
+                    box-shadow: 0 4px 0 #4a3b32; min-height: 52px; }
+        .quiz-opt:active { transform: translateY(3px); box-shadow: 0 1px 0 #4a3b32; }
+        .quiz-opt.correct { background: #55efc4; }
+        .quiz-opt.wrong { background: #ff9ea8; }
+        .quiz-opt:disabled { cursor: default; }
+        .quiz-feedback { min-height: 22px; margin-top: 10px; font-weight: 900; font-size: 15px; color: #594a42; }
+
         @keyframes pulseText {
             from { transform: scale(1); }
             to { transform: scale(1.15); }
@@ -518,6 +540,17 @@
                 font-size: 28px;
             }
         }
+
+        @media (max-height: 480px) {
+            .mode-buttons { flex-direction: row; gap: 8px; }
+            .mode-buttons .primary-btn, .mode-buttons .secondary-btn { margin-top: 0; padding: 8px 6px; font-size: 13px; }
+            .edu-opts { margin-top: 6px; font-size: 11px; }
+            .quiz-q { font-size: 15px; margin-bottom: 8px; }
+            .quiz-opts { gap: 6px; }
+            .quiz-opt { padding: 6px; font-size: 13px; min-height: 40px; border-width: 3px; border-radius: 12px; }
+            .quiz-tag { font-size: 10px; margin-bottom: 4px; }
+            .quiz-feedback { min-height: 16px; margin-top: 6px; font-size: 12px; }
+        }
     </style>
 </head>
 <body>
@@ -628,7 +661,15 @@
                 </div>
             </div>
 
-            <button class="primary-btn" id="btn-start-play">▶ PLAY SEKARANG</button>
+            <div class="mode-buttons">
+                <button class="primary-btn" id="btn-mode-free">🌿 MAIN BEBAS</button>
+                <button class="secondary-btn" id="btn-mode-edu">📖 EDUKASI</button>
+                <button class="secondary-btn" id="btn-mode-duel" disabled>⚔️ DUEL (segera)</button>
+            </div>
+            <div class="edu-opts">Mode Edukasi: soal muncul tiap
+                <select id="sel-every"><option value="2">2</option><option value="3" selected>3</option><option value="5">5</option></select>
+                kupu-kupu
+            </div>
         </div>
     </div>
 
@@ -641,6 +682,17 @@
             </p>
             <button class="primary-btn" id="btn-resume">▶ LANJUTKAN (RESUME)</button>
             <button class="secondary-btn" id="btn-restart-pause">🔄 MULAI ULANG</button>
+            <button class="secondary-btn" id="btn-menu-pause">🏠 MENU</button>
+        </div>
+    </div>
+
+    <!-- KUIS MODAL -->
+    <div class="modal-overlay" id="modal-quiz">
+        <div class="modal-card quiz-card">
+            <div class="quiz-tag">📖 KUIS KUPU-KUPU · <span id="quiz-reward"></span></div>
+            <div class="quiz-q" id="quiz-q"></div>
+            <div class="quiz-opts" id="quiz-opts"></div>
+            <div class="quiz-feedback" id="quiz-feedback"></div>
         </div>
     </div>
 
@@ -669,7 +721,9 @@
                 </div>
             </div>
 
+            <div class="game-subtitle" id="final-quiz" style="display:none;"></div>
             <button class="primary-btn" id="btn-play-again">🔄 PLAY AGAIN</button>
+            <button class="secondary-btn" id="btn-menu-over">🏠 MENU</button>
         </div>
     </div>
 </div>
@@ -841,6 +895,12 @@
             gain.connect(this.ctx.destination);
             osc.start(now);
             osc.stop(now + 0.09);
+        }
+
+        playWrong() {
+            if (this.muted || !this.ctx) return;
+            const now = this.ctx.currentTime;
+            [330, 247].forEach((f, i) => this._tone(f, now + i * 0.13, 0.22, 'sawtooth', 0.09));
         }
 
         playGameOver() {
@@ -1093,7 +1153,8 @@
         MENU: 'MENU',
         PLAYING: 'PLAYING',
         PAUSED: 'PAUSED',
-        GAMEOVER: 'GAMEOVER'
+        GAMEOVER: 'GAMEOVER',
+        QUIZ: 'QUIZ'
     };
 
     let currentState = STATE.MENU;
@@ -1199,6 +1260,12 @@
         if (e.code === 'KeyA' || e.code === 'ArrowLeft') keys.left = true;
         if (e.code === 'KeyD' || e.code === 'ArrowRight') keys.right = true;
 
+        if (currentState === STATE.QUIZ) {
+            const idx = ['Digit1', 'Digit2', 'Digit3', 'Digit4'].indexOf(e.code);
+            const btn = idx >= 0 ? document.getElementById('quiz-opts').children[idx] : null;
+            if (btn && !btn.disabled) btn.click();
+            return;
+        }
         if (e.code === 'Space' && currentState === STATE.PLAYING && !e.repeat) {
             triggerCatchAction();
         }
@@ -1365,6 +1432,111 @@
         });
     }
 
+    // ==========================================
+    // MODE & KUIS (Edukasi)
+    // ==========================================
+    const QUIZ_BONUS = 25;
+    const DEFAULT_QUESTIONS = [
+        { q: 'Hewan yang mengalami metamorfosis sempurna adalah ...', o: ['Kupu-kupu', 'Kucing', 'Ayam', 'Kambing'], a: 0 },
+        { q: 'Bagian tumbuhan yang paling banyak berperan dalam fotosintesis adalah ...', o: ['Akar', 'Daun', 'Bunga', 'Buah'], a: 1 },
+        { q: 'Hasil dari 8 × 7 adalah ...', o: ['54', '56', '64', '48'], a: 1 },
+        { q: 'Planet tempat manusia tinggal adalah ...', o: ['Mars', 'Venus', 'Bumi', 'Jupiter'], a: 2 },
+        { q: 'Lawan kata dari "tinggi" adalah ...', o: ['Besar', 'Rendah', 'Panjang', 'Lebar'], a: 1 },
+        { q: 'Tahap kedua metamorfosis kupu-kupu setelah telur adalah ...', o: ['Kepompong', 'Ulat', 'Dewasa', 'Larva kecil'], a: 1 },
+        { q: 'Ibu kota Indonesia saat ini (2024) secara resmi adalah ...', o: ['Bandung', 'Surabaya', 'Jakarta', 'Medan'], a: 2 },
+        { q: '15 + 27 = ...', o: ['41', '42', '43', '52'], a: 1 },
+        { q: 'Alat untuk mengukur suhu adalah ...', o: ['Barometer', 'Termometer', 'Penggaris', 'Timbangan'], a: 1 },
+        { q: 'Sumber energi utama bagi bumi adalah ...', o: ['Bulan', 'Matahari', 'Angin', 'Air'], a: 1 },
+        { q: 'Kupu-kupu menghisap nektar menggunakan ...', o: ['Gigi', 'Probosis', 'Sayap', 'Kaki'], a: 1 },
+        { q: 'Persegi memiliki jumlah sisi sebanyak ...', o: ['3', '4', '5', '6'], a: 1 }
+    ];
+
+    function loadQuestions() {
+        // Nanti sumbernya dipindah ke server; format tetap sama: {q, o:[4], a:index}
+        try {
+            const saved = JSON.parse(localStorage.getItem('bgy_questions_v1') || 'null');
+            if (Array.isArray(saved) && saved.length) return saved;
+        } catch (e) {}
+        return DEFAULT_QUESTIONS;
+    }
+
+    function shuffle(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    let gameMode = 'free';
+    let quizEvery = 3;
+    let sinceQuiz = 0;
+    let pendingQuiz = null;
+    let quizBag = [];
+    let quizStats = { right: 0, wrong: 0 };
+
+    function nextQuestion() {
+        if (!quizBag.length) quizBag = shuffle(loadQuestions().slice());
+        return quizBag.pop();
+    }
+
+    function addScore(n) {
+        score += n;
+        if (score > highScore) {
+            highScore = score;
+            try { localStorage.setItem('butterfly_catcher_best_v1', String(highScore)); } catch (err) {}
+        }
+    }
+
+    const modalQuiz = document.getElementById('modal-quiz');
+
+    function openQuiz() {
+        const item = nextQuestion();
+        currentState = STATE.QUIZ;
+        document.getElementById('quiz-q').textContent = item.q;
+        document.getElementById('quiz-reward').textContent = `+${pendingQuiz.points + QUIZ_BONUS} poin jika benar`;
+        document.getElementById('quiz-feedback').textContent = 'Pilih jawaban yang tepat!';
+        const wrap = document.getElementById('quiz-opts');
+        wrap.innerHTML = '';
+        item.o.forEach((text, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'quiz-opt';
+            btn.textContent = `${String.fromCharCode(65 + i)}. ${text}`;
+            btn.addEventListener('click', () => answerQuiz(i, item));
+            wrap.appendChild(btn);
+        });
+        modalQuiz.classList.add('visible');
+    }
+
+    function answerQuiz(i, item) {
+        if (!pendingQuiz) return;
+        const btns = [...document.getElementById('quiz-opts').children];
+        btns.forEach(b => (b.disabled = true));
+        const fb = document.getElementById('quiz-feedback');
+        const q = pendingQuiz;
+        pendingQuiz = null;
+        if (i === item.a) {
+            btns[i].classList.add('correct');
+            addScore(q.points + QUIZ_BONUS);
+            quizStats.right++;
+            sound.playCatch(true, comboCount);
+            fb.textContent = `✅ Benar! +${q.points + QUIZ_BONUS} poin`;
+        } else {
+            btns[i].classList.add('wrong');
+            btns[item.a].classList.add('correct');
+            quizStats.wrong++;
+            comboCount = 0;
+            comboTimer = 0;
+            sound.playWrong();
+            fb.textContent = '❌ Belum tepat. Poin tangkapan hangus.';
+        }
+        updateHUD();
+        setTimeout(() => {
+            modalQuiz.classList.remove('visible');
+            if (currentState === STATE.QUIZ) currentState = STATE.PLAYING;
+        }, 1400);
+    }
+
     function triggerCatchAction() {
         if (player.swinging || player.swingCooldown > 0) return;
 
@@ -1397,21 +1569,25 @@
                 comboTimer = COMBO_MAX_TIME;
                 const multiplier = Math.min(1 + Math.floor((comboCount - 1) / 2) * 0.5, 4.0);
                 const gainedPoints = Math.round(b.species.points * multiplier);
-                score += gainedPoints;
 
-                // Cek High Score
-                if (score > highScore) {
-                    highScore = score;
-                    try {
-                        localStorage.setItem('butterfly_catcher_best_v1', String(highScore));
-                    } catch (err) {}
+                // Mode edukasi: tiap N tangkapan, poin ditahan sampai kuis dijawab
+                let isQuizCatch = false;
+                if (gameMode === 'edu' && !pendingQuiz) {
+                    sinceQuiz++;
+                    if (sinceQuiz >= quizEvery) {
+                        sinceQuiz = 0;
+                        isQuizCatch = true;
+                        pendingQuiz = { points: gainedPoints };
+                    }
                 }
+                if (!isQuizCatch) addScore(gainedPoints);
 
                 // Efek Partikel & Teks Skor
                 spawnParticles(b.x, b.y - b.z, b.species.primary, b.species.rare ? 24 : 14);
                 spawnParticles(b.x, b.y - b.z, b.species.secondary, 8);
 
-                const label = comboCount >= 2 ? `+${gainedPoints} (x${multiplier})` : `+${gainedPoints}`;
+                let label = comboCount >= 2 ? `+${gainedPoints} (x${multiplier})` : `+${gainedPoints}`;
+                if (isQuizCatch) label = '❓ Jawab!';
                 const txtColor = b.species.rare ? '#feca57' : '#ffffff';
                 spawnFloatingText(b.x, b.y - 25, label, txtColor, b.species.rare ? 1.3 : 1.0);
 
@@ -1437,6 +1613,8 @@
             }
             updateHUD();
         }
+
+        if (pendingQuiz) openQuiz();
     }
 
     // ==========================================
@@ -1478,7 +1656,13 @@
         }
     }
 
-    function startNewGame() {
+    function startNewGame(m) {
+        if (m === 'free' || m === 'edu') gameMode = m;
+        if (gameMode === 'edu') quizEvery = parseInt(document.getElementById('sel-every').value, 10) || 3;
+        sinceQuiz = 0;
+        pendingQuiz = null;
+        quizStats = { right: 0, wrong: 0 };
+        modalQuiz.classList.remove('visible');
         sound.init();
         sound.playButton();
         sound.stopMusic();
@@ -1542,14 +1726,38 @@
             badge.textContent = '🎉 Kerja Bagus! Ayo Coba Pecahkan Rekormu!';
         }
 
+        const fq = document.getElementById('final-quiz');
+        if (gameMode === 'edu') {
+            const tot = quizStats.right + quizStats.wrong;
+            fq.textContent = `📖 Kuis: ${quizStats.right} benar dari ${tot} soal`;
+            fq.style.display = '';
+        } else {
+            fq.style.display = 'none';
+        }
+
         modalGameOver.classList.add('visible');
     }
 
+    function backToMenu() {
+        sound.init();
+        sound.playButton();
+        sound.stopMusic();
+        pendingQuiz = null;
+        modalQuiz.classList.remove('visible');
+        modalPause.classList.remove('visible');
+        modalGameOver.classList.remove('visible');
+        modalStart.classList.add('visible');
+        currentState = STATE.MENU;
+    }
+
     // Event Listeners Tombol UI
-    document.getElementById('btn-start-play').addEventListener('click', startNewGame);
+    document.getElementById('btn-mode-free').addEventListener('click', () => startNewGame('free'));
+    document.getElementById('btn-mode-edu').addEventListener('click', () => startNewGame('edu'));
     document.getElementById('btn-resume').addEventListener('click', togglePause);
-    document.getElementById('btn-restart-pause').addEventListener('click', startNewGame);
-    document.getElementById('btn-play-again').addEventListener('click', startNewGame);
+    document.getElementById('btn-restart-pause').addEventListener('click', () => startNewGame());
+    document.getElementById('btn-play-again').addEventListener('click', () => startNewGame());
+    document.getElementById('btn-menu-pause').addEventListener('click', backToMenu);
+    document.getElementById('btn-menu-over').addEventListener('click', backToMenu);
     document.getElementById('btn-pause').addEventListener('click', () => {
         if (currentState === STATE.PLAYING || currentState === STATE.PAUSED) {
             togglePause();
@@ -2399,7 +2607,7 @@
         lastTimestamp = timestamp;
         const elapsedSeconds = timestamp / 1000;
 
-        if (currentState !== STATE.PAUSED) {
+        if (currentState !== STATE.PAUSED && currentState !== STATE.QUIZ) {
             updateGame(dt);
         }
 
