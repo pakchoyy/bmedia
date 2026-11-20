@@ -1,12 +1,23 @@
 import type { Metadata } from "next";
-import { Fredoka } from "next/font/google";
+import { Fredoka, Nunito_Sans } from "next/font/google";
 import "./globals.css";
 
+// Sistem tipografi Main-yuk: Fredoka (judul/logo) + Nunito Sans (isi)
 const display = Fredoka({
   subsets: ["latin"],
   weight: ["500", "600", "700"],
   variable: "--font-display",
   display: "swap",
+  fallback: ["ui-rounded", "'Segoe UI'", "system-ui", "sans-serif"],
+});
+
+const body = Nunito_Sans({
+  subsets: ["latin"],
+  weight: ["400", "600", "700", "800"],
+  variable: "--font-body",
+  display: "swap",
+  adjustFontFallback: false,
+  fallback: ["'Segoe UI'", "system-ui", "-apple-system", "sans-serif"],
 });
 
 export const metadata: Metadata = {
@@ -42,7 +53,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" suppressHydrationWarning className={display.variable}>
+    <html lang="id" suppressHydrationWarning className={`${display.variable} ${body.variable}`}>
       <head>
         <script
           dangerouslySetInnerHTML={{
