@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import GameShowcase from "@/components/GameShowcase";
-import { GAMES } from "@/lib/games";
+import { MAIN_GAMES } from "@/lib/games";
 
 export const metadata: Metadata = {
   title: "Game",
@@ -21,7 +21,7 @@ export default function GameIndexPage() {
       </div>
 
       <div className="container mx-auto max-w-[1100px] px-4 py-8 space-y-6">
-        {GAMES.map((g) => (
+        {MAIN_GAMES.map((g) => (
           <GameShowcase key={g.slug} game={g} />
         ))}
 

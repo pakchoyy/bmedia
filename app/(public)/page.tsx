@@ -7,7 +7,7 @@ import CTAKirimKarya from "@/components/CTAKirimKarya";
 import Stats from "@/components/Stats";
 import GameShowcase from "@/components/GameShowcase";
 import HomeCategories from "@/components/HomeCategories";
-import { GAMES } from "@/lib/games";
+import { MAIN_GAMES } from "@/lib/games";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -95,7 +95,7 @@ export default async function HomePage() {
       {/* Game unggulan */}
       <section className="px-4 pt-8">
         <div className="container mx-auto max-w-[1200px]">
-          <GameShowcase game={GAMES[0]} compact />
+          <GameShowcase game={MAIN_GAMES[0]} compact />
         </div>
       </section>
 

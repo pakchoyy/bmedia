@@ -2,7 +2,7 @@
 
 export interface Soal {
   q: string;
-  o: [string, string, string, string];
+  o: string[]; // 4 atau 5 pilihan (A–D atau A–E)
   a: number; // indeks jawaban benar 0-3
 }
 
@@ -33,10 +33,10 @@ export function validateSoal(input: unknown): { ok: true; soal: Soal[] } | { ok:
     const o = Array.isArray(it?.o) ? it.o.map((x) => String(x ?? "").trim()) : [];
     const a = Number(it?.a);
     if (!q) return { ok: false, error: `Soal no. ${n}: pertanyaan masih kosong.` };
-    if (o.length !== 4 || o.some((x) => !x)) return { ok: false, error: `Soal no. ${n}: keempat pilihan jawaban wajib diisi.` };
-    if (!Number.isInteger(a) || a < 0 || a > 3) return { ok: false, error: `Soal no. ${n}: pilih jawaban yang benar.` };
+    if ((o.length !== 4 && o.length !== 5) || o.some((x) => !x)) return { ok: false, error: `Soal no. ${n}: pilihan jawaban harus 4 atau 5 dan semuanya terisi.` };
+    if (!Number.isInteger(a) || a < 0 || a >= o.length) return { ok: false, error: `Soal no. ${n}: pilih jawaban yang benar.` };
     if (q.length > MAX_TEKS || o.some((x) => x.length > MAX_TEKS)) return { ok: false, error: `Soal no. ${n}: teks terlalu panjang (maks ${MAX_TEKS} karakter).` };
-    out.push({ q, o: o as Soal["o"], a });
+    out.push({ q, o, a });
   }
   return { ok: true, soal: out };
 }
@@ -66,7 +66,7 @@ function parseCsvRows(text: string): string[][] {
 }
 
 /**
- * Impor CSV: kolom pertanyaan, A, B, C, D, jawaban (A/B/C/D).
+ * Impor CSV: kolom pertanyaan, A, B, C, D, [E], jawaban (A–D atau A–E).
  * Baris judul dilewati otomatis. Pemisah koma atau titik koma (Excel Indonesia).
  */
 export function parseCsvSoal(text: string): { soal: Soal[]; skipped: number } {
@@ -74,10 +74,15 @@ export function parseCsvSoal(text: string): { soal: Soal[]; skipped: number } {
   const soal: Soal[] = [];
   let skipped = 0;
   rows.forEach((r, idx) => {
-    const ans = "ABCD".indexOf(String(r[5] ?? "").trim().toUpperCase());
-    const cells = r.slice(0, 5).map((x) => String(x ?? "").trim());
-    if (r.length >= 6 && cells.every(Boolean) && ans >= 0) {
-      soal.push({ q: cells[0], o: [cells[1], cells[2], cells[3], cells[4]], a: ans });
+    const t = (i: number) => String(r[i] ?? "").trim();
+    // Format 7 kolom: pertanyaan,A,B,C,D,E,jawaban (E boleh kosong = 4 pilihan)
+    // Format 6 kolom: pertanyaan,A,B,C,D,jawaban
+    const seven = r.length >= 7 && /^[A-Ea-e]$/.test(t(6));
+    const ans = "ABCDE".indexOf((seven ? t(6) : t(5)).toUpperCase());
+    const opts = [t(1), t(2), t(3), t(4)];
+    if (seven && t(5)) opts.push(t(5));
+    if (r.length >= 6 && t(0) && opts.every(Boolean) && ans >= 0 && ans < opts.length) {
+      soal.push({ q: t(0), o: opts, a: ans });
     } else if (idx > 0) {
       skipped++;
     }
@@ -86,9 +91,9 @@ export function parseCsvSoal(text: string): { soal: Soal[]; skipped: number } {
 }
 
 export const CSV_TEMPLATE =
-  "pertanyaan,A,B,C,D,jawaban\n" +
-  '"Hewan yang mengalami metamorfosis sempurna adalah ...",Kupu-kupu,Kucing,Ayam,Kambing,A\n' +
-  '"Hasil dari 8 x 7 adalah ...",54,56,64,48,B\n';
+  "pertanyaan,A,B,C,D,E,jawaban\n" +
+  '"Hewan yang mengalami metamorfosis sempurna adalah ...",Kupu-kupu,Kucing,Ayam,Kambing,,A\n' +
+  '"Hasil dari 8 x 7 adalah ... (contoh 5 pilihan)",54,56,64,48,58,B\n';
 
 // Kode kelas: tanpa huruf/angka yang mirip (0/O, 1/I/L)
 const CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
