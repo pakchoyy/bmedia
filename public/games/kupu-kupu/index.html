@@ -738,6 +738,19 @@
 (function () {
     'use strict';
 
+    // Polyfill roundRect untuk browser/WebView lama
+    if (!CanvasRenderingContext2D.prototype.roundRect) {
+        CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+            r = Math.min(r || 0, w / 2, h / 2);
+            this.moveTo(x + r, y);
+            this.arcTo(x + w, y, x + w, y + h, r);
+            this.arcTo(x + w, y + h, x, y + h, r);
+            this.arcTo(x, y + h, x, y, r);
+            this.arcTo(x, y, x + w, y, r);
+            this.closePath();
+        };
+    }
+
     // ==========================================
     // 1. WEB AUDIO SYNTHESIZER (NO EXTERNAL FILES)
     // ==========================================
@@ -2266,42 +2279,13 @@
         ctx.restore();
     }
 
-    function drawPlayerCharacter() {
-        ctx.save();
-        ctx.translate(player.x - CAMERA.x, player.y - CAMERA.y);
-
-        // Bayangan Karakter
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
-        ctx.beginPath();
-        ctx.ellipse(0, 14, 22, 13, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.rotate(player.angle);
-
-        // Animasi Kaki Melangkah
-        const footOffset = player.isMoving ? Math.sin(player.walkCycle) * 9 : 0;
-        ctx.fillStyle = '#574b90';
-        ctx.strokeStyle = '#4a3b32';
-        ctx.lineWidth = 3.2;
-
-        // Kaki Kiri & Kanan
-        ctx.beginPath();
-        ctx.ellipse(footOffset, -11, 8, 5.5, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.ellipse(-footOffset, 11, 8, 5.5, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-
-        // Jaring Penangkap Kupu-Kupu (Berayun saat tombol ditekan)
+    // Karakter chibi tampak 3/4: menghadap 4 arah (bawah/atas/kiri/kanan)
+    function drawNet() {
+        // Digambar dalam koordinat yang diputar mengikuti arah hadap
         let netSwingAngle = 0.45;
         if (player.swinging) {
             const progress = 1 - (player.swingTimer / player.swingDuration);
             netSwingAngle = -1.25 + Math.sin(progress * Math.PI) * 2.6;
-
-            // Efek kilatan busur ayunan
             ctx.save();
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
             ctx.lineWidth = 10;
@@ -2310,85 +2294,192 @@
             ctx.stroke();
             ctx.restore();
         }
-
         ctx.save();
         ctx.rotate(netSwingAngle);
-        // Gagang Jaring
-        ctx.strokeStyle = '#e1b12c';
-        ctx.lineWidth = 6;
-        ctx.lineCap = 'round';
-        ctx.beginPath();
-        ctx.moveTo(6, 14);
-        ctx.lineTo(42, 22);
-        ctx.stroke();
-
         ctx.strokeStyle = '#4a3b32';
-        ctx.lineWidth = 2;
-        ctx.stroke();
+        ctx.lineWidth = 8;
+        ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(6, 10); ctx.lineTo(42, 20); ctx.stroke();
+        ctx.strokeStyle = '#e1b12c';
+        ctx.lineWidth = 4.5;
+        ctx.beginPath(); ctx.moveTo(6, 10); ctx.lineTo(42, 20); ctx.stroke();
 
-        // Lingkaran Jaring
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.78)';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.82)';
         ctx.strokeStyle = '#4a3b32';
         ctx.lineWidth = 3.5;
-        ctx.beginPath();
-        ctx.ellipse(52, 24, 15, 19, 0.2, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-
-        // Garis rajutan jaring
+        ctx.beginPath(); ctx.ellipse(52, 22, 15, 19, 0.2, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
         ctx.strokeStyle = 'rgba(74, 59, 50, 0.35)';
         ctx.lineWidth = 1.5;
         ctx.beginPath();
-        ctx.moveTo(42, 18);
-        ctx.lineTo(62, 30);
-        ctx.moveTo(42, 30);
-        ctx.lineTo(62, 18);
+        ctx.moveTo(42, 16); ctx.lineTo(62, 28);
+        ctx.moveTo(42, 28); ctx.lineTo(62, 16);
+        ctx.moveTo(40, 22); ctx.lineTo(66, 22);
         ctx.stroke();
         ctx.restore();
+    }
 
-        // Badan Baju Pastel Karakter
-        ctx.fillStyle = '#ff7675';
-        ctx.strokeStyle = '#4a3b32';
-        ctx.lineWidth = 3.5;
-        ctx.beginPath();
-        ctx.ellipse(0, 0, 16, 20, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
+    function drawPlayerCharacter() {
+        const ca = Math.cos(player.angle), sa = Math.sin(player.angle);
+        const dir = Math.abs(ca) > Math.abs(sa) ? (ca > 0 ? 'right' : 'left') : (sa > 0 ? 'down' : 'up');
 
-        // Tangan Bulat Imut
-        ctx.fillStyle = '#ffeaa7';
-        ctx.beginPath();
-        ctx.arc(8, -17, 6, 0, Math.PI * 2);
-        ctx.arc(10, 16, 6, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
+        const INK = '#4a3b32', SKIN = '#ffdcb8', HAIR = '#7a4a2b';
+        const SHIRT = '#ff7675', SHORTS = '#5b72e0', HAT = '#f9ca5b', BAND = '#ff4f6d';
 
-        // Topi Jerami Bundar Petualang (Tampak Atas)
-        ctx.fillStyle = '#feca57';
-        ctx.beginPath();
-        ctx.arc(0, 0, 21, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
+        ctx.save();
+        ctx.translate(player.x - CAMERA.x, player.y - CAMERA.y);
 
-        // Pita Merah pada Topi
-        ctx.fillStyle = '#ff6b81';
+        // Bayangan di tanah
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.24)';
         ctx.beginPath();
-        ctx.arc(0, 0, 13.5, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-
-        // Puncak Topi & Mata Mengintip di Depan
-        ctx.fillStyle = '#ffdf7e';
-        ctx.beginPath();
-        ctx.arc(-1, 0, 10.5, 0, Math.PI * 2);
+        ctx.ellipse(0, 20, 20, 8, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // Mata Lucu di arah hadap
-        ctx.fillStyle = '#2f3640';
-        ctx.beginPath();
-        ctx.arc(15, -5, 2.3, 0, Math.PI * 2);
-        ctx.arc(15, 5, 2.3, 0, Math.PI * 2);
-        ctx.fill();
+        const step = player.isMoving ? Math.sin(player.walkCycle) : 0;
+        const bob = player.isMoving ? Math.abs(Math.sin(player.walkCycle)) * 3 : 0;
+        const netBehind = player.swinging && dir === 'up';
+
+        // Jaring di belakang badan jika menghadap ke atas
+        if (netBehind) { ctx.save(); ctx.translate(0, -8); ctx.rotate(player.angle); drawNet(); ctx.restore(); }
+
+        ctx.lineJoin = 'round';
+        ctx.lineWidth = 3.2;
+        ctx.strokeStyle = INK;
+
+        // Kaki
+        const legSpread = dir === 'left' || dir === 'right' ? 3 : 6;
+        const drawLeg = (lx, ly) => {
+            ctx.fillStyle = SKIN;
+            ctx.beginPath(); ctx.roundRect(lx - 4, ly - 2, 8, 12, 4); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = INK;
+            ctx.beginPath(); ctx.ellipse(lx, ly + 10, 6, 3.6, 0, 0, Math.PI * 2); ctx.fill();
+        };
+        if (dir === 'left' || dir === 'right') {
+            drawLeg(-legSpread + step * 6, 8 - Math.max(0, -step) * 3);
+            drawLeg(legSpread - step * 6, 8 - Math.max(0, step) * 3);
+        } else {
+            drawLeg(-legSpread, 8 - Math.max(0, step) * 4);
+            drawLeg(legSpread, 8 - Math.max(0, -step) * 4);
+        }
+
+        ctx.save();
+        ctx.translate(0, -bob);
+
+        // Badan (kaos) + celana pendek
+        ctx.fillStyle = SHORTS;
+        ctx.beginPath(); ctx.roundRect(-11, 2, 22, 11, 5); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = SHIRT;
+        ctx.beginPath(); ctx.roundRect(-13, -14, 26, 21, 9); ctx.fill(); ctx.stroke();
+        // kilau baju
+        ctx.fillStyle = 'rgba(255,255,255,0.28)';
+        ctx.beginPath(); ctx.ellipse(-5, -8, 3.5, 6, 0, 0, Math.PI * 2); ctx.fill();
+
+        // Tangan
+        ctx.fillStyle = SKIN;
+        const armSwing = player.isMoving ? step * 3 : 0;
+        if (dir === 'left' || dir === 'right') {
+            ctx.beginPath(); ctx.arc(0 + armSwing, -2, 5.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        } else {
+            ctx.beginPath(); ctx.arc(-15, -3 + armSwing, 5.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+            ctx.beginPath(); ctx.arc(15, -3 - armSwing, 5.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        }
+
+        // Kepala besar (chibi)
+        const hy = -29;
+        ctx.save();
+        ctx.translate(0, hy);
+        if (dir === 'left') ctx.scale(-1, 1);
+
+        // Rambut belakang
+        ctx.fillStyle = HAIR;
+        ctx.beginPath(); ctx.ellipse(dir === 'up' ? 0 : (dir === 'down' ? 0 : -2), 1, 19, 18.5, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+
+        if (dir !== 'up') {
+            // Wajah
+            ctx.fillStyle = SKIN;
+            ctx.beginPath();
+            if (dir === 'down') ctx.ellipse(0, 3, 16, 14.5, 0, 0, Math.PI * 2);
+            else ctx.ellipse(3, 3, 14, 14.5, 0, 0, Math.PI * 2);
+            ctx.fill();
+            // Mata
+            ctx.fillStyle = '#2f3640';
+            const eyes = dir === 'down' ? [-6.5, 6.5] : [4, 11];
+            eyes.forEach(ex => {
+                ctx.beginPath(); ctx.ellipse(ex, 3, 2.7, 3.7, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#fff';
+                ctx.beginPath(); ctx.arc(ex + 0.9, 1.6, 1.1, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#2f3640';
+            });
+            // Pipi merona
+            ctx.fillStyle = 'rgba(255,120,140,0.45)';
+            if (dir === 'down') {
+                ctx.beginPath(); ctx.ellipse(-10, 9, 3.6, 2.3, 0, 0, Math.PI * 2); ctx.ellipse(10, 9, 3.6, 2.3, 0, 0, Math.PI * 2); ctx.fill();
+            } else {
+                ctx.beginPath(); ctx.ellipse(10, 9, 3.4, 2.2, 0, 0, Math.PI * 2); ctx.fill();
+            }
+            // Mulut
+            ctx.strokeStyle = INK; ctx.lineWidth = 2; ctx.lineCap = 'round';
+            ctx.beginPath();
+            const mx = dir === 'down' ? 0 : 8;
+            ctx.arc(mx, 8, 2.8, 0.15 * Math.PI, 0.85 * Math.PI);
+            ctx.stroke();
+            ctx.lineWidth = 3.2;
+            // Poni
+            ctx.fillStyle = HAIR;
+            ctx.beginPath();
+            if (dir === 'down') {
+                ctx.moveTo(-17, -2); ctx.quadraticCurveTo(-12, -16, 0, -14); ctx.quadraticCurveTo(12, -16, 17, -2);
+                ctx.quadraticCurveTo(9, -9, 3, -5); ctx.quadraticCurveTo(-4, -10, -17, -2);
+            } else {
+                ctx.moveTo(-14, 0); ctx.quadraticCurveTo(-10, -16, 4, -14); ctx.quadraticCurveTo(14, -12, 16, -2);
+                ctx.quadraticCurveTo(8, -8, 2, -5); ctx.quadraticCurveTo(-6, -9, -14, 0);
+            }
+            ctx.fill();
+        } else {
+            // Kilau rambut belakang
+            ctx.fillStyle = 'rgba(255,255,255,0.18)';
+            ctx.beginPath(); ctx.ellipse(-6, -6, 5, 8, 0.4, 0, Math.PI * 2); ctx.fill();
+        }
+
+        // Topi jerami
+        ctx.fillStyle = HAT;
+        ctx.strokeStyle = INK; ctx.lineWidth = 3.2;
+        ctx.beginPath(); ctx.ellipse(dir === 'down' || dir === 'up' ? 0 : 1, -13, 24, 7.5, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        ctx.beginPath(); ctx.ellipse(dir === 'down' || dir === 'up' ? 0 : 1, -17, 13.5, 10.5, 0, Math.PI, 0); ctx.lineTo(dir === 'down' || dir === 'up' ? 13.5 : 14.5, -13); ctx.lineTo(dir === 'down' || dir === 'up' ? -13.5 : -12.5, -13); ctx.closePath(); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = BAND;
+        ctx.fillRect(dir === 'down' || dir === 'up' ? -13 : -12, -18, 27, 4.6);
+        ctx.strokeRect(dir === 'down' || dir === 'up' ? -13 : -12, -18, 27, 4.6);
+        ctx.fillStyle = 'rgba(255,255,255,0.35)';
+        ctx.beginPath(); ctx.ellipse(-5, -22, 4, 2.4, -0.3, 0, Math.PI * 2); ctx.fill();
+
+        ctx.restore(); // kepala
+        ctx.restore(); // bob
+
+        // Jaring di depan badan jika tidak menghadap ke atas
+        if (player.swinging) {
+            if (!netBehind) { ctx.save(); ctx.translate(0, -8 - bob); ctx.rotate(player.angle); drawNet(); ctx.restore(); }
+        } else {
+            // Pose diam/jalan: jaring disandarkan di bahu
+            const sd = dir === 'left' ? -1 : 1;
+            const sway = player.isMoving ? Math.sin(player.walkCycle) * 2 : 0;
+            ctx.save();
+            ctx.translate(0, -bob);
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = INK; ctx.lineWidth = 7;
+            ctx.beginPath(); ctx.moveTo(sd * 13, -2); ctx.lineTo(sd * (22 + sway), -34); ctx.stroke();
+            ctx.strokeStyle = '#e1b12c'; ctx.lineWidth = 3.8;
+            ctx.beginPath(); ctx.moveTo(sd * 13, -2); ctx.lineTo(sd * (22 + sway), -34); ctx.stroke();
+            ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.strokeStyle = INK; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.ellipse(sd * (26 + sway), -46, 10.5, 12.5, sd * 0.25, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+            ctx.strokeStyle = 'rgba(74,59,50,0.35)'; ctx.lineWidth = 1.3;
+            ctx.beginPath();
+            ctx.moveTo(sd * (20 + sway), -52); ctx.lineTo(sd * (32 + sway), -40);
+            ctx.moveTo(sd * (20 + sway), -40); ctx.lineTo(sd * (32 + sway), -52);
+            ctx.stroke();
+            // Tangan memegang gagang
+            ctx.fillStyle = SKIN; ctx.strokeStyle = INK; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.arc(sd * 14, -4, 5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+            ctx.restore();
+        }
 
         ctx.restore();
     }
@@ -2405,71 +2496,111 @@
             ctxTarget.fill();
         }
 
-        // Posisi tubuh kupu-kupu melayang
         ctxTarget.translate(0, -z);
         ctxTarget.rotate(angle + Math.PI / 2);
         ctxTarget.scale(scale, scale);
 
         const flap = 0.28 + Math.abs(Math.sin(wingPhase)) * 0.72;
+        const INK = '#4a3b32';
 
         // Aura cahaya khusus kupu-kupu langka
         if (species.rare) {
-            const grad = ctxTarget.createRadialGradient(0, 0, 4, 0, 0, 32);
+            const grad = ctxTarget.createRadialGradient(0, 0, 4, 0, 0, 34);
             grad.addColorStop(0, 'rgba(254, 202, 87, 0.65)');
             grad.addColorStop(1, 'rgba(254, 202, 87, 0)');
             ctxTarget.fillStyle = grad;
             ctxTarget.beginPath();
-            ctxTarget.arc(0, 0, 32, 0, Math.PI * 2);
+            ctxTarget.arc(0, 0, 34, 0, Math.PI * 2);
             ctxTarget.fill();
         }
 
-        ctxTarget.strokeStyle = '#4a3b32';
-        ctxTarget.lineWidth = 2.6;
+        ctxTarget.lineJoin = 'round';
+        ctxTarget.lineWidth = 2.4;
+        ctxTarget.strokeStyle = INK;
 
-        // Fungsi gambar sepasang sayap (kiri/kanan)
         [-1, 1].forEach(side => {
             ctxTarget.save();
             ctxTarget.scale(side * flap, 1);
 
-            // Sayap Bawah
+            // Sayap bawah (lebih bulat)
             ctxTarget.fillStyle = species.secondary;
             ctxTarget.beginPath();
-            ctxTarget.ellipse(10, 7, 11, 8.5, 0.35, 0, Math.PI * 2);
+            ctxTarget.moveTo(2, 1);
+            ctxTarget.bezierCurveTo(16, 0, 26, 9, 19, 18);
+            ctxTarget.bezierCurveTo(13, 24, 4, 18, 2, 9);
+            ctxTarget.closePath();
             ctxTarget.fill();
             ctxTarget.stroke();
 
-            // Sayap Atas
+            // Sayap atas (lebih besar, ujung runcing)
             ctxTarget.fillStyle = species.primary;
             ctxTarget.beginPath();
-            ctxTarget.ellipse(13, -5, 15, 11, -0.3, 0, Math.PI * 2);
+            ctxTarget.moveTo(2, -1);
+            ctxTarget.bezierCurveTo(6, -22, 28, -24, 27, -8);
+            ctxTarget.bezierCurveTo(26, 0, 12, 4, 2, 3);
+            ctxTarget.closePath();
             ctxTarget.fill();
             ctxTarget.stroke();
 
-            // Corak bintik indah pada sayap
-            ctxTarget.fillStyle = species.accent;
+            // Kilau sayap
+            ctxTarget.fillStyle = 'rgba(255,255,255,0.4)';
             ctxTarget.beginPath();
-            ctxTarget.arc(15, -6, 4, 0, Math.PI * 2);
-            ctxTarget.arc(10, 7, 2.8, 0, Math.PI * 2);
+            ctxTarget.ellipse(10, -12, 6, 3, -0.6, 0, Math.PI * 2);
             ctxTarget.fill();
 
+            // Tulang sayap
+            ctxTarget.strokeStyle = 'rgba(74,59,50,0.35)';
+            ctxTarget.lineWidth = 1.4;
+            ctxTarget.beginPath();
+            ctxTarget.moveTo(3, -1);
+            ctxTarget.quadraticCurveTo(14, -6, 23, -10);
+            ctxTarget.moveTo(3, 2); ctxTarget.quadraticCurveTo(12, 6, 16, 15);
+            ctxTarget.stroke();
+
+            // Bintik corak berbingkai putih
+            ctxTarget.lineWidth = 1.2;
+            ctxTarget.strokeStyle = INK;
+            ctxTarget.fillStyle = species.accent;
+            ctxTarget.beginPath(); ctxTarget.arc(17, -8, 4.2, 0, Math.PI * 2); ctxTarget.fill(); ctxTarget.stroke();
+            ctxTarget.beginPath(); ctxTarget.arc(11, 12, 3.2, 0, Math.PI * 2); ctxTarget.fill(); ctxTarget.stroke();
+            ctxTarget.fillStyle = '#fff';
+            ctxTarget.beginPath(); ctxTarget.arc(16, -9, 1.3, 0, Math.PI * 2); ctxTarget.fill();
+
             ctxTarget.restore();
+            ctxTarget.lineWidth = 2.4;
+            ctxTarget.strokeStyle = INK;
         });
 
-        // Tubuh Kupu-kupu
-        ctxTarget.fillStyle = '#4a3b32';
+        // Tubuh
+        ctxTarget.fillStyle = INK;
         ctxTarget.beginPath();
-        ctxTarget.ellipse(0, 0, 3.2, 11, 0, 0, Math.PI * 2);
+        ctxTarget.ellipse(0, 3, 3.2, 11, 0, 0, Math.PI * 2);
         ctxTarget.fill();
 
-        // Antena Melengkung
-        ctxTarget.strokeStyle = '#4a3b32';
+        // Kepala + mata kecil
+        ctxTarget.beginPath();
+        ctxTarget.arc(0, -10, 4.6, 0, Math.PI * 2);
+        ctxTarget.fill();
+        ctxTarget.fillStyle = '#fff';
+        ctxTarget.beginPath();
+        ctxTarget.arc(-1.9, -11, 1.3, 0, Math.PI * 2);
+        ctxTarget.arc(1.9, -11, 1.3, 0, Math.PI * 2);
+        ctxTarget.fill();
+
+        // Antena melengkung dengan ujung bulat
+        ctxTarget.strokeStyle = INK;
         ctxTarget.lineWidth = 1.8;
         ctxTarget.beginPath();
-        ctxTarget.moveTo(-1.5, -9);
-        ctxTarget.quadraticCurveTo(-6, -16, -9, -14);
-        ctxTarget.moveTo(1.5, -9);
-        ctxTarget.quadraticCurveTo(6, -16, 9, -14);
+        ctxTarget.moveTo(-1.5, -13);
+        ctxTarget.quadraticCurveTo(-6, -21, -10, -19);
+        ctxTarget.moveTo(1.5, -13);
+        ctxTarget.quadraticCurveTo(6, -21, 10, -19);
         ctxTarget.stroke();
+        ctxTarget.fillStyle = INK;
+        ctxTarget.beginPath();
+        ctxTarget.arc(-10, -19, 1.9, 0, Math.PI * 2);
+        ctxTarget.arc(10, -19, 1.9, 0, Math.PI * 2);
+        ctxTarget.fill();
 
         ctxTarget.restore();
     }
