@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { saveSet, deleteSet } from "@/app/(public)/guru/actions";
 import { CSV_TEMPLATE, MAX_SOAL, parseCsvSoal, type QuestionSet, type Soal } from "@/lib/soal";
+import { htmlToLines, parsePlainText, parseSoalLines, type ImportResult } from "@/lib/soal-import";
 
 const inputCls =
   "w-full px-3 py-2 nb-flat dark:bg-slate-950 rounded-lg text-sm outline-none focus:ring-4 focus:ring-nb-yellow/60";
@@ -17,8 +18,14 @@ export default function SetEditor({ set }: { set: QuestionSet }) {
   const [msg, setMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
   const [dirty, setDirty] = useState(false);
   const [pending, start] = useTransition();
+  // Indeks soal hasil impor yang belum punya kunci jawaban (perlu dicek guru)
+  const [needCheck, setNeedCheck] = useState<Set<number>>(new Set());
+  const [pasteOpen, setPasteOpen] = useState(false);
+  const [pasteText, setPasteText] = useState("");
+  const [busy, setBusy] = useState(false);
 
   function update(i: number, patch: Partial<Soal>) {
+    if (patch.a !== undefined) setNeedCheck((p) => { const n = new Set(p); n.delete(i); return n; });
     setSoal((prev) => prev.map((s, k) => (k === i ? { ...s, ...patch } : s)));
     setDirty(true);
   }
@@ -40,21 +47,59 @@ export default function SetEditor({ set }: { set: QuestionSet }) {
     });
   }
 
-  async function importCsv(file: File) {
-    const { soal: hasil, skipped } = parseCsvSoal(await file.text());
-    if (!hasil.length) {
-      setMsg({ type: "err", text: "Tidak ada soal yang terbaca. Pastikan formatnya sesuai template." });
+  function addImported(r: ImportResult, sumber: string) {
+    if (!r.soal.length) {
+      setMsg({
+        type: "err",
+        text: `Tidak ada soal yang terbaca dari ${sumber}. Pastikan soal bernomor (1., 2., …) dengan 4 pilihan a–d.` +
+          (r.skipped.length ? ` (${r.skipped.slice(0, 2).join("; ")})` : ""),
+      });
       return;
     }
+    let startIdx = 0;
     setSoal((prev) => {
       const base = prev.filter((s) => s.q.trim() || s.o.some((x) => x.trim()));
-      return [...base, ...hasil].slice(0, MAX_SOAL);
+      startIdx = base.length;
+      return [...base, ...r.soal].slice(0, MAX_SOAL);
+    });
+    setNeedCheck((prev) => {
+      const next = new Set(prev);
+      r.noKey.forEach((n) => next.add(startIdx + n - 1));
+      return next;
     });
     setDirty(true);
-    setMsg({
-      type: "ok",
-      text: `${hasil.length} soal diimpor${skipped ? `, ${skipped} baris dilewati karena tidak lengkap` : ""}. Jangan lupa Simpan.`,
-    });
+    const parts = [`${r.soal.length} soal diimpor dari ${sumber}`];
+    if (r.noKey.length) parts.push(`${r.noKey.length} soal belum ada kuncinya (ditandai kuning, cek dulu)`);
+    if (r.skipped.length) parts.push(`${r.skipped.length} dilewati: ${r.skipped.slice(0, 2).join("; ")}${r.skipped.length > 2 ? "…" : ""}`);
+    setMsg({ type: r.noKey.length || r.skipped.length ? "err" : "ok", text: parts.join(". ") + ". Jangan lupa Simpan." });
+  }
+
+  async function importCsv(file: File) {
+    const { soal: hasil, skipped } = parseCsvSoal(await file.text());
+    addImported({ soal: hasil, noKey: [], skipped: skipped ? [`${skipped} baris tidak lengkap`] : [] }, "CSV");
+  }
+
+  async function importWord(file: File) {
+    if (/\.doc$/i.test(file.name)) {
+      setMsg({ type: "err", text: "File .doc (Word lama) belum didukung. Buka di Word lalu Simpan Sebagai → .docx." });
+      return;
+    }
+    setBusy(true);
+    try {
+      const mammoth = await import("mammoth/mammoth.browser");
+      const { value } = await mammoth.convertToHtml({ arrayBuffer: await file.arrayBuffer() });
+      addImported(parseSoalLines(htmlToLines(value)), "Word");
+    } catch {
+      setMsg({ type: "err", text: "File Word tidak bisa dibaca. Pastikan formatnya .docx." });
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function importPaste() {
+    addImported(parsePlainText(pasteText), "teks");
+    setPasteText("");
+    setPasteOpen(false);
   }
 
   function downloadTemplate() {
@@ -90,25 +135,61 @@ export default function SetEditor({ set }: { set: QuestionSet }) {
       </div>
 
       {/* Impor */}
-      <div className="nb-sm bg-nb-yellow/30 dark:bg-slate-900 rounded-2xl p-4 flex flex-wrap items-center gap-2 text-sm">
-        <span className="font-bold mr-auto">📥 Punya soal di Excel?</span>
-        <button onClick={downloadTemplate} className="px-3 py-2 rounded-lg bg-white dark:bg-slate-800 nb-flat font-semibold">
-          Unduh template
-        </button>
-        <label className="px-3 py-2 rounded-lg nb-sm nb-press bg-nb-orange text-white font-semibold cursor-pointer">
-          Impor CSV
-          <input type="file" accept=".csv,text/csv" className="hidden"
-            onChange={(e) => { const f = e.target.files?.[0]; if (f) importCsv(f); e.target.value = ""; }} />
-        </label>
-        <p className="w-full text-xs text-gray-500">Di Excel: isi template, lalu <i>Simpan Sebagai → CSV</i>. Kolom: pertanyaan, A, B, C, D, jawaban (A/B/C/D).</p>
+      <div className="nb-sm bg-nb-yellow/30 dark:bg-slate-900 rounded-2xl p-4 text-sm">
+        <p className="font-extrabold">📥 Sudah punya soal? Impor saja</p>
+        <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+          Tidak perlu template. Tulis soal bernomor (1., 2., …) dengan pilihan a–d, lalu tandai jawaban benar
+          dengan <b>Kunci: A</b>, huruf <b>tebal</b>, atau tanda <b>*</b>.
+        </p>
+        <div className="flex flex-wrap gap-2 mt-3">
+          <label className={`px-3 py-2 rounded-lg nb-sm nb-press bg-nb-blue text-white font-bold cursor-pointer ${busy ? "opacity-60" : ""}`}>
+            {busy ? "Membaca..." : "📄 Impor Word"}
+            <input type="file" accept=".docx,.doc,application/vnd.openxmlformats-officedocument.wordprocessingml.document" className="hidden" disabled={busy}
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) importWord(f); e.target.value = ""; }} />
+          </label>
+          <button onClick={() => setPasteOpen((v) => !v)} className="px-3 py-2 rounded-lg nb-sm nb-press bg-white dark:bg-slate-800 font-bold">
+            📋 Tempel teks
+          </button>
+          <label className="px-3 py-2 rounded-lg nb-sm nb-press bg-nb-mint text-nb-ink font-bold cursor-pointer">
+            📊 Impor CSV
+            <input type="file" accept=".csv,text/csv" className="hidden"
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) importCsv(f); e.target.value = ""; }} />
+          </label>
+        </div>
+        <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs font-semibold">
+          <a href="/contoh-soal-bgy.docx" download className="underline text-nb-ink dark:text-slate-200">Unduh contoh Word</a>
+          <button onClick={downloadTemplate} className="underline text-nb-ink dark:text-slate-200">Unduh template CSV (Excel)</button>
+        </div>
+
+        {pasteOpen && (
+          <div className="mt-3">
+            <textarea value={pasteText} onChange={(e) => setPasteText(e.target.value)} rows={8}
+              placeholder={"1. Hewan yang mengalami metamorfosis sempurna adalah ...\na. Kupu-kupu\nb. Kucing\nc. Ayam\nd. Kambing\nKunci: A"}
+              className={inputCls + " font-mono text-xs"} />
+            <div className="flex gap-2 mt-2">
+              <button onClick={importPaste} disabled={!pasteText.trim()}
+                className="px-3 py-2 rounded-lg nb-sm nb-press bg-nb-orange text-white font-bold disabled:opacity-50">
+                Baca soal
+              </button>
+              <button onClick={() => setPasteOpen(false)} className="px-3 py-2 text-xs font-semibold text-slate-500">Batal</button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Daftar soal */}
       {soal.map((s, i) => (
-        <div key={i} className="nb-sm bg-white dark:bg-slate-900 rounded-2xl p-4">
+        <div key={i} className={`nb-sm rounded-2xl p-4 ${needCheck.has(i) ? "bg-nb-yellow/40 dark:bg-yellow-900/40" : "bg-white dark:bg-slate-900"}`}>
+          {needCheck.has(i) && (
+            <p className="text-xs font-extrabold text-nb-ink dark:text-nb-yellow mb-2">⚠️ Kunci jawaban belum ditemukan. Pilih jawaban yang benar.</p>
+          )}
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-extrabold text-nb-ink dark:text-white">SOAL {i + 1}</span>
-            <button onClick={() => { setSoal((p) => p.filter((_, k) => k !== i)); setDirty(true); }}
+            <button onClick={() => {
+              setSoal((p) => p.filter((_, k) => k !== i));
+              setNeedCheck((p) => new Set(Array.from(p).filter((k) => k !== i).map((k) => (k > i ? k - 1 : k))));
+              setDirty(true);
+            }}
               className="text-xs font-semibold text-gray-400 hover:text-danger" aria-label={`Hapus soal ${i + 1}`}>
               Hapus
             </button>
