@@ -2102,6 +2102,7 @@
                     boardEl.innerHTML = '<h4>🏆 Peringkat kelas</h4>' + data.board.map((b, i) =>
                         '<div class="' + (b.name.toLowerCase() === name.toLowerCase() ? 'me' : '') + '"><span>' + (i + 1) + '. ' +
                         b.name.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])) + '</span><span>' + b.best + '</span></div>').join('');
+                    boardEl.innerHTML += '<a href="/papan/' + teacherSet.code + '" target="_top" style="display:block;margin-top:6px;font-weight:900;color:inherit">Lihat semua peringkat →</a>';
                     boardEl.style.display = '';
                 }
             })

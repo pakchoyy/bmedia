@@ -408,7 +408,7 @@
         body: JSON.stringify({ name: P.name, mode: 'race', score: P.score, caught: P.correct, quizRight: P.correct, quizWrong: P.wrong, durationS: dur, qStats: P.qstats })
       }).then(function (r) { if (!r.ok) throw new Error(r.status); });
     });
-    Promise.all(jobs).then(function () { saved.textContent = '✅ Hasil tersimpan di kelas'; }).catch(function () { saved.textContent = '⚠️ Hasil belum tersimpan (periksa internet)'; });
+    Promise.all(jobs).then(function () { saved.innerHTML = '✅ Hasil tersimpan di kelas · <a href="/papan/' + setCode + '" target="_top" style="color:inherit;font-weight:900">🏆 Lihat peringkat</a>'; }).catch(function () { saved.textContent = '⚠️ Hasil belum tersimpan (periksa internet)'; });
   }
 
   function toMenu() {

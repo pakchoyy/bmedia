@@ -3,14 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
-export default function GameFrame({ title, src }: { title: string; src: string }) {
+export default function GameFrame({ title, src, portraitOk = false }: { title: string; src: string; portraitOk?: boolean }) {
   const box = useRef<HTMLDivElement>(null);
   const [portrait, setPortrait] = useState(false);
   const [full, setFull] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia("(orientation: portrait) and (max-width: 900px)");
-    const update = () => setPortrait(mq.matches);
+    const update = () => setPortrait(!portraitOk && mq.matches);
     update();
     mq.addEventListener("change", update);
     const onFs = () => setFull(!!document.fullscreenElement);
@@ -19,7 +19,7 @@ export default function GameFrame({ title, src }: { title: string; src: string }
       mq.removeEventListener("change", update);
       document.removeEventListener("fullscreenchange", onFs);
     };
-  }, []);
+  }, [portraitOk]);
 
   async function toggleFull() {
     try {
@@ -30,7 +30,7 @@ export default function GameFrame({ title, src }: { title: string; src: string }
         // Kunci landscape (hanya jalan di layar penuh & browser yang mendukung)
         await (screen.orientation as ScreenOrientation & {
           lock?: (o: string) => Promise<void>;
-        }).lock?.("landscape");
+        }).lock?.(portraitOk ? "natural" : "landscape");
       }
     } catch {
       /* tidak didukung: abaikan */

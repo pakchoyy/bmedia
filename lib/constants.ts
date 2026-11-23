@@ -43,7 +43,14 @@ export const CONTACT_EMAIL = "admin@bgy.id";
 export const CONTACT_WA = "085600410357";
 export const CONTACT_TIKTOK = "https://www.tiktok.com/@pak.choyy";
 // Isi dengan tautan Saweria/Trakteer/Ko-fi untuk menampilkan tombol dukungan di footer. Kosong = tombol tersembunyi.
-export const DONASI_URL = "";
+export const DONASI_URL = "/traktir";
+
+/** Pilihan traktir (produk Kreacy, tidak tampil di beranda Kreacy) */
+export const TRAKTIR_OPSI = [
+  { emoji: "☕", label: "Kopi", harga: "Rp5.000", url: "https://kreacy.my.id/produk/k736i762" },
+  { emoji: "🥛", label: "Kopi Susu", harga: "Rp10.000", url: "https://kreacy.my.id/produk/7aqsvpk5" },
+  { emoji: "🍱", label: "Makan Siang", harga: "Rp25.000", url: "https://kreacy.my.id/produk/ava9j9q2" },
+];
 // Tautan undangan grup WhatsApp untuk usul game & diskusi. Kosong = tombol tersembunyi.
 export const GRUP_WA_URL = "https://chat.whatsapp.com/EUZbzdwVBFRCOjdfjufe8P";
 export const SITE_URL = "main-yuk.my.id";

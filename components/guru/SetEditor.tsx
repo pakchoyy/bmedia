@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { saveSet, deleteSet } from "@/app/(public)/guru/actions";
 import { CSV_TEMPLATE, MAX_SOAL, parseCsvSoal, type QuestionSet, type Soal } from "@/lib/soal";
-import { GAMES, gameLabel } from "@/lib/games";
+import { GAMES, gameLabel, SET_GAMES_FILTER } from "@/lib/games";
 import { htmlToLines, parsePlainText, parseSoalLines, type ImportResult } from "@/lib/soal-import";
 
 const inputCls =
@@ -126,7 +126,7 @@ export default function SetEditor({ set }: { set: QuestionSet }) {
         <div>
           <label className="block text-xs font-bold mb-1">Game untuk murid</label>
           <select value={game} onChange={(e) => { setGame(e.target.value); setDirty(true); }} className={inputCls}>
-            {GAMES.map((g) => <option key={g.slug} value={g.slug}>{gameLabel(g)}</option>)}
+            {GAMES.filter(SET_GAMES_FILTER).map((g) => <option key={g.slug} value={g.slug}>{gameLabel(g)}</option>)}
           </select>
           <p className="text-[11px] text-gray-500 mt-1">Game yang terbuka saat murid memasukkan kode kelas. Di panel kanan kamu bisa mencoba semua game dengan soal ini.</p>
         </div>

@@ -124,6 +124,7 @@ export default async function HomePage() {
               <Icon name="plus" /> Kirim Karyamu
             </Link>
             <WaGroupButton className="justify-center" />
+            <Link href="/traktir" className="nb-sm nb-press inline-flex items-center justify-center gap-2 bg-nb-yellow text-nb-ink font-extrabold rounded-xl px-4 py-2.5 text-sm">☕ Traktir Pak Choy</Link>
           </div>
         </div>
       </section>
