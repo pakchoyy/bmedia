@@ -9,7 +9,14 @@ export interface GameInfo {
   tagline: string;
   preview: string;
   modes: string[];
+  /** Boleh dimainkan tegak di HP (tanpa paksa landscape) */
+  portraitOk?: boolean;
+  /** Game tidak memakai set soal guru (tidak muncul di editor soal) */
+  noSet?: boolean;
 }
+
+/** Game yang bisa memakai set soal guru */
+export const SET_GAMES_FILTER = (g: { noSet?: boolean }) => !g.noSet;
 
 export const GAMES: GameInfo[] = [
   {
@@ -37,6 +44,16 @@ export const GAMES: GameInfo[] = [
     tagline: "Balap sepeda ke sekolah! Jawab soal matematika dengan benar untuk mengayuh. 1 lawan robot atau 2–4 pemain satu layar.",
     preview: "/games/gowes/preview.jpg",
     modes: ["Matematika Otomatis", "Soal Guru", "1 vs Robot", "2–4 Pemain (IFP)"],
+  },
+  {
+    slug: "hujan-kata",
+    title: "Hujan Kata",
+    src: "/games/hujan-kata/index.html",
+    tagline: "Kata dan soal hitungan jatuh dari awan. Ketik jawabannya sebelum menyentuh sawah! Latihan mengetik dan berhitung cepat.",
+    preview: "/games/hujan-kata/preview.jpg",
+    modes: ["Latihan Mengetik", "Hitung Cepat", "3 Tingkat"],
+    portraitOk: true,
+    noSet: true,
   },
 ];
 

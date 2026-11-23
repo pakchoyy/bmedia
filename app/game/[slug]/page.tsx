@@ -35,5 +35,5 @@ export default function GamePage({
     q.set("tok", tok);
   }
   const qs = q.toString();
-  return <GameFrame title={game.title} src={qs ? `${game.src}?${qs}` : game.src} />;
+  return <GameFrame title={game.title} src={qs ? `${game.src}?${qs}` : game.src} portraitOk={game.portraitOk} />;
 }

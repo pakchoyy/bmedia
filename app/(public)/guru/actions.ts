@@ -46,7 +46,7 @@ export async function saveSet(
   const subject = String(data.subject ?? "").trim().slice(0, 60) || null;
   const grade = String(data.grade ?? "").trim().slice(0, 40) || null;
 
-  const game = data.game && getGame(data.game) ? data.game : "kupu-kupu";
+  const game = data.game && getGame(data.game) && !getGame(data.game)!.noSet ? data.game : "kupu-kupu";
   const v = validateSoal(data.questions);
   if (!v.ok) return v;
   if (!v.soal.length) return { ok: false, error: "Tambahkan minimal 1 soal." };

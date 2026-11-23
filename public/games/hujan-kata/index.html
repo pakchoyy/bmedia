@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
+<title>Hujan Kata · Main-yuk</title>
+<style>
+  :root { --ink:#1b1a3a; --cream:#fff6dc; --yellow:#ffd23f; --orange:#ff7a1a; --pink:#ff5d8f; --mint:#2ec4b6; --blue:#4aa8ff; }
+  * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+  html, body { width:100%; height:100%; overflow:hidden; background:var(--cream); color:var(--ink);
+    font-family: ui-rounded, "Nunito", "Segoe UI", system-ui, -apple-system, sans-serif; }
+  button { font:inherit; color:inherit; cursor:pointer; border:0; background:none; }
+  .hidden { display:none !important; }
+  .nb { border:3px solid var(--ink); box-shadow:4px 4px 0 var(--ink); }
+  .nb-sm { border:2px solid var(--ink); box-shadow:2px 2px 0 var(--ink); }
+  .press:active { transform:translate(3px,3px); box-shadow:1px 1px 0 var(--ink); }
+
+  #menu, #over { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:10px; overflow:auto; z-index:20; }
+  #menu { background:linear-gradient(#7fb8e6, #bfe0f7 70%, #8fd66f 70%); }
+  #over { background:rgba(27,26,58,.72); }
+  .card { background:#fff; border-radius:22px; padding:16px 20px; width:min(100%, 560px); text-align:center; }
+  .card h1 { font-size:clamp(26px, 5.5vh, 42px); line-height:1.05; font-weight:900; }
+  .card h1 span { color:var(--blue); }
+  .sub { font-size:13px; font-weight:700; opacity:.75; margin-top:4px; }
+  .row { margin-top:10px; display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; }
+  .lbl { font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.6px; }
+  .seg { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; }
+  .seg button { padding:7px 13px; border-radius:12px; font-weight:900; font-size:15px; background:#fff; }
+  .seg button.on { background:var(--yellow); }
+  .best { margin-top:8px; font-size:13px; font-weight:800; }
+  .big { margin-top:12px; width:100%; padding:12px; border-radius:16px; background:var(--orange); font-size:20px; font-weight:900; }
+  .btns { margin-top:12px; display:flex; gap:8px; } .btns button { flex:1; padding:12px; border-radius:14px; font-weight:900; font-size:16px; }
+  .stat { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px; }
+  .stat div { background:var(--cream); border-radius:12px; padding:6px; font-weight:900; font-size:22px; }
+  .stat small { display:block; font-size:11px; opacity:.7; }
+
+  #game { position:absolute; inset:0; display:flex; flex-direction:column; }
+  .sky { position:relative; flex:1 1 auto; min-height:0; overflow:hidden; background:linear-gradient(#6fa6d6, #b7dbf5); }
+  .cloudrow { position:absolute; top:0; left:0; right:0; height:46px; display:flex; justify-content:space-around; pointer-events:none; }
+  .cloudrow i { width:22%; height:38px; margin-top:-8px; background:#fff; border:3px solid var(--ink); border-radius:0 0 40px 40px; }
+  .ground { position:absolute; left:0; right:0; bottom:0; height:38px; border-top:3px solid var(--ink);
+    background:repeating-linear-gradient(100deg, #7cc95e 0 22px, #6ab84f 22px 44px); }
+  .drop { position:absolute; top:0; transform:translate(-50%, 0); display:flex; flex-direction:column; align-items:center; will-change:transform; }
+  .drop .tear { width:20px; height:26px; background:var(--blue); border:3px solid var(--ink); border-radius:50% 50% 50% 50% / 60% 60% 40% 40%; clip-path:none; margin-bottom:-4px; }
+  .drop .w { background:#fff; border:3px solid var(--ink); border-radius:12px; padding:3px 10px; font-weight:900; font-size:clamp(16px, 3.2vh, 26px); white-space:nowrap; box-shadow:3px 3px 0 var(--ink); letter-spacing:.5px; }
+  .drop .w b { color:var(--orange); }
+  .drop.target .w { background:var(--yellow); }
+  .drop.pop { animation:pop .35s ease-out forwards; }
+  @keyframes pop { to { transform:translate(-50%, var(--y)) scale(1.6); opacity:0; } }
+  .splash { position:absolute; bottom:30px; font-size:26px; transform:translateX(-50%); animation:fade 1s forwards; pointer-events:none; }
+  @keyframes fade { to { opacity:0; transform:translate(-50%, -20px); } }
+  .hud { flex:0 0 auto; display:flex; align-items:center; gap:8px; padding:6px 8px; background:var(--ink); color:#fff; font-weight:900; flex-wrap:wrap; }
+  .pill { background:#fff; color:var(--ink); border-radius:99px; padding:2px 12px; font-size:15px; }
+  .hearts { letter-spacing:2px; font-size:16px; }
+  .hud .sp { flex:1; }
+  .hud button { background:#fff; color:var(--ink); border-radius:99px; width:32px; height:32px; }
+  .typebar { flex:0 0 auto; display:flex; gap:8px; padding:8px; background:var(--cream); border-top:3px solid var(--ink); }
+  #inp { flex:1; min-width:0; font:inherit; font-weight:900; font-size:22px; border:3px solid var(--ink); border-radius:14px; padding:8px 12px; text-transform:lowercase; }
+  #inp:focus { outline:3px solid var(--yellow); }
+  #inp.bad { animation:shake .3s; background:#ffd6d6; }
+  @keyframes shake { 25% { transform:translateX(-6px); } 75% { transform:translateX(6px); } }
+  .typebar .hint { align-self:center; font-size:12px; font-weight:800; opacity:.7; max-width:160px; }
+  @media (max-width:600px) { .typebar .hint { display:none; } }
+  @media (prefers-reduced-motion: reduce) { .drop.pop, .splash, #inp.bad { animation:none; } }
+</style>
+</head>
+<body>
+<div id="menu">
+  <div class="card nb">
+    <h1>Hujan <span>Kata</span> 🌧️</h1>
+    <div class="sub">Ketik kata yang jatuh dari awan sebelum menyentuh sawah. Latihan mengetik dan berhitung!</div>
+    <div class="row"><span class="lbl">Isi</span>
+      <div class="seg" id="segMode"><button class="nb-sm press" data-n="kata">🔤 Kata</button><button class="nb-sm press" data-n="hitung">🧮 Hitung</button></div></div>
+    <div class="row"><span class="lbl">Tingkat</span>
+      <div class="seg" id="segLevel"><button class="nb-sm press" data-n="1">Mudah</button><button class="nb-sm press" data-n="2">Sedang</button><button class="nb-sm press" data-n="3">Sulit</button></div></div>
+    <div class="best" id="best"></div>
+    <button id="start" class="big nb press">▶ MULAI</button>
+  </div>
+</div>
+
+<div id="game" class="hidden">
+  <div class="hud">
+    <span class="pill" id="score">0</span>
+    <span class="hearts" id="hearts" aria-label="Nyawa"></span>
+    <span id="combo"></span>
+    <span class="sp"></span>
+    <button id="bMute" class="press" aria-label="Suara">🔊</button>
+    <button id="bExit" class="press" aria-label="Keluar">✖</button>
+  </div>
+  <div class="sky" id="sky"><div class="cloudrow"><i></i><i></i><i></i><i></i></div><div class="ground"></div></div>
+  <form class="typebar" id="form" autocomplete="off">
+    <input id="inp" inputmode="text" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="ketik di sini…" aria-label="Ketik jawaban">
+    <span class="hint">Ketik lalu tekan Enter. Huruf oranye = sudah benar.</span>
+  </form>
+</div>
+
+<div id="over" class="hidden">
+  <div class="card nb">
+    <h1 id="ovTitle">Hujan reda!</h1>
+    <div class="stat"><div><span id="oScore">0</span><small>Skor</small></div><div><span id="oWords">0</span><small>Tertangkap</small></div><div><span id="oWpm">0</span><small>Kata/menit</small></div></div>
+    <div class="best" id="oBest"></div>
+    <div class="btns"><button id="again" class="nb press" style="background:var(--orange)">🔄 Main Lagi</button><button id="toMenu" class="nb press" style="background:var(--yellow)">🏠 Menu</button></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var WORDS = {
+    1: 'buku pena meja kursi tas topi baju sapu bola ikan ayam bebek sapi kuda nasi roti susu teh kopi gula air api batu kayu daun bunga pohon padi rumah pintu kaca lampu jam bulan awan hujan angin laut kali gigi mata kaki jari ibu ayah adik kakak guru kelas'.split(' '),
+    2: 'sekolah belajar membaca menulis bermain sepeda kancil gajah harimau kupu-kupu pelangi matahari sawah petani nelayan pasar jendela lemari pensil penghapus penggaris kalkulator bendera garuda pancasila provinsi gunung sungai danau pantai hutan cuaca musim tanaman hewan sayuran buah-buahan olahraga upacara perpustakaan kantin'.split(' '),
+    3: 'fotosintesis metamorfosis ekosistem perkembangbiakan kemerdekaan proklamasi musyawarah kebudayaan keberagaman persatuan pernapasan pencernaan peredaran tumbuhan lingkungan pelestarian pecahan perkalian pembagian persegi panjang segitiga lingkaran kubus balok tabung kerucut bilangan desimal persen magnet listrik energi gravitasi'.split(' ')
+  };
+  var mode = 'kata', level = 1, drops = [], score = 0, lives = 5, combo = 0, caught = 0, typedChars = 0;
+  var running = false, raf = 0, lastT = 0, spawnIn = 0, startAt = 0, speed = 0;
+  var muted = false; try { muted = localStorage.getItem('bgy_muted') === '1'; } catch (e) {}
+  var actx = null;
+  function tone(f, t, d, type, v) { if (muted) return; try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume(); var o = actx.createOscillator(), g = actx.createGain(), s = actx.currentTime + t; o.type = type || 'sine'; o.frequency.setValueAtTime(f, s); g.gain.setValueAtTime(.0001, s); g.gain.linearRampToValueAtTime(v || .12, s + .015); g.gain.exponentialRampToValueAtTime(.0001, s + d); o.connect(g); g.connect(actx.destination); o.start(s); o.stop(s + d + .02); } catch (e) {} }
+  function bestKey() { return 'hk_best_' + mode + level; }
+  function getBest() { try { return +localStorage.getItem(bestKey()) || 0; } catch (e) { return 0; } }
+  function showBest() { var b = getBest(); $('best').textContent = b ? '🏆 Rekor kamu: ' + b : ''; }
+  function rnd(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+
+  function seg(id, fn, isOn) {
+    var el = $(id);
+    function mark() { [].forEach.call(el.children, function (b) { b.classList.toggle('on', isOn(b.dataset.n)); }); showBest(); }
+    el.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; fn(b.dataset.n); mark(); tone(600, 0, .06); });
+    mark();
+  }
+  seg('segMode', function (n) { mode = n; }, function (n) { return n === mode; });
+  seg('segLevel', function (n) { level = +n; }, function (n) { return +n === level; });
+
+  function makeItem() {
+    if (mode === 'kata') { var list = WORDS[level]; var w = list[rnd(0, list.length - 1)]; return { show: w, ans: w }; }
+    var a, b, op = rnd(0, level === 1 ? 1 : 3), ans, s;
+    var M = level === 1 ? 10 : level === 2 ? 50 : 100;
+    if (op === 0) { a = rnd(1, M); b = rnd(1, M); ans = a + b; s = '+'; }
+    else if (op === 1) { a = rnd(1, M); b = rnd(1, a); ans = a - b; s = '−'; }
+    else if (op === 2) { a = rnd(2, level === 3 ? 12 : 9); b = rnd(2, 9); ans = a * b; s = '×'; }
+    else { b = rnd(2, 9); ans = rnd(2, level === 3 ? 12 : 9); a = ans * b; s = '÷'; }
+    return { show: a + ' ' + s + ' ' + b, ans: String(ans) };
+  }
+
+  function spawn() {
+    var sky = $('sky'), it = makeItem();
+    var el = document.createElement('div'); el.className = 'drop';
+    el.innerHTML = '<span class="tear"></span><span class="w"></span>';
+    var used = drops.map(function (d) { return d.x; }), x, tries = 0;
+    do { x = rnd(12, 88); tries++; } while (tries < 12 && used.some(function (u) { return Math.abs(u - x) < 16; }));
+    el.style.left = x + '%';
+    sky.appendChild(el);
+    var d = { el: el, w: el.querySelector('.w'), x: x, y: 40, it: it, v: speed * (0.85 + Math.random() * 0.3) };
+    renderWord(d, ''); drops.push(d);
+  }
+
+  function renderWord(d, typed) {
+    var show = mode === 'kata' ? d.it.show : d.it.show, ans = d.it.ans;
+    if (mode === 'kata' && typed && ans.indexOf(typed) === 0) {
+      d.w.innerHTML = ''; var b = document.createElement('b'); b.textContent = ans.slice(0, typed.length); d.w.appendChild(b); d.w.appendChild(document.createTextNode(ans.slice(typed.length)));
+    } else d.w.textContent = show;
+  }
+
+  function hearts() { $('hearts').textContent = '❤️'.repeat(Math.max(0, lives)) + '🤍'.repeat(Math.max(0, 5 - lives)); }
+  function hud() { $('score').textContent = score; hearts(); $('combo').textContent = combo >= 3 ? '🔥 x' + combo : ''; }
+
+  function loop(t) {
+    if (!running) return;
+    var dt = Math.min(50, t - (lastT || t)); lastT = t;
+    var H = $('sky').clientHeight - 38;
+    var el = (t - startAt) / 1000;
+    speed = (level === 1 ? 28 : level === 2 ? 36 : 44) + el * 0.55; // px/detik, makin lama makin cepat
+    spawnIn -= dt;
+    var maxOn = level === 1 ? 4 : 5;
+    if (spawnIn <= 0 && drops.length < maxOn) { spawn(); spawnIn = Math.max(900, (level === 1 ? 2600 : 2200) - el * 12); }
+    for (var i = drops.length - 1; i >= 0; i--) {
+      var d = drops[i]; d.y += d.v * dt / 1000;
+      d.el.style.transform = 'translate(-50%,' + d.y + 'px)';
+      if (d.y + d.el.offsetHeight >= H) {
+        drops.splice(i, 1); d.el.remove(); lives--; combo = 0; tone(200, 0, .25, 'sawtooth', .08);
+        var sp = document.createElement('div'); sp.className = 'splash'; sp.textContent = '💦'; sp.style.left = d.x + '%'; $('sky').appendChild(sp); setTimeout(function () { sp.remove(); }, 1000);
+        hud(); if (lives <= 0) { end(); return; }
+      }
+    }
+    // sorot target (cocok awalan, paling bawah)
+    var typed = $('inp').value.trim().toLowerCase(), tgt = null;
+    drops.forEach(function (d) { if (typed && d.it.ans.indexOf(typed) === 0 && (!tgt || d.y > tgt.y)) tgt = d; });
+    drops.forEach(function (d) { d.el.classList.toggle('target', d === tgt); renderWord(d, d === tgt ? typed : ''); });
+    raf = requestAnimationFrame(loop);
+  }
+
+  function submit() {
+    var v = $('inp').value.trim().toLowerCase().replace(/\s+/g, ' ');
+    if (!v || !running) return;
+    var hit = null; drops.forEach(function (d) { if (d.it.ans === v && (!hit || d.y > hit.y)) hit = d; });
+    if (hit) {
+      drops.splice(drops.indexOf(hit), 1); hit.el.style.setProperty('--y', hit.y + 'px'); hit.el.classList.add('pop'); setTimeout(function () { hit.el.remove(); }, 400);
+      combo++; caught++; typedChars += v.length;
+      score += 10 * v.length + (combo >= 3 ? combo * 5 : 0);
+      tone(880, 0, .08, 'triangle'); tone(1175, .06, .12, 'triangle');
+      $('inp').value = '';
+    } else {
+      combo = 0; var i = $('inp'); i.classList.remove('bad'); void i.offsetWidth; i.classList.add('bad'); tone(240, 0, .15, 'square', .06); i.select();
+    }
+    hud();
+  }
+
+  function start() {
+    drops.forEach(function (d) { d.el.remove(); }); drops = [];
+    score = 0; lives = 5; combo = 0; caught = 0; typedChars = 0; lastT = 0; spawnIn = 300;
+    $('menu').classList.add('hidden'); $('over').classList.add('hidden'); $('game').classList.remove('hidden');
+    $('bMute').textContent = muted ? '🔇' : '🔊';
+    $('inp').placeholder = mode === 'kata' ? 'ketik kata…' : 'ketik hasilnya…';
+    $('inp').setAttribute('inputmode', mode === 'kata' ? 'text' : 'numeric');
+    $('inp').value = ''; hud();
+    running = true; startAt = performance.now(); raf = requestAnimationFrame(loop);
+    setTimeout(function () { $('inp').focus(); }, 50);
+  }
+
+  function end() {
+    running = false; cancelAnimationFrame(raf);
+    var mins = Math.max(1 / 60, (performance.now() - startAt) / 60000);
+    var best = getBest(), rec = score > best; if (rec) { try { localStorage.setItem(bestKey(), score); } catch (e) {} }
+    $('oScore').textContent = score; $('oWords').textContent = caught; $('oWpm').textContent = Math.round(caught / mins);
+    $('ovTitle').textContent = rec ? '🏆 Rekor baru!' : 'Hujan reda!';
+    $('oBest').textContent = rec ? '' : 'Rekor kamu: ' + best;
+    $('over').classList.remove('hidden');
+    [523, 659, 784].forEach(function (f, i) { tone(f, i * .12, .2, 'triangle'); });
+  }
+
+  $('form').addEventListener('submit', function (e) { e.preventDefault(); submit(); });
+  // kata otomatis terkirim begitu persis cocok (tanpa Enter) — ramah HP
+  $('inp').addEventListener('input', function () {
+    var v = this.value.trim().toLowerCase();
+    // kirim otomatis bila persis cocok dan tidak ada jawaban lain yang lebih panjang dengan awalan sama (mis. 1 vs 12)
+    if (v && drops.some(function (d) { return d.it.ans === v; }) &&
+        !drops.some(function (d) { return d.it.ans !== v && d.it.ans.indexOf(v) === 0; })) submit();
+  });
+  $('start').addEventListener('click', start);
+  $('again').addEventListener('click', start);
+  $('toMenu').addEventListener('click', function () { $('over').classList.add('hidden'); $('game').classList.add('hidden'); $('menu').classList.remove('hidden'); showBest(); });
+  $('bExit').addEventListener('click', function () { if (confirm('Keluar dari permainan?')) end(); });
+  $('bMute').addEventListener('click', function () { muted = !muted; try { localStorage.setItem('bgy_muted', muted ? '1' : '0'); } catch (e) {} this.textContent = muted ? '🔇' : '🔊'; $('inp').focus(); });
+  $('sky').addEventListener('pointerdown', function () { if (running) setTimeout(function () { $('inp').focus(); }, 0); });
+  document.addEventListener('visibilitychange', function () { if (document.hidden && running) { lastT = 0; } });
+})();
+</script>
+</body>
+</html>

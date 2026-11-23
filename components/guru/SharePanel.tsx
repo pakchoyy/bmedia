@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import QRCode from "qrcode";
-import { GAMES, gameLabel, getGame } from "@/lib/games";
+import { GAMES, gameLabel, getGame, SET_GAMES_FILTER } from "@/lib/games";
 import { startRoom } from "@/app/(public)/guru/actions";
 
 export default function SharePanel({ id, code, game }: { id: string; code: string; game: string }) {
@@ -61,7 +61,7 @@ export default function SharePanel({ id, code, game }: { id: string; code: strin
           className="nb-sm nb-press w-full bg-nb-mint text-nb-ink rounded-lg py-2.5 text-sm font-extrabold block">
           📊 Lihat hasil murid
         </a>
-        {GAMES.map((g) => (
+        {GAMES.filter(SET_GAMES_FILTER).map((g) => (
           <a key={g.slug} href={`/game/${g.slug}?set=${code}`} target="_blank" rel="noopener"
             className="w-full nb-sm nb-press bg-nb-yellow text-nb-ink rounded-lg py-2.5 text-sm font-extrabold block">
             ▶ Coba: {gameLabel(g)}
