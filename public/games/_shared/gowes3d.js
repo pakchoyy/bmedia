@@ -9,7 +9,8 @@ const INK = 0x1b1a3a;
 
 export const CHAR_OPTS = {
   skin: [['#f6d3b3', 'Terang'], ['#e9b98f', 'Kuning langsat'], ['#c98d63', 'Sawo matang'], ['#8d5a3b', 'Gelap']],
-  head: [['pendek', 'Rambut pendek'], ['kuncir', 'Kuncir'], ['jilbab', 'Jilbab'], ['peci', 'Peci'], ['topi', 'Topi sekolah']],
+  gender: [['l', 'Laki-laki'], ['p', 'Perempuan']],
+  head: [['pendek', 'Rambut pendek'], ['panjang', 'Rambut panjang'], ['kuncir', 'Kuncir'], ['jilbab', 'Jilbab'], ['peci', 'Peci'], ['topi', 'Topi sekolah']],
   seragam: [['sd', 'SD'], ['smp', 'SMP'], ['sma', 'SMA'], ['pramuka', 'Pramuka'], ['olahraga', 'Olahraga']],
 };
 const UNIFORM = {
@@ -20,7 +21,7 @@ const UNIFORM = {
   olahraga: { top: 0x2ec4b6, bottom: 0x1b1a3a, tie: null },
 };
 export function defaultChar(i) {
-  return { skin: CHAR_OPTS.skin[i % 4][0], head: ['pendek', 'jilbab', 'kuncir', 'peci'][i % 4], seragam: 'sd' };
+  return { gender: ['l', 'p', 'p', 'l', 'p'][i % 5], skin: CHAR_OPTS.skin[i % 4][0], head: ['pendek', 'jilbab', 'kuncir', 'peci', 'panjang'][i % 5], seragam: 'sd' };
 }
 
 function hasWebGL() {
@@ -81,7 +82,9 @@ export function makeRider(color, ch) {
   const body = new THREE.Group(); body.position.set(0, 1.12, 0.3); g.add(body);
   const top = box(0.62, 0.62, 0.42, u.top); top.position.set(0, 0.4, -0.12); top.rotation.x = -0.4; body.add(top);
   if (u.tie) { const tie = box(0.12, 0.32, 0.05, u.tie); tie.position.set(0, 0.42, -0.36); tie.rotation.x = -0.4; body.add(tie); }
-  const bot = box(0.58, 0.26, 0.48, u.bottom); bot.position.set(0, 0.04, 0); body.add(bot);
+  const girl = ch.gender === 'p' && ch.seragam !== 'olahraga';
+  const bot = girl ? new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.46, 0.42, 8), mat(u.bottom)) : box(0.58, 0.26, 0.48, u.bottom);
+  bot.castShadow = true; bot.position.set(0, girl ? -0.02 : 0.04, 0); body.add(bot);
   const bag = box(0.5, 0.52, 0.22, color); bag.position.set(0, 0.48, 0.24); bag.rotation.x = -0.4; body.add(bag);
   [-0.36, 0.36].forEach((x) => { const a = box(0.15, 0.15, 0.62, u.top); a.position.set(x, 0.48, -0.5); a.rotation.x = 0.45; body.add(a); const h = box(0.15, 0.15, 0.15, skin); h.position.set(x, 0.33, -0.8); body.add(h); });
   const legs = [];
@@ -99,6 +102,7 @@ export function makeRider(color, ch) {
   } else {
     const cap = box(0.86, 0.22, 0.82, hair); cap.position.set(0, 0.4, 0.02); head.add(cap);
     const back = box(0.86, 0.6, 0.18, hair); back.position.set(0, 0.12, 0.35); head.add(back);
+    if (ch.head === 'panjang' || (ch.gender === 'p' && ch.head !== 'kuncir')) { const lh = box(0.88, 0.95, 0.22, hair); lh.position.set(0, -0.12, 0.38); head.add(lh); [-0.44, 0.44].forEach((x) => { const sd = box(0.1, 0.8, 0.6, hair); sd.position.set(x, -0.08, 0.1); head.add(sd); }); }
     if (ch.head === 'kuncir') { [-0.5, 0.5].forEach((x) => { const p = box(0.2, 0.36, 0.2, hair); p.position.set(x, 0.18, 0.2); head.add(p); const b = box(0.22, 0.08, 0.22, 0xff5d8f); b.position.set(x, 0.38, 0.2); head.add(b); }); }
     if (ch.head === 'peci') { const p = box(0.84, 0.3, 0.8, 0x1b1a3a); p.position.set(0, 0.55, 0.02); head.add(p); }
     if (ch.head === 'topi') { const p = box(0.86, 0.26, 0.82, ch.seragam === 'sd' ? 0xd62839 : 0x1f4fa8); p.position.set(0, 0.55, 0.02); head.add(p); const v = box(0.8, 0.06, 0.4, ch.seragam === 'sd' ? 0xd62839 : 0x1f4fa8); v.position.set(0, 0.44, -0.55); head.add(v); }
@@ -250,12 +254,15 @@ export function mount(sceneEl) {
   function resize() { const w = sceneEl.clientWidth, h = sceneEl.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
   const ro = new ResizeObserver(resize); ro.observe(sceneEl); resize();
 
-  let last = performance.now(), camZ = 8, alive = true, slow = 0;
+  let last = performance.now(), camZ = 8, alive = true, slow = 0, finishAt = 0;
+  const t0 = performance.now(), camPos = new THREE.Vector3(9, 6, -9), camLook = new THREE.Vector3(0, 1.2, 0);
+  const roadHalf = () => Math.max(worldLanes, 2) * LANE_W / 2 + 0.7;
   function frame(now) {
     if (!alive) return;
-    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    let dt = Math.min(0.05, (now - last) / 1000); last = now;
+    const realDt = dt; if (finishAt && now - finishAt < 1400) dt *= 0.3; // slow-motion saat finis
     // turunkan kualitas otomatis bila perangkat lambat
-    if (dt > 0.034) { if (++slow > 90 && renderer.shadowMap.enabled) { renderer.shadowMap.enabled = false; if (world) world.crowd.visible = sceneEl.clientWidth > 900; pr = 1; renderer.setPixelRatio(1); resize(); } } else slow = Math.max(0, slow - 1);
+    if (realDt > 0.034) { if (++slow > 90 && renderer.shadowMap.enabled) { renderer.shadowMap.enabled = false; if (world) world.crowd.visible = sceneEl.clientWidth > 900; pr = 1; renderer.setPixelRatio(1); resize(); } } else slow = Math.max(0, slow - 1);
     sync();
     let cnt = 0, lead = 0, back = -1e9;
     riders.forEach((r) => { if (r.visible) { cnt++; lead = Math.min(lead, r.z); back = Math.max(back, r.z); } });
@@ -277,13 +284,31 @@ export function mount(sceneEl) {
       r.boost = Math.max(0, r.boost - dt * 1.2);
       r.trail.children.forEach((p, i) => { p.material.opacity = r.boost * 0.9; p.scale.z = 1 + r.boost * 3; p.position.z = 1.2 + (i % 2) * 0.4 + r.boost * 1.2 + Math.sin(now / 40 + i) * 0.1; });
     });
-    // kamera ala game balap: rendah, tepat di belakang rombongan
+    // ---- kamera sinematik: intro → (chase / samping / depan rendah bergiliran) → finis slow-motion ----
     const spread = Math.abs((back - lead) * K);
     const many = cnt > 2;
+    let leadVz = 0, leadX = 0; riders.forEach((r) => { if (r.visible && r.group.position.z <= leadVz) { leadVz = r.group.position.z; leadX = r.group.position.x; } });
+    const age = (now - t0) / 1000;
     const dist = (many ? 7.5 : 5.8) + spread * 0.8;
-    camZ += (center + spread / 2 + dist - camZ) * Math.min(1, dt * 7);
-    cam.position.set(0, (many ? 3.6 : 2.9) + spread * 0.15, camZ);
-    cam.lookAt(0, 1.7, camZ - dist - 12);
+    let want, look;
+    if (finishAt) {
+      const a = (now - finishAt) / 1000 * 0.5;                  // orbit pelan di depan pemenang
+      want = new THREE.Vector3(leadX + 2.5 + Math.sin(a) * 3, 2.6, leadVz - 8.5);   // di depan pemenang, menghadap ke belakang
+      look = new THREE.Vector3(leadX, 1.9, leadVz);
+    } else if (age < 4.2 && lead > -1) {                        // hitung mundur: isometrik depan-samping
+      const a = age / 4.2;
+      want = new THREE.Vector3(9 - a * 4, 6 - a * 2.5, -9 + a * 4);
+      look = new THREE.Vector3(0, 1.2, 0);
+    } else {
+      const shot = Math.floor((age - 4.2) / 7) % 4;             // 0 belakang, 1 samping, 2 belakang, 3 depan rendah
+      if (shot === 1) { want = new THREE.Vector3(roadHalf() + 5, 2.4, leadVz + 1.5); look = new THREE.Vector3(0, 1.4, leadVz - 2); }
+      else if (shot === 3) { want = new THREE.Vector3(leadX * 0.5 + 1.5, 1.3, leadVz - 7); look = new THREE.Vector3(0, 1.6, leadVz + 2); }
+      else { want = new THREE.Vector3(0, (many ? 3.6 : 2.9) + spread * 0.15, center + spread / 2 + dist); look = new THREE.Vector3(0, 1.7, center - 12); }
+    }
+    camPos.lerp(want, Math.min(1, realDt * (finishAt ? 3 : 2.6)));
+    camLook.lerp(look, Math.min(1, realDt * 4));
+    cam.position.copy(camPos); cam.lookAt(camLook);
+    camZ = camPos.z;
     sun.position.set(10, 22, camZ + 6); sun.target.position.set(0, 0, camZ - 10);
     if (world) {
       world.clouds.forEach((c, i) => { c.position.x += dt * (0.5 + (i % 3) * 0.3); if (c.position.x > 80) c.position.x = -80; });
@@ -294,7 +319,7 @@ export function mount(sceneEl) {
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
-  return { destroy() { alive = false; ro.disconnect(); renderer.dispose(); canvas.remove(); } };
+  return { finish() { if (!finishAt) finishAt = performance.now(); }, destroy() { alive = false; ro.disconnect(); renderer.dispose(); canvas.remove(); } };
 }
 
 /** Pratinjau karakter berputar untuk menu Buat Karakter. */
