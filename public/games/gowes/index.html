@@ -195,6 +195,7 @@
 
 <script src="/games/_shared/mathgen.js"></script>
 <script src="/games/_shared/sfx.js"></script>
+<script src="/games/_shared/koin.js"></script>
 <script src="/games/_shared/fx.js"></script>
 <script src="/games/_shared/ruang.js"></script>
 <script type="module">import { mount, preview, CHAR_OPTS, defaultChar } from "/games/_shared/gowes3d.js"; window.Gowes3D = { mount, preview, CHAR_OPTS, defaultChar };</script>
@@ -256,8 +257,27 @@
     var grp = function (key, label, sw) { return '<div class="grp"><b>' + label + '</b><div class="ops" data-k="' + key + '">' + O[key].map(function (o) { return '<button type="button" data-v="' + o[0] + '"' + (sw ? ' class="sw" style="background:' + o[0] + '" title="' + o[1] + '" aria-label="' + o[1] + '"' : '') + '>' + (sw ? '' : o[1]) + '</button>'; }).join('') + '</div></div>'; };
     ov.innerHTML = '<div class="cc"><canvas></canvas><div><h3>Karakter Pemain ' + (i + 1) + '</h3>' + grp('gender', 'Anak') + grp('skin', 'Warna kulit', true) + grp('head', 'Kepala') + grp('seragam', 'Seragam') + '<button type="button" class="done">✔ Simpan</button></div></div>';
     document.body.appendChild(ov);
-    var mark = function () { [].forEach.call(ov.querySelectorAll('.ops'), function (g) { [].forEach.call(g.children, function (b) { b.classList.toggle('on', cfg[g.dataset.k] === b.dataset.v); }); }); };
-    ov.addEventListener('click', function (e) { var b = e.target.closest('.ops button'); if (b) { cfg[b.parentNode.dataset.k] = b.dataset.v; mark(); tone(600, 0, .06, 'sine', .08); } });
+    function shop() { return ''; }
+    var sh = document.createElement('div'); sh.className = 'grp'; ov.querySelector('.done').before(sh);
+    function renderShop() {
+      var coins = window.Koin ? Koin.get() : 0;
+      sh.innerHTML = '<b>Aksesori · 🪙 ' + coins + ' koin</b><div class="ops">' + O.aksesori.map(function (a) {
+        var own = !a[2] || (window.Koin && Koin.owned('ak_' + a[0]));
+        return '<button type="button" data-ak="' + a[0] + '" class="' + ((cfg.aksesori || 'none') === a[0] ? 'on' : '') + '">' + a[1] + (own ? '' : ' 🔒' + a[2]) + '</button>';
+      }).join('') + '</div><div style="font-size:11px;font-weight:700;opacity:.7;margin-top:3px">Kumpulkan koin dari semua game Main-yuk.</div>';
+    }
+    renderShop();
+    sh.addEventListener('click', function (e) {
+      var b = e.target.closest('button[data-ak]'); if (!b) return;
+      var a = O.aksesori.filter(function (x) { return x[0] === b.dataset.ak; })[0];
+      if (a[2] && !Koin.owned('ak_' + a[0])) {
+        if (!Koin.spend(a[2])) { b.animate([{ transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'none' }], 300); return; }
+        Koin.own('ak_' + a[0]); if (Sfx.coin) Sfx.coin();
+      }
+      cfg.aksesori = a[0]; renderShop();
+    });
+    var mark = function () { [].forEach.call(ov.querySelectorAll('.ops[data-k]'), function (g) { [].forEach.call(g.children, function (b) { b.classList.toggle('on', cfg[g.dataset.k] === b.dataset.v); }); }); };
+    ov.addEventListener('click', function (e) { var b = e.target.closest('.ops[data-k] button'); if (b) { cfg[b.parentNode.dataset.k] = b.dataset.v; mark(); tone(600, 0, .06, 'sine', .08); } });
     mark();
     var pv = Gowes3D.preview(ov.querySelector('canvas'), COLORS[i], function () { return cfg; });
     ov.querySelector('.done').onclick = function () { try { localStorage.setItem('bgy_char_' + i, JSON.stringify(cfg)); } catch (e) {} if (pv) pv.destroy(); ov.remove(); };
@@ -442,6 +462,7 @@
   }
 
   function showResult(winner, dur) {
+    if (window.Koin) Koin.add(Math.max.apply(null, players.map(function (P) { return P.score || 0; })) / 25, 'Gowes');
     var all = players.slice(); if (bot) all.push(bot);
     var order = all.sort(function (a, b) {
       if (a === winner) return -1; if (b === winner) return 1;

@@ -11,6 +11,7 @@ export const CHAR_OPTS = {
   skin: [['#f6d3b3', 'Terang'], ['#e9b98f', 'Kuning langsat'], ['#c98d63', 'Sawo matang'], ['#8d5a3b', 'Gelap']],
   gender: [['l', 'Laki-laki'], ['p', 'Perempuan']],
   head: [['pendek', 'Rambut pendek'], ['panjang', 'Rambut panjang'], ['kuncir', 'Kuncir'], ['jilbab', 'Jilbab'], ['peci', 'Peci'], ['topi', 'Topi sekolah']],
+  aksesori: [['none', 'Tanpa', 0], ['kacamata', 'Kacamata', 40], ['dasi', 'Dasi kupu', 60], ['headset', 'Headset', 90], ['mahkota', 'Mahkota', 150], ['tanduk', 'Tanduk lucu', 120], ['sayap', 'Sayap', 250]],
   seragam: [['sd', 'SD'], ['smp', 'SMP'], ['sma', 'SMA'], ['pramuka', 'Pramuka'], ['olahraga', 'Olahraga']],
 };
 const UNIFORM = {
@@ -107,6 +108,13 @@ export function makeRider(color, ch) {
     if (ch.head === 'peci') { const p = box(0.84, 0.3, 0.8, 0x1b1a3a); p.position.set(0, 0.55, 0.02); head.add(p); }
     if (ch.head === 'topi') { const p = box(0.86, 0.26, 0.82, ch.seragam === 'sd' ? 0xd62839 : 0x1f4fa8); p.position.set(0, 0.55, 0.02); head.add(p); const v = box(0.8, 0.06, 0.4, ch.seragam === 'sd' ? 0xd62839 : 0x1f4fa8); v.position.set(0, 0.44, -0.55); head.add(v); }
   }
+  const ak = ch.aksesori || 'none';
+  if (ak === 'kacamata') { [-0.2, 0.2].forEach((x) => { const l = box(0.24, 0.18, 0.04, 0x1b1a3a); l.position.set(x, 0.05, -0.41); head.add(l); const g2 = box(0.18, 0.12, 0.02, 0x9fd8ff); g2.position.set(x, 0.05, -0.43); head.add(g2); }); const br = box(0.16, 0.05, 0.04, 0x1b1a3a); br.position.set(0, 0.07, -0.41); head.add(br); }
+  if (ak === 'dasi') { [-0.1, 0.1].forEach((x) => { const d = box(0.16, 0.14, 0.05, 0xff5d8f); d.position.set(x, 0.7, -0.4); d.rotation.z = x > 0 ? 0.4 : -0.4; body.add(d); }); }
+  if (ak === 'headset') { const band = box(0.92, 0.1, 0.12, 0x1b1a3a); band.position.set(0, 0.5, 0.02); head.add(band); [-0.46, 0.46].forEach((x) => { const e = box(0.12, 0.3, 0.3, color); e.position.set(x, 0.05, 0.02); head.add(e); }); }
+  if (ak === 'mahkota') { const c = box(0.7, 0.18, 0.66, 0xffd23f); c.position.set(0, 0.72, 0.02); head.add(c); [-0.26, 0, 0.26].forEach((x) => { const t = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.22, 4), mat(0xffd23f)); t.position.set(x, 0.92, -0.25); head.add(t); }); }
+  if (ak === 'tanduk') { [-0.28, 0.28].forEach((x) => { const t = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.32, 6), mat(0xff7a1a)); t.position.set(x, 0.72, 0); t.rotation.z = x > 0 ? -0.3 : 0.3; head.add(t); }); }
+  if (ak === 'sayap') { [-1, 1].forEach((sx) => { const w = box(0.06, 0.55, 0.75, 0xffffff); w.position.set(sx * 0.42, 0.55, 0.32); w.rotation.z = sx * 0.6; body.add(w); }); }
   if (ch.head !== 'peci' && ch.head !== 'topi') { const helm = box(0.9, 0.16, 0.86, color); helm.position.set(0, ch.head === 'jilbab' ? 0.53 : 0.56, 0.02); head.add(helm); }
   g.scale.setScalar(1.15);
   return { group: g, wheels, legs, body, head };

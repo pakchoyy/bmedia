@@ -108,6 +108,7 @@
 
 <script src="/games/_shared/mathgen.js"></script>
 <script src="/games/_shared/sfx.js"></script>
+<script src="/games/_shared/koin.js"></script>
 <script src="/games/_shared/fx.js"></script>
 <script>
 (function () {
@@ -363,6 +364,7 @@
   }
 
   function end(win) {
+    if (window.Koin) setTimeout(function () { Koin.add(score / 20, 'Pahlawan Ketik'); }, 400);
     running = false; cancelAnimationFrame(raf); Sfx.music(false);
     var min = Math.max(1 / 60, (performance.now() - startAt) / 60000), acc = typed + wrong ? Math.round(typed / (typed + wrong) * 100) : 0;
     var best = getBest(), rec = score > best; if (rec) try { localStorage.setItem(bestKey(), score); } catch (e) {}

@@ -133,6 +133,7 @@
 <div id="result" class="hidden"></div>
 
 <script src="/games/_shared/sfx.js"></script>
+<script src="/games/_shared/koin.js"></script>
 <script src="/games/_shared/fx.js"></script>
 <script>
 (function () {
@@ -313,6 +314,7 @@
   }
 
   function showResult(winner, dur) {
+    if (window.Koin) Koin.add(Math.max.apply(null, lanes.map(function (L) { return L.score || 0; })) / 25, 'Tangkap Kupu');
     var order = lanes.slice().sort(function (a, b) {
       if (a === winner) return -1; if (b === winner) return 1;
       return b.correct - a.correct || a.lastCorrectAt - b.lastCorrectAt;

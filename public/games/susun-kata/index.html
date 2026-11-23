@@ -116,6 +116,7 @@
 </div>
 
 <script src="/games/_shared/sfx.js"></script>
+<script src="/games/_shared/koin.js"></script>
 <script src="/games/_shared/fx.js"></script>
 <script>
 (function () {
@@ -282,6 +283,7 @@
   }
 
   function end() {
+    if (window.Koin) Koin.add(score / 15, 'Susun Kata');
     running = false; clearInterval(timerId);
     $('oScore').textContent = score; $('oRight').textContent = right; $('oSkip').textContent = skipped;
     $('ovTitle').textContent = right >= 10 ? '🏆 Hebat sekali!' : right >= 5 ? '🎉 Bagus!' : 'Selesai!';
