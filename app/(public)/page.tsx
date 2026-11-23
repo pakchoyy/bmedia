@@ -32,6 +32,10 @@ function SectionHead({ id, title, mark, desc, href, linkText }: { id: string; ti
 export default async function HomePage() {
   const [karya, kontributor, stats, links, populer] = await Promise.all([getHomeKarya(8), getKontributor(), getSiteStats(), getWebLinks(), getTrendingMedia(4)]);
 
+  // Beranda: satu web dari tiap kategori, lalu tambahan sampai 6
+  const satuPerKategori = links.filter((w, i, a) => a.findIndex((x) => x.kategori === w.kategori) === i);
+  const webPilihan = [...satuPerKategori, ...links.filter((w) => !satuPerKategori.includes(w))].slice(0, 6);
+
   return (
     <div className="fade-in">
       {/* Hero ringkas */}
@@ -102,7 +106,7 @@ export default async function HomePage() {
         <div className="container mx-auto max-w-[1200px]">
           <SectionHead id="web-judul" title="Web Belajar" mark="Lain" desc="Rekomendasi web belajar pihak ketiga. Dibuka di tab baru." href="/web-belajar" linkText="Semua web" />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {links.slice(0, 3).map((w, i) => <WebLuarCard key={w.id} w={w} i={i} />)}
+            {webPilihan.map((w, i) => <WebLuarCard key={w.id} w={w} i={i} />)}
           </div>
         </div>
       </section>

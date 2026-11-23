@@ -175,17 +175,21 @@ export async function changePassword(current: string, next: string): Promise<Act
 }
 
 // ---------- Web Belajar Lain (tautan pihak ketiga) ----------
-export async function addWebLink(input: { name: string; url: string; description: string; mapel: string }): Promise<ActionResult> {
+export async function addWebLink(input: { name: string; url: string; description: string; mapel: string; kategori?: string; cover?: string }): Promise<ActionResult> {
   const denied = await guard(); if (denied) return denied;
   const name = (input.name || "").trim().slice(0, 60);
   const url = normalizeUrl((input.url || "").trim()) ?? "";
   const description = (input.description || "").trim().slice(0, 240);
   const mapel = (input.mapel || "").trim().slice(0, 40) || "Umum";
+  const kategori = (input.kategori || "").trim().slice(0, 40) || "Lainnya";
+  const coverRaw = (input.cover || "").trim();
+  const cover = coverRaw ? (/^https:\/\/[^\s<>"]+$/i.test(coverRaw) ? coverRaw.slice(0, 500) : null) : null;
+  if (coverRaw && !cover) return { ok: false, error: "Link gambar cover harus diawali https://" };
   if (!name) return { ok: false, error: "Nama web wajib diisi." };
   if (!url || !/^https:\/\//i.test(url)) return { ok: false, error: "Link harus diawali https://" };
   try {
-    await sql`INSERT INTO web_links (name, url, description, mapel, sort)
-      VALUES (${name}, ${url}, ${description}, ${mapel}, (SELECT COALESCE(MAX(sort), 0) + 1 FROM web_links))`;
+    await sql`INSERT INTO web_links (name, url, description, mapel, kategori, cover, sort)
+      VALUES (${name}, ${url}, ${description}, ${mapel}, ${kategori}, ${cover}, (SELECT COALESCE(MAX(sort), 0) + 1 FROM web_links))`;
     revalidatePath("/"); revalidatePath("/web-belajar"); revalidatePath("/admin/web-belajar");
     return { ok: true };
   } catch (e: unknown) { return { ok: false, error: String(e) }; }
