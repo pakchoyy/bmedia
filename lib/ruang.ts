@@ -27,6 +27,7 @@ export interface Room {
   starts_at: string | null;
   ends_at: string | null;
   created_at: string;
+  game: string;
 }
 
 

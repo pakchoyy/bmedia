@@ -10,7 +10,7 @@ interface Live {
   serverNow: number; startsAt: number | null; endsAt: number | null; players: Player[];
 }
 
-export default function RuangLive({ roomId, code, setId, title }: { roomId: string; code: string; setId: string; title: string }) {
+export default function RuangLive({ roomId, code, setId, title, game = "kupu-kupu" }: { game?: string; roomId: string; code: string; setId: string; title: string }) {
   const [live, setLive] = useState<Live | null>(null);
   const [offset, setOffset] = useState(0);
   const [tick, setTick] = useState(0);
@@ -141,7 +141,7 @@ export default function RuangLive({ roomId, code, setId, title }: { roomId: stri
                   <div className="relative flex items-center gap-3 px-3 py-2 text-nb-ink dark:text-white">
                     <span className="font-extrabold w-6">{["🥇", "🥈", "🥉"][i] ?? i + 1}</span>
                     <span className="font-bold flex-1 truncate">{p.name}</span>
-                    <span className="text-xs hidden sm:inline">{p.caught} kupu · kuis {p.quiz_right}/{p.quiz_right + p.quiz_wrong}</span>
+                    <span className="text-xs hidden sm:inline">{p.caught} {game === "kupu-kupu" ? "kupu" : "benar"} · kuis {p.quiz_right}/{p.quiz_right + p.quiz_wrong}</span>
                     <span className="font-extrabold tabular-nums w-14 text-right">{p.score}</span>
                   </div>
                 </li>

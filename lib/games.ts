@@ -17,7 +17,16 @@ export interface GameInfo {
   mapel: string;
   fase: string;
   caraMain: string[];
+  /** Cara main yang didukung: sendiri, layar kelas (IFP), Mabar online */
+  cara: Cara[];
 }
+
+export type Cara = "sendiri" | "ifp" | "online";
+export const CARA_LABEL: Record<Cara, { icon: string; label: string }> = {
+  sendiri: { icon: "🙋", label: "Main sendiri" },
+  ifp: { icon: "🖥️", label: "Layar kelas 1–4" },
+  online: { icon: "🌐", label: "Mabar online" },
+};
 
 /** Game yang bisa memakai set soal guru */
 export const SET_GAMES_FILTER = (g: { noSet?: boolean }) => !g.noSet;
@@ -33,6 +42,7 @@ export const GAMES: GameInfo[] = [
     mapel: "Semua mapel",
     fase: "SD (Fase A–C)",
     caraMain: ["Gerakkan anak dengan joystick atau tombol panah.", "Tangkap kupu-kupu dengan jaring; tiap beberapa tangkapan muncul soal.", "Jawab benar untuk poin ekstra. Pilih mode Duel atau Layar Bersama untuk main berdua sampai berempat."],
+    cara: ["sendiri", "ifp", "online"],
   },
   {
     slug: "kupu-bersama",
@@ -46,6 +56,7 @@ export const GAMES: GameInfo[] = [
     mapel: "Semua mapel",
     fase: "SD (Fase A–C)",
     caraMain: ["Pilih 2–4 pemain dan target kupu.", "Setiap pemain menjawab soal di kolomnya sendiri.", "Jawaban benar menangkap satu kupu; yang pertama memenuhi toples menang."],
+    cara: ["ifp"],
   },
   {
     slug: "gowes",
@@ -57,6 +68,7 @@ export const GAMES: GameInfo[] = [
     mapel: "Matematika",
     fase: "SD–SMP",
     caraMain: ["Pilih jumlah pemain (1 lawan robot atau 2–4 orang).", "Pilih jenis soal (20 jenis, dari tambah sampai FPB/KPK) dan tingkat kesulitan.", "Jawab benar untuk mengayuh; yang pertama sampai sekolah menang."],
+    cara: ["sendiri", "ifp", "online"],
   },
   {
     slug: "balon",
@@ -68,6 +80,7 @@ export const GAMES: GameInfo[] = [
     mapel: "Matematika",
     fase: "SD–SMP",
     caraMain: ["Pilih jumlah pemain dan jenis soal.", "Balon berisi jawaban terbang ke atas; ketuk balon yang benar.", "Pecahkan target balon paling dulu untuk menang."],
+    cara: ["sendiri", "ifp", "online"],
   },
   {
     slug: "tebak-emoji",
@@ -81,6 +94,7 @@ export const GAMES: GameInfo[] = [
     mapel: "Bahasa Indonesia",
     fase: "SD",
     caraMain: ["Lihat gabungan emoji di layar.", "Pilih kata yang paling cocok dari 4 pilihan.", "Main sendiri atau 2 tim bergantian; tim dengan skor tertinggi menang."],
+    cara: ["sendiri", "ifp"],
   },
   {
     slug: "susun-kata",
@@ -93,6 +107,7 @@ export const GAMES: GameInfo[] = [
     mapel: "Bahasa Indonesia",
     fase: "SD",
     caraMain: ["Baca petunjuknya.", "Ketuk huruf sesuai urutan untuk menyusun kata.", "Pakai Bantuan bila buntu; semakin sedikit bantuan, semakin besar skor."],
+    cara: ["sendiri"],
   },
   {
     slug: "hujan-kata",
@@ -106,6 +121,7 @@ export const GAMES: GameInfo[] = [
     mapel: "Mengetik & Hitung",
     fase: "SD–SMP",
     caraMain: ["Kata atau soal hitungan jatuh dari awan.", "Ketik kata atau hasilnya sebelum menyentuh sawah.", "Jaga nyawa tetap ada; hujan makin cepat."],
+    cara: ["sendiri"],
   },
 ];
 
@@ -123,3 +139,6 @@ export function gameLabel(g: GameInfo): string {
 export function getGame(slug: string): GameInfo | undefined {
   return GAMES.find((g) => g.slug === slug);
 }
+
+/** Game yang bisa dipakai untuk Mabar Online (ruang 5 angka) */
+export const ONLINE_GAMES = GAMES.filter((g) => g.cara.includes("online") && !g.parent);

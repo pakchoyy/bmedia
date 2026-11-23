@@ -16,5 +16,5 @@ export default async function RuangPage({ params }: { params: { id: string } }) 
   if (!room) notFound();
   const sets = await sql`SELECT id, title FROM question_sets WHERE id = ${room.set_id} LIMIT 1`;
   const set = sets[0] as { id: string; title: string };
-  return <RuangLive roomId={room.id} code={room.code} setId={set.id} title={set.title} />;
+  return <RuangLive roomId={room.id} code={room.code} setId={set.id} title={set.title} game={room.game} />;
 }

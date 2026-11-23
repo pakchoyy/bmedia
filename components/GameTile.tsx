@@ -23,7 +23,7 @@ export default function GameTile({ game, cover, meta, plays }: { game: GameInfo;
           <span className="rounded-md border-2 border-nb-ink bg-nb-yellow px-1.5 py-0.5 text-[10px] sm:text-[11px] font-extrabold text-nb-ink">{m.mapel}</span>
           <span className="rounded-md border-2 border-nb-ink bg-[#c4a8ff] px-1.5 py-0.5 text-[10px] sm:text-[11px] font-extrabold text-nb-ink">{m.fase}</span>
         </div>
-        <p className="hidden sm:block text-sm text-slate-700 dark:text-slate-300 line-clamp-2">{m.deskripsi}</p>
+        <p className="text-xs sm:text-sm leading-snug text-slate-700 dark:text-slate-300 line-clamp-2">{m.deskripsi}</p>
         <p className="text-[11px] sm:text-xs font-bold text-slate-600 dark:text-slate-400">🎮 {plays ? `${plays.toLocaleString("id-ID")}× dimainkan` : "Baru"}</p>
         <div className={`mt-auto pt-1 grid gap-1.5 ${custom ? "grid-cols-[1fr_auto] sm:grid-cols-2" : "grid-cols-1"}`}>
           <Link href={`/game/${game.slug}`} className="nb-press inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#22c55e] hover:bg-[#2bd968] hover:-translate-y-0.5 transition border-2 border-nb-ink shadow-[2px_2px_0_#1b1a3a] py-1.5 sm:py-2 text-[13px] sm:text-sm font-extrabold text-nb-ink">

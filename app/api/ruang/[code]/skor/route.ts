@@ -51,6 +51,6 @@ export async function POST(req: Request, { params }: { params: { code: string } 
     rank: idx + 1,
     total: all.length,
     score: all[idx].score,
-    top: all.slice(0, 5).map((p) => ({ name: p.name, score: p.score, me: p.id === pid })),
+    top: all.slice(0, 5).map((p) => ({ name: p.name, score: p.score, caught: p.caught, me: p.id === pid })),
   }, { headers: { "Cache-Control": "no-store" } });
 }

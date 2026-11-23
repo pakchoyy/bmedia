@@ -18,7 +18,7 @@ export default function RuangJoinForm({ code }: { code: string }) {
       if (!r.ok) { setErr(d.error ?? "Gagal bergabung."); return; }
       try { localStorage.setItem("bgy_player_name", name.trim()); } catch { /* abaikan */ }
       // Muat halaman penuh agar lapisan situs tidak ikut ke game
-      window.location.assign(`/game/kupu-kupu?set=${d.setCode}&room=${code}&pid=${d.pid}&tok=${d.tok}`);
+      window.location.assign(`/game/${/^[a-z0-9-]{1,40}$/.test(d.game) ? d.game : "kupu-kupu"}?set=${d.setCode}&room=${code}&pid=${d.pid}&tok=${d.tok}`);
     } catch {
       setErr("Tidak dapat terhubung. Periksa internet.");
     } finally { setBusy(false); }

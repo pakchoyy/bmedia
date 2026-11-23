@@ -76,11 +76,14 @@ export async function deleteSet(id: string): Promise<void> {
 }
 
 // Mabar Online: buat ruang baru untuk set soal ini lalu buka layar pantau
-export async function startRoom(setId: string): Promise<void> {
+export async function startRoom(setId: string, gameSlug = "kupu-kupu"): Promise<void> {
   const guru = await getCurrentGuru();
   if (!guru) redirect("/guru/masuk");
   const own = await sql`SELECT id FROM question_sets WHERE id = ${setId} AND teacher_id = ${guru.guruId} LIMIT 1`;
   if (!own.length) redirect("/guru");
+
+  const g = getGame(gameSlug);
+  const roomGame = g && g.cara.includes("online") && !g.parent ? g.slug : "kupu-kupu";
 
   // Tutup ruang lama milik guru ini yang belum selesai agar tidak menumpuk
   await sql`UPDATE rooms SET status = 'finished' WHERE teacher_id = ${guru.guruId} AND status = 'lobby'`;
@@ -89,7 +92,7 @@ export async function startRoom(setId: string): Promise<void> {
   for (let i = 0; i < 8 && !id; i++) {
     try {
       const rows = await sql`
-        INSERT INTO rooms (code, set_id, teacher_id) VALUES (${randomRoomCode()}, ${setId}, ${guru.guruId})
+        INSERT INTO rooms (code, set_id, teacher_id, game) VALUES (${randomRoomCode()}, ${setId}, ${guru.guruId}, ${roomGame})
         RETURNING id
       `;
       id = (rows[0] as { id: string }).id;
