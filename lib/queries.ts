@@ -59,3 +59,43 @@ export async function getSiteStats(): Promise<SiteStats> {
     return { totalMedia: 0, totalTeachers: 0, totalPlays: 0 };
   }
 }
+
+/** Karya kontributor yang dipilih admin ("Pilihan Main-yuk") */
+export async function getFeaturedMedia(limit = 8): Promise<Media[]> {
+  try {
+    const rows = await sql`
+      SELECT * FROM media WHERE status = 'approved' AND featured = true
+      ORDER BY plays DESC, submitted_at DESC LIMIT ${limit}
+    `;
+    return rows as Media[];
+  } catch (e) {
+    console.error("getFeaturedMedia error:", e);
+    return [];
+  }
+}
+
+export interface Kontributor {
+  name: string;
+  sekolah: string | null;
+  karya: number;
+  dibuka: number;
+}
+
+/** Daftar guru kontributor (dikelompokkan per nama, tanpa membedakan huruf besar/kecil) */
+export async function getKontributor(): Promise<Kontributor[]> {
+  try {
+    const rows = await sql`
+      SELECT max(guru_name) AS name,
+             max(NULLIF(NULLIF(trim(sekolah), '-'), '')) AS sekolah,
+             count(*)::int AS karya,
+             coalesce(sum(plays), 0)::int AS dibuka
+      FROM media WHERE status = 'approved' AND trim(guru_name) <> ''
+      GROUP BY lower(trim(guru_name))
+      ORDER BY karya DESC, dibuka DESC, name ASC
+    `;
+    return rows as Kontributor[];
+  } catch (e) {
+    console.error("getKontributor error:", e);
+    return [];
+  }
+}

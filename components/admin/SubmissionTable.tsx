@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Media, MediaStatus } from "@/types/media";
-import { approveSubmission, rejectSubmission } from "@/app/admin/actions";
+import { approveSubmission, rejectSubmission, setFeatured, deleteMedia } from "@/app/admin/actions";
 import { formatDate } from "@/lib/utils";
 import StatusBadge from "./StatusBadge";
 import RejectDialog from "./RejectDialog";
@@ -73,6 +73,27 @@ export default function SubmissionTable({
   const notify = (msg: string, isError = false) => {
     setToastError(isError);
     setToast(msg);
+  };
+
+  const handleFeature = async (m: Media) => {
+    setBusy(true);
+    const res = await setFeatured(m.id, !m.featured);
+    setBusy(false);
+    setToastError(!res.ok);
+    setToast(res.ok ? (m.featured ? "Dilepas dari Pilihan Main-yuk." : "Ditandai sebagai Pilihan Main-yuk ⭐") : res.error);
+    setTimeout(() => setToast(""), 2500);
+    if (res.ok) router.refresh();
+  };
+
+  const handleDelete = async (m: Media) => {
+    if (!confirm(`Hapus "${m.title}" secara permanen? Tindakan ini tidak bisa dibatalkan.`)) return;
+    setBusy(true);
+    const res = await deleteMedia(m.id);
+    setBusy(false);
+    setToastError(!res.ok);
+    setToast(res.ok ? "Media dihapus." : res.error);
+    setTimeout(() => setToast(""), 2500);
+    if (res.ok) router.refresh();
   };
 
   const handleApprove = async (m: Media) => {
@@ -238,6 +259,27 @@ export default function SubmissionTable({
                       >
                         <Icon name="book" />
                       </Link>
+                      {m.status === "approved" && (
+                        <button
+                          onClick={() => handleFeature(m)}
+                          disabled={busy}
+                          className={`p-2 rounded-lg transition-colors disabled:opacity-50 ${m.featured ? "text-amber-500 bg-amber-50" : "text-gray-400 hover:text-amber-500 hover:bg-amber-50"}`}
+                          title={m.featured ? "Lepas dari Pilihan Main-yuk" : "Jadikan Pilihan Main-yuk"}
+                          aria-label={`${m.featured ? "Lepas" : "Jadikan"} Pilihan Main-yuk: ${m.title}`}
+                          aria-pressed={!!m.featured}
+                        >
+                          <Icon name={m.featured ? "star" : "star-outline"} />
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleDelete(m)}
+                        disabled={busy}
+                        className="p-2 rounded-lg text-gray-400 hover:text-danger hover:bg-danger/10 transition-colors disabled:opacity-50"
+                        title="Hapus media"
+                        aria-label={`Hapus ${m.title}`}
+                      >
+                        <Icon name="trash" />
+                      </button>
                       {m.status === "pending" && (
                         <>
                           <button

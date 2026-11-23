@@ -13,7 +13,7 @@ export default function NotFound() {
         className="nb nb-hover nb-press inline-flex items-center gap-2 bg-nb-orange text-nb-ink px-8 py-3 rounded-xl font-extrabold"
       >
         <Icon name="arrow-left" />
-        Kembali ke Katalog
+        Kembali ke Karya Guru
       </Link>
     </div>
   );

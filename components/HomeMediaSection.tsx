@@ -169,7 +169,7 @@ export default function HomeMediaSection({ media }: HomeMediaSectionProps) {
         {/* Media heading */}
         <div className="flex items-center justify-center gap-3 mb-5">
           <h2 className="font-display font-bold text-2xl sm:text-3xl text-nb-ink dark:text-slate-100">
-            {isFiltering ? "Hasil Pencarian" : <>Media <span className="nb-mark">Terbaru</span></>}
+            {isFiltering ? "Hasil Pencarian" : <>Karya Guru <span className="nb-mark">Terbaru</span></>}
           </h2>
           <span className="nb-flat rounded-full bg-white dark:bg-slate-900 px-2 py-0.5 text-xs font-extrabold text-nb-ink dark:text-slate-200">
             {filtered.length} media

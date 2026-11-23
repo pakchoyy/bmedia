@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { CATEGORIES, JENJANG_OPTIONS, KELAS_OPTIONS } from "@/lib/constants";
+import WaGroupButton from "./WaGroupButton";
 import { normalizeUrl } from "@/lib/utils";
 import { submitMedia } from "@/app/(public)/submit/actions";
 import type { Jenjang, MediaCategory } from "@/types/media";
@@ -194,6 +195,7 @@ export default function SubmitForm() {
           <p className="text-gray-600 dark:text-slate-300 text-lg mb-6">
             Terima kasih sudah berbagi. Admin akan meninjau karyamu maksimal 1×24 jam. Kalau kamu mengisi nomor WA, kabar tayang atau revisi dikirim ke sana.
           </p>
+          <div className="mb-4"><WaGroupButton /></div>
           <div className="flex flex-wrap justify-center gap-3">
             <button
               onClick={() => router.push("/catalog")}

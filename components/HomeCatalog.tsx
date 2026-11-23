@@ -174,7 +174,7 @@ export default function HomeCatalog({
                 href="/catalog"
                 className="inline-flex items-center gap-2 bg-primary-light text-white px-8 py-3 rounded-full font-semibold hover:bg-primary transition-colors"
               >
-                Buka Katalog Lengkap
+                Buka Semua Karya Guru
                 <Icon name="arrow-up-right-from-square" className="text-sm" />
               </Link>
             </div>

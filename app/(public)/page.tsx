@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getApprovedMedia, getSiteStats } from "@/lib/queries";
+import { getApprovedMedia, getFeaturedMedia, getSiteStats } from "@/lib/queries";
+import GameCard from "@/components/GameCard";
 import Icon from "@/components/Icon";
 import HomeMediaSection from "@/components/HomeMediaSection";
 import CTABuatGame from "@/components/CTABuatGame";
@@ -13,9 +14,10 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function HomePage() {
-  const [media, stats] = await Promise.all([
+  const [media, stats, featured] = await Promise.all([
     getApprovedMedia(),
     getSiteStats(),
+    getFeaturedMedia(8),
   ]);
 
   const sortedMedia = [...media].sort(
@@ -98,6 +100,23 @@ export default async function HomePage() {
           <GameShowcase game={MAIN_GAMES[0]} compact />
         </div>
       </section>
+
+      {/* Pilihan Main-yuk: karya kontributor yang diunggulkan admin */}
+      {featured.length > 0 && (
+        <section className="px-4 pt-8" aria-labelledby="pilihan-judul">
+          <div className="container mx-auto max-w-[1200px]">
+            <div className="text-center mb-5">
+              <h2 id="pilihan-judul" className="font-display font-bold text-2xl sm:text-3xl text-nb-ink dark:text-white">
+                Pilihan <span className="nb-mark">Main-yuk</span>
+              </h2>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">Karya guru yang dipilih Pak Choy. Hak cipta tetap milik pembuatnya.</p>
+            </div>
+            <div className="grid gap-4 sm:gap-5 grid-cols-2 lg:grid-cols-4">
+              {featured.map((m) => <GameCard key={m.id} media={m} />)}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Search + Filter + Media Grid — all-in-one */}
       <div id="media">

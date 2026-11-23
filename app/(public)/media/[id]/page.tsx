@@ -79,11 +79,14 @@ export default async function MediaDetailPage({ params }: Props) {
             Bagikan ke grup WA
           </a>
 
+          {media.featured && <p className="mt-4 inline-flex items-center gap-1.5 nb-flat rounded-full bg-nb-yellow text-nb-ink px-3 py-1 text-xs font-extrabold"><Icon name="star" /> Pilihan Main-yuk</p>}
+
           <p className="text-sm text-gray-500 dark:text-slate-400 mt-6 pt-4 border-t border-gray-200 dark:border-slate-700">
             Dibuat oleh <strong className="text-nb-ink dark:text-white">{media.guru_name}</strong>
             {media.sekolah && media.sekolah !== "-" ? ` · ${media.sekolah}` : ""}
             {media.tool && media.tool !== "Lainnya" ? ` · ${media.tool}` : ""}
           </p>
+          <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">Karya ini milik pembuatnya. Main-yuk hanya menautkan.</p>
         </div>
       </div>
 

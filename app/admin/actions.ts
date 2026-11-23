@@ -55,6 +55,18 @@ export async function deleteMedia(id: string): Promise<ActionResult> {
   }
 }
 
+export async function setFeatured(id: string, featured: boolean): Promise<ActionResult> {
+  const denied = await guard();
+  if (denied) return denied;
+  try {
+    await sql`UPDATE media SET featured = ${featured}, updated_at = now() WHERE id = ${id} AND status = 'approved'`;
+    revalidatePath("/"); revalidatePath("/catalog"); revalidatePath("/admin/media");
+    return { ok: true };
+  } catch (e: unknown) {
+    return { ok: false, error: String(e) };
+  }
+}
+
 export interface MediaEditInput {
   title: string; description: string; mapel: string; jenjang: Jenjang;
   kelas: string; category: MediaCategory; tool: string; link_url: string;

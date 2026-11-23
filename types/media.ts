@@ -33,6 +33,8 @@ export interface Media {
   rejection_reason?: string | null;
   submitted_at: string;
   updated_at?: string | null;
+  /** Dipilih admin sebagai "Pilihan Main-yuk" (karya kontributor yang diunggulkan) */
+  featured?: boolean;
 }
 
 export interface MediaInsert {
