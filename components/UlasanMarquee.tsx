@@ -21,7 +21,8 @@ export default function UlasanMarquee({ items }: { items: Ulasan[] }) {
         {head}
         <div className="container mx-auto max-w-[1200px] px-4">
           <Link href="/usulan?jenis=Ulasan" className="group block rounded-2xl bg-white border-[3px] border-nb-ink shadow-[4px_4px_0_#1b1a3a] p-4 sm:p-5 sm:flex sm:items-center sm:gap-5">
-            <span className="block text-2xl tracking-wider" aria-hidden="true">☆☆☆☆☆</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/maskot/jempol.webp" alt="" aria-hidden="true" className="w-20 sm:w-24 shrink-0 max-sm:float-right" />
             <span className="block mt-1 sm:mt-0">
               <span className="block font-display font-bold text-lg text-nb-ink">Belum ada ulasan. Jadi yang pertama!</span>
               <span className="block text-sm text-slate-600">Ceritakan pengalaman main Main-yuk di kelas atau di rumah. Ulasan pilihan tampil di sini.</span>

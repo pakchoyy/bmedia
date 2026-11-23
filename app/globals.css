@@ -197,3 +197,7 @@ button {
 /* Ulasan berjalan (kanan ke kiri). Tetap bergerak pelan; pengguna bisa menjeda lewat tombol/hover. */
 .ulasan-track { animation: ulasan-jalan 40s linear infinite; }
 @keyframes ulasan-jalan { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+.maskot-hero { animation: maskot-goyang 3s ease-in-out infinite; }
+@keyframes maskot-goyang { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(0deg) translateY(-6px); } }
+@media (prefers-reduced-motion: reduce) { .maskot-hero { animation: none; } }

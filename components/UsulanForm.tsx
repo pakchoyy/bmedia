@@ -24,7 +24,8 @@ export default function UsulanForm({ awal = "Ulasan" }: { awal?: string }) {
   if (state === "ok") {
     return (
       <div className="nb rounded-2xl bg-nb-mint/30 p-6 text-center" role="status">
-        <div className="text-5xl" aria-hidden="true">💌</div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/maskot/sorak.webp" alt="" aria-hidden="true" className="w-28 mx-auto" />
         <p className="mt-2 font-display font-bold text-2xl text-nb-ink dark:text-white">Terima kasih!</p>
         <p className="mt-1 text-slate-700 dark:text-slate-300">{f.jenis === "Ulasan" ? "Ulasanmu sudah sampai. Setelah dibaca Pak Choy, ulasan bisa tampil di beranda." : "Pesanmu sudah sampai ke Pak Choy."}</p>
         <button onClick={() => { setF({ ...f, pesan: "" }); setState("idle"); }} className="mt-4 nb-sm nb-press rounded-xl bg-white px-4 py-2 font-extrabold text-nb-ink">Kirim lagi</button>
