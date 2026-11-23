@@ -55,6 +55,9 @@
       if (muted()) return;
       note(N(52), 0, .28, 'sawtooth', .1, null, N(40)); note(N(47), .05, .3, 'square', .06, null, N(36));
     },
+    bell: function () { if (muted()) return; note(N(93), 0, .35, 'sine', .12); note(N(98), .09, .4, 'sine', .1); },
+    cheer: function () { if (muted()) return; noise(0, .9, .18, 700); noise(.05, .7, .1, 2500); },
+    coin: function () { if (muted()) return; note(N(88), 0, .08, 'square', .08); note(N(95), .07, .22, 'square', .08); },
     pop: function () {
       if (muted()) return;
       noise(0, .09, .45, 900); note(N(88), 0, .08, 'sine', .14, null, N(100));

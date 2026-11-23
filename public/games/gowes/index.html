@@ -131,10 +131,11 @@
   @media (max-width:520px) { .mg-grid { grid-template-columns:repeat(4, 1fr); } }
   @media (max-height:480px) { .mg-btn { min-height:38px; padding:3px 2px; } .mg-btn .mg-l { font-size:9px; } .mg-grid { gap:4px; } }
   /* Tampilan 3D (Three.js): adegan 2D disembunyikan, posisi sepeda tetap dibaca dari elemen .bike */
-  .scene.is3d { height:clamp(170px, 44vh, 420px); background:#9fdcff; }
-  .scene.is3d > :not(.g3d) { opacity:0 !important; pointer-events:none !important; }
+  .scene.is3d { height:clamp(190px, 58vh, 560px); background:#9fdcff; }
+  .scene.is3d ~ .pads .qcard { margin:5px 6px 4px; padding:3px 8px; } .scene.is3d ~ .pads .opts { gap:5px; padding:0 6px 6px; } .scene.is3d ~ .pads .opt { min-height:44px; }
+  .scene.is3d > :not(.g3d):not(.g3d-hud) { opacity:0 !important; pointer-events:none !important; }
   .scene.is3d .g3d { position:absolute; inset:0; width:100%; height:100%; display:block; }
-  @media (max-height:480px) { .scene.is3d { height:40vh; } }
+  @media (max-height:480px) { .scene.is3d { height:52vh; } .scene.is3d ~ .pads .opt { min-height:34px; } }
   .names label .chbtn { flex:none; width:34px; height:30px; border:2px solid var(--ink); border-radius:9px; background:var(--c); font-size:16px; box-shadow:2px 2px 0 var(--ink); }
   #charov { position:fixed; inset:0; z-index:50; display:flex; align-items:center; justify-content:center; padding:10px; background:rgba(27,26,58,.75); }
   #charov .cc { background:#fff; border:4px solid var(--ink); box-shadow:8px 8px 0 var(--ink); border-radius:24px; width:min(100%,640px); max-height:96vh; overflow:auto; display:grid; grid-template-columns:200px 1fr; gap:12px; padding:14px; }
@@ -220,7 +221,7 @@
       o.connect(g); g.connect(actx.destination); o.start(s); o.stop(s + d + 0.02);
     } catch (e) {}
   }
-  function sGood() { Sfx.good(); }
+  function sGood() { Sfx.good(); if (Sfx.bell) Sfx.bell(); }
   function sBad() { Sfx.bad(); }
   function sWin() { Sfx.music(false); Sfx.win(); }
   function sTick() { Sfx.tick(); }
@@ -437,7 +438,7 @@
     if (window._g3d && window._g3d.finish) window._g3d.finish();
     var dur = Math.round((performance.now() - startAt) / 1000);
     if (winner.isBot) { Sfx.music(false); sBad(); } else { sWin(); Fx.win(); winner.el.classList.add('win'); winner.el.querySelector('.wn').textContent = winner.name; }
-    setTimeout(function () { showResult(winner, dur); }, window._g3d ? 3200 : 1500);
+    setTimeout(function () { showResult(winner, dur); }, window._g3d ? 5600 : 1500);
   }
 
   function showResult(winner, dur) {
