@@ -7,7 +7,7 @@ import Link from "next/link";
 const inputCls =
   "w-full px-4 py-3 nb-flat dark:bg-slate-900 rounded-lg text-base outline-none focus:ring-4 focus:ring-nb-yellow/60 transition";
 
-export default function AuthForm({ mode }: { mode: "daftar" | "masuk" }) {
+export default function AuthForm({ mode, next = "/guru" }: { mode: "daftar" | "masuk"; next?: string }) {
   const daftar = mode === "daftar";
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -31,7 +31,7 @@ export default function AuthForm({ mode }: { mode: "daftar" | "masuk" }) {
         setError(data.error ?? "Terjadi kesalahan. Coba lagi.");
         return;
       }
-      router.push("/guru");
+      router.push(next);
       router.refresh();
     } catch {
       setError("Tidak dapat terhubung. Periksa internet Anda.");
@@ -86,7 +86,7 @@ export default function AuthForm({ mode }: { mode: "daftar" | "masuk" }) {
 
       <p className="text-center text-sm text-gray-500 mt-6">
         {daftar ? "Sudah punya akun? " : "Belum punya akun? "}
-        <Link href={daftar ? "/guru/masuk" : "/guru/daftar"} className="font-semibold text-nb-orange hover:underline">
+        <Link href={`${daftar ? "/guru/masuk" : "/guru/daftar"}${next !== "/guru" ? `?next=${encodeURIComponent(next)}` : ""}`} className="font-semibold text-nb-orange hover:underline">
           {daftar ? "Masuk" : "Daftar akun"}
         </Link>
       </p>

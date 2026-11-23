@@ -49,7 +49,7 @@ export default async function GuruDashboard() {
 
       <div className="flex items-center justify-between mb-3">
         <h2 className="font-display font-bold text-xl text-nb-ink dark:text-slate-100">Set Soal Saya</h2>
-        <form action={createSet}>
+        <form action={createSet.bind(null, "")}>
           <button className="nb-sm nb-press bg-nb-orange text-nb-ink font-bold px-4 py-2.5 rounded-lg text-sm">
             + Buat Set Soal
           </button>

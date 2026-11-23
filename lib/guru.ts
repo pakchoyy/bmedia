@@ -45,3 +45,8 @@ export async function requireGuru(): Promise<Guru> {
   if (!g) redirect("/guru/masuk");
   return g;
 }
+
+/** Tujuan setelah masuk/daftar: hanya halaman /guru internal (cegah open redirect). */
+export function safeNext(n?: string | null): string {
+  return n && /^\/guru(\/[a-z0-9\-/]*)?(\?game=[a-z0-9-]{1,40})?$/i.test(n) ? n : "/guru";
+}
