@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { getHomeKarya, getKontributor, getSiteStats } from "@/lib/queries";
+import { getHomeKarya, getSiteStats, getUlasan } from "@/lib/queries";
 import GameCard from "@/components/GameCard";
 import GameTile from "@/components/GameTile";
 import WebLuarCard from "@/components/WebLuarCard";
 import WaGroupButton from "@/components/WaGroupButton";
 import SearchBox from "@/components/SearchBox";
-import KontributorMarquee from "@/components/KontributorMarquee";
+import UlasanMarquee from "@/components/UlasanMarquee";
 import Icon from "@/components/Icon";
 import { MAIN_GAMES } from "@/lib/games";
 import { getWebLinks } from "@/lib/links";
@@ -33,8 +33,8 @@ function SectionHead({ id, title, mark, desc, href, linkText }: { id: string; ti
 }
 
 export default async function HomePage() {
-  const [karya, kontributor, stats, links, settings] = await Promise.all([
-    getHomeKarya(8), getKontributor(), getSiteStats(), getWebLinks(), getSettings(),
+  const [karya, ulasan, stats, links, settings] = await Promise.all([
+    getHomeKarya(8), getUlasan(), getSiteStats(), getWebLinks(), getSettings(),
   ]);
   const hero = settings[HERO_KEY] || HERO_DEFAULT;
   // Beranda: satu web dari tiap kategori, lalu tambahan sampai 6
@@ -46,13 +46,13 @@ export default async function HomePage() {
       {/* Hero */}
       <section className="relative overflow-hidden bg-nb-cream dark:bg-[#1d1a3d] border-b-[3px] border-nb-ink dark:border-[var(--nb-ink)]">
         <div aria-hidden="true" className="pointer-events-none absolute -top-10 -left-10 w-40 h-40 rounded-full bg-nb-yellow/60 dark:bg-nb-yellow/20" />
-        <div className="relative container mx-auto max-w-[1200px] px-4 sm:px-5 py-6 sm:py-10 grid gap-6 lg:grid-cols-[1.05fr_1fr] items-center">
+        <div className="relative container mx-auto max-w-[1200px] px-4 sm:px-5 py-6 sm:py-8 grid gap-6 lg:grid-cols-[1.2fr_1fr] items-center">
           <div className="max-lg:text-center">
             <h1 className="font-display font-bold text-nb-ink dark:text-white text-[1.75rem] leading-[1.1] sm:text-5xl">
-              Belajar Jadi <span className="nb-mark">Seru</span> di <span className="text-nb-orange">Main-yuk</span>
+              Belajar Jadi <span className="nb-mark">Seru</span> di <span className="text-nb-orange whitespace-nowrap">Main-yuk</span>
             </h1>
             <p className="mt-2 sm:mt-3 text-sm sm:text-base text-slate-700 dark:text-slate-300 max-w-[520px] max-lg:mx-auto">
-              Kumpulan game edukasi SD–SMA. Soalnya bisa dibuat guru sendiri dan dimainkan bareng di kelas.
+              Game edukasi SD–SMA yang bisa diisi soal buatan guru. Main sendiri, adu cepat di layar kelas, atau mabar pakai kode.
             </p>
             <SearchBox className="mt-4 sm:mt-5 max-w-[520px] max-lg:mx-auto" />
             <div className="mt-3 sm:mt-4 grid grid-cols-2 gap-2.5 sm:flex sm:flex-wrap sm:gap-3 max-lg:justify-center">
@@ -64,7 +64,7 @@ export default async function HomePage() {
               </Link>
             </div>
           </div>
-          <div className="relative max-w-[520px] w-full mx-auto max-sm:max-w-[280px]">
+          <div className="relative max-w-[440px] w-full mx-auto max-sm:max-w-[280px]">
             <div className="nb rounded-2xl bg-white dark:bg-slate-900 overflow-hidden">
               <div className="flex items-center gap-1.5 px-3 py-1.5 border-b-[3px] border-nb-ink dark:border-[var(--nb-ink)] bg-nb-yellow">
                 <span className="w-2.5 h-2.5 rounded-full bg-nb-pink border-2 border-nb-ink" />
@@ -73,7 +73,7 @@ export default async function HomePage() {
                 <span className="ml-auto text-[10px] font-extrabold uppercase tracking-wider text-nb-ink">main-yuk</span>
               </div>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={hero} alt="Ilustrasi murid belajar dengan game di Main-yuk" className="w-full aspect-[16/10] object-cover block" />
+              <img src={hero} alt="Ilustrasi murid belajar dengan game di Main-yuk" className="w-full aspect-[16/9] object-cover block" />
             </div>
           </div>
         </div>
@@ -82,15 +82,15 @@ export default async function HomePage() {
       {/* 1. Karya Admin Main-yuk */}
       <section id="game" className="px-4 pt-8 sm:pt-10 scroll-mt-20" aria-labelledby="game-judul">
         <div className="container mx-auto max-w-[1200px]">
-          <SectionHead id="game-judul" title="Karya Admin" mark="Main-yuk" desc="Game buatan Main-yuk. Bertanda Custom Soal = guru bisa memakai soal sendiri." href="/game" linkText="Semua" />
+          <SectionHead id="game-judul" title="Karya Admin" mark="Main-yuk" desc="Game buatan Main-yuk. Yang berpita merah muda bisa diisi soalmu sendiri." href="/game" linkText="Semua" />
           <div className="grid gap-3 sm:gap-5 grid-cols-2 lg:grid-cols-3">
             {MAIN_GAMES.map((g) => <GameTile key={g.slug} game={g} cover={settings[coverKey(g.slug)]} />)}
           </div>
           <Link href="/guru" className="mt-4 nb-sm nb-hover rounded-2xl bg-nb-mint/25 dark:bg-slate-900 px-4 py-3 flex items-center gap-3">
             <Icon name="chalkboard-user" className="text-2xl text-nb-ink dark:text-white shrink-0" />
             <span className="min-w-0">
-              <span className="block font-display font-bold text-nb-ink dark:text-white">Guru? Buat soalmu sendiri</span>
-              <span className="block text-sm text-slate-600 dark:text-slate-400">Ketik atau impor dari Word, bagikan kode, murid main bareng.</span>
+              <span className="block font-display font-bold text-nb-ink dark:text-white">Guru? Pakai soalmu sendiri</span>
+              <span className="block text-sm text-slate-600 dark:text-slate-400">Daftar di Ruang Guru, ketik soal atau unggah file Word/CSV, lalu bagikan kode ke murid.</span>
             </span>
             <span aria-hidden="true" className="ml-auto font-extrabold text-nb-ink dark:text-white">→</span>
           </Link>
@@ -99,7 +99,7 @@ export default async function HomePage() {
 
       {/* 2. Karya Kontributor */}
       <section id="karya" className="pt-10 sm:pt-12 scroll-mt-20" aria-labelledby="karya-judul">
-        <KontributorMarquee names={kontributor.map((k) => k.name)} />
+        <UlasanMarquee items={ulasan} />
         <div className="container mx-auto max-w-[1200px] px-4 pt-6">
           <SectionHead id="karya-judul" title="Karya" mark="Kontributor" desc="Media buatan guru Indonesia. Hak cipta milik pembuatnya." href="/catalog" linkText={`Semua (${stats.totalMedia})`} />
           <div className="grid gap-3 sm:gap-5 grid-cols-2 lg:grid-cols-4">
@@ -123,10 +123,10 @@ export default async function HomePage() {
         <div className="container mx-auto max-w-[1200px] nb rounded-2xl bg-nb-lilac/25 dark:bg-slate-900 p-5 sm:p-8 grid gap-5 lg:grid-cols-[1fr_auto] items-center">
           <div>
             <h2 id="ajak-judul" className="font-display font-bold text-2xl text-nb-ink dark:text-white">Punya ide game atau menemukan kendala?</h2>
-            <p className="mt-1 text-slate-700 dark:text-slate-300">Kirim usulan, bagikan karyamu, atau ngobrol bareng {kontributor.length} guru kontributor di grup WA.</p>
+            <p className="mt-1 text-slate-700 dark:text-slate-300">Kirim saran, bagikan karyamu, atau ngobrol bareng guru lain di grup WA.</p>
           </div>
           <div className="grid grid-cols-2 gap-2.5 sm:flex sm:flex-wrap lg:grid lg:grid-cols-1">
-            <Link href="/usulan" className="nb nb-hover nb-press bg-nb-orange text-nb-ink font-extrabold rounded-xl px-4 py-2.5 text-sm inline-flex items-center justify-center gap-2">💡 Kirim Usulan</Link>
+            <Link href="/usulan" className="nb nb-hover nb-press bg-nb-orange text-nb-ink font-extrabold rounded-xl px-4 py-2.5 text-sm inline-flex items-center justify-center gap-2">💡 Kirim Saran</Link>
             <Link href="/submit" className="nb-sm nb-press bg-white text-nb-ink font-extrabold rounded-xl px-4 py-2.5 text-sm inline-flex items-center justify-center gap-2"><Icon name="plus" /> Kirim Karya</Link>
             <WaGroupButton className="justify-center" />
             <Link href="/traktir" className="nb-sm nb-press inline-flex items-center justify-center gap-2 bg-nb-yellow text-nb-ink font-extrabold rounded-xl px-4 py-2.5 text-sm">☕ Traktir</Link>

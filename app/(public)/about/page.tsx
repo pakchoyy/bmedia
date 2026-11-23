@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Icon from "@/components/Icon";
 import { CONTACT_WA, CONTACT_TIKTOK } from "@/lib/constants";
+import UsulanForm from "@/components/UsulanForm";
 
 export const metadata: Metadata = {
   title: {
-    absolute: "Tentang Main-yuk",
+    absolute: "Tentang & Saran · Main-yuk",
   },
   description:
     "Main-yuk adalah tempat untuk menemukan, menggunakan, dan berbagi media pembelajaran interaktif karya guru Indonesia.",
@@ -66,6 +67,12 @@ export default function AboutPage() {
             </div>
           ))}
         </div>
+
+        <section id="saran" className="mt-10 max-w-[700px] mx-auto scroll-mt-20" aria-labelledby="saran-judul">
+          <h2 id="saran-judul" className="font-display text-2xl sm:text-3xl font-bold text-nb-ink dark:text-white text-center mb-1">Ulasan & <span className="nb-mark">Saran</span></h2>
+          <p className="text-center text-sm text-slate-600 dark:text-slate-400 mb-5">Tulis ulasan, usulkan game, atau laporkan kendala. Langsung dibaca Pak Choy.</p>
+          <UsulanForm />
+        </section>
 
         <div id="kontak" className="mt-8 nb bg-nb-yellow rounded-2xl p-6 max-w-[700px] mx-auto text-center">
           <h2 className="font-display text-2xl font-bold text-nb-ink mb-2">Hubungi Pak Choyy</h2>
