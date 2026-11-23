@@ -61,6 +61,10 @@ export default function SharePanel({ id, code, game }: { id: string; code: strin
           className="nb-sm nb-press w-full bg-nb-mint text-nb-ink rounded-lg py-2.5 text-sm font-extrabold block">
           📊 Lihat hasil murid
         </a>
+        <a href={`/papan/${code}`} target="_blank" rel="noopener"
+          className="nb-sm nb-press w-full bg-white text-nb-ink rounded-lg py-2.5 text-sm font-extrabold block">
+          🏆 Papan peringkat (tampilkan di IFP)
+        </a>
         {GAMES.filter(SET_GAMES_FILTER).map((g) => (
           <a key={g.slug} href={`/game/${g.slug}?set=${code}`} target="_blank" rel="noopener"
             className="w-full nb-sm nb-press bg-nb-yellow text-nb-ink rounded-lg py-2.5 text-sm font-extrabold block">

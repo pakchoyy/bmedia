@@ -46,6 +46,15 @@ export const GAMES: GameInfo[] = [
     modes: ["Matematika Otomatis", "Soal Guru", "1 vs Robot", "2–4 Pemain (IFP)"],
   },
   {
+    slug: "susun-kata",
+    title: "Susun Kata",
+    src: "/games/susun-kata/index.html",
+    tagline: "Huruf-hurufnya teracak! Susun jadi kata yang benar dari petunjuk. Bisa pakai soal guru: jawaban pendek jadi kata yang disusun.",
+    preview: "/games/susun-kata/preview.jpg",
+    modes: ["4 Tema Kata", "Soal Guru", "Mode Santai"],
+    portraitOk: true,
+  },
+  {
     slug: "hujan-kata",
     title: "Hujan Kata",
     src: "/games/hujan-kata/index.html",
