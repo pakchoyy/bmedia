@@ -45,7 +45,7 @@ export default function SharePanel({ id, code, game }: { id: string; code: strin
       ) : (
         <div className="mx-auto mt-3 w-48 h-48 rounded-lg bg-gray-100 dark:bg-slate-800" />
       )}
-      <p className="text-xs text-gray-500 mt-2">Murid scan QR, atau buka <b>Masuk Kelas</b> lalu ketik kode.</p>
+      <p className="text-xs text-gray-500 mt-2">Murid scan QR, atau buka <b>Mabar Yuk</b> lalu ketik kode.</p>
 
       <div className="grid gap-2 mt-4">
         <button onClick={() => joinUrl && copy(joinUrl, "link")}

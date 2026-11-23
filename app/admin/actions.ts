@@ -20,7 +20,7 @@ export async function approveSubmission(id: string): Promise<ActionResult> {
   const denied = await guard();
   if (denied) return denied;
   try {
-    await sql`UPDATE media SET status = 'approved', rejection_reason = NULL WHERE id = ${id}`;
+    await sql`UPDATE media SET status = 'approved', rejection_reason = NULL, approved_at = now() WHERE id = ${id}`;
     revalidatePath("/admin"); revalidatePath("/admin/submissions");
     revalidatePath("/"); revalidatePath("/catalog");
     return { ok: true };
@@ -215,4 +215,37 @@ export async function moveWebLink(id: string, dir: -1 | 1): Promise<ActionResult
     revalidatePath("/"); revalidatePath("/web-belajar"); revalidatePath("/admin/web-belajar");
     return { ok: true };
   } catch (e: unknown) { return { ok: false, error: String(e) }; }
+}
+
+// ---------- Tampilan: cover hero & cover game ----------
+const SETTING_KEYS = /^(hero_banner|cover_[a-z0-9-]{1,40})$/;
+
+export async function setSetting(key: string, value: string | null): Promise<ActionResult> {
+  const denied = await guard(); if (denied) return denied;
+  if (!SETTING_KEYS.test(key)) return { ok: false, error: "Pengaturan tidak dikenal." };
+  try {
+    if (!value) {
+      await sql`DELETE FROM site_settings WHERE key = ${key}`;
+    } else {
+      const v = value.trim();
+      if (!/^https:\/\/[^\s<>"']+$/i.test(v) || v.length > 600) return { ok: false, error: "Link gambar tidak valid." };
+      await sql`INSERT INTO site_settings (key, value) VALUES (${key}, ${v})
+        ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = now()`;
+    }
+    revalidatePath("/"); revalidatePath("/game"); revalidatePath("/admin/tampilan");
+    return { ok: true };
+  } catch (e: unknown) { return { ok: false, error: String(e) }; }
+}
+
+// ---------- Usulan pengguna ----------
+export async function setUsulanDibaca(id: string, dibaca: boolean): Promise<ActionResult> {
+  const denied = await guard(); if (denied) return denied;
+  try { await sql`UPDATE usulan SET dibaca = ${dibaca} WHERE id = ${id}`; revalidatePath("/admin/usulan"); return { ok: true }; }
+  catch (e: unknown) { return { ok: false, error: String(e) }; }
+}
+
+export async function deleteUsulan(id: string): Promise<ActionResult> {
+  const denied = await guard(); if (denied) return denied;
+  try { await sql`DELETE FROM usulan WHERE id = ${id}`; revalidatePath("/admin/usulan"); return { ok: true }; }
+  catch (e: unknown) { return { ok: false, error: String(e) }; }
 }

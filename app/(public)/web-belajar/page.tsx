@@ -44,7 +44,7 @@ export default async function WebBelajarPage({ searchParams }: { searchParams: {
           return (
             <section key={g} className="mt-8" aria-labelledby={`k-${g}`}>
               <h2 id={`k-${g}`} className="font-display font-bold text-2xl text-nb-ink dark:text-white mb-4">{g}</h2>
-              <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              <ul className="grid gap-3 sm:gap-5 grid-cols-2 lg:grid-cols-3">
                 {items.map((w, i) => <li key={w.id}><WebLuarCard w={w} i={i} /></li>)}
               </ul>
             </section>
