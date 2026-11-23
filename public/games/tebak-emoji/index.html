@@ -95,6 +95,8 @@
 </div>
 
 <script src="/games/_shared/sfx.js"></script>
+<script src="/games/_shared/suara.js"></script>
+<script src="/games/_shared/tutor.js"></script>
 <script src="/games/_shared/koin.js"></script>
 <script src="/games/_shared/fx.js"></script>
 <script>
@@ -135,6 +137,7 @@
 
   function show() {
     var p = deck[idx]; locked = false;
+    if (window.Suara) Suara.read('Tebak kata dari emoji. Kategori ' + p[2]);
     $('round').textContent = (idx + 1) + '/' + deck.length;
     $('emo').textContent = p[0]; $('emo').setAttribute('aria-label', 'Teka-teki emoji'); $('cat').textContent = 'Kategori: ' + p[2];
     if (mode === 'tim') { var T = TEAM[turn]; $('turn').textContent = 'Giliran ' + T.n; $('turn').style.setProperty('--c', T.c); $('score').textContent = teamScore[0] + ' : ' + teamScore[1]; }
@@ -154,6 +157,7 @@
   function renderBar() { if (!timeLimit) return; var pct = Math.max(0, timeLeft / timeLimit * 100); $('bar').style.width = pct + '%'; $('bar').classList.toggle('low', pct < 30); }
 
   function answer(o, btn) {
+    if (window.Tutor) Tutor.done();
     if (locked) return; locked = true;
     var p = deck[idx], ok = o === p[1];
     [].forEach.call($('opts').children, function (b) { b.disabled = true; if (b.textContent === p[1]) b.classList.add('good'); });
@@ -180,6 +184,7 @@
   }
 
   function start() {
+    if (window.Tutor) setTimeout(Tutor.hint, 400);
     deck = shuffle(BANK.slice()).slice(0, rounds); idx = 0; score = 0; teamScore = [0, 0]; turn = 0; history = [];
     $('turn').classList.toggle('hidden', mode !== 'tim');
     $('barBox').style.visibility = timeLimit ? 'visible' : 'hidden';
@@ -217,6 +222,7 @@
   $('bExit').addEventListener('click', function () { if (confirm('Selesai bermain?')) end(); });
   $('bMute').addEventListener('click', function () { muted = !muted; try { localStorage.setItem('bgy_muted', muted ? '1' : '0'); } catch (e) {} this.textContent = muted ? '🔇' : '🔊'; });
   window.addEventListener('keydown', function (e) { if ($('game').classList.contains('hidden')) return; var k = '1234'.indexOf(e.key); if (k >= 0 && $('opts').children[k]) $('opts').children[k].click(); });
+  if (window.Tutor) Tutor.init('tebak-emoji', [{"sel": "#segMode", "text": "Main sendiri, atau 2 tim bergantian untuk satu kelas."}, {"sel": "#segRounds", "text": "Pilih berapa ronde teka-teki."}, {"sel": "#segTime", "text": "Atur waktu menjawab tiap soal."}, {"sel": "#start", "text": "Tekan MULAI! Tebak kata dari gabungan emoji."}], { inGame: "Lihat emojinya, lalu ketuk kata yang paling cocok!" });
 })();
 </script>
 <script src="/games/_shared/twemoji.min.js"></script>

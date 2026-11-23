@@ -67,7 +67,10 @@ export default async function PermainanPage({ params }: { params: { slug: string
         </div>
 
         <section className="mt-8 nb rounded-2xl bg-white dark:bg-slate-900 p-5 sm:p-6" aria-labelledby="cara">
-          <h2 id="cara" className="font-display font-bold text-2xl text-nb-ink dark:text-white">Cara main</h2>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 id="cara" className="font-display font-bold text-2xl text-nb-ink dark:text-white">Cara main</h2>
+            <Link href={`/game/${g.slug}?tutor=1`} className="nb-sm nb-press rounded-xl bg-nb-yellow px-3 py-1.5 text-sm font-extrabold text-nb-ink">▶ Tonton cara main</Link>
+          </div>
           <ol className="mt-3 grid gap-3 sm:grid-cols-3">
             {g.caraMain.map((c, i) => (
               <li key={i} className="flex gap-3 rounded-xl bg-nb-cream dark:bg-slate-800 border-2 border-nb-ink p-3">

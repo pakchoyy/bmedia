@@ -117,6 +117,8 @@
 
 <script src="/games/_shared/mathgen.js"></script>
 <script src="/games/_shared/sfx.js"></script>
+<script src="/games/_shared/suara.js"></script>
+<script src="/games/_shared/tutor.js"></script>
 <script src="/games/_shared/koin.js"></script>
 <script src="/games/_shared/fx.js"></script>
 <script src="/games/_shared/ruang.js"></script>
@@ -195,6 +197,7 @@
   function showQuestion(L) {
     L.balloons.forEach(function (b) { b.el.remove(); }); L.balloons = [];
     var item = nextQ(L); L.cur = item; L.locked = false; L.shownAt = performance.now();
+    if (lanes.length === 1 && window.Suara) Suara.read(item.q);
     var qEl = L.el.querySelector('.q'); qEl.textContent = item.q; qEl.classList.toggle('long', item.q.length > 50);
     var n = item.o.length, W = L.sky.clientWidth, H = L.sky.clientHeight;
     var bw = Math.max(56, Math.min(150, W / n - 10, H * 0.32));
@@ -224,6 +227,7 @@
   }
 
   function answer(L, obj) {
+    if (window.Tutor) Tutor.done();
     if (!running || L.locked || finished) return;
     var ok = obj.k === L.cur.a, t = performance.now() - L.shownAt;
     if (L.cur.idx != null) { var qs = L.qstats[L.cur.idx] || (L.qstats[L.cur.idx] = [0, 0]); qs[ok ? 0 : 1]++; }
@@ -270,6 +274,7 @@
   function tickTimer() { var s = Math.floor((performance.now() - startAt) / 1000); $('timer').textContent = '⏱ ' + String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); }
 
   function start() {
+    if (window.Tutor) setTimeout(Tutor.hint, 3600);
     var names = roomMode ? [roomName || 'Kamu'] : [].map.call($('names').querySelectorAll('input'), function (inp, i) { return (inp.value || '').trim().replace(/[<>]/g, '') || ('Pemain ' + (i + 1)); });
     finished = false; running = false; cancelAnimationFrame(raf); clearInterval(timerId);
     var g = $('game'); g.innerHTML = ''; g.classList.remove('hidden');
@@ -341,6 +346,7 @@
       onEnd: function () { running = false; finished = true; cancelAnimationFrame(raf); clearInterval(timerId); }
     });
   }
+  if (window.Tutor) Tutor.init('balon', [{"sel": "#segPlayers", "text": "Pilih jumlah pemain. Untuk layar kelas, 2 sampai 4 anak bisa main bersamaan."}, {"sel": "#mg", "text": "Pilih jenis soal yang mau dilatih."}, {"sel": "#segTarget", "text": "Tentukan target berapa balon yang harus dipecahkan."}, {"sel": "#start", "text": "Tekan MULAI! Pecahkan balon berisi jawaban yang benar."}], { inGame: "Ketuk balon yang berisi jawaban benar sebelum terbang!" });
 })();
 </script>
 <script src="/games/_shared/twemoji.min.js"></script>

@@ -133,6 +133,8 @@
 <div id="result" class="hidden"></div>
 
 <script src="/games/_shared/sfx.js"></script>
+<script src="/games/_shared/suara.js"></script>
+<script src="/games/_shared/tutor.js"></script>
 <script src="/games/_shared/koin.js"></script>
 <script src="/games/_shared/fx.js"></script>
 <script>
@@ -255,6 +257,7 @@
   }
 
   function answer(L, k, btn) {
+    if (window.Tutor) Tutor.done();
     if (!running || L.locked || finished) return;
     L.locked = true;
     var item = L.cur.item, ok = k === item.a, t = performance.now() - L.shownAt;
@@ -283,6 +286,7 @@
   }
 
   function start() {
+    if (window.Tutor) setTimeout(Tutor.hint, 3200);
     var names = [].map.call($('names').querySelectorAll('input'), function (inp, i) { return (inp.value || '').trim().replace(/[<>]/g, '') || ('Pemain ' + (i + 1)); });
     finished = false; running = true;
     var race = $('race'); race.innerHTML = ''; race.classList.remove('hidden');
@@ -360,6 +364,7 @@
     // pintasan keyboard untuk uji di laptop: lajur 1 = 1-5, lajur 2 = 6-0 (opsional)
     if (!running) return;
   });
+  if (window.Tutor) Tutor.init('kupu-bersama', [{"sel": "#segPlayers", "text": "Pilih 2 sampai 4 pemain. Layar dibagi untuk setiap anak."}, {"sel": "#segTarget", "text": "Tentukan berapa kupu yang harus ditangkap untuk menang."}, {"sel": "#names", "text": "Tulis nama tiap pemain."}, {"sel": "#start", "text": "Tekan MULAI! Jawab benar untuk menangkap kupu."}], { inGame: "Tiap pemain menjawab di kolomnya sendiri. Jawab benar untuk menangkap kupu!" });
 })();
 </script>
 <script src="/games/_shared/twemoji.min.js"></script>

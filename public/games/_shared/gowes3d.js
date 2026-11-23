@@ -279,7 +279,7 @@ export function mount(sceneEl) {
     document.head.appendChild(st);
   }
   const dots = new Map();
-  const t0 = performance.now(), camPos = new THREE.Vector3(9, 6, -9), camLook = new THREE.Vector3(0, 1.2, 0);
+  const t0 = performance.now(), camPos = new THREE.Vector3(6, 5.5, -8), camLook = new THREE.Vector3(0, 1.2, 0);
   let lastCenter = 0; const center0 = () => lastCenter;
   const roadHalf = () => Math.max(worldLanes, 2) * LANE_W / 2 + 0.7;
   function frame(now) {
@@ -339,7 +339,8 @@ export function mount(sceneEl) {
       look = new THREE.Vector3(leadX, 1.9, leadVz);
     } else if (age < 4.2 && lead > -1) {                        // hitung mundur: isometrik depan-samping
       const a = age / 4.2;
-      want = new THREE.Vector3(9 - a * 4, 6 - a * 2.5, -9 + a * 4);
+      const rx = roadHalf() + 0.6;                                 // di atas trotoar, tidak menabrak rumah
+      want = new THREE.Vector3(rx - a * 1.5, 5.5 - a * 2, -8 + a * 3.5);
       look = new THREE.Vector3(0, 1.2, 0);
     } else {
       const shot = Math.floor((age - 4.2) / 7) % 4;             // 0 belakang, 1 samping, 2 belakang, 3 depan rendah
@@ -348,6 +349,8 @@ export function mount(sceneEl) {
       else if (shot === 3) { want = new THREE.Vector3(focX * 0.6 + 1.2, 1.6, focVz - 7.5); look = new THREE.Vector3(focX * 0.5, 1.6, focVz + 2); }
       else { want = new THREE.Vector3(0, (many ? 3.6 : 2.9) + spread * 0.15, center + spread / 2 + dist); look = new THREE.Vector3(0, 1.7, center - 12); }
     }
+    // saat berpindah sudut melintasi rombongan, kamera naik agar tidak menembus pesepeda
+    if (!finishAt && Math.abs(camPos.z - center) < 5 && Math.abs(want.z - camPos.z) > 3) want.y = Math.max(want.y, 6.5);
     camPos.lerp(want, Math.min(1, realDt * (finishAt ? 3 : 2.6)));
     cam.fov += ((boosting && !finishAt ? 72 : 60) - cam.fov) * Math.min(1, realDt * 4); cam.updateProjectionMatrix();
     camLook.lerp(look, Math.min(1, realDt * 4));

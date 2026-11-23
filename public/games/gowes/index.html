@@ -195,6 +195,8 @@
 
 <script src="/games/_shared/mathgen.js"></script>
 <script src="/games/_shared/sfx.js"></script>
+<script src="/games/_shared/suara.js"></script>
+<script src="/games/_shared/tutor.js"></script>
 <script src="/games/_shared/koin.js"></script>
 <script src="/games/_shared/fx.js"></script>
 <script src="/games/_shared/ruang.js"></script>
@@ -343,6 +345,7 @@
 
   function showQuestion(P) {
     var item = nextQ(P); P.cur = item; P.shownAt = performance.now(); P.locked = false;
+    if (players.length === 1 && window.Suara) Suara.read(item.q);
     var qEl = P.el.querySelector('.q'); qEl.textContent = item.q; qEl.classList.toggle('long', item.q.length > 40);
     var box = P.el.querySelector('.opts'); box.innerHTML = '';
     box.className = 'opts' + (item.o.length === 5 ? ' five' : '') + (item.math ? '' : ' text');
@@ -354,6 +357,7 @@
   }
 
   function answer(P, k, btn) {
+    if (window.Tutor) Tutor.done();
     if (!running || P.locked || finished) return;
     P.locked = true;
     var item = P.cur, ok = k === item.a, t = performance.now() - P.shownAt;
@@ -413,6 +417,7 @@
   }
 
   function start() {
+    if (window.Tutor) setTimeout(Tutor.hint, 3200);
     var names = roomMode ? [roomName || 'Kamu'] : [].map.call($('names').querySelectorAll('input'), function (inp, i) { return (inp.value || '').trim().replace(/[<>]/g, '') || ('Pemain ' + (i + 1)); });
     finished = false; running = false; clearTimeout(botId);
     var g = $('game'); g.innerHTML = ''; g.classList.remove('hidden');
@@ -523,6 +528,7 @@
     var k = '12345'.indexOf(e.key); if (k < 0) return;
     var b = players[0].el.querySelectorAll('.opt')[k]; if (b) answer(players[0], k, b);
   });
+  if (window.Tutor) Tutor.init('gowes', [{"sel": "#segPlayers", "text": "Pilih jumlah pemain: 1 lawan robot, atau 2–4 teman di satu layar kelas."}, {"sel": "#mg", "text": "Pilih jenis soal matematikanya, misalnya Tambah atau Perkalian."}, {"sel": "#segLevel", "text": "Atur tingkat kesulitan: Mudah, Sedang, atau Sulit."}, {"sel": ".chbtn", "text": "Ketuk tombol baju untuk membuat karakter anak sekolahmu."}, {"sel": "#start", "text": "Tekan GOWES! Jawab benar untuk mengayuh sampai ke sekolah."}], { inGame: "Ketuk jawaban yang benar untuk mengayuh sepedamu!" });
 })();
 </script>
 <script src="/games/_shared/twemoji.min.js"></script>
