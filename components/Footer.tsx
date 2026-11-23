@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Icon from "./Icon";
 import { CONTACT_WA, CONTACT_TIKTOK, DONASI_URL } from "@/lib/constants";
+import WaGroupButton from "./WaGroupButton";
 
 export default function Footer() {
   return (
@@ -19,7 +20,8 @@ export default function Footer() {
         <div>
           <h3 className="font-display font-bold text-nb-yellow mb-2">Jelajahi</h3>
           <ul className="space-y-1.5 text-sm font-semibold text-white/85">
-            <li><Link href="/catalog" className="hover:text-nb-yellow">Katalog Media</Link></li>
+            <li><Link href="/catalog" className="hover:text-nb-yellow">Karya Guru</Link></li>
+            <li><Link href="/kontributor" className="hover:text-nb-yellow">Kontributor</Link></li>
             <li><Link href="/game" className="hover:text-nb-yellow">Game</Link></li>
             <li><Link href="/main" className="hover:text-nb-yellow">Masuk Kelas</Link></li>
             <li><Link href="/guru" className="hover:text-nb-yellow">Ruang Guru</Link></li>
@@ -39,6 +41,7 @@ export default function Footer() {
               <Icon name="whatsapp" /> WhatsApp
             </a>
           </div>
+          <WaGroupButton className="mt-3 mr-2" />
           {DONASI_URL && (
             <a href={DONASI_URL} target="_blank" rel="noopener noreferrer"
               className="mt-3 inline-flex items-center gap-2 rounded-xl bg-nb-yellow text-nb-ink font-extrabold text-sm px-3 py-2 border-2 border-white shadow-[3px_3px_0_#ff5d8f]">

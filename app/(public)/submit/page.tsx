@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import SubmitForm from "@/components/SubmitForm";
+import WaGroupButton from "@/components/WaGroupButton";
 
 export const metadata: Metadata = {
   title: "Kirim Karya",
@@ -19,6 +20,14 @@ export default function SubmitPage() {
         </p>
 
         <SubmitForm />
+
+        <div className="max-w-[800px] mx-auto mt-6 text-center space-y-3">
+          <p className="text-xs text-slate-600 dark:text-slate-400">
+            Karya tetap milik pembuatnya. Main-yuk hanya menautkan dan memamerkannya, dan berhak menolak atau menghapus karya yang tidak sesuai.
+            Karya terbaik bisa dipilih sebagai <b>Pilihan Main-yuk</b> di beranda, dengan nama pembuat tetap dicantumkan.
+          </p>
+          <WaGroupButton />
+        </div>
       </div>
     </div>
   );

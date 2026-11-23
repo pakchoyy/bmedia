@@ -26,6 +26,11 @@ export default function GameCard({ media, categoryColor }: { media: Media; categ
           <span aria-hidden="true" className="w-2 h-2 rounded-full border border-nb-ink" style={{ backgroundColor: categoryColor || "#16a34a" }} />
           {media.category}
         </div>
+        {media.featured && (
+          <div className="absolute top-2 right-2 z-10 nb-flat rounded-full bg-nb-yellow text-nb-ink px-2 py-0.5 text-[10px] sm:text-[11px] font-extrabold inline-flex items-center gap-1">
+            <Icon name="star" className="text-[10px]" /> Pilihan
+          </div>
+        )}
         <MediaThumb media={media} className="transition-transform duration-500 group-hover:scale-105" />
       </div>
 
@@ -48,7 +53,7 @@ export default function GameCard({ media, categoryColor }: { media: Media; categ
 
         <div className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 mt-auto truncate">
           <Icon name="user-tie" className="mr-1 text-nb-orange" />
-          {media.guru_name}
+          <span className="font-normal opacity-70">Karya </span>{media.guru_name}
         </div>
         <div className="hidden sm:flex justify-between items-center gap-2 mt-1 text-[11px] text-slate-500 dark:text-slate-400">
           <span className="truncate">
