@@ -43,6 +43,9 @@ export default function GameCard({ media, categoryColor }: { media: Media; categ
           <span className="nb-flat rounded-md bg-nb-yellow/40 px-1.5 py-0.5 text-[10px] sm:text-[11px] font-bold text-nb-ink dark:text-slate-100">
             {media.mapel}
           </span>
+          <span className="nb-flat rounded-md bg-nb-lilac/35 px-1.5 py-0.5 text-[10px] sm:text-[11px] font-bold text-nb-ink dark:text-slate-100">
+            {media.jenjang}
+          </span>
           <span className="hidden sm:inline nb-flat rounded-md bg-nb-blue/15 px-1.5 py-0.5 text-[11px] font-bold text-nb-ink dark:text-slate-100">
             {media.kelas}
           </span>
@@ -67,7 +70,7 @@ export default function GameCard({ media, categoryColor }: { media: Media; categ
         </div>
 
         <div className="nb-sm mt-3 py-1.5 sm:py-2 rounded-xl bg-nb-orange text-nb-ink font-extrabold text-xs sm:text-sm text-center group-hover:bg-nb-ink group-hover:text-white transition-colors">
-          Buka Media →
+          ▶ Main
         </div>
       </div>
     </Link>

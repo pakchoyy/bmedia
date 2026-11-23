@@ -1,136 +1,130 @@
 import Link from "next/link";
-import { getApprovedMedia, getFeaturedMedia, getSiteStats } from "@/lib/queries";
+import { getHomeKarya, getKontributor, getSiteStats, getTrendingMedia } from "@/lib/queries";
 import GameCard from "@/components/GameCard";
+import GameTile from "@/components/GameTile";
+import WebLuarCard from "@/components/WebLuarCard";
+import WaGroupButton from "@/components/WaGroupButton";
 import Icon from "@/components/Icon";
-import HomeMediaSection from "@/components/HomeMediaSection";
-import CTABuatGame from "@/components/CTABuatGame";
-import CTAKirimKarya from "@/components/CTAKirimKarya";
-import Stats from "@/components/Stats";
-import GameShowcase from "@/components/GameShowcase";
-import HomeCategories from "@/components/HomeCategories";
 import { MAIN_GAMES } from "@/lib/games";
+import { getWebLinks } from "@/lib/links";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export default async function HomePage() {
-  const [media, stats, featured] = await Promise.all([
-    getApprovedMedia(),
-    getSiteStats(),
-    getFeaturedMedia(8),
-  ]);
-
-  const sortedMedia = [...media].sort(
-    (a, b) => new Date(b.submitted_at).getTime() - new Date(a.submitted_at).getTime()
+function SectionHead({ id, title, mark, desc, href, linkText }: { id: string; title: string; mark: string; desc: string; href?: string; linkText?: string }) {
+  return (
+    <div className="flex flex-wrap items-end justify-between gap-3 mb-5">
+      <div>
+        <h2 id={id} className="font-display font-bold text-2xl sm:text-3xl text-nb-ink dark:text-white">
+          {title} <span className="nb-mark">{mark}</span>
+        </h2>
+        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">{desc}</p>
+      </div>
+      {href && (
+        <Link href={href} className="nb-sm nb-hover nb-press bg-white dark:bg-slate-900 rounded-xl px-4 py-2 text-sm font-extrabold text-nb-ink dark:text-white inline-flex items-center gap-1.5">
+          {linkText} <span aria-hidden="true">→</span>
+        </Link>
+      )}
+    </div>
   );
+}
+
+export default async function HomePage() {
+  const [karya, kontributor, stats, links, populer] = await Promise.all([getHomeKarya(8), getKontributor(), getSiteStats(), getWebLinks(), getTrendingMedia(4)]);
 
   return (
     <div className="fade-in">
-      {/* Hero — neo-brutalism */}
+      {/* Hero ringkas */}
       <section className="relative overflow-hidden bg-nb-cream dark:bg-[#1d1a3d] border-b-[3px] border-nb-ink dark:border-[var(--nb-ink)]">
-        {/* Hiasan bentuk */}
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-10 -left-10 w-40 h-40 rounded-full bg-nb-yellow/60 dark:bg-nb-yellow/20" />
-          <div className="absolute bottom-6 left-[42%] w-10 h-10 rotate-12 bg-nb-pink nb-sm max-lg:hidden" />
-          <div className="absolute top-10 right-8 w-24 h-24 rounded-full bg-nb-blue/20" />
-        </div>
-
-        <div className="relative container mx-auto max-w-[1200px] px-5 py-8 sm:py-12 grid gap-8 lg:grid-cols-[1.05fr_1fr] items-center">
-          <div className="max-lg:text-center">
-            <span className="inline-block bg-white dark:bg-slate-900 nb-sm rounded-full px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-nb-ink dark:text-slate-100">
-              <Icon name="school" className="mr-1.5 inline -mt-0.5" />Game &amp; Media Belajar · SD – SMA
-            </span>
-
-            <h1 className="font-display font-bold text-nb-ink dark:text-white text-[2.1rem] leading-[1.1] sm:text-5xl mt-4">
-              Belajar Jadi <span className="nb-mark">Seru</span>
-              <br className="max-sm:hidden" /> Bareng <span className="text-nb-blue">Guru Indonesia</span>
-              <span className="nb-cursor text-nb-blue">_</span>
-            </h1>
-
-            <p className="mt-3 text-[15px] sm:text-base text-slate-700 dark:text-slate-300 max-w-[480px] max-lg:mx-auto">
-              Ratusan game, kuis, dan lab maya <b>karya guru</b>. Gratis dipakai di kelas, bisa main pakai kode dari guru.
-            </p>
-
-            <div className="mt-5 flex flex-wrap gap-3 max-lg:justify-center">
-              <a href="#media" className="nb nb-hover nb-press bg-nb-orange text-nb-ink font-extrabold rounded-xl px-5 py-3 inline-flex items-center gap-2">
-                <Icon name="compass" /> Jelajahi Media
-              </a>
-              <Link href="/main" className="nb nb-hover nb-press bg-nb-yellow text-nb-ink font-extrabold rounded-xl px-5 py-3 inline-flex items-center gap-2">
-                <Icon name="gamepad" /> Masuk Kelas
-              </Link>
-              <Link href="/submit" className="nb-sm nb-hover nb-press bg-white dark:bg-slate-900 text-nb-ink dark:text-white font-bold rounded-xl px-4 py-3 inline-flex items-center gap-2">
-                <Icon name="plus" /> Kirim Karya
-              </Link>
-            </div>
-
-            <div className="mt-5 flex flex-wrap gap-2 max-lg:justify-center text-xs font-bold">
-              <span className="nb-flat rounded-full bg-nb-mint/25 px-2.5 py-1 text-nb-ink dark:text-white">✓ Gratis</span>
-              <span className="nb-flat rounded-full bg-nb-lilac/30 px-2.5 py-1 text-nb-ink dark:text-white">✓ Karya Guru Indonesia</span>
-              <span className="nb-flat rounded-full bg-nb-pink/25 px-2.5 py-1 text-nb-ink dark:text-white">✓ Interaktif</span>
-            </div>
+        <div aria-hidden="true" className="pointer-events-none absolute -top-10 -left-10 w-40 h-40 rounded-full bg-nb-yellow/60 dark:bg-nb-yellow/20" />
+        <div className="relative container mx-auto max-w-[1200px] px-5 py-8 sm:py-10 text-center">
+          <h1 className="font-display font-bold text-nb-ink dark:text-white text-[2rem] leading-[1.1] sm:text-5xl">
+            Belajar Jadi <span className="nb-mark">Seru</span> di <span className="text-nb-orange">Main-yuk</span>
+          </h1>
+          <p className="mt-3 text-[15px] sm:text-base text-slate-700 dark:text-slate-300 max-w-[560px] mx-auto">
+            Kumpulan game edukasi untuk SD–SMA. Soalnya bisa dibuat guru sendiri dan dimainkan bareng di kelas.
+          </p>
+          <div className="mt-5 flex flex-wrap gap-3 justify-center">
+            <a href="#game" className="nb nb-hover nb-press bg-nb-orange text-nb-ink font-extrabold rounded-xl px-5 py-3 inline-flex items-center gap-2">
+              <Icon name="play" /> Main Sekarang
+            </a>
+            <Link href="/main" className="nb nb-hover nb-press bg-nb-yellow text-nb-ink font-extrabold rounded-xl px-5 py-3 inline-flex items-center gap-2">
+              <Icon name="school" /> Masuk Kelas
+            </Link>
           </div>
-
-          {/* Jendela ilustrasi */}
-          <div className="relative max-w-[520px] w-full mx-auto">
-            <div className="nb rounded-2xl bg-white dark:bg-slate-900 overflow-hidden">
-              <div className="flex items-center gap-1.5 px-3 py-2 border-b-[3px] border-nb-ink dark:border-[var(--nb-ink)] bg-nb-yellow">
-                <span className="w-3 h-3 rounded-full bg-nb-pink border-2 border-nb-ink" />
-                <span className="w-3 h-3 rounded-full bg-nb-orange border-2 border-nb-ink" />
-                <span className="w-3 h-3 rounded-full bg-nb-mint border-2 border-nb-ink" />
-                <span className="ml-auto text-[10px] font-extrabold uppercase tracking-wider text-nb-ink">main-yuk</span>
-              </div>
-              <img src="/hero-banner.webp" alt="Ilustrasi media belajar interaktif bersama guru" className="w-full h-auto block" />
-            </div>
-            <div className="nb-sm nb-float absolute -left-3 -top-4 sm:-left-6 bg-nb-mint text-nb-ink rounded-xl px-3 py-1.5 text-xs font-extrabold" style={{ ["--r" as string]: "-8deg" }}>
-              <Icon name="gamepad" className="mr-1 inline -mt-0.5" />Game Edukasi
-            </div>
-            <div className="nb-sm nb-float absolute -right-2 -bottom-4 sm:-right-5 bg-nb-pink text-nb-ink rounded-xl px-3 py-1.5 text-xs font-extrabold" style={{ ["--r" as string]: "6deg", animationDelay: "1.2s" }}>
-              <Icon name="flask" className="mr-1 inline -mt-0.5" />Lab Maya
-            </div>
-          </div>
+          <nav aria-label="Bagian beranda" className="mt-6 flex flex-wrap justify-center gap-2 text-sm font-extrabold">
+            <a href="#game" className="nb-flat rounded-full bg-white dark:bg-slate-900 px-3 py-1.5 text-nb-ink dark:text-white">🎮 Karya Main-yuk · {MAIN_GAMES.length}</a>
+            <a href="#karya" className="nb-flat rounded-full bg-white dark:bg-slate-900 px-3 py-1.5 text-nb-ink dark:text-white">🧑‍🏫 Karya Kontributor · {stats.totalMedia}</a>
+            <a href="#web" className="nb-flat rounded-full bg-white dark:bg-slate-900 px-3 py-1.5 text-nb-ink dark:text-white">🌐 Web Belajar Lain · {links.length}</a>
+          </nav>
         </div>
       </section>
 
-      {/* Kategori */}
-      <HomeCategories />
-
-      {/* Game unggulan */}
-      <section className="px-4 pt-8">
+      {/* 1. Game Main-yuk */}
+      <section id="game" className="px-4 pt-10 scroll-mt-20" aria-labelledby="game-judul">
         <div className="container mx-auto max-w-[1200px]">
-          <GameShowcase game={MAIN_GAMES[0]} compact />
+          <SectionHead id="game-judul" title="Karya" mark="Main-yuk" desc="Game buatan Main-yuk. Bisa pakai soal sendiri dan dimainkan 1–4 pemain di IFP." href="/game" linkText="Semua game" />
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {MAIN_GAMES.map((g) => <GameTile key={g.slug} game={g} />)}
+            <Link href="/guru" className="nb-sm nb-hover rounded-2xl border-dashed bg-nb-cream/60 dark:bg-slate-900/60 p-6 flex flex-col items-center justify-center text-center gap-2 min-h-[220px]">
+              <Icon name="chalkboard-user" className="text-3xl text-nb-ink dark:text-white" />
+              <span className="font-display font-bold text-lg text-nb-ink dark:text-white">Guru? Buat soalmu sendiri</span>
+              <span className="text-sm text-slate-600 dark:text-slate-400">Daftar akun guru, ketik atau impor soal dari Word, lalu bagikan kode ke murid.</span>
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* Pilihan Main-yuk: karya kontributor yang diunggulkan admin */}
-      {featured.length > 0 && (
-        <section className="px-4 pt-8" aria-labelledby="pilihan-judul">
+      {/* 2. Karya Kontributor */}
+      <section id="karya" className="px-4 pt-12 scroll-mt-20" aria-labelledby="karya-judul">
+        <div className="container mx-auto max-w-[1200px]">
+          <SectionHead id="karya-judul" title="Karya" mark="Kontributor" desc="Media buatan guru Indonesia. Bertanda ★ = Pilihan Main-yuk. Hak cipta milik pembuatnya." href="/catalog" linkText={`Lihat semua (${stats.totalMedia})`} />
+          <div className="grid gap-4 sm:gap-5 grid-cols-2 lg:grid-cols-4">
+            {karya.map((m) => <GameCard key={m.id} media={m} />)}
+          </div>
+        </div>
+      </section>
+
+      {/* Terpopuler */}
+      {populer.length > 0 && (
+        <section className="px-4 pt-12" aria-labelledby="populer-judul">
           <div className="container mx-auto max-w-[1200px]">
-            <div className="text-center mb-5">
-              <h2 id="pilihan-judul" className="font-display font-bold text-2xl sm:text-3xl text-nb-ink dark:text-white">
-                Pilihan <span className="nb-mark">Main-yuk</span>
-              </h2>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">Karya guru yang dipilih Pak Choy. Hak cipta tetap milik pembuatnya.</p>
-            </div>
+            <SectionHead id="populer-judul" title="Paling Sering" mark="Dimainkan" desc="Karya kontributor yang paling banyak dibuka." />
             <div className="grid gap-4 sm:gap-5 grid-cols-2 lg:grid-cols-4">
-              {featured.map((m) => <GameCard key={m.id} media={m} />)}
+              {populer.map((m) => <GameCard key={m.id} media={m} />)}
             </div>
           </div>
         </section>
       )}
 
-      {/* Search + Filter + Media Grid — all-in-one */}
-      <div id="media">
-        <HomeMediaSection media={sortedMedia} />
-      </div>
+      {/* 3. Web Belajar Lain */}
+      <section id="web" className="px-4 pt-12 scroll-mt-20" aria-labelledby="web-judul">
+        <div className="container mx-auto max-w-[1200px]">
+          <SectionHead id="web-judul" title="Web Belajar" mark="Lain" desc="Rekomendasi web belajar pihak ketiga. Dibuka di tab baru." href="/web-belajar" linkText="Semua web" />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {links.slice(0, 3).map((w, i) => <WebLuarCard key={w.id} w={w} i={i} />)}
+          </div>
+        </div>
+      </section>
 
-      {/* Stats */}
-      <Stats stats={stats} />
-
-      {/* CTA */}
-      <section className="py-4 px-6">
-        <div className="container mx-auto max-w-[1200px] grid gap-4 lg:grid-cols-2">
-          <CTABuatGame />
-          <CTAKirimKarya />
+      {/* Kontributor + ajakan */}
+      <section className="px-4 py-12" aria-labelledby="kontrib-judul">
+        <div className="container mx-auto max-w-[1200px] nb rounded-2xl bg-nb-lilac/25 dark:bg-slate-900 p-6 sm:p-8 grid gap-6 lg:grid-cols-[1fr_auto] items-center">
+          <div>
+            <h2 id="kontrib-judul" className="font-display font-bold text-2xl text-nb-ink dark:text-white">Terima kasih, {kontributor.length} guru kontributor!</h2>
+            <ul className="mt-3 flex flex-wrap gap-2">
+              {kontributor.slice(0, 10).map((k) => (
+                <li key={k.name}><Link href={`/catalog?q=${encodeURIComponent(k.name)}`} className="nb-flat rounded-full bg-white dark:bg-slate-800 px-3 py-1 text-sm font-bold text-nb-ink dark:text-white inline-block">{k.name}</Link></li>
+              ))}
+              {kontributor.length > 10 && <li><Link href="/kontributor" className="rounded-full px-3 py-1 text-sm font-extrabold underline text-nb-ink dark:text-white inline-block">+{kontributor.length - 10} lainnya</Link></li>}
+            </ul>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
+            <Link href="/submit" className="nb nb-hover nb-press bg-nb-orange text-nb-ink font-extrabold rounded-xl px-5 py-3 inline-flex items-center justify-center gap-2">
+              <Icon name="plus" /> Kirim Karyamu
+            </Link>
+            <WaGroupButton className="justify-center" />
+          </div>
         </div>
       </section>
     </div>

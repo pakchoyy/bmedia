@@ -173,3 +173,42 @@ export async function changePassword(current: string, next: string): Promise<Act
   await sql`DELETE FROM admin_devices WHERE admin_id = ${session.adminId}`;
   return { ok: true };
 }
+
+// ---------- Web Belajar Lain (tautan pihak ketiga) ----------
+export async function addWebLink(input: { name: string; url: string; description: string; mapel: string }): Promise<ActionResult> {
+  const denied = await guard(); if (denied) return denied;
+  const name = (input.name || "").trim().slice(0, 60);
+  const url = normalizeUrl((input.url || "").trim()) ?? "";
+  const description = (input.description || "").trim().slice(0, 240);
+  const mapel = (input.mapel || "").trim().slice(0, 40) || "Umum";
+  if (!name) return { ok: false, error: "Nama web wajib diisi." };
+  if (!url || !/^https:\/\//i.test(url)) return { ok: false, error: "Link harus diawali https://" };
+  try {
+    await sql`INSERT INTO web_links (name, url, description, mapel, sort)
+      VALUES (${name}, ${url}, ${description}, ${mapel}, (SELECT COALESCE(MAX(sort), 0) + 1 FROM web_links))`;
+    revalidatePath("/"); revalidatePath("/web-belajar"); revalidatePath("/admin/web-belajar");
+    return { ok: true };
+  } catch (e: unknown) { return { ok: false, error: String(e) }; }
+}
+
+export async function deleteWebLink(id: string): Promise<ActionResult> {
+  const denied = await guard(); if (denied) return denied;
+  try {
+    await sql`DELETE FROM web_links WHERE id = ${id}`;
+    revalidatePath("/"); revalidatePath("/web-belajar"); revalidatePath("/admin/web-belajar");
+    return { ok: true };
+  } catch (e: unknown) { return { ok: false, error: String(e) }; }
+}
+
+export async function moveWebLink(id: string, dir: -1 | 1): Promise<ActionResult> {
+  const denied = await guard(); if (denied) return denied;
+  try {
+    const rows = (await sql`SELECT id, sort FROM web_links ORDER BY sort, created_at`) as { id: string; sort: number }[];
+    const i = rows.findIndex((r) => r.id === id), j = i + dir;
+    if (i < 0 || j < 0 || j >= rows.length) return { ok: true };
+    [rows[i], rows[j]] = [rows[j], rows[i]];
+    for (let k = 0; k < rows.length; k++) await sql`UPDATE web_links SET sort = ${k + 1} WHERE id = ${rows[k].id}`;
+    revalidatePath("/"); revalidatePath("/web-belajar"); revalidatePath("/admin/web-belajar");
+    return { ok: true };
+  } catch (e: unknown) { return { ok: false, error: String(e) }; }
+}

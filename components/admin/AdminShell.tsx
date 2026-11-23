@@ -14,17 +14,17 @@ export default function AdminShell({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-pagebg">
+    <div className="admin-nb min-h-screen bg-nb-cream dark:bg-[#1d1a3d]">
       {open && (
         <div
-          className="fixed inset-0 bg-black/40 z-40 lg:hidden"
+          className="fixed inset-0 bg-nb-ink/50 z-40 lg:hidden"
           onClick={() => setOpen(false)}
           aria-hidden="true"
         />
       )}
 
       <div
-        className={`fixed inset-y-0 left-0 z-50 w-64 shadow-lg transform transition-transform duration-300 lg:translate-x-0 lg:shadow-none ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 lg:translate-x-0 lg:shadow-none ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >

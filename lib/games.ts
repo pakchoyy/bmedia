@@ -30,6 +30,14 @@ export const GAMES: GameInfo[] = [
     preview: "/games/kupu-bersama/preview.webp",
     modes: ["2–4 Pemain", "Satu Layar", "Cocok untuk IFP"],
   },
+  {
+    slug: "gowes",
+    title: "Gowes ke Sekolah",
+    src: "/games/gowes/index.html",
+    tagline: "Balap sepeda ke sekolah! Jawab soal matematika dengan benar untuk mengayuh. 1 lawan robot atau 2–4 pemain satu layar.",
+    preview: "/games/gowes/preview.jpg",
+    modes: ["Matematika Otomatis", "Soal Guru", "1 vs Robot", "2–4 Pemain (IFP)"],
+  },
 ];
 
 /** Game yang tampil sebagai kartu (tanpa varian/mode) */

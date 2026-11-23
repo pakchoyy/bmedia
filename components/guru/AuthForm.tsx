@@ -87,7 +87,7 @@ export default function AuthForm({ mode }: { mode: "daftar" | "masuk" }) {
       <p className="text-center text-sm text-gray-500 mt-6">
         {daftar ? "Sudah punya akun? " : "Belum punya akun? "}
         <Link href={daftar ? "/guru/masuk" : "/guru/daftar"} className="font-semibold text-nb-orange hover:underline">
-          {daftar ? "Masuk" : "Daftar gratis"}
+          {daftar ? "Masuk" : "Daftar akun"}
         </Link>
       </p>
     </div>

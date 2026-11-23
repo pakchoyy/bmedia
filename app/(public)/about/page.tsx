@@ -23,8 +23,8 @@ const values = [
   },
   {
     icon: "book-open",
-    title: "Gratis & Terbuka",
-    desc: "Media yang tersedia dapat digunakan secara gratis untuk mendukung kegiatan pembelajaran.",
+    title: "Terbuka untuk Semua Guru",
+    desc: "Media yang tersedia dapat dipakai untuk mendukung kegiatan pembelajaran di kelas.",
   },
 ];
 
