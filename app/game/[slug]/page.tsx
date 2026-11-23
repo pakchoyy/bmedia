@@ -17,7 +17,7 @@ export default function GamePage({
   searchParams,
 }: {
   params: { slug: string };
-  searchParams: { set?: string; room?: string; pid?: string; tok?: string };
+  searchParams: { set?: string; room?: string; pid?: string; tok?: string; tutor?: string };
 }) {
   const game = getGame(params.slug);
   if (!game) notFound();
@@ -34,6 +34,7 @@ export default function GamePage({
     q.set("pid", pid);
     q.set("tok", tok);
   }
+  if (searchParams.tutor === "1") q.set("tutor", "1");
   // Versi build: memaksa browser memuat file game terbaru setelah setiap deploy
   q.set("v", (process.env.VERCEL_GIT_COMMIT_SHA || "dev").slice(0, 7));
   const qs = q.toString();

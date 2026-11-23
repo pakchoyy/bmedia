@@ -116,6 +116,8 @@
 </div>
 
 <script src="/games/_shared/sfx.js"></script>
+<script src="/games/_shared/suara.js"></script>
+<script src="/games/_shared/tutor.js"></script>
 <script src="/games/_shared/koin.js"></script>
 <script src="/games/_shared/fx.js"></script>
 <script>
@@ -181,6 +183,7 @@
     cur = queue.pop(); num++; picked = []; hintUsed = 0;
     $('count').textContent = '#' + num;
     $('clue').textContent = cur.clue;
+    if (window.Suara) Suara.read(cur.clue);
     $('clueLbl').textContent = setQ ? 'Soal' : 'Petunjuk · ' + cur.w.replace(/[^a-z0-9]/g, '').length + ' huruf';
     var letters = cur.w.split('').filter(function (c) { return c !== ' ' && c !== '-'; });
     var mixed;
@@ -227,6 +230,7 @@
   function toast(t) { var e = document.createElement('div'); e.className = 'toast'; e.textContent = t; document.body.appendChild(e); setTimeout(function () { e.remove(); }, 1000); }
 
   function check() {
+    if (window.Tutor) Tutor.done();
     var guess = picked.map(function (i) { return tiles[i].c; }).join('');
     var ans = cur.w.replace(/[ \-]/g, '');
     var ok = guess === ans;
@@ -271,6 +275,7 @@
   }
 
   function start() {
+    if (window.Tutor) setTimeout(Tutor.hint, 400);
     if (setQ) { var nm = ($('name').value || '').trim().replace(/\s+/g, ' ').slice(0, 30); if (!nm) { $('name').focus(); $('name').placeholder = 'Tulis namamu dulu ya'; return; } try { localStorage.setItem('bgy_name', nm); } catch (e) {} }
     queue = buildQueue(); score = 0; right = 0; skipped = 0; num = 0; history = []; qstats = {};
     $('score').textContent = '0';
@@ -322,6 +327,7 @@
     var ch = (e.key || '').toLowerCase(); if (ch.length !== 1) return;
     var i = tiles.findIndex(function (t) { return !t.used && t.c === ch; }); if (i >= 0) pick(i);
   });
+  if (window.Tutor) Tutor.init('susun-kata', [{"sel": "#segTema", "text": "Pilih tema kata: Hewan, Buah, Sekolah, IPA, atau acak."}, {"sel": "#segTime", "text": "Pilih waktu bermain, atau Santai tanpa batas waktu."}, {"sel": "#start", "text": "Tekan MULAI! Susun huruf yang teracak menjadi kata."}], { inGame: "Ketuk huruf sesuai urutan. Buntu? Tekan Bantuan." });
 })();
 </script>
 <script src="/games/_shared/twemoji.min.js"></script>

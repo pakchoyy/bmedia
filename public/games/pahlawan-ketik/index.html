@@ -108,6 +108,8 @@
 
 <script src="/games/_shared/mathgen.js"></script>
 <script src="/games/_shared/sfx.js"></script>
+<script src="/games/_shared/suara.js"></script>
+<script src="/games/_shared/tutor.js"></script>
 <script src="/games/_shared/koin.js"></script>
 <script src="/games/_shared/fx.js"></script>
 <script>
@@ -211,6 +213,7 @@
 
   // ---------- input ----------
   function key(ch) {
+    if (window.Tutor && typed > 2) Tutor.done();
     if (!running || waveBreak > 0) return;
     ch = ch.toLowerCase();
     if (!target) {
@@ -353,6 +356,7 @@
   }
 
   function start() {
+    if (window.Tutor) setTimeout(Tutor.hint, 1500);
     if (setQ) { var nm = ($('name').value || '').trim().slice(0, 30); if (!nm) { $('name').focus(); $('name').placeholder = 'Tulis namamu dulu ya'; return; } try { localStorage.setItem('bgy_name', nm); } catch (e) {} }
     try { localStorage.setItem('pk_mode', mode); localStorage.setItem('pk_level', level); } catch (e) {}
     enemies = []; bullets = []; parts = []; target = null; score = 0; lives = 3; combo = 0; wave = 1; typed = 0; wrong = 0; words = 0; miss = {}; qstats = {}; bag = []; waveBreak = 0; shake = 0;
@@ -393,6 +397,7 @@
   $('bExit').addEventListener('click', function () { if (confirm('Selesai bermain?')) end(false); });
   $('bMute').addEventListener('click', function () { try { localStorage.setItem('bgy_muted', Sfx.muted() ? '0' : '1'); } catch (e) {} this.textContent = Sfx.muted() ? '🔇' : '🔊'; Sfx.music(!Sfx.muted() && running); inp.focus(); });
   document.addEventListener('visibilitychange', function () { last = 0; });
+  if (window.Tutor) Tutor.init('pahlawan-ketik', [{"sel": "#segMode", "text": "Pilih isi: Kata, Istilah IPA, atau soal Hitung."}, {"sel": "#segLevel", "text": "Atur tingkat kesulitan katanya."}, {"sel": "#start", "text": "Tekan MULAI! Ketik kata di bawah monster untuk menembaknya."}], { inGame: "Ketik kata di bawah monster. Huruf pertama mengunci sasaranmu!" });
 })();
 </script>
 <script src="/games/_shared/twemoji.min.js"></script>
