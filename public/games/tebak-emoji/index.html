@@ -95,6 +95,7 @@
 </div>
 
 <script src="/games/_shared/sfx.js"></script>
+<script src="/games/_shared/koin.js"></script>
 <script src="/games/_shared/fx.js"></script>
 <script>
 (function () {
@@ -189,6 +190,7 @@
   }
 
   function end() {
+    if (window.Koin) Koin.add((score + teamScore[0] + teamScore[1]) / 20, 'Tebak Emoji');
     clearInterval(timerId); $('game').classList.add('hidden');
     var right = history.filter(function (h) { return h.ok; }).length;
     var tm = $('teams');

@@ -117,6 +117,7 @@
 
 <script src="/games/_shared/mathgen.js"></script>
 <script src="/games/_shared/sfx.js"></script>
+<script src="/games/_shared/koin.js"></script>
 <script src="/games/_shared/fx.js"></script>
 <script src="/games/_shared/ruang.js"></script>
 <script>
@@ -300,6 +301,7 @@
   }
 
   function showResult(w, dur) {
+    if (window.Koin) Koin.add(Math.max.apply(null, lanes.map(function (L) { return L.score || 0; })) / 25, 'Balon');
     var order = lanes.slice().sort(function (a, b) { if (a === w) return -1; if (b === w) return 1; return b.popped - a.popped || a.lastAt - b.lastAt; });
     var res = $('result'); res.classList.remove('hidden');
     res.innerHTML = '<div class="card nb"><h1></h1><div class="sub">Waktu ' + dur + ' detik · target ' + target + ' balon</div><div class="rank"></div><div id="saved"></div>' +
