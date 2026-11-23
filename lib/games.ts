@@ -13,6 +13,10 @@ export interface GameInfo {
   portraitOk?: boolean;
   /** Game tidak memakai set soal guru (tidak muncul di editor soal) */
   noSet?: boolean;
+  /** Bawaan badge & halaman info (bisa diubah admin di Tampilan & Cover) */
+  mapel: string;
+  fase: string;
+  caraMain: string[];
 }
 
 /** Game yang bisa memakai set soal guru */
@@ -26,6 +30,9 @@ export const GAMES: GameInfo[] = [
     tagline: "Tangkap kupu-kupu di taman. Tiap beberapa tangkapan, jawab soal untuk poin ekstra!",
     preview: "/games/kupu-kupu/preview.webp",
     modes: ["Main Bebas", "Edukasi", "Duel 2 Pemain", "Layar Bersama 2–4", "Mabar Online"],
+    mapel: "Semua mapel",
+    fase: "SD (Fase A–C)",
+    caraMain: ["Gerakkan anak dengan joystick atau tombol panah.", "Tangkap kupu-kupu dengan jaring; tiap beberapa tangkapan muncul soal.", "Jawab benar untuk poin ekstra. Pilih mode Duel atau Layar Bersama untuk main berdua sampai berempat."],
   },
   {
     slug: "kupu-bersama",
@@ -36,6 +43,9 @@ export const GAMES: GameInfo[] = [
     tagline: "Layar dibagi per pemain. Jawab soal dengan benar untuk menangkap kupu, siapa paling dulu memenuhi toplesnya menang!",
     preview: "/games/kupu-bersama/preview.webp",
     modes: ["2–4 Pemain", "Satu Layar", "Cocok untuk IFP"],
+    mapel: "Semua mapel",
+    fase: "SD (Fase A–C)",
+    caraMain: ["Pilih 2–4 pemain dan target kupu.", "Setiap pemain menjawab soal di kolomnya sendiri.", "Jawaban benar menangkap satu kupu; yang pertama memenuhi toples menang."],
   },
   {
     slug: "gowes",
@@ -44,6 +54,9 @@ export const GAMES: GameInfo[] = [
     tagline: "Balap sepeda ke sekolah! Jawab soal matematika dengan benar untuk mengayuh. 1 lawan robot atau 2–4 pemain satu layar.",
     preview: "/games/gowes/preview.jpg",
     modes: ["Matematika Otomatis", "Soal Guru", "1 vs Robot", "2–4 Pemain (IFP)"],
+    mapel: "Matematika",
+    fase: "SD–SMP",
+    caraMain: ["Pilih jumlah pemain (1 lawan robot atau 2–4 orang).", "Pilih jenis soal (20 jenis, dari tambah sampai FPB/KPK) dan tingkat kesulitan.", "Jawab benar untuk mengayuh; yang pertama sampai sekolah menang."],
   },
   {
     slug: "balon",
@@ -52,6 +65,9 @@ export const GAMES: GameInfo[] = [
     tagline: "Balon jawaban terbang ke atas. Pecahkan yang benar sebelum lepas! Soal matematika otomatis atau soal guru, 1–4 pemain di IFP.",
     preview: "/games/balon/preview.jpg",
     modes: ["Soal Guru", "Matematika Otomatis", "1–4 Pemain (IFP)"],
+    mapel: "Matematika",
+    fase: "SD–SMP",
+    caraMain: ["Pilih jumlah pemain dan jenis soal.", "Balon berisi jawaban terbang ke atas; ketuk balon yang benar.", "Pecahkan target balon paling dulu untuk menang."],
   },
   {
     slug: "tebak-emoji",
@@ -62,6 +78,9 @@ export const GAMES: GameInfo[] = [
     modes: ["2 Tim Bergantian", "Kuis Kelas", "50+ Teka-teki"],
     portraitOk: true,
     noSet: true,
+    mapel: "Bahasa Indonesia",
+    fase: "SD",
+    caraMain: ["Lihat gabungan emoji di layar.", "Pilih kata yang paling cocok dari 4 pilihan.", "Main sendiri atau 2 tim bergantian; tim dengan skor tertinggi menang."],
   },
   {
     slug: "susun-kata",
@@ -71,6 +90,9 @@ export const GAMES: GameInfo[] = [
     preview: "/games/susun-kata/preview.jpg",
     modes: ["4 Tema Kata", "Soal Guru", "Mode Santai"],
     portraitOk: true,
+    mapel: "Bahasa Indonesia",
+    fase: "SD",
+    caraMain: ["Baca petunjuknya.", "Ketuk huruf sesuai urutan untuk menyusun kata.", "Pakai Bantuan bila buntu; semakin sedikit bantuan, semakin besar skor."],
   },
   {
     slug: "hujan-kata",
@@ -81,6 +103,9 @@ export const GAMES: GameInfo[] = [
     modes: ["Latihan Mengetik", "Hitung Cepat", "3 Tingkat"],
     portraitOk: true,
     noSet: true,
+    mapel: "Mengetik & Hitung",
+    fase: "SD–SMP",
+    caraMain: ["Kata atau soal hitungan jatuh dari awan.", "Ketik kata atau hasilnya sebelum menyentuh sawah.", "Jaga nyawa tetap ada; hujan makin cepat."],
   },
 ];
 

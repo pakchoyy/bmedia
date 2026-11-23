@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { sql } from "@/lib/db";
-import { MAIN_GAMES } from "@/lib/games";
-import { getWebLinks } from "@/lib/links";
-import { getSettings, coverKey } from "@/lib/settings";
-import type { Media } from "@/types/media";
+import { search, type SearchResult } from "@/lib/search";
+import { getSettings, coverKey, gameMeta } from "@/lib/settings";
 import GameTile from "@/components/GameTile";
 import GameCard from "@/components/GameCard";
 import WebLuarCard from "@/components/WebLuarCard";
@@ -20,26 +17,12 @@ const JENIS = [
   { k: "web", label: "Web Lain" },
 ];
 
-const norm = (s: string) => s.toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "");
 
 export default async function CariPage({ searchParams }: { searchParams: { q?: string; j?: string } }) {
   const q = (searchParams.q ?? "").trim().slice(0, 60);
   const j = JENIS.some((x) => x.k === searchParams.j) ? searchParams.j! : "";
-  const words = norm(q).split(/\s+/).filter(Boolean);
-  const hit = (...fields: (string | null | undefined)[]) => {
-    const hay = norm(fields.filter(Boolean).join(" "));
-    return words.every((w) => hay.includes(w));
-  };
-
-  const [settings, links, media] = await Promise.all([
-    getSettings(),
-    getWebLinks(),
-    q ? (sql`SELECT * FROM media WHERE status = 'approved' ORDER BY featured DESC, plays DESC LIMIT 400`.then((r) => r as Media[])) : Promise.resolve([] as Media[]),
-  ]);
-
-  const games = q ? MAIN_GAMES.filter((g) => hit(g.title, g.tagline, g.modes.join(" "))) : [];
-  const karya = q ? media.filter((m) => hit(m.title, m.description, m.mapel, m.guru_name, m.sekolah, m.jenjang, m.kelas, m.category)) : [];
-  const webs = q ? links.filter((w) => hit(w.name, w.description, w.mapel, w.kategori)) : [];
+  const [settings, r] = await Promise.all([getSettings(), q ? search(q) : Promise.resolve({ games: [], karya: [], webs: [] } as SearchResult)]);
+  const { games, karya, webs } = r;
   const counts: Record<string, number> = { "": games.length + karya.length + webs.length, admin: games.length, kontributor: karya.length, web: webs.length };
   const show = (k: string) => !j || j === k;
   const href = (k: string) => `/cari?q=${encodeURIComponent(q)}${k ? `&j=${k}` : ""}`;
@@ -50,7 +33,7 @@ export default async function CariPage({ searchParams }: { searchParams: { q?: s
         <h1 className="font-display font-bold text-3xl sm:text-4xl text-nb-ink dark:text-white text-center">
           Cari di <span className="nb-mark">Main-yuk</span>
         </h1>
-        <SearchBox defaultValue={q} className="mt-5 max-w-2xl mx-auto" autoFocus={!q} />
+        <SearchBox defaultValue={q} className="mt-5 max-w-2xl mx-auto" autoFocus mode="page" />
 
         {q && (
           <>
@@ -74,7 +57,7 @@ export default async function CariPage({ searchParams }: { searchParams: { q?: s
               <section className="mt-8">
                 <h2 className="font-display font-bold text-2xl text-nb-ink dark:text-white mb-4">Karya Admin Main-yuk</h2>
                 <div className="grid gap-3 sm:gap-5 grid-cols-2 lg:grid-cols-3">
-                  {games.map((g) => <GameTile key={g.slug} game={g} cover={settings[coverKey(g.slug)]} />)}
+                  {games.map((g) => <GameTile key={g.slug} game={g} cover={settings[coverKey(g.slug)]} meta={gameMeta(settings, g)} />)}
                 </div>
               </section>
             )}

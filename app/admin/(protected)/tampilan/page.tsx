@@ -1,4 +1,5 @@
-import { getSettings, HERO_KEY, HERO_DEFAULT, coverKey } from "@/lib/settings";
+import { getSettings, HERO_KEY, HERO_DEFAULT, coverKey, gameMeta } from "@/lib/settings";
+import GameMetaForm from "@/components/admin/GameMetaForm";
 import { MAIN_GAMES } from "@/lib/games";
 import CoverSetting from "@/components/admin/CoverSetting";
 
@@ -21,10 +22,15 @@ export default async function AdminTampilanPage() {
         </div>
       </section>
       <section>
-        <h2 className="font-bold text-lg text-gray-900 dark:text-white mb-3">Cover Karya Admin Main-yuk</h2>
+        <h2 className="font-bold text-lg text-gray-900 dark:text-white mb-3">Cover & info Karya Admin Main-yuk</h2>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {MAIN_GAMES.map((g) => (
-            <CoverSetting key={g.slug} label={g.title} settingKey={coverKey(g.slug)} current={s[coverKey(g.slug)] ?? null} fallback={g.preview} hint="Saran ukuran 1280×720 piksel (16:9). Taruh judul/karakter di tengah." />
+            <div key={g.slug} className="space-y-2">
+              <CoverSetting label={g.title} settingKey={coverKey(g.slug)} current={s[coverKey(g.slug)] ?? null} fallback={g.preview} hint="Saran ukuran 1280×720 piksel (16:9). Taruh judul/karakter di tengah." />
+              <div className="rounded-xl border-2 border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3">
+                <GameMetaForm slug={g.slug} meta={gameMeta(s, g)} />
+              </div>
+            </div>
           ))}
         </div>
       </section>
