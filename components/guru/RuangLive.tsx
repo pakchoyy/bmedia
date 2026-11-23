@@ -80,7 +80,7 @@ export default function RuangLive({ roomId, code, setId, title }: { roomId: stri
           <p className="text-xs font-bold uppercase tracking-wider text-gray-500">Kode ruang</p>
           <div className="font-mono text-5xl font-extrabold tracking-[0.2em] text-nb-ink dark:text-white mt-1" aria-label={`Kode ruang ${code.split("").join(" ")}`}>{code}</div>
           {qr && /* eslint-disable-next-line @next/next/no-img-element */ <img src={qr} alt={`QR ruang ${code}`} className="mx-auto mt-3 w-44 h-44 rounded-lg border-2 border-nb-ink" />}
-          <p className="text-xs text-gray-500 mt-2">Murid buka <b>Masuk Kelas</b> lalu ketik kode ini, atau scan QR.</p>
+          <p className="text-xs text-gray-500 mt-2">Murid buka <b>Mabar Yuk</b> lalu ketik kode ini, atau scan QR.</p>
 
           {status === "lobby" && (
             <div className="mt-4 space-y-3 text-left">

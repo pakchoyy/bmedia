@@ -15,15 +15,15 @@ export default function WebLuarCard({ w, i = 0 }: { w: WebLuar; i?: number }) {
         )}
         {!w.cover && <span className="absolute top-2 left-2 nb-flat rounded-full bg-white px-2.5 py-0.5 text-[11px] font-extrabold text-nb-ink">{w.kategori}</span>}
       </div>
-      <div className="p-4 flex flex-col gap-2 flex-1">
+      <div className="p-2.5 sm:p-4 flex flex-col gap-1.5 sm:gap-2 flex-1">
         <div>
-          <h3 className="font-display font-semibold text-lg leading-tight text-nb-ink dark:text-white">{w.name}</h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{hostOf(w.url)}</p>
+          <h3 className="font-display font-semibold text-[15px] sm:text-lg leading-tight text-nb-ink dark:text-white">{w.name}</h3>
+          <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 truncate">{hostOf(w.url)}</p>
         </div>
-        <p className="text-sm text-slate-700 dark:text-slate-300 flex-1">{w.description}</p>
+        <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 flex-1 line-clamp-3 sm:line-clamp-none">{w.description}</p>
         <div className="flex items-center justify-between gap-2 text-xs font-extrabold text-nb-ink dark:text-white">
-          <span className="nb-flat rounded-full bg-nb-cream px-2.5 py-0.5 text-nb-ink truncate">{w.mapel}</span>
-          <span className="inline-flex items-center gap-1 shrink-0">Buka <Icon name="arrow-up-right-from-square" /><span className="sr-only">(tab baru)</span></span>
+          <span className="hidden sm:inline nb-flat rounded-full bg-nb-cream px-2.5 py-0.5 text-nb-ink truncate">{w.mapel}</span>
+          <span className="inline-flex items-center gap-1 shrink-0 ml-auto">Buka <Icon name="arrow-up-right-from-square" /><span className="sr-only">(tab baru)</span></span>
         </div>
       </div>
     </a>

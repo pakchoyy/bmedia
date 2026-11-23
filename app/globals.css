@@ -193,3 +193,11 @@ button {
   transform: translate(2px, 2px); box-shadow: none;
 }
 .admin-nb main [class*="bg-primary"]:not(.bg-primary-light\/10) { background-color: #ff7a1a !important; color: #1b1a3a !important; }
+
+/* Teks kontributor berjalan (kanan ke kiri) */
+.marquee-track { animation: marquee var(--marquee-dur, 40s) linear infinite; }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; flex-wrap: wrap; width: auto; justify-content: center; }
+  .marquee-track > li[aria-hidden="true"] { display: none; }
+}

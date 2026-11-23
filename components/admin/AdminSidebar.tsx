@@ -17,6 +17,8 @@ export default function AdminSidebar({ email, onNavigate }: AdminSidebarProps) {
     { href: "/admin/media", label: "Semua Media", icon: "book" },
     { href: "/admin/media/new", label: "Tambah Media", icon: "plus" },
     { href: "/admin/submissions", label: "Submission", icon: "clipboard" },
+    { href: "/admin/tampilan", label: "Tampilan & Cover", icon: "photo-video" },
+    { href: "/admin/usulan", label: "Usulan Pengguna", icon: "envelope" },
     { href: "/admin/web-belajar", label: "Web Belajar Lain", icon: "arrow-up-right-from-square" },
     { href: "/admin/statistik", label: "Statistik Guru", icon: "chart-simple" },
     { href: "/admin/password", label: "Keamanan & PIN", icon: "key" },

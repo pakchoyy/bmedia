@@ -43,7 +43,7 @@ export default async function GuruDashboard() {
         <ol className="text-sm mt-2 space-y-1 opacity-95 list-decimal list-inside">
           <li>Buat set soal (tulis manual atau impor dari Excel/CSV).</li>
           <li>Bagikan <b>kode kelas</b> atau QR ke murid.</li>
-          <li>Murid buka <b>Masuk Kelas</b>, ketik kode, lalu bermain dengan soal Anda.</li>
+          <li>Murid buka <b>Mabar Yuk</b>, ketik kode, lalu bermain dengan soal Anda.</li>
         </ol>
       </div>
 

@@ -11,7 +11,7 @@ export default function GameShowcase({ game, compact = false }: { game: GameInfo
         <img src={game.preview} alt={`Cuplikan permainan ${game.title}`} width={960} height={540}
           className="w-full h-full object-cover aspect-video" loading="lazy" />
         <span className="nb-sm absolute left-3 top-3 rounded-full bg-nb-yellow text-nb-ink px-3 py-1 text-xs font-extrabold">
-          Game Unggulan
+          Karya Admin
         </span>
       </div>
 
@@ -29,7 +29,7 @@ export default function GameShowcase({ game, compact = false }: { game: GameInfo
           <ol className="mt-4 space-y-1.5 text-sm text-slate-700 dark:text-slate-300 list-decimal list-inside">
             <li>Guru membuat soal di <b>Ruang Guru</b> (ketik, impor Word, atau CSV).</li>
             <li>Guru membagikan <b>kode kelas</b> atau QR.</li>
-            <li>Murid masuk lewat <b>Masuk Kelas</b> dan bermain dengan soal tersebut.</li>
+            <li>Murid masuk lewat <b>Mabar Yuk</b> dan bermain dengan soal tersebut.</li>
           </ol>
         )}
 
