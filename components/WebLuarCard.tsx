@@ -9,11 +9,11 @@ export default function WebLuarCard({ w, i = 0 }: { w: WebLuar; i?: number }) {
       <div className="relative aspect-video overflow-hidden border-b-[3px] border-nb-ink dark:border-[var(--nb-ink)] bg-nb-cream">
         {w.cover ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={w.cover} alt="" loading="lazy" className="w-full h-full object-cover object-top group-hover:scale-[1.03] transition-transform duration-300" />
+          <img src={w.cover} alt="" loading="lazy" className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300" />
         ) : (
           <div className={`w-full h-full flex items-center justify-center font-display font-bold text-5xl text-nb-ink ${WEB_COLORS[i % WEB_COLORS.length]}`}>{w.name.charAt(0)}</div>
         )}
-        <span className="absolute top-2 left-2 nb-flat rounded-full bg-white px-2.5 py-0.5 text-[11px] font-extrabold text-nb-ink">{w.kategori}</span>
+        {!w.cover && <span className="absolute top-2 left-2 nb-flat rounded-full bg-white px-2.5 py-0.5 text-[11px] font-extrabold text-nb-ink">{w.kategori}</span>}
       </div>
       <div className="p-4 flex flex-col gap-2 flex-1">
         <div>
