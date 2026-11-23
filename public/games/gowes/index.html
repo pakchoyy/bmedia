@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Gowes ke Sekolah · Main-yuk</title>
+<style>
+  :root { --ink:#1b1a3a; --cream:#fff6dc; --yellow:#ffd23f; --orange:#ff7a1a; --pink:#ff5d8f; --mint:#2ec4b6; }
+  * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html, body { width:100%; height:100%; overflow:hidden; background:var(--cream); color:var(--ink);
+    font-family: ui-rounded, "Nunito", "Segoe UI", system-ui, -apple-system, sans-serif; touch-action:manipulation; }
+  button { font:inherit; color:inherit; cursor:pointer; border:0; background:none; }
+  .hidden { display:none !important; }
+  .nb { border:3px solid var(--ink); box-shadow:4px 4px 0 var(--ink); }
+  .nb-sm { border:2px solid var(--ink); box-shadow:2px 2px 0 var(--ink); }
+  .press:active { transform:translate(3px,3px); box-shadow:1px 1px 0 var(--ink); }
+
+  /* ===== Menu ===== */
+  #menu { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:10px; overflow:auto;
+    background: linear-gradient(#9fdcff 0 55%, #8fd66f 55% 75%, #6dbb52 75%); }
+  .card { background:#fff; border-radius:22px; padding:16px 20px; width:min(100%, 680px); text-align:center; }
+  .card h1 { font-size:clamp(26px, 5.5vh, 42px); line-height:1.05; font-weight:900; letter-spacing:-.5px; }
+  .card h1 span { color:var(--orange); }
+  .sub { font-size:13px; font-weight:700; opacity:.75; margin-top:4px; }
+  .setinfo { margin-top:8px; font-size:12px; font-weight:800; background:#fff3c4; border:2px solid var(--ink); border-radius:10px; padding:3px 10px; display:inline-block; }
+  .setinfo.ok { background:#c8f7dc; } .setinfo.err { background:#ffd6d6; }
+  .row { margin-top:9px; display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; }
+  .lbl { font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.6px; min-width:70px; text-align:right; }
+  .seg { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; }
+  .seg button { padding:7px 13px; border-radius:12px; font-weight:900; font-size:15px; background:#fff; min-width:44px; }
+  .seg button.on { background:var(--yellow); }
+  .seg.multi button.on { background:var(--mint); }
+  .names { display:grid; gap:6px; grid-template-columns:repeat(2, 1fr); margin-top:10px; }
+  .names label { display:flex; align-items:center; gap:6px; font-size:12px; font-weight:900; }
+  .names i { width:14px; height:14px; border-radius:50%; border:2px solid var(--ink); flex:none; background:var(--c); }
+  .names input { flex:1; min-width:0; font:inherit; font-weight:800; border:2px solid var(--ink); border-radius:9px; padding:5px 8px; }
+  #start { margin-top:12px; width:100%; padding:12px; border-radius:16px; background:var(--orange); font-size:20px; font-weight:900; }
+  .mathonly.off { opacity:.35; pointer-events:none; }
+
+  /* ===== Permainan ===== */
+  #game { position:absolute; inset:0; display:flex; flex-direction:column; background:var(--ink); }
+  .topbar { flex:0 0 auto; display:grid; grid-template-columns:1fr auto 1fr; align-items:center; padding:3px 8px; color:#fff; font-weight:900; }
+  .topbar .brand { font-size:12px; opacity:.8; }
+  .topbar .tb { justify-self:end; display:flex; gap:6px; }
+  .topbar .tb button { color:var(--ink); background:#fff; border-radius:99px; width:30px; height:30px; font-size:14px; line-height:1; }
+  .timer { background:#fff; color:var(--ink); border-radius:99px; padding:1px 16px; font-weight:900; font-size:clamp(13px, 2.4vh, 20px); }
+
+  /* jalan desa */
+  .scene { position:relative; flex:0 0 auto; height:clamp(120px, 34vh, 300px); overflow:hidden; border-bottom:4px solid var(--ink);
+    background:linear-gradient(#8ed4ff, #c9ecff 60%); }
+  .sun { position:absolute; top:8%; left:6%; width:9vh; height:9vh; border-radius:50%; background:#ffd23f; border:3px solid var(--ink); }
+  .cloud { position:absolute; height:5vh; width:16vh; background:#fff; border:3px solid var(--ink); border-radius:99px; animation:drift 38s linear infinite; }
+  .cloud.c2 { top:20%; animation-duration:52s; animation-delay:-20s; transform:scale(.8); }
+  @keyframes drift { from { left:105%; } to { left:-25%; } }
+  .hills { position:absolute; left:0; width:100%; bottom:var(--hb); height:34%; display:block; }
+  .sawah { position:absolute; left:0; right:0; bottom:0; height:var(--sh);
+    background: repeating-linear-gradient(100deg, #7cc95e 0 22px, #6ab84f 22px 44px); border-top:3px solid var(--ink); }
+  .road { position:absolute; left:0; right:0; bottom:4%; display:flex; flex-direction:column; }
+  .rlane { position:relative; height:var(--lh); background:#5c5f73; border-top:2px solid #3c3e4f; }
+  .rlane:first-child { border-top:3px solid var(--ink); }
+  .rlane:last-child { border-bottom:3px solid var(--ink); }
+  .rlane::after { content:''; position:absolute; left:0; right:0; top:50%; height:2px; background:repeating-linear-gradient(90deg, #fff 0 16px, transparent 16px 34px); opacity:.55; }
+  .finish { position:absolute; right:13%; top:0; bottom:0; width:10px; z-index:1;
+    background:repeating-linear-gradient(#fff 0 6px, var(--ink) 6px 12px); border-left:2px solid var(--ink); border-right:2px solid var(--ink); }
+  .school { position:absolute; right:1%; bottom:calc(var(--rb) - 3px); width:12%; max-width:170px; z-index:0; }
+  .bike { position:absolute; top:50%; left:2%; height:calc(var(--lh) * 1.5); aspect-ratio:1.35; transform:translate(0, -62%); z-index:2;
+    transition:left .55s cubic-bezier(.3,1.3,.5,1); }
+  .bike .wheel { transform-box:fill-box; transform-origin:center; }
+  .bike.go .wheel { animation:spin .45s linear 2; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .bike.wob { animation:wob .5s ease-in-out 2; }
+  @keyframes wob { 0%,100% { rotate:0deg; } 30% { rotate:-8deg; } 70% { rotate:6deg; } }
+  .bike .tag { position:absolute; left:-4px; top:-14px; font-size:11px; font-weight:900; background:var(--c); border:2px solid var(--ink); border-radius:99px; padding:0 6px; white-space:nowrap; }
+  .bike.bot .tag { background:#ddd; }
+
+  /* kolom pemain */
+  .pads { flex:1 1 auto; min-height:0; display:flex; gap:5px; padding-top:5px; }
+  .pad { --c:#ff7675; position:relative; flex:1 1 0; min-width:0; display:flex; flex-direction:column; background:var(--cream); }
+  .pad header { background:var(--c); border-bottom:3px solid var(--ink); display:flex; align-items:center; justify-content:space-between; gap:6px; padding:4px 10px; font-weight:900; }
+  .pad .name { font-size:clamp(13px, 2.4vh, 20px); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .pad .score { font-size:clamp(12px, 2.2vh, 18px); background:#fff; border:2px solid var(--ink); border-radius:99px; padding:0 9px; white-space:nowrap; }
+  .qcard { margin:7px 8px 6px; background:#fff; border-radius:14px; padding:6px 10px; text-align:center; flex:0 0 auto; }
+  .q { font-weight:900; line-height:1.2; font-size:clamp(15px, 3.6vh, 34px); max-height:5.2em; overflow:auto; }
+  .q.long { font-size:clamp(13px, 2.6vh, 22px); }
+  .opts { flex:1 1 auto; min-height:0; display:grid; grid-template-columns:1fr 1fr; gap:6px; padding:0 8px 8px; }
+  .opts.five .opt:last-child { grid-column:1 / -1; }
+  .opt { min-height:34px; background:#fff; border-radius:12px; font-weight:900; font-size:clamp(15px, 3.4vh, 30px); padding:4px 8px; display:flex; align-items:center; justify-content:center; gap:6px; line-height:1.1; text-align:center; }
+  .opts.text .opt { font-size:clamp(12px, 2.4vh, 20px); font-weight:800; }
+  .opt.good { background:#8cf0b8; } .opt.bad { background:#ff9aa8; }
+  .opt:disabled { cursor:default; }
+  .ov { position:absolute; inset:0; display:none; align-items:center; justify-content:center; flex-direction:column; gap:6px; text-align:center; font-weight:900; font-size:clamp(20px, 5vh, 36px); color:var(--ink); padding:10px; z-index:4; }
+  .pad.frozen .ov.freeze { display:flex; background:rgba(255,154,168,.55); }
+  .pad.win .ov.win { display:flex; background:rgba(255,210,63,.9); }
+
+  /* ===== Hasil ===== */
+  #result { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:10px; background:rgba(27,26,58,.78); z-index:20; overflow:auto; }
+  #result .card { width:min(100%, 560px); }
+  .rank { margin-top:10px; display:grid; gap:6px; text-align:left; }
+  .rk { display:flex; align-items:center; gap:10px; background:var(--cream); border-radius:12px; padding:6px 10px; font-weight:800; }
+  .rk .pos { width:30px; height:30px; border-radius:50%; background:var(--c); border:2px solid var(--ink); display:flex; align-items:center; justify-content:center; font-weight:900; flex:none; }
+  .rk .nm { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .rk small { font-size:11px; opacity:.7; display:block; font-weight:700; }
+  .btns { margin-top:12px; display:flex; gap:8px; }
+  .btns button { flex:1; padding:12px; border-radius:14px; font-weight:900; font-size:16px; }
+  #saved { margin-top:8px; font-size:12px; font-weight:800; }
+  @media (max-height:480px) {
+    .card { padding:8px 12px; border-radius:16px; } .card h1 { font-size:22px; } .sub { display:none; }
+    .row { margin-top:5px; } .seg button { padding:4px 10px; font-size:13px; } .names { margin-top:5px; } #start { margin-top:7px; padding:7px; font-size:17px; }
+    .scene { height:30vh; } .school { width:10%; } .qcard { margin:3px 5px; padding:3px 6px; } .opts { gap:4px; padding:0 5px 4px; } .opt { min-height:26px; border-radius:9px; }
+    .pad header { padding:2px 8px; } .topbar { padding:1px 8px; } .topbar .tb button { width:24px; height:24px; font-size:12px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .cloud, .bike.go .wheel, .bike.wob { animation:none; } .bike { transition:none; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="bk" viewBox="0 0 135 100">
+    <g class="wheel"><circle cx="30" cy="72" r="22" fill="#fff" fill-opacity=".25" stroke="#1b1a3a" stroke-width="6"/><path d="M30 52v40M10 72h40M16 58l28 28M44 58L16 86" stroke="#1b1a3a" stroke-width="2"/></g>
+    <g class="wheel"><circle cx="105" cy="72" r="22" fill="#fff" fill-opacity=".25" stroke="#1b1a3a" stroke-width="6"/><path d="M105 52v40M85 72h40M91 58l28 28M119 58L91 86" stroke="#1b1a3a" stroke-width="2"/></g>
+    <path d="M30 72 L55 40 L92 40 L105 72 M55 40 L68 72 L92 40 M30 72 L68 72" fill="none" stroke="#1b1a3a" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M30 72 L55 40 L92 40 L105 72 M55 40 L68 72 L92 40 M30 72 L68 72" fill="none" stroke="var(--c)" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M88 40 L84 26 L96 24" fill="none" stroke="#1b1a3a" stroke-width="5" stroke-linecap="round"/>
+    <rect x="45" y="34" width="18" height="6" rx="3" fill="#1b1a3a"/>
+    <!-- anak bersepeda -->
+    <path d="M56 34 L66 60 L70 72" fill="none" stroke="#1b1a3a" stroke-width="9" stroke-linecap="round"/>
+    <path d="M56 34 L66 60 L70 72" fill="none" stroke="#7a4b2a" stroke-width="5" stroke-linecap="round"/>
+    <path d="M52 36 C 50 22, 60 10, 72 12 L 78 30 C 70 36, 60 38, 52 36 Z" fill="#fff" stroke="#1b1a3a" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M73 18 L88 26" stroke="#1b1a3a" stroke-width="8" stroke-linecap="round"/>
+    <path d="M73 18 L88 26" stroke="#f2c49b" stroke-width="4" stroke-linecap="round"/>
+    <path d="M48 24 C 44 30, 44 38, 50 40 L 56 26 Z" fill="var(--c)" stroke="#1b1a3a" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="78" cy="2" r="11" fill="#f2c49b" stroke="#1b1a3a" stroke-width="4"/>
+    <path d="M66 0 C 68 -12, 90 -12, 90 0 Z" fill="var(--c)" stroke="#1b1a3a" stroke-width="3.5" stroke-linejoin="round"/>
+    <circle cx="83" cy="2" r="2" fill="#1b1a3a"/>
+  </symbol>
+</svg>
+
+<div id="menu">
+  <div class="card nb">
+    <h1>Gowes ke <span>Sekolah</span> 🚲</h1>
+    <div class="sub">Jawab soal dengan benar untuk mengayuh sepeda. Siapa paling dulu sampai di sekolah, dia menang!</div>
+    <div class="setinfo" id="setinfo">🧮 Soal matematika otomatis</div>
+    <div class="row"><span class="lbl">Pemain</span>
+      <div class="seg" id="segPlayers"><button class="nb-sm press" data-n="1">1 vs 🤖</button><button class="nb-sm press" data-n="2">2</button><button class="nb-sm press" data-n="3">3</button><button class="nb-sm press" data-n="4">4</button></div></div>
+    <div class="row mathonly"><span class="lbl">Soal</span>
+      <div class="seg multi" id="segOps"><button class="nb-sm press" data-n="add">+ Tambah</button><button class="nb-sm press" data-n="sub">− Kurang</button><button class="nb-sm press" data-n="mul">× Kali</button><button class="nb-sm press" data-n="div">÷ Bagi</button></div></div>
+    <div class="row mathonly"><span class="lbl">Tingkat</span>
+      <div class="seg" id="segLevel"><button class="nb-sm press" data-n="1">Mudah</button><button class="nb-sm press" data-n="2">Sedang</button><button class="nb-sm press" data-n="3">Sulit</button></div></div>
+    <div class="row"><span class="lbl">Jarak</span>
+      <div class="seg" id="segTarget"><button class="nb-sm press" data-n="8">Dekat</button><button class="nb-sm press" data-n="12">Sedang</button><button class="nb-sm press" data-n="18">Jauh</button></div></div>
+    <div class="names" id="names"></div>
+    <button id="start" class="nb press">▶ GOWES!</button>
+  </div>
+</div>
+
+<div id="game" class="hidden"></div>
+<div id="result" class="hidden"></div>
+
+<script>
+(function () {
+  'use strict';
+  var COLORS = ['#ff7675', '#4aa8ff', '#55efc4', '#feca57'];
+  var $ = function (id) { return document.getElementById(id); };
+  var setQ = null, setCode = null, nPlayers = 2, target = 12, level = 1, ops = { add: true, sub: true, mul: false, div: false };
+  var sceneVars = '', players = [], bot = null, running = false, finished = false, startAt = 0, timerId = 0, botId = 0;
+
+  // ---------- Suara ----------
+  var actx = null, muted = false;
+  try { muted = localStorage.getItem('bgy_muted') === '1'; } catch (e) {}
+  function tone(f, t, d, type, v) {
+    if (muted) return;
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      if (actx.state === 'suspended') actx.resume();
+      var o = actx.createOscillator(), g = actx.createGain(), s = actx.currentTime + t;
+      o.type = type || 'sine'; o.frequency.setValueAtTime(f, s);
+      g.gain.setValueAtTime(0.0001, s); g.gain.linearRampToValueAtTime(v || 0.14, s + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, s + d);
+      o.connect(g); g.connect(actx.destination); o.start(s); o.stop(s + d + 0.02);
+    } catch (e) {}
+  }
+  function sGood() { tone(988, 0, .08, 'square', .06); tone(1319, .07, .14, 'square', .06); } // kring-kring
+  function sBad() { tone(220, 0, .22, 'sawtooth', .08); tone(170, .1, .25, 'sawtooth', .08); }
+  function sWin() { [523, 659, 784, 1047, 784, 1047].forEach(function (f, i) { tone(f, i * .12, .22, 'triangle', .16); }); }
+  function sTick() { tone(520, 0, .06, 'square', .05); }
+
+  // ---------- Soal matematika ----------
+  function rnd(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function makeMath() {
+    var list = Object.keys(ops).filter(function (k) { return ops[k]; }); if (!list.length) list = ['add'];
+    var op = list[rnd(0, list.length - 1)], a, b, ans, sym;
+    var R = level === 1 ? [1, 10, 2, 5] : level === 2 ? [10, 99, 2, 10] : [100, 999, 6, 15];
+    if (op === 'add') { a = rnd(R[0], R[1]); b = rnd(R[0], R[1]); ans = a + b; sym = '+'; }
+    else if (op === 'sub') { a = rnd(R[0], R[1]); b = rnd(R[0], R[1]); if (b > a) { var t = a; a = b; b = t; } ans = a - b; sym = '−'; }
+    else if (op === 'mul') { a = rnd(R[2], R[3]); b = rnd(2, level === 3 ? 15 : 10); ans = a * b; sym = '×'; }
+    else { b = rnd(2, level === 1 ? 5 : 10); ans = rnd(R[2], R[3]); a = b * ans; sym = '÷'; }
+    var opts = [ans], spread = Math.max(3, Math.round(ans * 0.15));
+    var tries = 0;
+    while (opts.length < 4 && tries++ < 60) {
+      var d = [ans + 1, ans - 1, ans + 10, ans - 10, ans + rnd(-spread, spread), (op === 'mul' ? ans + b : ans + 2), (op === 'mul' ? ans - b : ans - 2)][rnd(0, 6)];
+      if (d >= 0 && opts.indexOf(d) < 0) opts.push(d);
+    }
+    while (opts.length < 4) opts.push(ans + opts.length * 3);
+    shuffle(opts);
+    return { q: a + ' ' + sym + ' ' + b + ' = ?', o: opts.map(String), a: opts.indexOf(ans), math: true };
+  }
+
+  // ---------- Soal guru (opsional) ----------
+  (function loadSet() {
+    var code = (new URLSearchParams(location.search).get('set') || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (!code) return;
+    var info = $('setinfo'); info.textContent = '⏳ Memuat soal dari guru...';
+    fetch('/api/set/' + code).then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); }).then(function (d) {
+      var qs = (Array.isArray(d.questions) ? d.questions : []).filter(function (q) {
+        return q && typeof q.q === 'string' && Array.isArray(q.o) && (q.o.length === 4 || q.o.length === 5) && q.a >= 0 && q.a < q.o.length;
+      });
+      if (!qs.length) throw new Error('kosong');
+      setQ = qs; setCode = code;
+      info.textContent = '📚 Soal guru: ' + d.title + ' (' + qs.length + ' soal)'; info.className = 'setinfo ok';
+      [].forEach.call(document.querySelectorAll('.mathonly'), function (el) { el.classList.add('off'); });
+    }).catch(function () { info.textContent = '⚠️ Kode soal tidak ditemukan. Memakai soal matematika otomatis.'; info.className = 'setinfo err'; });
+  })();
+
+  // ---------- Menu ----------
+  function renderNames() {
+    var box = $('names'); box.innerHTML = '';
+    for (var i = 0; i < nPlayers; i++) {
+      var l = document.createElement('label'); l.style.setProperty('--c', COLORS[i]);
+      l.innerHTML = '<i></i><input maxlength="14" placeholder="Pemain ' + (i + 1) + '" autocomplete="off">';
+      box.appendChild(l);
+    }
+  }
+  function seg(id, fn, isOn) {
+    var el = $(id);
+    function mark() { [].forEach.call(el.children, function (b) { b.classList.toggle('on', isOn(b.dataset.n)); }); }
+    el.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; fn(b.dataset.n); mark(); tone(600, 0, .06, 'sine', .08); });
+    mark();
+  }
+  seg('segPlayers', function (n) { nPlayers = +n; renderNames(); }, function (n) { return +n === nPlayers; });
+  seg('segTarget', function (n) { target = +n; }, function (n) { return +n === target; });
+  seg('segLevel', function (n) { level = +n; }, function (n) { return +n === level; });
+  seg('segOps', function (n) {
+    ops[n] = !ops[n];
+    if (!Object.keys(ops).some(function (k) { return ops[k]; })) ops[n] = true; // minimal satu
+  }, function (n) { return ops[n]; });
+  renderNames();
+
+  // ---------- Permainan ----------
+  function nextQ(P) {
+    if (!setQ) return makeMath();
+    if (!P.bag.length) P.bag = shuffle(setQ.map(function (_, i) { return i; }));
+    var idx = P.bag.pop(); var q = setQ[idx]; return { q: q.q, o: q.o, a: q.a, idx: idx };
+  }
+  function bikeLeft(step) { return 2 + (step / target) * 76; } // % (garis finis di ~85%)
+
+  function makeBike(color, name, isBot) {
+    var el = document.createElement('div'); el.className = 'bike' + (isBot ? ' bot' : ''); el.style.setProperty('--c', color);
+    el.innerHTML = '<svg viewBox="0 -14 135 114" width="100%" height="100%"><use href="#bk"/></svg><span class="tag"></span>';
+    el.querySelector('.tag').textContent = name;
+    return el;
+  }
+  function pedal(B) { B.classList.remove('go'); void B.offsetWidth; B.classList.add('go'); }
+
+  function buildPad(i, name) {
+    var el = document.createElement('section'); el.className = 'pad'; el.style.setProperty('--c', COLORS[i]);
+    el.innerHTML = '<header><span class="name"></span><span class="score">🚲 0/' + target + '</span></header>' +
+      '<div class="qcard nb-sm"><div class="q"></div></div><div class="opts"></div>' +
+      '<div class="ov freeze">💥 Oleng!<small style="font-size:.5em">tunggu sebentar…</small></div>' +
+      '<div class="ov win">🏆<div><span class="wn"></span> sampai duluan!</div></div>';
+    el.querySelector('.name').textContent = name;
+    return { i: i, name: name, el: el, bag: [], cur: null, step: 0, correct: 0, wrong: 0, score: 0, locked: false, shownAt: 0, lastAt: 0, qstats: {} };
+  }
+
+  function showQuestion(P) {
+    var item = nextQ(P); P.cur = item; P.shownAt = performance.now(); P.locked = false;
+    var qEl = P.el.querySelector('.q'); qEl.textContent = item.q; qEl.classList.toggle('long', item.q.length > 40);
+    var box = P.el.querySelector('.opts'); box.innerHTML = '';
+    box.className = 'opts' + (item.o.length === 5 ? ' five' : '') + (item.math ? '' : ' text');
+    item.o.forEach(function (text, k) {
+      var b = document.createElement('button'); b.className = 'opt nb-sm press'; b.type = 'button'; b.textContent = text;
+      b.addEventListener('pointerdown', function (e) { e.preventDefault(); answer(P, k, b); });
+      box.appendChild(b);
+    });
+  }
+
+  function answer(P, k, btn) {
+    if (!running || P.locked || finished) return;
+    P.locked = true;
+    var item = P.cur, ok = k === item.a, t = performance.now() - P.shownAt;
+    if (item.idx != null) { var qs = P.qstats[item.idx] || (P.qstats[item.idx] = [0, 0]); qs[ok ? 0 : 1]++; }
+    var btns = P.el.querySelectorAll('.opt'); [].forEach.call(btns, function (b) { b.disabled = true; });
+    btns[item.a].classList.add('good');
+    if (ok) {
+      sGood(); P.correct++; P.step++; P.lastAt = performance.now();
+      P.score += 100 + Math.max(0, Math.round((6000 - t) / 100));
+      P.el.querySelector('.score').textContent = '🚲 ' + P.step + '/' + target;
+      P.bike.style.left = bikeLeft(P.step) + '%'; pedal(P.bike);
+      if (P.step >= target) { finish(P); return; }
+      setTimeout(function () { if (!finished) showQuestion(P); }, 450);
+    } else {
+      sBad(); btn.classList.add('bad'); P.wrong++;
+      P.el.classList.add('frozen'); P.bike.classList.remove('wob'); void P.bike.offsetWidth; P.bike.classList.add('wob');
+      setTimeout(function () { P.el.classList.remove('frozen'); if (!finished) showQuestion(P); }, 1500);
+    }
+  }
+
+  function tickTimer() {
+    var s = Math.floor((performance.now() - startAt) / 1000);
+    $('timer').textContent = '⏱ ' + String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+  }
+
+  function botLoop() {
+    // Lawan komputer: Mudah ±4,5 dtk, Sedang ±3,5 dtk, Sulit ±2,8 dtk per kayuhan
+    var base = setQ ? 4200 : [0, 4500, 3500, 2800][level];
+    botId = setTimeout(function () {
+      if (!running || finished) return;
+      if (Math.random() < 0.85) { bot.step++; bot.bike.style.left = bikeLeft(bot.step) + '%'; pedal(bot.bike); }
+      else { bot.bike.classList.remove('wob'); void bot.bike.offsetWidth; bot.bike.classList.add('wob'); }
+      if (bot.step >= target) { finish(bot); return; }
+      botLoop();
+    }, base * (0.7 + Math.random() * 0.6));
+  }
+
+  function sceneHTML(n) {
+    var k = n <= 2 ? 0.17 : n === 3 ? 0.14 : 0.115, f = n * k * 100;
+    sceneVars = '--rb:' + (4 + f) + '%;--sh:' + (f + 16) + '%;--hb:' + (f + 14) + '%';
+    return '<div class="sun"></div><div class="cloud" style="top:10%"></div><div class="cloud c2"></div>' +
+      '<svg class="hills" viewBox="0 0 400 60" preserveAspectRatio="none"><path d="M0 60 L60 12 L120 60 Z M90 60 L170 4 L250 60 Z M220 60 L300 18 L380 60 Z M330 60 L380 30 L430 60 Z" fill="#5aa1c9" stroke="#1b1a3a" stroke-width="2.5" stroke-linejoin="round"/></svg>' +
+      '<div class="sawah"></div>' +
+      '<svg class="school" viewBox="0 0 120 100"><rect x="10" y="40" width="100" height="56" fill="#fff6dc" stroke="#1b1a3a" stroke-width="4"/><path d="M2 44 L60 12 L118 44 Z" fill="#ff7a1a" stroke="#1b1a3a" stroke-width="4" stroke-linejoin="round"/><rect x="50" y="66" width="20" height="30" fill="#4aa8ff" stroke="#1b1a3a" stroke-width="3"/><rect x="20" y="54" width="20" height="16" fill="#bfe7ff" stroke="#1b1a3a" stroke-width="3"/><rect x="80" y="54" width="20" height="16" fill="#bfe7ff" stroke="#1b1a3a" stroke-width="3"/><text x="60" y="38" text-anchor="middle" font-size="10" font-weight="900" fill="#1b1a3a" font-family="sans-serif">SD</text><line x1="60" y1="12" x2="60" y2="-4" stroke="#1b1a3a" stroke-width="2.5"/><rect x="60" y="-4" width="14" height="5" fill="#e63946"/><rect x="60" y="1" width="14" height="5" fill="#fff" stroke="#1b1a3a" stroke-width=".8"/></svg>' +
+      '<div class="road" style="--lh:calc(clamp(120px, 34vh, 300px) * ' + k + ')"></div>';
+  }
+
+  function start() {
+    var names = [].map.call($('names').querySelectorAll('input'), function (inp, i) { return (inp.value || '').trim().replace(/[<>]/g, '') || ('Pemain ' + (i + 1)); });
+    finished = false; running = false; clearTimeout(botId);
+    var g = $('game'); g.innerHTML = ''; g.classList.remove('hidden');
+    $('menu').classList.add('hidden'); $('result').classList.add('hidden');
+    players = names.map(function (n, i) { return buildPad(i, n); });
+    var nLanes = players.length + (players.length === 1 ? 1 : 0);
+
+    var bar = document.createElement('div'); bar.className = 'topbar';
+    bar.innerHTML = '<span class="brand">Main-yuk · Gowes ke Sekolah</span><span id="timer" class="timer nb-sm">⏱ 00:00</span>' +
+      '<span class="tb"><button class="nb-sm press" id="bMute" aria-label="Suara">' + (muted ? '🔇' : '🔊') + '</button><button class="nb-sm press" id="bExit" aria-label="Keluar">✖</button></span>';
+    g.appendChild(bar);
+    var scene = document.createElement('div'); scene.className = 'scene'; scene.innerHTML = sceneHTML(nLanes); scene.style.cssText = sceneVars; g.appendChild(scene);
+    var road = scene.querySelector('.road');
+    var fin = document.createElement('div'); fin.className = 'finish'; road.appendChild(fin);
+    function addLane(color, name, isBot) {
+      var ln = document.createElement('div'); ln.className = 'rlane'; var b = makeBike(color, name, isBot); ln.appendChild(b); road.appendChild(ln); return b;
+    }
+    players.forEach(function (P) { P.bike = addLane(COLORS[P.i], P.name, false); });
+    bot = null;
+    if (players.length === 1) { bot = { name: 'Robot', i: 9, step: 0, correct: 0, wrong: 0, score: 0, isBot: true }; bot.bike = addLane('#b8b8c8', '🤖 Robot', true); }
+
+    var pads = document.createElement('div'); pads.className = 'pads'; g.appendChild(pads);
+    players.forEach(function (P) { pads.appendChild(P.el); showQuestion(P); });
+    $('bMute').onclick = function () { muted = !muted; try { localStorage.setItem('bgy_muted', muted ? '1' : '0'); } catch (e) {} this.textContent = muted ? '🔇' : '🔊'; };
+    $('bExit').onclick = function () { if (confirm('Keluar dari permainan?')) toMenu(); };
+
+    var n = 3, ov = document.createElement('div');
+    ov.style.cssText = 'position:absolute;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:rgba(27,26,58,.6);color:#fff;font-weight:900;font-size:22vh';
+    g.appendChild(ov);
+    (function cd() {
+      if (n > 0) { ov.textContent = n; sTick(); n--; setTimeout(cd, 800); }
+      else { ov.textContent = 'GOWES!'; ov.style.fontSize = '14vh'; tone(880, 0, .3, 'triangle', .18); setTimeout(function () { ov.remove(); }, 450);
+        running = true; startAt = performance.now(); timerId = setInterval(tickTimer, 250); tickTimer(); if (bot) botLoop(); }
+    })();
+  }
+
+  function finish(winner) {
+    finished = true; running = false; clearInterval(timerId); clearTimeout(botId);
+    var dur = Math.round((performance.now() - startAt) / 1000);
+    if (winner.isBot) { sBad(); } else { sWin(); winner.el.classList.add('win'); winner.el.querySelector('.wn').textContent = winner.name; }
+    setTimeout(function () { showResult(winner, dur); }, 1500);
+  }
+
+  function showResult(winner, dur) {
+    var all = players.slice(); if (bot) all.push(bot);
+    var order = all.sort(function (a, b) {
+      if (a === winner) return -1; if (b === winner) return 1;
+      return b.step - a.step || (a.lastAt || 0) - (b.lastAt || 0);
+    });
+    var medals = ['🥇', '🥈', '🥉', '4', '5'];
+    var res = $('result'); res.classList.remove('hidden');
+    res.innerHTML = '<div class="card nb"><h1></h1><div class="sub">Waktu ' + dur + ' detik · ' + target + ' kayuhan sampai sekolah</div><div class="rank"></div><div id="saved"></div>' +
+      '<div class="btns"><button id="again" class="nb press" style="background:var(--orange)">🔄 Main Lagi</button><button id="toMenu" class="nb press" style="background:var(--yellow)">🏠 Menu</button></div></div>';
+    res.querySelector('h1').textContent = winner.isBot ? '🤖 Robot sampai duluan!' : '🏆 ' + winner.name + ' menang!';
+    var box = res.querySelector('.rank');
+    order.forEach(function (P, r) {
+      var d = document.createElement('div'); d.className = 'rk'; d.style.setProperty('--c', P.isBot ? '#b8b8c8' : COLORS[P.i]);
+      var pos = document.createElement('span'); pos.className = 'pos'; pos.textContent = medals[r] || (r + 1);
+      var nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = P.isBot ? '🤖 Robot' : P.name;
+      var sm = document.createElement('small'); sm.textContent = P.isBot ? P.step + ' kayuhan' : P.correct + ' benar · ' + P.wrong + ' salah';
+      nm.appendChild(sm);
+      var sc = document.createElement('b'); sc.textContent = P.isBot ? '' : P.score;
+      d.appendChild(pos); d.appendChild(nm); d.appendChild(sc); box.appendChild(d);
+    });
+    $('again').onclick = start; $('toMenu').onclick = toMenu;
+    submitResults(dur);
+  }
+
+  function submitResults(dur) {
+    if (!setCode) return;
+    var saved = $('saved'); saved.textContent = '⏳ Menyimpan hasil ke kelas...';
+    var jobs = players.map(function (P) {
+      return fetch('/api/set/' + setCode + '/hasil', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true,
+        body: JSON.stringify({ name: P.name, mode: 'race', score: P.score, caught: P.correct, quizRight: P.correct, quizWrong: P.wrong, durationS: dur, qStats: P.qstats })
+      }).then(function (r) { if (!r.ok) throw new Error(r.status); });
+    });
+    Promise.all(jobs).then(function () { saved.textContent = '✅ Hasil tersimpan di kelas'; }).catch(function () { saved.textContent = '⚠️ Hasil belum tersimpan (periksa internet)'; });
+  }
+
+  function toMenu() {
+    running = false; finished = true; clearInterval(timerId); clearTimeout(botId);
+    $('game').classList.add('hidden'); $('result').classList.add('hidden'); $('menu').classList.remove('hidden');
+  }
+
+  $('start').addEventListener('click', function () { tone(700, 0, .08, 'sine', .1); start(); });
+  // Uji di laptop: tombol 1–4 menjawab untuk pemain 1
+  window.addEventListener('keydown', function (e) {
+    if (!running || !players[0]) return;
+    var k = '12345'.indexOf(e.key); if (k < 0) return;
+    var b = players[0].el.querySelectorAll('.opt')[k]; if (b) answer(players[0], k, b);
+  });
+})();
+</script>
+</body>
+</html>
