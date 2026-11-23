@@ -118,12 +118,14 @@
 <script src="/games/_shared/mathgen.js"></script>
 <script src="/games/_shared/sfx.js"></script>
 <script src="/games/_shared/fx.js"></script>
+<script src="/games/_shared/ruang.js"></script>
 <script>
 (function () {
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
   var COLORS = ['#ff7675', '#4aa8ff', '#55efc4', '#feca57'];
   var BCOL = ['#ff5d8f', '#ffd23f', '#4aa8ff', '#2ec4b6', '#b79cff'];
+  var roomMode = !!(window.Ruang && Ruang.active), roomName = '', setFail = false;
   var setQ = null, setCode = null, nPlayers = 1, target = 12, level = 1, mathMode = 'add';
   var lanes = [], running = false, finished = false, startAt = 0, timerId = 0, raf = 0, lastT = 0;
   var muted = false; try { muted = localStorage.getItem('bgy_muted') === '1'; } catch (e) {}
@@ -150,7 +152,7 @@
       setQ = qs; setCode = code;
       info.textContent = '📚 Soal guru: ' + d.title + ' (' + qs.length + ' soal)'; info.className = 'setinfo ok';
       [].forEach.call(document.querySelectorAll('.mathonly'), function (el) { el.classList.add('off'); });
-    }).catch(function () { info.textContent = '⚠️ Kode soal tidak ditemukan. Memakai soal matematika otomatis.'; info.className = 'setinfo err'; });
+    }).catch(function () { setFail = true; info.textContent = '⚠️ Kode soal tidak ditemukan. Memakai soal matematika otomatis.'; info.className = 'setinfo err'; });
   })();
 
   function renderNames() {
@@ -181,7 +183,7 @@
 
   function buildLane(i, name) {
     var el = document.createElement('section'); el.className = 'lane'; el.style.setProperty('--c', COLORS[i]);
-    el.innerHTML = '<header><span class="name"></span><span class="score">🎈 0/' + target + '</span></header>' +
+    el.innerHTML = '<header><span class="name"></span><span class="score">🎈 0' + (roomMode ? '' : '/' + target) + '</span></header>' +
       '<div class="qcard nb-sm"><div class="q"></div></div><div class="sky"></div>' +
       '<div class="ov freeze">💥 Salah!<small style="font-size:.5em">tunggu sebentar…</small></div>' +
       '<div class="ov win">🏆<div><span class="wn"></span> menang!</div></div>';
@@ -230,7 +232,7 @@
       L.locked = true; sPop(); obj.el.classList.add('pop');
       L.popped++; L.lastAt = performance.now(); var gain = 100 + Math.max(0, Math.round((7000 - t) / 100)); L.score += gain;
       Fx.good(c[0], c[1], '+' + gain);
-      L.el.querySelector('.score').textContent = '🎈 ' + L.popped + '/' + target;
+      L.el.querySelector('.score').textContent = '🎈 ' + L.popped + (roomMode ? '' : '/' + target);
       L.balloons.forEach(function (b) { if (b !== obj) { b.el.style.setProperty('--y', (-b.y) + 'px'); b.el.style.opacity = '.35'; } });
       if (L.popped >= target) { finish(L); return; }
       setTimeout(function () { if (!finished) showQuestion(L); }, 500);
@@ -267,7 +269,7 @@
   function tickTimer() { var s = Math.floor((performance.now() - startAt) / 1000); $('timer').textContent = '⏱ ' + String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); }
 
   function start() {
-    var names = [].map.call($('names').querySelectorAll('input'), function (inp, i) { return (inp.value || '').trim().replace(/[<>]/g, '') || ('Pemain ' + (i + 1)); });
+    var names = roomMode ? [roomName || 'Kamu'] : [].map.call($('names').querySelectorAll('input'), function (inp, i) { return (inp.value || '').trim().replace(/[<>]/g, '') || ('Pemain ' + (i + 1)); });
     finished = false; running = false; cancelAnimationFrame(raf); clearInterval(timerId);
     var g = $('game'); g.innerHTML = ''; g.classList.remove('hidden');
     $('menu').classList.add('hidden'); $('result').classList.add('hidden');
@@ -280,7 +282,7 @@
     lanes.forEach(function (L) { wrap.appendChild(L.el); });
     $('bMute').onclick = function () { muted = !muted; try { localStorage.setItem('bgy_muted', muted ? '1' : '0'); } catch (e) {} this.textContent = muted ? '🔇' : '🔊'; };
     $('bExit').onclick = function () { if (confirm('Keluar dari permainan?')) toMenu(); };
-    var n = 3, ov = document.createElement('div');
+    var n = roomMode ? 0 : 3, ov = document.createElement('div');
     ov.style.cssText = 'position:absolute;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:rgba(27,26,58,.6);color:#fff;font-weight:900;font-size:22vh';
     g.appendChild(ov);
     (function cd() {
@@ -326,6 +328,17 @@
 
   function toMenu() { Sfx.music(false); running = false; finished = true; cancelAnimationFrame(raf); clearInterval(timerId); $('game').classList.add('hidden'); $('result').classList.add('hidden'); $('menu').classList.remove('hidden'); }
   $('start').addEventListener('click', start);
+
+  // ---------- Mabar Online (ruang 5 angka) ----------
+  if (roomMode) {
+    $('menu').classList.add('hidden');
+    Ruang.init({
+      ready: function () { return !!setQ || setFail; },
+      onStart: function (ms, name) { roomName = name; nPlayers = 1; target = 99999; start(); $('bExit').style.display = 'none'; },
+      getStats: function () { var L = lanes[0] || {}; return { score: L.score || 0, caught: L.popped || 0, quizRight: L.popped || 0, quizWrong: (L.wrong || 0) + (L.miss || 0) }; },
+      onEnd: function () { running = false; finished = true; cancelAnimationFrame(raf); clearInterval(timerId); }
+    });
+  }
 })();
 </script>
 <script src="/games/_shared/twemoji.min.js"></script>

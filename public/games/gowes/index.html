@@ -178,11 +178,13 @@
 <script src="/games/_shared/mathgen.js"></script>
 <script src="/games/_shared/sfx.js"></script>
 <script src="/games/_shared/fx.js"></script>
+<script src="/games/_shared/ruang.js"></script>
 <script>
 (function () {
   'use strict';
   var COLORS = ['#ff7675', '#4aa8ff', '#55efc4', '#feca57'];
   var $ = function (id) { return document.getElementById(id); };
+  var roomMode = !!(window.Ruang && Ruang.active), roomName = '', setFail = false, ghosts = [], roomTop = [];
   var setQ = null, setCode = null, nPlayers = 2, target = 12, level = 1, mathMode = 'add';
   var sceneVars = '', players = [], bot = null, running = false, finished = false, startAt = 0, timerId = 0, botId = 0;
 
@@ -224,7 +226,7 @@
       setQ = qs; setCode = code;
       info.textContent = '📚 Soal guru: ' + d.title + ' (' + qs.length + ' soal)'; info.className = 'setinfo ok';
       [].forEach.call(document.querySelectorAll('.mathonly'), function (el) { el.classList.add('off'); });
-    }).catch(function () { info.textContent = '⚠️ Kode soal tidak ditemukan. Memakai soal matematika otomatis.'; info.className = 'setinfo err'; });
+    }).catch(function () { setFail = true; info.textContent = '⚠️ Kode soal tidak ditemukan. Memakai soal matematika otomatis.'; info.className = 'setinfo err'; });
   })();
 
   // ---------- Menu ----------
@@ -254,7 +256,19 @@
     if (!P.bag.length) P.bag = shuffle(setQ.map(function (_, i) { return i; }));
     var idx = P.bag.pop(); var q = setQ[idx]; return { q: q.q, o: q.o, a: q.a, idx: idx };
   }
-  function bikeLeft(step) { return 2 + (step / target) * 76; } // % (garis finis di ~85%)
+  function bikeLeft(step) {
+    if (roomMode) { var mx = Math.max(15, step + 3); roomTop.forEach(function (t) { mx = Math.max(mx, (t.caught || 0) + 3); }); return 2 + Math.min(1, step / mx) * 76; }
+    return 2 + (step / target) * 76;
+  } // % (garis finis di ~85%)
+  // Mabar Online: tampilkan 3 teman teratas sebagai sepeda bayangan
+  function placeGhosts() {
+    var others = roomTop.filter(function (t) { return !t.me; }).slice(0, ghosts.length);
+    ghosts.forEach(function (gb, i) {
+      var t = others[i]; gb.style.visibility = t ? 'visible' : 'hidden'; if (!t) return;
+      gb.querySelector('.tag').textContent = t.name + ' · ' + (t.caught || 0); gb.style.left = bikeLeft(t.caught || 0) + '%';
+    });
+    if (players[0] && players[0].bike) players[0].bike.style.left = bikeLeft(players[0].step) + '%';
+  }
 
   function makeBike(color, name, isBot) {
     var el = document.createElement('div'); el.className = 'bike' + (isBot ? ' bot' : ''); el.style.setProperty('--c', color);
@@ -266,7 +280,7 @@
 
   function buildPad(i, name) {
     var el = document.createElement('section'); el.className = 'pad'; el.style.setProperty('--c', COLORS[i]);
-    el.innerHTML = '<header><span class="name"></span><span class="score">🚲 0/' + target + '</span></header>' +
+    el.innerHTML = '<header><span class="name"></span><span class="score">🚲 0' + (roomMode ? '' : '/' + target) + '</span></header>' +
       '<div class="qcard nb-sm"><div class="q"></div></div><div class="opts"></div>' +
       '<div class="ov freeze">💥 Oleng!<small style="font-size:.5em">tunggu sebentar…</small></div>' +
       '<div class="ov win">🏆<div><span class="wn"></span> sampai duluan!</div></div>';
@@ -297,7 +311,7 @@
       sGood(); P.correct++; P.step++; P.lastAt = performance.now();
       var gain = 100 + Math.max(0, Math.round((6000 - t) / 100)); P.score += gain;
       var c = Fx.center(btn); Fx.good(c[0], c[1], '+' + gain);
-      P.el.querySelector('.score').textContent = '🚲 ' + P.step + '/' + target;
+      P.el.querySelector('.score').textContent = '🚲 ' + P.step + (roomMode ? '' : '/' + target);
       P.bike.style.left = bikeLeft(P.step) + '%'; pedal(P.bike);
       if (P.step >= target) { finish(P); return; }
       setTimeout(function () { if (!finished) showQuestion(P); }, 450);
@@ -346,12 +360,12 @@
   }
 
   function start() {
-    var names = [].map.call($('names').querySelectorAll('input'), function (inp, i) { return (inp.value || '').trim().replace(/[<>]/g, '') || ('Pemain ' + (i + 1)); });
+    var names = roomMode ? [roomName || 'Kamu'] : [].map.call($('names').querySelectorAll('input'), function (inp, i) { return (inp.value || '').trim().replace(/[<>]/g, '') || ('Pemain ' + (i + 1)); });
     finished = false; running = false; clearTimeout(botId);
     var g = $('game'); g.innerHTML = ''; g.classList.remove('hidden');
     $('menu').classList.add('hidden'); $('result').classList.add('hidden');
     players = names.map(function (n, i) { return buildPad(i, n); });
-    var nLanes = players.length + (players.length === 1 ? 1 : 0);
+    var nLanes = roomMode ? 4 : players.length + (players.length === 1 ? 1 : 0);
 
     var bar = document.createElement('div'); bar.className = 'topbar';
     bar.innerHTML = '<span class="brand">Main-yuk · Gowes ke Sekolah</span><span id="timer" class="timer nb-sm">⏱ 00:00</span>' +
@@ -365,14 +379,16 @@
     }
     players.forEach(function (P) { P.bike = addLane(COLORS[P.i], P.name, false); });
     bot = null;
-    if (players.length === 1) { bot = { name: 'Robot', i: 9, step: 0, correct: 0, wrong: 0, score: 0, isBot: true }; bot.bike = addLane('#b8b8c8', '🤖 Robot', true); }
+    ghosts = [];
+    if (roomMode) { ['#b79cff', '#feca57', '#55efc4'].forEach(function (c) { var gb = addLane(c, '…', true); gb.style.visibility = 'hidden'; gb.style.opacity = '.8'; ghosts.push(gb); }); }
+    else if (players.length === 1) { bot = { name: 'Robot', i: 9, step: 0, correct: 0, wrong: 0, score: 0, isBot: true }; bot.bike = addLane('#b8b8c8', '🤖 Robot', true); }
 
     var pads = document.createElement('div'); pads.className = 'pads'; g.appendChild(pads);
     players.forEach(function (P) { pads.appendChild(P.el); showQuestion(P); });
     $('bMute').onclick = function () { muted = !muted; try { localStorage.setItem('bgy_muted', muted ? '1' : '0'); } catch (e) {} this.textContent = muted ? '🔇' : '🔊'; };
     $('bExit').onclick = function () { if (confirm('Keluar dari permainan?')) toMenu(); };
 
-    var n = 3, ov = document.createElement('div');
+    var n = roomMode ? 0 : 3, ov = document.createElement('div');
     ov.style.cssText = 'position:absolute;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:rgba(27,26,58,.6);color:#fff;font-weight:900;font-size:22vh';
     g.appendChild(ov);
     (function cd() {
@@ -432,6 +448,18 @@
   }
 
   $('start').addEventListener('click', function () { tone(700, 0, .08, 'sine', .1); start(); });
+
+  // ---------- Mabar Online (ruang 5 angka) ----------
+  if (roomMode) {
+    $('menu').classList.add('hidden');
+    Ruang.init({
+      ready: function () { return !!setQ || setFail; },
+      onStart: function (ms, name) { roomName = name; nPlayers = 1; target = 99999; start(); $('bExit').style.display = 'none'; },
+      getStats: function () { var P = players[0] || {}; return { score: P.score || 0, caught: P.correct || 0, quizRight: P.correct || 0, quizWrong: P.wrong || 0 }; },
+      onTop: function (top) { roomTop = top; placeGhosts(); },
+      onEnd: function () { running = false; finished = true; clearInterval(timerId); clearTimeout(botId); }
+    });
+  }
   // Uji di laptop: tombol 1–4 menjawab untuk pemain 1
   window.addEventListener('keydown', function (e) {
     if (!running || !players[0]) return;

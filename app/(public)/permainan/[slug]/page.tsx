@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getGame, variantsOf, MAIN_GAMES } from "@/lib/games";
+import { getGame, variantsOf, MAIN_GAMES, CARA_LABEL } from "@/lib/games";
 import { getSettings, coverKey, gameMeta } from "@/lib/settings";
 import GameTile from "@/components/GameTile";
 import { getGamePlays } from "@/lib/queries";
@@ -45,6 +45,7 @@ export default async function PermainanPage({ params }: { params: { slug: string
             <p className="mt-3 text-slate-700 dark:text-slate-300">{meta.deskripsi}</p>
             <p className="mt-2 text-sm font-bold text-slate-600 dark:text-slate-400">🎮 {plays[g.slug] ? `${plays[g.slug].toLocaleString("id-ID")}× dimainkan` : "Game baru"}</p>
             <div className="mt-3 flex flex-wrap gap-1.5">
+              {g.cara.map((c) => <span key={c} className="rounded-full border-2 border-nb-ink bg-[#38a3ff]/30 px-2.5 py-0.5 text-xs font-extrabold text-nb-ink dark:text-white">{CARA_LABEL[c].icon} {CARA_LABEL[c].label}</span>)}
               {g.modes.map((m) => <span key={m} className="rounded-full border-2 border-nb-ink bg-white dark:bg-slate-800 px-2.5 py-0.5 text-xs font-bold text-nb-ink dark:text-white">{m}</span>)}
             </div>
             <div className="mt-5 grid gap-2.5 sm:grid-cols-2">

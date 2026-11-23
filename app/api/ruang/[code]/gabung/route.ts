@@ -32,7 +32,7 @@ export async function POST(req: Request, { params }: { params: { code: string } 
       RETURNING id
     `;
     const sets = await sql`SELECT code FROM question_sets WHERE id = ${room.set_id} LIMIT 1`;
-    return NextResponse.json({ ok: true, pid: (rows[0] as { id: string }).id, tok: token, setCode: (sets[0] as { code: string }).code });
+    return NextResponse.json({ ok: true, pid: (rows[0] as { id: string }).id, tok: token, setCode: (sets[0] as { code: string }).code, game: room.game || "kupu-kupu" });
   } catch (e) {
     if (String(e).includes("room_players_name_idx")) {
       return NextResponse.json({ error: "Nama itu sudah dipakai di ruang ini. Tambahkan inisial, mis. 'Budi A'." }, { status: 409 });

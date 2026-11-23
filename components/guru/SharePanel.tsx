@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import QRCode from "qrcode";
-import { GAMES, gameLabel, getGame, SET_GAMES_FILTER } from "@/lib/games";
+import { GAMES, gameLabel, getGame, SET_GAMES_FILTER, ONLINE_GAMES } from "@/lib/games";
 import { startRoom } from "@/app/(public)/guru/actions";
 
 export default function SharePanel({ id, code, game }: { id: string; code: string; game: string }) {
@@ -52,11 +52,16 @@ export default function SharePanel({ id, code, game }: { id: string; code: strin
           className="w-full nb-flat rounded-lg py-2.5 text-sm font-semibold ">
           {copied === "link" ? "Link disalin ✓" : "🔗 Salin link untuk murid"}
         </button>
-        <form action={startRoom.bind(null, id)}>
-          <button className="w-full nb nb-press bg-nb-orange text-nb-ink rounded-lg py-3 text-sm font-extrabold">
-            🌐 Mulai Mabar Online
-          </button>
-        </form>
+        <div className="rounded-lg border-2 border-nb-ink bg-nb-orange/20 p-2.5">
+          <p className="text-xs font-extrabold text-nb-ink mb-1.5">🌐 Mulai Mabar Online (HP murid masing-masing) dengan game:</p>
+          <div className="grid gap-1.5">
+            {ONLINE_GAMES.map((g) => (
+              <form key={g.slug} action={startRoom.bind(null, id, g.slug)}>
+                <button className="w-full nb-sm nb-press bg-nb-orange text-nb-ink rounded-lg py-2 text-sm font-extrabold">{g.title}</button>
+              </form>
+            ))}
+          </div>
+        </div>
         <a href={`/guru/set/${id}/hasil`}
           className="nb-sm nb-press w-full bg-nb-mint text-nb-ink rounded-lg py-2.5 text-sm font-extrabold block">
           📊 Lihat hasil murid
