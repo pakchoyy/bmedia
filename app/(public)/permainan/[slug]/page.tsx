@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getGame, variantsOf, MAIN_GAMES } from "@/lib/games";
 import { getSettings, coverKey, gameMeta } from "@/lib/settings";
 import GameTile from "@/components/GameTile";
+import { getGamePlays } from "@/lib/queries";
 import Icon from "@/components/Icon";
 
 export const dynamic = "force-dynamic";
@@ -17,7 +18,7 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
 export default async function PermainanPage({ params }: { params: { slug: string } }) {
   const g = getGame(params.slug);
   if (!g || g.parent) notFound();
-  const s = await getSettings();
+  const [s, plays] = await Promise.all([getSettings(), getGamePlays()]);
   const meta = gameMeta(s, g);
   const cover = s[coverKey(g.slug)] || g.preview;
   const custom = !g.noSet;
@@ -39,18 +40,19 @@ export default async function PermainanPage({ params }: { params: { slug: string
             <div className="mt-2 flex flex-wrap gap-1.5">
               <span className="rounded-md border-2 border-nb-ink bg-nb-yellow/50 px-2 py-0.5 text-xs font-extrabold text-nb-ink dark:text-white">{meta.mapel}</span>
               <span className="rounded-md border-2 border-nb-ink bg-nb-lilac/40 px-2 py-0.5 text-xs font-extrabold text-nb-ink dark:text-white">{meta.fase}</span>
-              {custom && <span className="rounded-md border-2 border-nb-ink bg-[#6cb8ff]/60 px-2 py-0.5 text-xs font-extrabold text-nb-ink dark:text-white">✏️ Bisa soal sendiri</span>}
+              {custom && <span className="rounded-md border-2 border-nb-ink bg-[#38a3ff] hover:bg-[#55b3ff] hover:-translate-y-0.5 transition/60 px-2 py-0.5 text-xs font-extrabold text-nb-ink dark:text-white">✏️ Bisa soal sendiri</span>}
             </div>
             <p className="mt-3 text-slate-700 dark:text-slate-300">{meta.deskripsi}</p>
+            <p className="mt-2 text-sm font-bold text-slate-600 dark:text-slate-400">🎮 {plays[g.slug] ? `${plays[g.slug].toLocaleString("id-ID")}× dimainkan` : "Game baru"}</p>
             <div className="mt-3 flex flex-wrap gap-1.5">
               {g.modes.map((m) => <span key={m} className="rounded-full border-2 border-nb-ink bg-white dark:bg-slate-800 px-2.5 py-0.5 text-xs font-bold text-nb-ink dark:text-white">{m}</span>)}
             </div>
             <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
-              <Link href={`/game/${g.slug}`} className="nb nb-hover nb-press inline-flex items-center justify-center gap-2 rounded-xl bg-[#5fd068] py-3 font-extrabold text-nb-ink">
+              <Link href={`/game/${g.slug}`} className="nb nb-hover nb-press inline-flex items-center justify-center gap-2 rounded-xl bg-[#22c55e] hover:bg-[#2bd968] hover:-translate-y-0.5 transition py-3 font-extrabold text-nb-ink">
                 <Icon name="play" /> Main sekarang
               </Link>
               {custom && (
-                <Link href={`/guru/baru?game=${g.slug}`} className="nb nb-hover nb-press inline-flex items-center justify-center gap-2 rounded-xl bg-[#6cb8ff] py-3 font-extrabold text-nb-ink">
+                <Link href={`/guru/baru?game=${g.slug}`} className="nb nb-hover nb-press inline-flex items-center justify-center gap-2 rounded-xl bg-[#38a3ff] hover:bg-[#55b3ff] hover:-translate-y-0.5 transition py-3 font-extrabold text-nb-ink">
                   <Icon name="pen" /> Pakai soal sendiri
                 </Link>
               )}
@@ -83,7 +85,7 @@ export default async function PermainanPage({ params }: { params: { slug: string
         <section className="mt-10" aria-labelledby="lain">
           <h2 id="lain" className="font-display font-bold text-2xl text-nb-ink dark:text-white mb-4">Game lainnya</h2>
           <div className="grid gap-3 sm:gap-5 grid-cols-2 lg:grid-cols-3">
-            {lain.map((x) => <GameTile key={x.slug} game={x} cover={s[coverKey(x.slug)]} meta={gameMeta(s, x)} />)}
+            {lain.map((x) => <GameTile key={x.slug} game={x} cover={s[coverKey(x.slug)]} meta={gameMeta(s, x)} plays={plays[x.slug]} />)}
           </div>
         </section>
       </div>

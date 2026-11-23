@@ -37,5 +37,5 @@ export default function GamePage({
   // Versi build: memaksa browser memuat file game terbaru setelah setiap deploy
   q.set("v", (process.env.VERCEL_GIT_COMMIT_SHA || "dev").slice(0, 7));
   const qs = q.toString();
-  return <GameFrame title={game.title} src={qs ? `${game.src}?${qs}` : game.src} portraitOk={game.portraitOk} />;
+  return <GameFrame title={game.title} src={qs ? `${game.src}?${qs}` : game.src} portraitOk={game.portraitOk} slug={game.slug} />;
 }

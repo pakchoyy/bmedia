@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
-export default function GameFrame({ title, src, portraitOk = false }: { title: string; src: string; portraitOk?: boolean }) {
+export default function GameFrame({ title, src, portraitOk = false, slug }: { title: string; src: string; portraitOk?: boolean; slug?: string }) {
   const box = useRef<HTMLDivElement>(null);
   const [portrait, setPortrait] = useState(false);
   const [full, setFull] = useState(false);
@@ -20,6 +20,17 @@ export default function GameFrame({ title, src, portraitOk = false }: { title: s
       document.removeEventListener("fullscreenchange", onFs);
     };
   }, [portraitOk]);
+
+  // Catat "dimainkan" sekali saat game dibuka
+  useEffect(() => {
+    if (!slug) return;
+    try {
+      const k = `gp_${slug}`, last = Number(sessionStorage.getItem(k) || 0);
+      if (Date.now() - last < 10 * 60 * 1000) return; // sudah dihitung di tab ini
+      sessionStorage.setItem(k, String(Date.now()));
+    } catch { /* sessionStorage tidak tersedia: tetap kirim, server membatasi */ }
+    fetch(`/api/game-play/${slug}`, { method: "POST", keepalive: true }).catch(() => {});
+  }, [slug]);
 
   async function toggleFull() {
     try {
