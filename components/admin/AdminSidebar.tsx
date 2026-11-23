@@ -17,6 +17,7 @@ export default function AdminSidebar({ email, onNavigate }: AdminSidebarProps) {
     { href: "/admin/media", label: "Semua Media", icon: "book" },
     { href: "/admin/media/new", label: "Tambah Media", icon: "plus" },
     { href: "/admin/submissions", label: "Submission", icon: "clipboard" },
+    { href: "/admin/statistik", label: "Statistik Guru", icon: "chart-simple" },
     { href: "/admin/password", label: "Keamanan & PIN", icon: "key" },
   ];
 

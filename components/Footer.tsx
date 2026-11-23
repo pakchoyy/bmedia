@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Icon from "./Icon";
-import { CONTACT_WA, CONTACT_TIKTOK } from "@/lib/constants";
+import { CONTACT_WA, CONTACT_TIKTOK, DONASI_URL } from "@/lib/constants";
 
 export default function Footer() {
   return (
@@ -39,6 +39,12 @@ export default function Footer() {
               <Icon name="whatsapp" /> WhatsApp
             </a>
           </div>
+          {DONASI_URL && (
+            <a href={DONASI_URL} target="_blank" rel="noopener noreferrer"
+              className="mt-3 inline-flex items-center gap-2 rounded-xl bg-nb-yellow text-nb-ink font-extrabold text-sm px-3 py-2 border-2 border-white shadow-[3px_3px_0_#ff5d8f]">
+              ☕ Traktir Pak Choy kopi
+            </a>
+          )}
           <p className="text-xs text-white/60 mt-3">Ada data yang perlu diperbaiki? Hubungi Pak Choy.</p>
         </div>
       </div>
