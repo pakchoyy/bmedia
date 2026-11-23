@@ -74,6 +74,11 @@ export default function AboutPage() {
           <UsulanForm />
         </section>
 
+        <p className="mt-8 text-center text-xs text-slate-500 dark:text-slate-400 max-w-[700px] mx-auto">
+          Kredit aset game: grafis latar dari <a href="https://kenney.nl" className="underline" target="_blank" rel="noopener noreferrer">Kenney</a> (CC0) ·
+          emoji dari <a href="https://github.com/jdecked/twemoji" className="underline" target="_blank" rel="noopener noreferrer">Twemoji</a> oleh Twitter/X dan kontributor (CC-BY 4.0).
+        </p>
+
         <div id="kontak" className="mt-8 nb bg-nb-yellow rounded-2xl p-6 max-w-[700px] mx-auto text-center">
           <h2 className="font-display text-2xl font-bold text-nb-ink mb-2">Hubungi Pak Choyy</h2>
           <p className="text-nb-ink/80 mb-4 text-sm">

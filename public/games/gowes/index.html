@@ -49,17 +49,23 @@
 
   /* jalan desa */
   .scene { position:relative; flex:0 0 auto; height:clamp(120px, 34vh, 300px); overflow:hidden; border-bottom:4px solid var(--ink);
-    background:linear-gradient(#8ed4ff, #c9ecff 60%); }
-  .sun { position:absolute; top:8%; left:6%; width:9vh; height:9vh; border-radius:50%; background:#ffd23f; border:3px solid var(--ink); }
-  .cloud { position:absolute; height:5vh; width:16vh; background:#fff; border:3px solid var(--ink); border-radius:99px; animation:drift 38s linear infinite; }
+    background:linear-gradient(#bfe9ff, #e8f7ff 70%); }
+  .sun { position:absolute; top:7%; left:5%; height:22%; animation:sunSpin 30s linear infinite; }
+  @keyframes sunSpin { to { rotate:360deg; } }
+  .kl { position:absolute; left:0; width:200%; background-repeat:repeat-x; background-size:auto 100%; pointer-events:none; }
+  .kl.clouds { top:0; height:55%; background-image:url(/games/_shared/kenney/cloudLayerB1.png); opacity:.9; animation:pan 90s linear infinite; }
+  .kl.mtn { bottom:calc(var(--hb) - 2%); height:40%; background-image:url(/games/_shared/kenney/mountains.png); animation:pan 240s linear infinite; }
+  .kl.hill { bottom:calc(var(--hb) - 6%); height:30%; background-image:url(/games/_shared/kenney/hills.png); filter:hue-rotate(-60deg) saturate(1.6) brightness(.95); animation:pan 160s linear infinite; }
+  @keyframes pan { to { transform:translateX(-50%); } }
+  .cloud { position:absolute; height:16%; animation:drift 38s linear infinite; }
   .cloud.c2 { top:20%; animation-duration:52s; animation-delay:-20s; transform:scale(.8); }
   @keyframes drift { from { left:105%; } to { left:-25%; } }
-  .hills { position:absolute; left:0; width:100%; bottom:var(--hb); height:34%; display:block; }
-  .decos { position:absolute; left:0; right:0; bottom:calc(var(--rb) - 4px); height:26%; pointer-events:none; z-index:0; }
+  .hills { display:none; }
+  .decos { position:absolute; left:0; right:0; bottom:calc(var(--rb) - 4px); height:24%; pointer-events:none; z-index:0; }
   .decos .deco { position:absolute; bottom:0; width:auto; overflow:visible; }
   .decos .fl { height:22%; }
   .sawah { position:absolute; left:0; right:0; bottom:0; height:var(--sh);
-    background: repeating-linear-gradient(100deg, #7cc95e 0 22px, #6ab84f 22px 44px); border-top:3px solid var(--ink); }
+    background: linear-gradient(#2ec27a, #23b56d); border-top:4px solid #1aa560; }
   .road { position:absolute; left:0; right:0; bottom:4%; display:flex; flex-direction:column; }
   .rlane { position:relative; height:var(--lh); background:#5c5f73; border-top:2px solid #3c3e4f; }
   .rlane:first-child { border-top:3px solid var(--ink); }
@@ -114,7 +120,7 @@
     .scene { height:30vh; } .school { width:10%; } .qcard { margin:3px 5px; padding:3px 6px; } .opts { gap:4px; padding:0 5px 4px; } .opt { min-height:26px; border-radius:9px; }
     .pad header { padding:2px 8px; } .topbar { padding:1px 8px; } .topbar .tb button { width:24px; height:24px; font-size:12px; }
   }
-  @media (prefers-reduced-motion: reduce) { .cloud, .bike.go .wheel, .bike.wob { animation:none; } .bike { transition:none; } }
+  @media (prefers-reduced-motion: reduce) { .kl, .sun, .cloud, .bike.go .wheel, .bike.wob { animation:none; } .bike { transition:none; } }
   .mg-wrap { margin-top:10px; }
   .mg-grid { display:grid; grid-template-columns:repeat(5, 1fr); gap:6px; margin-top:6px; }
   .mg-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; padding:6px 2px; border-radius:12px; background:#fff; border:2px solid var(--ink); box-shadow:2px 2px 0 var(--ink); min-height:54px; }
@@ -321,15 +327,18 @@
   }
 
   function deco() {
-    var tree = function (x, s) { return '<svg class="deco" style="left:' + x + '%;height:' + s + '%" viewBox="0 0 40 60"><rect x="17" y="34" width="6" height="24" rx="2" fill="#8a5a3b" stroke="#1b1a3a" stroke-width="2.5"/><circle cx="20" cy="24" r="17" fill="#3fae5a" stroke="#1b1a3a" stroke-width="3"/><circle cx="13" cy="19" r="5" fill="#6fd27f"/></svg>'; };
-    var house = function (x, c) { return '<svg class="deco" style="left:' + x + '%;height:62%" viewBox="0 0 50 44"><rect x="6" y="18" width="38" height="24" fill="#fff6dc" stroke="#1b1a3a" stroke-width="3"/><path d="M2 20 L25 3 L48 20 Z" fill="' + c + '" stroke="#1b1a3a" stroke-width="3" stroke-linejoin="round"/><rect x="20" y="27" width="10" height="15" fill="#4aa8ff" stroke="#1b1a3a" stroke-width="2.5"/></svg>'; };
-    var flower = function (x) { return '<svg class="deco fl" style="left:' + x + '%" viewBox="0 0 20 20"><circle cx="10" cy="10" r="4" fill="#ffd23f" stroke="#1b1a3a" stroke-width="1.5"/><circle cx="10" cy="3" r="3" fill="#ff5d8f"/><circle cx="17" cy="10" r="3" fill="#ff5d8f"/><circle cx="10" cy="17" r="3" fill="#ff5d8f"/><circle cx="3" cy="10" r="3" fill="#ff5d8f"/></svg>'; };
-    return '<div class="decos">' + tree(3, 85) + house(12, '#ff5d8f') + tree(24, 70) + tree(29, 95) + house(42, '#4aa8ff') + tree(55, 80) + flower(20) + flower(37) + flower(63) + tree(67, 90) + house(74, '#2ec4b6') + '</div>';
+    var K = '/games/_shared/kenney/';
+    var im = function (f, x, h) { return '<img class="deco" src="' + K + f + '.png" alt="" style="left:' + x + '%;height:' + h + '%">'; };
+    return '<div class="decos">' +
+      im('treePine', 2, 120) + im('house1', 9, 95) + im('bush1', 17, 28) + im('tree', 22, 110) + im('treeLong', 27, 125) +
+      im('fence', 31, 40) + im('house2', 37, 92) + im('bushAlt1', 46, 22) + im('treePine', 52, 115) + im('houseAlt1', 58, 100) +
+      im('tree', 66, 105) + im('bush1', 70, 26) + im('treeLong', 74, 120) + '</div>';
   }
+
   function sceneHTML(n) {
     var k = n <= 2 ? 0.17 : n === 3 ? 0.14 : 0.115, f = n * k * 100;
     sceneVars = '--rb:' + (4 + f) + '%;--sh:' + (f + 16) + '%;--hb:' + (f + 14) + '%';
-    return '<div class="sun"></div><div class="cloud" style="top:10%"></div><div class="cloud c2"></div>' +
+    return '<div class="kl clouds"></div><img class="sun" src="/games/_shared/kenney/sun.png" alt=""><img class="cloud" style="top:8%" src="/games/_shared/kenney/cloud2.png" alt=""><img class="cloud c2" src="/games/_shared/kenney/cloud4.png" alt=""><div class="kl mtn"></div><div class="kl hill"></div>' +
       '<svg class="hills" viewBox="0 0 400 60" preserveAspectRatio="none"><path d="M0 60 L60 12 L120 60 Z M90 60 L170 4 L250 60 Z M220 60 L300 18 L380 60 Z M330 60 L380 30 L430 60 Z" fill="#5aa1c9" stroke="#1b1a3a" stroke-width="2.5" stroke-linejoin="round"/></svg>' +
       '<div class="sawah"></div>' + deco() +
       '<svg class="school" viewBox="0 0 120 100"><rect x="10" y="40" width="100" height="56" fill="#fff6dc" stroke="#1b1a3a" stroke-width="4"/><path d="M2 44 L60 12 L118 44 Z" fill="#ff7a1a" stroke="#1b1a3a" stroke-width="4" stroke-linejoin="round"/><rect x="50" y="66" width="20" height="30" fill="#4aa8ff" stroke="#1b1a3a" stroke-width="3"/><rect x="20" y="54" width="20" height="16" fill="#bfe7ff" stroke="#1b1a3a" stroke-width="3"/><rect x="80" y="54" width="20" height="16" fill="#bfe7ff" stroke="#1b1a3a" stroke-width="3"/><text x="60" y="38" text-anchor="middle" font-size="10" font-weight="900" fill="#1b1a3a" font-family="sans-serif">SD</text><line x1="60" y1="12" x2="60" y2="-4" stroke="#1b1a3a" stroke-width="2.5"/><rect x="60" y="-4" width="14" height="5" fill="#e63946"/><rect x="60" y="1" width="14" height="5" fill="#fff" stroke="#1b1a3a" stroke-width=".8"/></svg>' +
@@ -431,5 +440,7 @@
   });
 })();
 </script>
+<script src="/games/_shared/twemoji.min.js"></script>
+<script src="/games/_shared/emoji.js"></script>
 </body>
 </html>
