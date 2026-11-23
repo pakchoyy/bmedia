@@ -156,6 +156,8 @@ export async function changePassword(current: string, next: string): Promise<Act
     return { ok: false, error: "Password lama salah." };
   }
   const newHash = await bcrypt.hash(next, 10);
-  await sql`UPDATE admins SET password_hash = ${newHash} WHERE id = ${session.adminId}`;
+  await sql`UPDATE admins SET password_hash = ${newHash}, pin_hash = NULL, pin_failed = 0, pin_locked_until = NULL WHERE id = ${session.adminId}`;
+  // Ganti password mencabut PIN dan semua perangkat tepercaya (aman bila password sempat bocor)
+  await sql`DELETE FROM admin_devices WHERE admin_id = ${session.adminId}`;
   return { ok: true };
 }

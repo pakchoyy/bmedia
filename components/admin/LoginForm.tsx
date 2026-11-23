@@ -41,7 +41,7 @@ export default function LoginForm() {
           <div className="w-14 h-14 rounded-2xl bg-primary-light/10 text-primary-light flex items-center justify-center mb-3">
             <Icon name="laptop-code" className="text-2xl" />
           </div>
-          <h1 className="text-xl font-extrabold text-primary">Bantu Guru Yuk</h1>
+          <h1 className="text-xl font-extrabold text-primary">Main-yuk</h1>
           <p className="text-sm text-gray-500">Admin Panel — Masuk</p>
         </div>
 

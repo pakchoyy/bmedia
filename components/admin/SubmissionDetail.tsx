@@ -91,9 +91,9 @@ export default function SubmissionDetail({ media }: { media: Media }) {
   const waTo = waNumber(media.guru_wa);
   const waText =
     media.status === "approved"
-      ? `Halo ${media.guru_name}, karya "${media.title}" sudah tayang di Bantu Guru Yuk. Terima kasih sudah berbagi!\n\n${MEDIA_SITE_ORIGIN}/media/${media.id}`
+      ? `Halo ${media.guru_name}, karya "${media.title}" sudah tayang di Main-yuk. Terima kasih sudah berbagi!\n\n${MEDIA_SITE_ORIGIN}/media/${media.id}`
       : media.status === "rejected"
-        ? `Halo ${media.guru_name}, karya "${media.title}" belum bisa ditayangkan di Bantu Guru Yuk.\n\nAlasan: ${media.rejection_reason ?? "-"}\n\nSilakan perbaiki lalu kirim ulang ya. Terima kasih!`
+        ? `Halo ${media.guru_name}, karya "${media.title}" belum bisa ditayangkan di Main-yuk.\n\nAlasan: ${media.rejection_reason ?? "-"}\n\nSilakan perbaiki lalu kirim ulang ya. Terima kasih!`
         : null;
 
   const handleApprove = async () => {
