@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Tebak Emoji · Main-yuk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root { --ink:#1b1a3a; --cream:#fff6dc; --yellow:#ffd23f; --orange:#ff7a1a; --pink:#ff5d8f; --mint:#2ec4b6; --blue:#4aa8ff; --lilac:#b79cff; }
   * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
@@ -52,6 +54,7 @@
   @media (max-width:520px) { .opts { grid-template-columns:1fr; } }
   @media (prefers-reduced-motion: reduce) { .toast { animation:none; opacity:0; } }
 </style>
+<link rel="stylesheet" href="/games/_shared/theme.css">
 </head>
 <body>
 <div id="menu" class="screen">
@@ -91,6 +94,8 @@
   </div>
 </div>
 
+<script src="/games/_shared/sfx.js"></script>
+<script src="/games/_shared/fx.js"></script>
 <script>
 (function () {
   'use strict';
@@ -154,10 +159,10 @@
     if (ok) {
       var gain = 100 + (timeLimit ? Math.round(timeLeft / timeLimit * 50) : 0);
       if (mode === 'tim') teamScore[turn] += gain; else score += gain;
-      toast('✅ +' + gain); [660, 880, 1100].forEach(function (f, i) { tone(f, i * .07, .12, 'triangle'); });
+      var c = btn ? Fx.center(btn) : null; Fx.good(c && c[0], c && c[1], '+' + gain); Sfx.good();
     } else {
       if (btn) btn.classList.add('bad');
-      toast(btn ? '❌' : '⏰'); tone(220, 0, .2, 'sawtooth', .07);
+      var cb = btn ? Fx.center(btn) : null; Fx.bad($('opts'), cb && cb[0], cb && cb[1]); Sfx.bad();
     }
     history.push({ e: p[0], a: p[1], ok: ok, t: mode === 'tim' ? TEAM[turn].n : '' });
     if (mode === 'tim') $('score').textContent = teamScore[0] + ' : ' + teamScore[1]; else $('score').textContent = score;
@@ -180,7 +185,7 @@
     $('score').textContent = mode === 'tim' ? '0 : 0' : '0';
     $('bMute').textContent = muted ? '🔇' : '🔊';
     $('menu').classList.add('hidden'); $('over').classList.add('hidden'); $('game').classList.remove('hidden');
-    show(); clearInterval(timerId); timerId = setInterval(tick, 250);
+    show(); clearInterval(timerId); timerId = setInterval(tick, 250); Sfx.go(); Sfx.music(true);
   }
 
   function end() {
@@ -201,7 +206,7 @@
     var rv = $('review'); rv.innerHTML = '';
     history.forEach(function (h) { var d = document.createElement('div'); d.textContent = (h.ok ? '✅ ' : '❌ ') + h.e + '  = ' + h.a + (h.t ? ' · ' + h.t : ''); rv.appendChild(d); });
     $('over').classList.remove('hidden');
-    [523, 659, 784].forEach(function (f, i) { tone(f, i * .12, .2, 'triangle'); });
+    Sfx.music(false); Sfx.win();
   }
 
   $('start').addEventListener('click', start);

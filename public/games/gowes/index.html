@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Gowes ke Sekolah · Main-yuk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root { --ink:#1b1a3a; --cream:#fff6dc; --yellow:#ffd23f; --orange:#ff7a1a; --pink:#ff5d8f; --mint:#2ec4b6; }
   * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
@@ -123,6 +125,7 @@
   @media (max-width:520px) { .mg-grid { grid-template-columns:repeat(4, 1fr); } }
   @media (max-height:480px) { .mg-btn { min-height:38px; padding:3px 2px; } .mg-btn .mg-l { font-size:9px; } .mg-grid { gap:4px; } }
 </style>
+<link rel="stylesheet" href="/games/_shared/theme.css">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -167,6 +170,7 @@
 <div id="result" class="hidden"></div>
 
 <script src="/games/_shared/mathgen.js"></script>
+<script src="/games/_shared/sfx.js"></script>
 <script src="/games/_shared/fx.js"></script>
 <script>
 (function () {
@@ -190,10 +194,10 @@
       o.connect(g); g.connect(actx.destination); o.start(s); o.stop(s + d + 0.02);
     } catch (e) {}
   }
-  function sGood() { tone(988, 0, .08, 'square', .06); tone(1319, .07, .14, 'square', .06); } // kring-kring
-  function sBad() { tone(220, 0, .22, 'sawtooth', .08); tone(170, .1, .25, 'sawtooth', .08); }
-  function sWin() { [523, 659, 784, 1047, 784, 1047].forEach(function (f, i) { tone(f, i * .12, .22, 'triangle', .16); }); }
-  function sTick() { tone(520, 0, .06, 'square', .05); }
+  function sGood() { Sfx.good(); }
+  function sBad() { Sfx.bad(); }
+  function sWin() { Sfx.music(false); Sfx.win(); }
+  function sTick() { Sfx.tick(); }
 
   // ---------- Soal matematika ----------
   function rnd(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
@@ -364,7 +368,7 @@
     g.appendChild(ov);
     (function cd() {
       if (n > 0) { ov.textContent = n; sTick(); n--; setTimeout(cd, 800); }
-      else { ov.textContent = 'GOWES!'; ov.style.fontSize = '14vh'; tone(880, 0, .3, 'triangle', .18); setTimeout(function () { ov.remove(); }, 450);
+      else { ov.textContent = 'GOWES!'; ov.style.fontSize = '14vh'; Sfx.go(); Sfx.music(true); setTimeout(function () { ov.remove(); }, 450);
         running = true; startAt = performance.now(); timerId = setInterval(tickTimer, 250); tickTimer(); if (bot) botLoop(); }
     })();
   }
@@ -372,7 +376,7 @@
   function finish(winner) {
     finished = true; running = false; clearInterval(timerId); clearTimeout(botId);
     var dur = Math.round((performance.now() - startAt) / 1000);
-    if (winner.isBot) { sBad(); } else { sWin(); Fx.win(); winner.el.classList.add('win'); winner.el.querySelector('.wn').textContent = winner.name; }
+    if (winner.isBot) { Sfx.music(false); sBad(); } else { sWin(); Fx.win(); winner.el.classList.add('win'); winner.el.querySelector('.wn').textContent = winner.name; }
     setTimeout(function () { showResult(winner, dur); }, 1500);
   }
 
@@ -414,7 +418,7 @@
   }
 
   function toMenu() {
-    running = false; finished = true; clearInterval(timerId); clearTimeout(botId);
+    Sfx.music(false); running = false; finished = true; clearInterval(timerId); clearTimeout(botId);
     $('game').classList.add('hidden'); $('result').classList.add('hidden'); $('menu').classList.remove('hidden');
   }
 

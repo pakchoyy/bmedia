@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Balon Pecah · Main-yuk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root { --ink:#1b1a3a; --cream:#fff6dc; --yellow:#ffd23f; --orange:#ff7a1a; --pink:#ff5d8f; --mint:#2ec4b6; --blue:#4aa8ff; }
   * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
@@ -102,6 +104,7 @@
   @media (max-width:520px) { .mg-grid { grid-template-columns:repeat(4, 1fr); } }
   @media (max-height:480px) { .mg-btn { min-height:38px; padding:3px 2px; } .mg-btn .mg-l { font-size:9px; } .mg-grid { gap:4px; } }
 </style>
+<link rel="stylesheet" href="/games/_shared/theme.css">
 </head>
 <body>
 <div id="menu" class="screen">
@@ -125,6 +128,7 @@
 <div id="result" class="screen hidden"></div>
 
 <script src="/games/_shared/mathgen.js"></script>
+<script src="/games/_shared/sfx.js"></script>
 <script src="/games/_shared/fx.js"></script>
 <script>
 (function () {
@@ -137,9 +141,9 @@
   var muted = false; try { muted = localStorage.getItem('bgy_muted') === '1'; } catch (e) {}
   var actx = null;
   function tone(f, t, d, type, v) { if (muted) return; try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume(); var o = actx.createOscillator(), g = actx.createGain(), s = actx.currentTime + t; o.type = type || 'sine'; o.frequency.setValueAtTime(f, s); g.gain.setValueAtTime(.0001, s); g.gain.linearRampToValueAtTime(v || .14, s + .015); g.gain.exponentialRampToValueAtTime(.0001, s + d); o.connect(g); g.connect(actx.destination); o.start(s); o.stop(s + d + .02); } catch (e) {} }
-  function sPop() { tone(900, 0, .05, 'square', .1); tone(1400, .03, .1, 'triangle', .1); }
-  function sBad() { tone(220, 0, .22, 'sawtooth', .08); }
-  function sWin() { [523, 659, 784, 1047, 784, 1047].forEach(function (f, i) { tone(f, i * .12, .22, 'triangle', .16); }); }
+  function sPop() { Sfx.pop(); Sfx.good(); }
+  function sBad() { Sfx.bad(); }
+  function sWin() { Sfx.music(false); Sfx.win(); }
   function rnd(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
   function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
 
@@ -266,7 +270,7 @@
       });
       if (escaped) {
         L.miss++; if (L.cur.idx != null) { var qs = L.qstats[L.cur.idx] || (L.qstats[L.cur.idx] = [0, 0]); qs[1]++; }
-        tone(330, 0, .15, 'triangle', .06); showQuestion(L);
+        Sfx.bad(); showQuestion(L);
       }
     });
     raf = requestAnimationFrame(loop);
@@ -292,8 +296,8 @@
     ov.style.cssText = 'position:absolute;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:rgba(27,26,58,.6);color:#fff;font-weight:900;font-size:22vh';
     g.appendChild(ov);
     (function cd() {
-      if (n > 0) { ov.textContent = n; tone(520, 0, .06, 'square', .05); n--; setTimeout(cd, 800); }
-      else { ov.textContent = '🎈'; tone(880, 0, .3, 'triangle', .18); setTimeout(function () { ov.remove(); }, 400);
+      if (n > 0) { ov.textContent = n; Sfx.tick(); n--; setTimeout(cd, 800); }
+      else { ov.textContent = '🎈'; Sfx.go(); Sfx.music(true); setTimeout(function () { ov.remove(); }, 400);
         running = true; startAt = performance.now(); lastT = 0; lanes.forEach(showQuestion); raf = requestAnimationFrame(loop); timerId = setInterval(tickTimer, 250); tickTimer(); }
     })();
   }
@@ -332,7 +336,7 @@
     }
   }
 
-  function toMenu() { running = false; finished = true; cancelAnimationFrame(raf); clearInterval(timerId); $('game').classList.add('hidden'); $('result').classList.add('hidden'); $('menu').classList.remove('hidden'); }
+  function toMenu() { Sfx.music(false); running = false; finished = true; cancelAnimationFrame(raf); clearInterval(timerId); $('game').classList.add('hidden'); $('result').classList.add('hidden'); $('menu').classList.remove('hidden'); }
   $('start').addEventListener('click', start);
 })();
 </script>

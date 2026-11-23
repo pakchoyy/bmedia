@@ -37,36 +37,30 @@ export default function GameFrame({ title, src, portraitOk = false }: { title: s
     }
   }
 
+  const btn = "inline-flex items-center gap-1.5 rounded-xl border-[3px] border-[#1b1a3a] shadow-[3px_3px_0_#1b1a3a] font-extrabold text-[#1b1a3a] text-sm px-3 py-1.5 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none";
+
   return (
     <div ref={box} className="fixed inset-0 bg-slate-900" style={{ zIndex: 2147483000 }}>
-      <iframe
-        src={src}
-        title={title}
-        className="w-full h-full border-0"
-        allow="fullscreen; autoplay"
-      />
+      <iframe src={src} title={title} className="w-full h-full border-0" allow="fullscreen; autoplay" />
 
-      {!full && (
-        <Link
-          href="/"
-          className="absolute left-2 bottom-2 z-10 rounded-full bg-black/55 text-white text-xs font-bold px-3 py-1.5"
-        >
-          ← Main-yuk
-        </Link>
-      )}
-      <button
-        onClick={toggleFull}
-        aria-label="Layar penuh"
-        className="absolute left-2 top-1/2 -translate-y-1/2 z-10 rounded-full bg-black/55 text-white text-sm w-9 h-9"
-      >
-        {full ? "🡼" : "⛶"}
-      </button>
+      {/* Kontrol: kiri bawah agar tidak menutupi skor/HUD game */}
+      <div className="absolute left-2 bottom-2 z-10 flex gap-2">
+        {!full && (
+          <Link href="/" className={`${btn} bg-[#ffd23f]`} aria-label="Kembali ke beranda Main-yuk">
+            <span aria-hidden="true">🏠</span> Beranda
+          </Link>
+        )}
+        <button onClick={toggleFull} className={`${btn} bg-white`} aria-label={full ? "Keluar layar penuh" : "Layar penuh"}>
+          <span aria-hidden="true">{full ? "↙" : "⛶"}</span> {full ? "Keluar" : "Layar penuh"}
+        </button>
+      </div>
 
       {portrait && (
         <div className="absolute inset-0 z-20 bg-slate-900 text-white flex flex-col items-center justify-center gap-4 text-center p-6">
           <div className="text-6xl animate-pulse">🔄</div>
           <p className="text-xl font-extrabold">Putar HP kamu ke samping</p>
           <p className="text-sm opacity-75">Game ini dimainkan dalam mode landscape.</p>
+          <Link href="/" className={`${btn} bg-[#ffd23f]`}>🏠 Beranda</Link>
         </div>
       )}
     </div>

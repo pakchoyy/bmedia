@@ -1,0 +1,57 @@
+/* Main-yuk · Tema bersama menu & tampilan game (dimuat setelah gaya masing-masing game). */
+html, body, button, input, select, textarea { font-family: "Nunito", ui-rounded, "Segoe UI", system-ui, sans-serif; }
+h1, h2, .q, .opt, .tile, .slot, .timer, .pill, .score, .name, .big, #start, .mg-i, .emo + *, .w { font-family: "Fredoka", "Nunito", ui-rounded, system-ui, sans-serif; }
+
+/* Latar menu: gumpalan warna + pola titik + konfeti diam */
+#menu {
+  background:
+    radial-gradient(circle at 8% 12%, rgba(255,210,63,.75) 0 120px, transparent 121px),
+    radial-gradient(circle at 94% 88%, rgba(255,93,143,.45) 0 150px, transparent 151px),
+    radial-gradient(circle at 92% 8%, rgba(46,196,182,.45) 0 90px, transparent 91px),
+    radial-gradient(rgba(27,26,58,.10) 1.6px, transparent 1.6px) 0 0 / 20px 20px,
+    linear-gradient(160deg, #fff3d0, #ffe1ec 55%, #d9f2ff) !important;
+}
+#menu .card {
+  position: relative; border-width: 4px !important; border-radius: 30px !important;
+  box-shadow: 9px 9px 0 #1b1a3a !important; animation: mgCardIn .45s cubic-bezier(.2,1.3,.4,1) both;
+}
+#menu .card::before {
+  content: "MAIN-YUK"; position: absolute; top: -15px; left: 50%; transform: translateX(-50%) rotate(-2deg);
+  background: #ffd23f; border: 3px solid #1b1a3a; border-radius: 999px; padding: 2px 14px;
+  font: 800 12px/1.4 "Fredoka", sans-serif; letter-spacing: 1.5px; color: #1b1a3a; box-shadow: 3px 3px 0 #1b1a3a;
+}
+#menu .card h1 { font-family: "Fredoka", sans-serif !important; font-weight: 700 !important; letter-spacing: 0 !important; text-shadow: 3px 3px 0 rgba(255,210,63,.55); }
+#menu .sub { font-size: 14px !important; }
+@keyframes mgCardIn { from { opacity: 0; transform: translateY(18px) scale(.97); } to { opacity: 1; transform: none; } }
+
+/* Tombol pilihan */
+.seg button, .mg-btn { transition: transform .12s, box-shadow .12s, background .12s; }
+.seg button:hover, .mg-btn:hover { transform: translate(-1px,-2px); box-shadow: 3px 4px 0 #1b1a3a; }
+.seg button.on, .mg-btn.on { background: #ffd23f !important; box-shadow: inset 0 -4px 0 rgba(0,0,0,.12), 2px 2px 0 #1b1a3a !important; }
+.mg-btn.on .mg-i { transform: scale(1.12); }
+
+/* Tombol mulai: besar, berkilau, berdenyut halus */
+#start, .big {
+  position: relative; overflow: hidden; font-family: "Fredoka", sans-serif !important; font-weight: 700 !important;
+  font-size: clamp(20px, 3.4vh, 26px) !important; letter-spacing: .5px; border-width: 4px !important;
+  box-shadow: 6px 6px 0 #1b1a3a !important; animation: mgPulse 2.2s ease-in-out infinite;
+}
+#start::after, .big::after {
+  content: ""; position: absolute; top: -50%; left: -40%; width: 30%; height: 200%; transform: rotate(20deg);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent); animation: mgShine 2.8s ease-in-out infinite;
+}
+#start:active, .big:active { transform: translate(4px,4px); box-shadow: 2px 2px 0 #1b1a3a !important; }
+@keyframes mgPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.015); } }
+@keyframes mgShine { 0% { left: -40%; } 55%,100% { left: 130%; } }
+
+/* Kartu soal & pilihan jawaban di dalam game */
+.qcard { border-width: 3px !important; box-shadow: 4px 4px 0 #1b1a3a !important; }
+.opt { transition: transform .1s, background .15s; box-shadow: 3px 3px 0 #1b1a3a !important; }
+.opt:hover:not(:disabled) { transform: translateY(-2px); background: #fff8e1; }
+.opt.good { background: #8cf0b8 !important; transform: scale(1.03); }
+.opt.bad { background: #ff9aa8 !important; }
+.topbar { background: linear-gradient(90deg, #1b1a3a, #2d2a5c); }
+
+@media (prefers-reduced-motion: reduce) {
+  #menu .card, #start, .big, #start::after, .big::after { animation: none !important; }
+}
