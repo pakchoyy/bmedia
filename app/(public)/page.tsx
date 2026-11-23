@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getHomeKarya, getSiteStats, getUlasan } from "@/lib/queries";
+import { getHomeKarya, getSiteStats, getUlasan, getGamePlays } from "@/lib/queries";
 import GameCard from "@/components/GameCard";
 import GameTile from "@/components/GameTile";
 import WebLuarCard from "@/components/WebLuarCard";
@@ -33,8 +33,8 @@ function SectionHead({ id, title, mark, desc, href, linkText }: { id: string; ti
 }
 
 export default async function HomePage() {
-  const [karya, ulasan, stats, links, settings] = await Promise.all([
-    getHomeKarya(8), getUlasan(), getSiteStats(), getWebLinks(), getSettings(),
+  const [karya, ulasan, stats, links, settings, plays] = await Promise.all([
+    getHomeKarya(8), getUlasan(), getSiteStats(), getWebLinks(), getSettings(), getGamePlays(),
   ]);
   const hero = settings[HERO_KEY] || HERO_DEFAULT;
   // Beranda: satu web dari tiap kategori, lalu tambahan sampai 6
@@ -84,7 +84,7 @@ export default async function HomePage() {
         <div className="container mx-auto max-w-[1200px]">
           <SectionHead id="game-judul" title="Karya Admin" mark="Main-yuk" desc="Game buatan Main-yuk. Tombol biru ✏️ artinya game itu bisa diisi soalmu sendiri." href="/game" linkText="Semua" />
           <div className="grid gap-3 sm:gap-5 grid-cols-2 lg:grid-cols-3">
-            {MAIN_GAMES.map((g) => <GameTile key={g.slug} game={g} cover={settings[coverKey(g.slug)]} meta={gameMeta(settings, g)} />)}
+            {MAIN_GAMES.map((g) => <GameTile key={g.slug} game={g} cover={settings[coverKey(g.slug)]} meta={gameMeta(settings, g)} plays={plays[g.slug]} />)}
           </div>
           <Link href="/guru" className="mt-4 nb-sm nb-hover rounded-2xl bg-nb-mint/25 dark:bg-slate-900 px-4 py-3 flex items-center gap-3">
             <Icon name="chalkboard-user" className="text-2xl text-nb-ink dark:text-white shrink-0" />

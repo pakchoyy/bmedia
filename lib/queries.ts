@@ -125,3 +125,14 @@ export async function getUlasan(limit = 20): Promise<Ulasan[]> {
     return [];
   }
 }
+
+/** Jumlah dimainkan tiap Karya Admin: { slug: plays } */
+export async function getGamePlays(): Promise<Record<string, number>> {
+  try {
+    const rows = (await sql`SELECT slug, plays FROM game_plays`) as { slug: string; plays: number }[];
+    return Object.fromEntries(rows.map((r) => [r.slug, Number(r.plays)]));
+  } catch (e) {
+    console.error("getGamePlays error:", e);
+    return {};
+  }
+}

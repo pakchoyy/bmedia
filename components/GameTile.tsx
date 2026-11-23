@@ -4,7 +4,7 @@ import type { GameInfo } from "@/lib/games";
 import type { GameMeta } from "@/lib/settings";
 
 /** Kartu game Karya Admin: cover, badge mapel & fase, tombol Main (hijau) dan Soal sendiri (biru, hanya game yang mendukung soal guru). */
-export default function GameTile({ game, cover, meta }: { game: GameInfo; cover?: string; meta?: GameMeta }) {
+export default function GameTile({ game, cover, meta, plays }: { game: GameInfo; cover?: string; meta?: GameMeta; plays?: number }) {
   const custom = !game.noSet;
   const m = meta ?? { mapel: game.mapel, fase: game.fase, deskripsi: game.tagline };
   return (
@@ -20,16 +20,17 @@ export default function GameTile({ game, cover, meta }: { game: GameInfo; cover?
           <Link href={`/permainan/${game.slug}`} className="hover:underline decoration-nb-yellow decoration-4 underline-offset-4">{game.title}</Link>
         </h3>
         <div className="flex flex-wrap gap-1">
-          <span className="rounded-md border-2 border-nb-ink bg-nb-yellow/50 px-1.5 py-0.5 text-[10px] sm:text-[11px] font-extrabold text-nb-ink dark:text-white">{m.mapel}</span>
-          <span className="rounded-md border-2 border-nb-ink bg-nb-lilac/40 px-1.5 py-0.5 text-[10px] sm:text-[11px] font-extrabold text-nb-ink dark:text-white">{m.fase}</span>
+          <span className="rounded-md border-2 border-nb-ink bg-nb-yellow px-1.5 py-0.5 text-[10px] sm:text-[11px] font-extrabold text-nb-ink">{m.mapel}</span>
+          <span className="rounded-md border-2 border-nb-ink bg-[#c4a8ff] px-1.5 py-0.5 text-[10px] sm:text-[11px] font-extrabold text-nb-ink">{m.fase}</span>
         </div>
         <p className="hidden sm:block text-sm text-slate-700 dark:text-slate-300 line-clamp-2">{m.deskripsi}</p>
+        <p className="text-[11px] sm:text-xs font-bold text-slate-600 dark:text-slate-400">🎮 {plays ? `${plays.toLocaleString("id-ID")}× dimainkan` : "Baru"}</p>
         <div className={`mt-auto pt-1 grid gap-1.5 ${custom ? "grid-cols-[1fr_auto] sm:grid-cols-2" : "grid-cols-1"}`}>
-          <Link href={`/game/${game.slug}`} className="nb-press inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#5fd068] border-2 border-nb-ink shadow-[2px_2px_0_#1b1a3a] py-1.5 sm:py-2 text-[13px] sm:text-sm font-extrabold text-nb-ink">
+          <Link href={`/game/${game.slug}`} className="nb-press inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#22c55e] hover:bg-[#2bd968] hover:-translate-y-0.5 transition border-2 border-nb-ink shadow-[2px_2px_0_#1b1a3a] py-1.5 sm:py-2 text-[13px] sm:text-sm font-extrabold text-nb-ink">
             <Icon name="play" /> Main
           </Link>
           {custom && (
-            <Link href={`/guru/baru?game=${game.slug}`} className="nb-press inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#6cb8ff] border-2 border-nb-ink shadow-[2px_2px_0_#1b1a3a] px-2.5 sm:px-0 py-1.5 sm:py-2 text-sm font-extrabold text-nb-ink" title={`Buat soal sendiri untuk ${game.title}`} aria-label={`Pakai soal sendiri untuk ${game.title}`}>
+            <Link href={`/guru/baru?game=${game.slug}`} className="nb-press inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#38a3ff] hover:bg-[#55b3ff] hover:-translate-y-0.5 transition border-2 border-nb-ink shadow-[2px_2px_0_#1b1a3a] px-2.5 sm:px-0 py-1.5 sm:py-2 text-sm font-extrabold text-nb-ink" title={`Buat soal sendiri untuk ${game.title}`} aria-label={`Pakai soal sendiri untuk ${game.title}`}>
               <Icon name="pen" /> <span className="hidden sm:inline">Soal sendiri</span>
             </Link>
           )}
