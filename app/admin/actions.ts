@@ -244,6 +244,15 @@ export async function setUsulanDibaca(id: string, dibaca: boolean): Promise<Acti
   catch (e: unknown) { return { ok: false, error: String(e) }; }
 }
 
+export async function setUsulanTampil(id: string, tampil: boolean): Promise<ActionResult> {
+  const denied = await guard(); if (denied) return denied;
+  try {
+    await sql`UPDATE usulan SET tampil = ${tampil}, dibaca = true WHERE id = ${id} AND jenis = 'Ulasan'`;
+    revalidatePath("/admin/usulan"); revalidatePath("/");
+    return { ok: true };
+  } catch (e: unknown) { return { ok: false, error: String(e) }; }
+}
+
 export async function deleteUsulan(id: string): Promise<ActionResult> {
   const denied = await guard(); if (denied) return denied;
   try { await sql`DELETE FROM usulan WHERE id = ${id}`; revalidatePath("/admin/usulan"); return { ok: true }; }

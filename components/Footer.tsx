@@ -27,7 +27,7 @@ export default function Footer() {
             <li><Link href="/main" className="hover:text-nb-yellow">Mabar Yuk</Link></li>
             <li><Link href="/guru" className="hover:text-nb-yellow">Ruang Guru</Link></li>
             <li><Link href="/submit" className="hover:text-nb-yellow">Kirim Karya</Link></li>
-            <li><Link href="/usulan" className="hover:text-nb-yellow">Kirim Usulan</Link></li>
+            <li><Link href="/usulan" className="hover:text-nb-yellow">Ulasan & Saran</Link></li>
           </ul>
         </div>
 

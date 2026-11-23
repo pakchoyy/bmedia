@@ -113,3 +113,15 @@ export async function getHomeKarya(limit = 8): Promise<Media[]> {
     return [];
   }
 }
+
+export interface Ulasan { id: string; nama: string; peran: string; pesan: string; rating: number }
+
+/** Ulasan pengguna yang sudah disetujui admin untuk tampil di beranda */
+export async function getUlasan(limit = 20): Promise<Ulasan[]> {
+  try {
+    return (await sql`SELECT id, nama, peran, pesan, rating FROM usulan WHERE jenis = 'Ulasan' AND tampil = true ORDER BY created_at DESC LIMIT ${limit}`) as Ulasan[];
+  } catch (e) {
+    console.error("getUlasan error:", e);
+    return [];
+  }
+}

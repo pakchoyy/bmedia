@@ -8,16 +8,10 @@ import ThemeToggle from "./ThemeToggle";
 
 const links = [
   { label: "Home", href: "/", icon: "house" },
-  { label: "Karya Admin Main-yuk", href: "/game", icon: "gamepad" },
-  { label: "Karya Kontributor", href: "/catalog", icon: "book" },
-  { label: "Web Belajar Lain", href: "/web-belajar", icon: "arrow-up-right-from-square" },
-  { label: "Kontributor", href: "/kontributor", icon: "users" },
-  { label: "Mabar Yuk", href: "/main", icon: "school" },
+  { label: "Mabar Yuk", href: "/main", icon: "users" },
   { label: "Ruang Guru", href: "/guru", icon: "chalkboard-user" },
-  { label: "Cari", href: "/cari", icon: "magnifying-glass" },
   { label: "Kirim Karya", href: "/submit", icon: "paper-plane" },
-  { label: "Kirim Usulan", href: "/usulan", icon: "envelope" },
-  { label: "Tentang", href: "/about", icon: "info" },
+  { label: "Tentang & Saran", href: "/about", icon: "info" },
 ];
 
 export default function Navbar() {

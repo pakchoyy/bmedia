@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { sql } from "@/lib/db";
 import { allowRequest, clientIp } from "@/lib/rate-limit";
 
-const JENIS = ["Usulan game", "Kendala / error", "Saran tampilan", "Lainnya"];
+const JENIS = ["Ulasan", "Usulan game", "Kendala / error", "Saran tampilan", "Lainnya"];
+const PERAN = ["Guru", "Murid", "Orang tua", "Lainnya"];
 const clean = (v: unknown, max: number) => (typeof v === "string" ? v.replace(/\s+/g, " ").trim().slice(0, max) : "");
 
 // Publik: pengunjung mengirim usulan atau laporan kendala
@@ -16,6 +17,9 @@ export async function POST(req: Request) {
   const pesan = typeof b.pesan === "string" ? b.pesan.trim().slice(0, 2000) : "";
   if (pesan.length < 5) return NextResponse.json({ error: "Tulis pesanmu minimal 5 huruf." }, { status: 400 });
   const jenis = JENIS.includes(String(b.jenis)) ? String(b.jenis) : "Lainnya";
-  await sql`INSERT INTO usulan (nama, kontak, jenis, pesan) VALUES (${clean(b.nama, 60)}, ${clean(b.kontak, 80)}, ${jenis}, ${pesan})`;
+  const rating = jenis === "Ulasan" && Number.isInteger(b.rating) && (b.rating as number) >= 1 && (b.rating as number) <= 5 ? (b.rating as number) : null;
+  if (jenis === "Ulasan" && !rating) return NextResponse.json({ error: "Pilih jumlah bintang dulu ya." }, { status: 400 });
+  const peran = PERAN.includes(String(b.peran)) ? String(b.peran) : "";
+  await sql`INSERT INTO usulan (nama, kontak, jenis, pesan, rating, peran) VALUES (${clean(b.nama, 60)}, ${clean(b.kontak, 80)}, ${jenis}, ${pesan}, ${rating}, ${peran})`;
   return NextResponse.json({ ok: true });
 }

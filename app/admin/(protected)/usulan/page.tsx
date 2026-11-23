@@ -4,7 +4,7 @@ import UsulanList, { type UsulanRow } from "@/components/admin/UsulanList";
 export const dynamic = "force-dynamic";
 
 export default async function AdminUsulanPage() {
-  const rows = (await sql`SELECT id, nama, kontak, jenis, pesan, dibaca, created_at FROM usulan ORDER BY dibaca, created_at DESC LIMIT 200`) as UsulanRow[];
+  const rows = (await sql`SELECT id, nama, kontak, jenis, pesan, dibaca, created_at, rating, peran, tampil FROM usulan ORDER BY dibaca, created_at DESC LIMIT 200`) as UsulanRow[];
   const baru = rows.filter((r) => !r.dibaca).length;
   return (
     <div className="space-y-6">

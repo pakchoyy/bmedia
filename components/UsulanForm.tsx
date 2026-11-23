@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 
-const JENIS = ["Usulan game", "Kendala / error", "Saran tampilan", "Lainnya"];
+const JENIS = ["Ulasan", "Usulan game", "Kendala / error", "Saran tampilan", "Lainnya"];
+const PERAN = ["Guru", "Murid", "Orang tua", "Lainnya"];
 const field = "w-full rounded-xl border-[3px] border-nb-ink bg-white dark:bg-slate-900 px-3 py-2.5 text-nb-ink dark:text-white font-semibold focus:outline-none focus:ring-4 focus:ring-nb-yellow";
 
-export default function UsulanForm() {
-  const [f, setF] = useState({ nama: "", kontak: "", jenis: JENIS[0], pesan: "", website: "" });
+export default function UsulanForm({ awal = "Ulasan" }: { awal?: string }) {
+  const [f, setF] = useState({ nama: "", kontak: "", jenis: JENIS.includes(awal) ? awal : JENIS[0], pesan: "", website: "", rating: 0, peran: "Guru" });
   const [state, setState] = useState<"idle" | "kirim" | "ok">("idle");
   const [err, setErr] = useState("");
 
@@ -25,7 +26,7 @@ export default function UsulanForm() {
       <div className="nb rounded-2xl bg-nb-mint/30 p-6 text-center" role="status">
         <div className="text-5xl" aria-hidden="true">💌</div>
         <p className="mt-2 font-display font-bold text-2xl text-nb-ink dark:text-white">Terima kasih!</p>
-        <p className="mt-1 text-slate-700 dark:text-slate-300">Usulanmu sudah sampai ke Pak Choy.</p>
+        <p className="mt-1 text-slate-700 dark:text-slate-300">{f.jenis === "Ulasan" ? "Ulasanmu sudah sampai. Setelah dibaca Pak Choy, ulasan bisa tampil di beranda." : "Pesanmu sudah sampai ke Pak Choy."}</p>
         <button onClick={() => { setF({ ...f, pesan: "" }); setState("idle"); }} className="mt-4 nb-sm nb-press rounded-xl bg-white px-4 py-2 font-extrabold text-nb-ink">Kirim lagi</button>
       </div>
     );
@@ -43,9 +44,28 @@ export default function UsulanForm() {
           ))}
         </div>
       </fieldset>
-      <label className="grid gap-1.5 text-sm font-extrabold text-nb-ink dark:text-white">Pesan
+      {f.jenis === "Ulasan" && (
+        <div className="grid gap-3 sm:grid-cols-2">
+          <fieldset>
+            <legend className="text-sm font-extrabold text-nb-ink dark:text-white mb-1.5">Nilai</legend>
+            <div className="flex gap-1" role="radiogroup" aria-label="Jumlah bintang">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <button key={n} type="button" role="radio" aria-checked={f.rating === n} aria-label={`${n} bintang`}
+                  onClick={() => setF({ ...f, rating: n })}
+                  className={`text-3xl leading-none transition-transform hover:scale-110 ${n <= f.rating ? "" : "grayscale opacity-30"}`}>⭐</button>
+              ))}
+            </div>
+          </fieldset>
+          <label className="grid gap-1.5 text-sm font-extrabold text-nb-ink dark:text-white">Saya seorang
+            <select className={field} value={f.peran} onChange={(e) => setF({ ...f, peran: e.target.value })}>
+              {PERAN.map((p) => <option key={p}>{p}</option>)}
+            </select>
+          </label>
+        </div>
+      )}
+      <label className="grid gap-1.5 text-sm font-extrabold text-nb-ink dark:text-white">{f.jenis === "Ulasan" ? "Ceritakan pengalamanmu" : "Pesan"}
         <textarea required minLength={5} maxLength={2000} rows={5} className={field} value={f.pesan} onChange={(e) => setF({ ...f, pesan: e.target.value })}
-          placeholder="Contoh: Tolong buatkan game tebak gambar untuk IPA kelas 4. / Di HP saya tombol Mulai tidak bisa diklik." />
+          placeholder={f.jenis === "Ulasan" ? "Contoh: Murid kelas 4 jadi semangat latihan perkalian pakai Balon Pecah di IFP." : "Contoh: Tolong buatkan game tebak gambar untuk IPA kelas 4. / Di HP saya tombol Mulai tidak bisa diklik."} />
       </label>
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="grid gap-1.5 text-sm font-extrabold text-nb-ink dark:text-white">Nama <span className="font-semibold text-slate-500">(opsional)</span>
@@ -58,7 +78,7 @@ export default function UsulanForm() {
       <input tabIndex={-1} aria-hidden="true" autoComplete="off" className="hidden" value={f.website} onChange={(e) => setF({ ...f, website: e.target.value })} name="website" />
       {err && <p role="alert" className="text-sm font-bold text-red-600">{err}</p>}
       <button disabled={state === "kirim"} className="nb nb-hover nb-press rounded-xl bg-nb-orange py-3 font-extrabold text-nb-ink disabled:opacity-60">
-        {state === "kirim" ? "Mengirim…" : "Kirim usulan"}
+        {state === "kirim" ? "Mengirim…" : f.jenis === "Ulasan" ? "Kirim ulasan" : "Kirim"}
       </button>
     </form>
   );
