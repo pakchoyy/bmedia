@@ -8,9 +8,10 @@ import ThemeToggle from "./ThemeToggle";
 
 const links = [
   { label: "Home", href: "/", icon: "house" },
-  { label: "Karya Guru", href: "/catalog", icon: "magnifying-glass" },
+  { label: "Game Main-yuk", href: "/game", icon: "gamepad" },
+  { label: "Karya Kontributor", href: "/catalog", icon: "magnifying-glass" },
+  { label: "Web Belajar Lain", href: "/web-belajar", icon: "arrow-up-right-from-square" },
   { label: "Kontributor", href: "/kontributor", icon: "users" },
-  { label: "Game", href: "/game", icon: "gamepad" },
   { label: "Masuk Kelas", href: "/main", icon: "school" },
   { label: "Ruang Guru", href: "/guru", icon: "chalkboard-user" },
   { label: "Kirim Karya", href: "/submit", icon: "paper-plane" },

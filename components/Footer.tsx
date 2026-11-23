@@ -20,8 +20,9 @@ export default function Footer() {
         <div>
           <h3 className="font-display font-bold text-nb-yellow mb-2">Jelajahi</h3>
           <ul className="space-y-1.5 text-sm font-semibold text-white/85">
-            <li><Link href="/catalog" className="hover:text-nb-yellow">Karya Guru</Link></li>
+            <li><Link href="/catalog" className="hover:text-nb-yellow">Karya Kontributor</Link></li>
             <li><Link href="/kontributor" className="hover:text-nb-yellow">Kontributor</Link></li>
+            <li><Link href="/web-belajar" className="hover:text-nb-yellow">Web Belajar Lain</Link></li>
             <li><Link href="/game" className="hover:text-nb-yellow">Game</Link></li>
             <li><Link href="/main" className="hover:text-nb-yellow">Masuk Kelas</Link></li>
             <li><Link href="/guru" className="hover:text-nb-yellow">Ruang Guru</Link></li>

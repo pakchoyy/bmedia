@@ -99,3 +99,17 @@ export async function getKontributor(): Promise<Kontributor[]> {
     return [];
   }
 }
+
+/** Karya kontributor untuk beranda: Pilihan dulu, lalu yang terbaru */
+export async function getHomeKarya(limit = 8): Promise<Media[]> {
+  try {
+    const rows = await sql`
+      SELECT * FROM media WHERE status = 'approved'
+      ORDER BY featured DESC, submitted_at DESC LIMIT ${limit}
+    `;
+    return rows as Media[];
+  } catch (e) {
+    console.error("getHomeKarya error:", e);
+    return [];
+  }
+}
