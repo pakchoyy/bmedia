@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
 <title>Hujan Kata · Main-yuk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root { --ink:#1b1a3a; --cream:#fff6dc; --yellow:#ffd23f; --orange:#ff7a1a; --pink:#ff5d8f; --mint:#2ec4b6; --blue:#4aa8ff; }
   * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
@@ -63,6 +65,7 @@
   @media (max-width:600px) { .typebar .hint { display:none; } }
   @media (prefers-reduced-motion: reduce) { .drop.pop, .splash, #inp.bad { animation:none; } }
 </style>
+<link rel="stylesheet" href="/games/_shared/theme.css">
 </head>
 <body>
 <div id="menu">
@@ -103,6 +106,8 @@
   </div>
 </div>
 
+<script src="/games/_shared/sfx.js"></script>
+<script src="/games/_shared/fx.js"></script>
 <script>
 (function () {
   'use strict';
@@ -177,7 +182,7 @@
       var d = drops[i]; d.y += d.v * dt / 1000;
       d.el.style.transform = 'translate(-50%,' + d.y + 'px)';
       if (d.y + d.el.offsetHeight >= H) {
-        drops.splice(i, 1); d.el.remove(); lives--; combo = 0; tone(200, 0, .25, 'sawtooth', .08);
+        drops.splice(i, 1); d.el.remove(); lives--; combo = 0; Sfx.bad();
         var sp = document.createElement('div'); sp.className = 'splash'; sp.textContent = '💦'; sp.style.left = d.x + '%'; $('sky').appendChild(sp); setTimeout(function () { sp.remove(); }, 1000);
         hud(); if (lives <= 0) { end(); return; }
       }
@@ -194,13 +199,13 @@
     if (!v || !running) return;
     var hit = null; drops.forEach(function (d) { if (d.it.ans === v && (!hit || d.y > hit.y)) hit = d; });
     if (hit) {
-      drops.splice(drops.indexOf(hit), 1); hit.el.style.setProperty('--y', hit.y + 'px'); hit.el.classList.add('pop'); setTimeout(function () { hit.el.remove(); }, 400);
+      var hc = Fx.center(hit.w); Fx.good(hc[0], hc[1], '+' + (10 * v.length)); drops.splice(drops.indexOf(hit), 1); hit.el.style.setProperty('--y', hit.y + 'px'); hit.el.classList.add('pop'); setTimeout(function () { hit.el.remove(); }, 400);
       combo++; caught++; typedChars += v.length;
       score += 10 * v.length + (combo >= 3 ? combo * 5 : 0);
-      tone(880, 0, .08, 'triangle'); tone(1175, .06, .12, 'triangle');
+      Sfx.pop(); Sfx.good();
       $('inp').value = '';
     } else {
-      combo = 0; var i = $('inp'); i.classList.remove('bad'); void i.offsetWidth; i.classList.add('bad'); tone(240, 0, .15, 'square', .06); i.select();
+      combo = 0; var i = $('inp'); i.classList.remove('bad'); void i.offsetWidth; i.classList.add('bad'); Sfx.bad(); i.select();
     }
     hud();
   }
@@ -213,7 +218,7 @@
     $('inp').placeholder = mode === 'kata' ? 'ketik kata…' : 'ketik hasilnya…';
     $('inp').setAttribute('inputmode', mode === 'kata' ? 'text' : 'numeric');
     $('inp').value = ''; hud();
-    running = true; startAt = performance.now(); raf = requestAnimationFrame(loop);
+    running = true; startAt = performance.now(); raf = requestAnimationFrame(loop); Sfx.go(); Sfx.music(true);
     setTimeout(function () { $('inp').focus(); }, 50);
   }
 
@@ -225,7 +230,7 @@
     $('ovTitle').textContent = rec ? '🏆 Rekor baru!' : 'Hujan reda!';
     $('oBest').textContent = rec ? '' : 'Rekor kamu: ' + best;
     $('over').classList.remove('hidden');
-    [523, 659, 784].forEach(function (f, i) { tone(f, i * .12, .2, 'triangle'); });
+    Sfx.music(false); Sfx.win();
   }
 
   $('form').addEventListener('submit', function (e) { e.preventDefault(); submit(); });

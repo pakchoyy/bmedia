@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Susun Kata · Main-yuk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root { --ink:#1b1a3a; --cream:#fff6dc; --yellow:#ffd23f; --orange:#ff7a1a; --pink:#ff5d8f; --mint:#2ec4b6; --blue:#4aa8ff; --lilac:#b79cff; }
   * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
@@ -67,6 +69,7 @@
   .review div { padding:3px 6px; border-bottom:1px dashed rgba(27,26,58,.2); }
   @media (prefers-reduced-motion: reduce) { .slots.good .slot.filled, .slots.bad, .toast { animation:none; } }
 </style>
+<link rel="stylesheet" href="/games/_shared/theme.css">
 </head>
 <body>
 <div id="menu" class="screen">
@@ -112,6 +115,8 @@
   </div>
 </div>
 
+<script src="/games/_shared/sfx.js"></script>
+<script src="/games/_shared/fx.js"></script>
 <script>
 (function () {
   'use strict';
@@ -228,11 +233,11 @@
     if (ok) {
       right++; var gain = Math.max(20, 50 + ans.length * 10 - hintUsed * 20); score += gain;
       $('score').textContent = score; $('slots').classList.add('good');
-      history.push({ w: cur.w, ok: true }); toast('+' + gain);
-      [660, 880, 1100].forEach(function (f, i) { tone(f, i * .07, .12, 'triangle'); });
+      history.push({ w: cur.w, ok: true }); var c = Fx.center($('slots')); Fx.good(c[0], c[1], '+' + gain);
+      Sfx.good();
       running = false; setTimeout(function () { running = true; nextWord(); }, 800);
     } else {
-      $('slots').classList.add('bad'); tone(220, 0, .2, 'sawtooth', .07);
+      $('slots').classList.add('bad'); Sfx.bad(); var cb = Fx.center($('slots')); Fx.bad(null, cb[0], cb[1]);
       setTimeout(function () { $('slots').classList.remove('bad'); unpickFrom(0); }, 600);
     }
   }
@@ -272,7 +277,7 @@
     timeLeft = timeLimit; $('bar').style.width = '100%';
     $('menu').classList.add('hidden'); $('over').classList.add('hidden'); $('game').classList.remove('hidden');
     $('bMute').textContent = muted ? '🔇' : '🔊';
-    running = true; startAt = performance.now(); nextWord();
+    running = true; startAt = performance.now(); nextWord(); Sfx.go(); Sfx.music(true);
     clearInterval(timerId); timerId = setInterval(tick, 250);
   }
 
@@ -283,7 +288,7 @@
     var rv = $('review'); rv.innerHTML = '';
     history.forEach(function (h) { var d = document.createElement('div'); d.textContent = (h.ok ? '✅ ' : '⏭ ') + h.w.toUpperCase(); rv.appendChild(d); });
     $('over').classList.remove('hidden');
-    [523, 659, 784].forEach(function (f, i) { tone(f, i * .12, .2, 'triangle'); });
+    Sfx.music(false); Sfx.win();
     submit();
   }
 
@@ -301,7 +306,7 @@
 
   $('start').addEventListener('click', start);
   $('again').addEventListener('click', start);
-  $('toMenu').addEventListener('click', function () { $('over').classList.add('hidden'); $('game').classList.add('hidden'); $('menu').classList.remove('hidden'); });
+  $('toMenu').addEventListener('click', function () { Sfx.music(false); $('over').classList.add('hidden'); $('game').classList.add('hidden'); $('menu').classList.remove('hidden'); });
   $('bUndo').addEventListener('click', undo);
   $('bShuffle').addEventListener('click', function () { if (!running) return; unpickFrom(0); shuffle(tiles); render(); });
   $('bHint').addEventListener('click', hint);
