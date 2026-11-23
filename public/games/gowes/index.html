@@ -253,7 +253,7 @@
     if (!window.Gowes3D) return;
     var cfg = getChar(i), O = Gowes3D.CHAR_OPTS, ov = document.createElement('div'); ov.id = 'charov';
     var grp = function (key, label, sw) { return '<div class="grp"><b>' + label + '</b><div class="ops" data-k="' + key + '">' + O[key].map(function (o) { return '<button type="button" data-v="' + o[0] + '"' + (sw ? ' class="sw" style="background:' + o[0] + '" title="' + o[1] + '" aria-label="' + o[1] + '"' : '') + '>' + (sw ? '' : o[1]) + '</button>'; }).join('') + '</div></div>'; };
-    ov.innerHTML = '<div class="cc"><canvas></canvas><div><h3>Karakter Pemain ' + (i + 1) + '</h3>' + grp('skin', 'Warna kulit', true) + grp('head', 'Kepala') + grp('seragam', 'Seragam') + '<button type="button" class="done">✔ Simpan</button></div></div>';
+    ov.innerHTML = '<div class="cc"><canvas></canvas><div><h3>Karakter Pemain ' + (i + 1) + '</h3>' + grp('gender', 'Anak') + grp('skin', 'Warna kulit', true) + grp('head', 'Kepala') + grp('seragam', 'Seragam') + '<button type="button" class="done">✔ Simpan</button></div></div>';
     document.body.appendChild(ov);
     var mark = function () { [].forEach.call(ov.querySelectorAll('.ops'), function (g) { [].forEach.call(g.children, function (b) { b.classList.toggle('on', cfg[g.dataset.k] === b.dataset.v); }); }); };
     ov.addEventListener('click', function (e) { var b = e.target.closest('.ops button'); if (b) { cfg[b.parentNode.dataset.k] = b.dataset.v; mark(); tone(600, 0, .06, 'sine', .08); } });
@@ -434,9 +434,10 @@
 
   function finish(winner) {
     finished = true; running = false; clearInterval(timerId); clearTimeout(botId);
+    if (window._g3d && window._g3d.finish) window._g3d.finish();
     var dur = Math.round((performance.now() - startAt) / 1000);
     if (winner.isBot) { Sfx.music(false); sBad(); } else { sWin(); Fx.win(); winner.el.classList.add('win'); winner.el.querySelector('.wn').textContent = winner.name; }
-    setTimeout(function () { showResult(winner, dur); }, 1500);
+    setTimeout(function () { showResult(winner, dur); }, window._g3d ? 3200 : 1500);
   }
 
   function showResult(winner, dur) {
