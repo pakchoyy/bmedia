@@ -23,7 +23,7 @@ export default function Footer() {
             <li><Link href="/catalog" className="hover:text-nb-yellow">Karya Kontributor</Link></li>
             <li><Link href="/kontributor" className="hover:text-nb-yellow">Kontributor</Link></li>
             <li><Link href="/web-belajar" className="hover:text-nb-yellow">Web Belajar Lain</Link></li>
-            <li><Link href="/game" className="hover:text-nb-yellow">Game</Link></li>
+            <li><Link href="/game" className="hover:text-nb-yellow">Karya Main-yuk</Link></li>
             <li><Link href="/main" className="hover:text-nb-yellow">Masuk Kelas</Link></li>
             <li><Link href="/guru" className="hover:text-nb-yellow">Ruang Guru</Link></li>
             <li><Link href="/submit" className="hover:text-nb-yellow">Kirim Karya</Link></li>

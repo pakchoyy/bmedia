@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { getHomeKarya, getKontributor, getSiteStats } from "@/lib/queries";
+import { getHomeKarya, getKontributor, getSiteStats, getTrendingMedia } from "@/lib/queries";
 import GameCard from "@/components/GameCard";
 import GameTile from "@/components/GameTile";
 import WebLuarCard from "@/components/WebLuarCard";
 import WaGroupButton from "@/components/WaGroupButton";
 import Icon from "@/components/Icon";
 import { MAIN_GAMES } from "@/lib/games";
-import { WEB_LUAR } from "@/lib/links";
+import { getWebLinks } from "@/lib/links";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -30,7 +30,7 @@ function SectionHead({ id, title, mark, desc, href, linkText }: { id: string; ti
 }
 
 export default async function HomePage() {
-  const [karya, kontributor, stats] = await Promise.all([getHomeKarya(8), getKontributor(), getSiteStats()]);
+  const [karya, kontributor, stats, links, populer] = await Promise.all([getHomeKarya(8), getKontributor(), getSiteStats(), getWebLinks(), getTrendingMedia(4)]);
 
   return (
     <div className="fade-in">
@@ -42,7 +42,7 @@ export default async function HomePage() {
             Belajar Jadi <span className="nb-mark">Seru</span> di <span className="text-nb-orange">Main-yuk</span>
           </h1>
           <p className="mt-3 text-[15px] sm:text-base text-slate-700 dark:text-slate-300 max-w-[560px] mx-auto">
-            Kumpulan game edukasi gratis untuk SD–SMA. Soalnya bisa dibuat guru sendiri dan dimainkan bareng di kelas.
+            Kumpulan game edukasi untuk SD–SMA. Soalnya bisa dibuat guru sendiri dan dimainkan bareng di kelas.
           </p>
           <div className="mt-5 flex flex-wrap gap-3 justify-center">
             <a href="#game" className="nb nb-hover nb-press bg-nb-orange text-nb-ink font-extrabold rounded-xl px-5 py-3 inline-flex items-center gap-2">
@@ -53,9 +53,9 @@ export default async function HomePage() {
             </Link>
           </div>
           <nav aria-label="Bagian beranda" className="mt-6 flex flex-wrap justify-center gap-2 text-sm font-extrabold">
-            <a href="#game" className="nb-flat rounded-full bg-white dark:bg-slate-900 px-3 py-1.5 text-nb-ink dark:text-white">🎮 Game Main-yuk · {MAIN_GAMES.length}</a>
+            <a href="#game" className="nb-flat rounded-full bg-white dark:bg-slate-900 px-3 py-1.5 text-nb-ink dark:text-white">🎮 Karya Main-yuk · {MAIN_GAMES.length}</a>
             <a href="#karya" className="nb-flat rounded-full bg-white dark:bg-slate-900 px-3 py-1.5 text-nb-ink dark:text-white">🧑‍🏫 Karya Kontributor · {stats.totalMedia}</a>
-            <a href="#web" className="nb-flat rounded-full bg-white dark:bg-slate-900 px-3 py-1.5 text-nb-ink dark:text-white">🌐 Web Belajar Lain · {WEB_LUAR.length}</a>
+            <a href="#web" className="nb-flat rounded-full bg-white dark:bg-slate-900 px-3 py-1.5 text-nb-ink dark:text-white">🌐 Web Belajar Lain · {links.length}</a>
           </nav>
         </div>
       </section>
@@ -63,13 +63,13 @@ export default async function HomePage() {
       {/* 1. Game Main-yuk */}
       <section id="game" className="px-4 pt-10 scroll-mt-20" aria-labelledby="game-judul">
         <div className="container mx-auto max-w-[1200px]">
-          <SectionHead id="game-judul" title="Game" mark="Main-yuk" desc="Game buatan Main-yuk. Bisa pakai soal sendiri dan dimainkan 1–4 pemain di IFP." href="/game" linkText="Semua game" />
+          <SectionHead id="game-judul" title="Karya" mark="Main-yuk" desc="Game buatan Main-yuk. Bisa pakai soal sendiri dan dimainkan 1–4 pemain di IFP." href="/game" linkText="Semua game" />
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {MAIN_GAMES.map((g) => <GameTile key={g.slug} game={g} />)}
             <Link href="/guru" className="nb-sm nb-hover rounded-2xl border-dashed bg-nb-cream/60 dark:bg-slate-900/60 p-6 flex flex-col items-center justify-center text-center gap-2 min-h-[220px]">
               <Icon name="chalkboard-user" className="text-3xl text-nb-ink dark:text-white" />
               <span className="font-display font-bold text-lg text-nb-ink dark:text-white">Guru? Buat soalmu sendiri</span>
-              <span className="text-sm text-slate-600 dark:text-slate-400">Daftar gratis, ketik atau impor soal dari Word, bagikan kode ke murid.</span>
+              <span className="text-sm text-slate-600 dark:text-slate-400">Daftar akun guru, ketik atau impor soal dari Word, lalu bagikan kode ke murid.</span>
             </Link>
           </div>
         </div>
@@ -85,12 +85,24 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Terpopuler */}
+      {populer.length > 0 && (
+        <section className="px-4 pt-12" aria-labelledby="populer-judul">
+          <div className="container mx-auto max-w-[1200px]">
+            <SectionHead id="populer-judul" title="Paling Sering" mark="Dimainkan" desc="Karya kontributor yang paling banyak dibuka." />
+            <div className="grid gap-4 sm:gap-5 grid-cols-2 lg:grid-cols-4">
+              {populer.map((m) => <GameCard key={m.id} media={m} />)}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* 3. Web Belajar Lain */}
       <section id="web" className="px-4 pt-12 scroll-mt-20" aria-labelledby="web-judul">
         <div className="container mx-auto max-w-[1200px]">
-          <SectionHead id="web-judul" title="Web Belajar" mark="Lain" desc="Rekomendasi web gratis pihak ketiga. Dibuka di tab baru." href="/web-belajar" linkText="Semua web" />
+          <SectionHead id="web-judul" title="Web Belajar" mark="Lain" desc="Rekomendasi web belajar pihak ketiga. Dibuka di tab baru." href="/web-belajar" linkText="Semua web" />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {WEB_LUAR.slice(0, 3).map((w) => <WebLuarCard key={w.url} w={w} />)}
+            {links.slice(0, 3).map((w, i) => <WebLuarCard key={w.id} w={w} i={i} />)}
           </div>
         </div>
       </section>

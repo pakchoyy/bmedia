@@ -170,3 +170,26 @@ button {
 @media (prefers-reduced-motion: reduce) {
   .nb-float, .nb-cursor { animation: none; }
 }
+
+/* ===== Admin: neo-brutalism seragam dengan situs ===== */
+.admin-nb main h1 { font-family: var(--font-display, inherit); color: #1b1a3a; }
+.dark .admin-nb main h1 { color: #fff; }
+.admin-nb main :is(.bg-white, .dark\:bg-slate-900, .dark\:bg-slate-800):is(.rounded-xl, .rounded-2xl, .rounded-lg):is(.border, .border-2, .shadow, .shadow-sm, .shadow-md, .shadow-lg, .shadow-card) {
+  border: 3px solid #1b1a3a !important;
+  box-shadow: 4px 4px 0 #1b1a3a !important;
+}
+.admin-nb main table { border-collapse: separate; border-spacing: 0; }
+.admin-nb main thead tr { background: #ffd23f !important; }
+.admin-nb main thead th { color: #1b1a3a !important; font-weight: 800; border-bottom: 3px solid #1b1a3a; }
+.admin-nb main tbody tr + tr td { border-top: 2px solid rgba(27, 26, 58, .12); }
+.admin-nb main :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]) {
+  border: 2px solid #1b1a3a !important; border-radius: 10px;
+}
+.admin-nb main :is(input, select, textarea):focus { outline: 3px solid #ffd23f; outline-offset: 1px; }
+.admin-nb main button:is(.rounded, .rounded-lg, .rounded-xl):is([class*="bg-primary"], [class*="bg-danger"], [class*="bg-green"], [class*="bg-red"], [class*="bg-blue"], [class*="bg-nb-"]) {
+  border: 2px solid #1b1a3a; box-shadow: 2px 2px 0 #1b1a3a; font-weight: 800;
+}
+.admin-nb main button:is(.rounded, .rounded-lg, .rounded-xl):is([class*="bg-primary"], [class*="bg-danger"], [class*="bg-green"], [class*="bg-red"], [class*="bg-blue"], [class*="bg-nb-"]):active {
+  transform: translate(2px, 2px); box-shadow: none;
+}
+.admin-nb main [class*="bg-primary"]:not(.bg-primary-light\/10) { background-color: #ff7a1a !important; color: #1b1a3a !important; }
