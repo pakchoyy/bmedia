@@ -45,6 +45,6 @@ export const CONTACT_TIKTOK = "https://www.tiktok.com/@pak.choyy";
 // Isi dengan tautan Saweria/Trakteer/Ko-fi untuk menampilkan tombol dukungan di footer. Kosong = tombol tersembunyi.
 export const DONASI_URL = "";
 // Tautan undangan grup WhatsApp untuk usul game & diskusi. Kosong = tombol tersembunyi.
-export const GRUP_WA_URL = "";
+export const GRUP_WA_URL = "https://chat.whatsapp.com/EUZbzdwVBFRCOjdfjufe8P";
 export const SITE_URL = "main-yuk.my.id";
 export const MEDIA_SITE_ORIGIN = "https://main-yuk.my.id";
