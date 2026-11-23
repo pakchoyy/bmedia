@@ -28,7 +28,7 @@ export default function MabarPage({ searchParams }: { searchParams: { e?: string
           </div>
           <div id="kode" className="relative nb bg-white dark:bg-slate-900 rounded-2xl p-6 text-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/maskot/halo.webp" alt="" aria-hidden="true" className="absolute -top-12 -right-4 w-24 sm:w-28 rotate-6 pointer-events-none" />
+            <img src="/maskot/halo.webp" alt="" aria-hidden="true" className="hidden lg:block absolute -top-12 -right-4 w-28 rotate-6 pointer-events-none" />
             <h2 id="kode-judul" className="font-display text-2xl font-bold text-nb-ink dark:text-white mb-1">Punya kode?</h2>
             <p className="text-sm text-slate-500 mb-4">Ketik kode atau scan QR yang ditampilkan guru.</p>
             <JoinCodeForm initialError={err} />

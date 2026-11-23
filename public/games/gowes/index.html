@@ -130,6 +130,11 @@
   .mg-btn:active { transform:translate(2px,2px); box-shadow:0 0 0 var(--ink); }
   @media (max-width:520px) { .mg-grid { grid-template-columns:repeat(4, 1fr); } }
   @media (max-height:480px) { .mg-btn { min-height:38px; padding:3px 2px; } .mg-btn .mg-l { font-size:9px; } .mg-grid { gap:4px; } }
+  /* Tampilan 3D (Three.js): adegan 2D disembunyikan, posisi sepeda tetap dibaca dari elemen .bike */
+  .scene.is3d { height:clamp(170px, 44vh, 420px); background:#9fdcff; }
+  .scene.is3d > :not(.g3d) { opacity:0 !important; pointer-events:none !important; }
+  .scene.is3d .g3d { position:absolute; inset:0; width:100%; height:100%; display:block; }
+  @media (max-height:480px) { .scene.is3d { height:40vh; } }
 </style>
 <link rel="stylesheet" href="/games/_shared/theme.css">
 </head>
@@ -179,6 +184,7 @@
 <script src="/games/_shared/sfx.js"></script>
 <script src="/games/_shared/fx.js"></script>
 <script src="/games/_shared/ruang.js"></script>
+<script type="module">import { mount } from "/games/_shared/gowes3d.js"; window.Gowes3D = { mount };</script>
 <script>
 (function () {
   'use strict';
@@ -372,6 +378,8 @@
       '<span class="tb"><button class="nb-sm press" id="bMute" aria-label="Suara">' + (muted ? '🔇' : '🔊') + '</button><button class="nb-sm press" id="bExit" aria-label="Keluar">✖</button></span>';
     g.appendChild(bar);
     var scene = document.createElement('div'); scene.className = 'scene'; scene.innerHTML = sceneHTML(nLanes); scene.style.cssText = sceneVars; g.appendChild(scene);
+    if (window._g3d) { window._g3d.destroy(); window._g3d = null; }
+    if (window.Gowes3D) { try { window._g3d = Gowes3D.mount(scene); } catch (e) { window._g3d = null; } }
     var road = scene.querySelector('.road');
     var fin = document.createElement('div'); fin.className = 'finish'; road.appendChild(fin);
     function addLane(color, name, isBot) {
