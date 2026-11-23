@@ -258,3 +258,16 @@ export async function deleteUsulan(id: string): Promise<ActionResult> {
   try { await sql`DELETE FROM usulan WHERE id = ${id}`; revalidatePath("/admin/usulan"); return { ok: true }; }
   catch (e: unknown) { return { ok: false, error: String(e) }; }
 }
+
+export async function setGameMeta(slug: string, meta: { mapel: string; fase: string; deskripsi: string }): Promise<ActionResult> {
+  const denied = await guard(); if (denied) return denied;
+  if (!/^[a-z0-9-]{1,40}$/.test(slug)) return { ok: false, error: "Game tidak dikenal." };
+  const clean = (v: unknown, n: number) => (typeof v === "string" ? v.replace(/\s+/g, " ").trim().slice(0, n) : "");
+  const value = JSON.stringify({ mapel: clean(meta.mapel, 60), fase: clean(meta.fase, 40), deskripsi: clean(meta.deskripsi, 300) });
+  try {
+    await sql`INSERT INTO site_settings (key, value) VALUES (${"meta_" + slug}, ${value})
+      ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = now()`;
+    revalidatePath("/"); revalidatePath("/game"); revalidatePath("/admin/tampilan");
+    return { ok: true };
+  } catch (e: unknown) { return { ok: false, error: String(e) }; }
+}

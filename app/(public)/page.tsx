@@ -9,7 +9,7 @@ import UlasanMarquee from "@/components/UlasanMarquee";
 import Icon from "@/components/Icon";
 import { MAIN_GAMES } from "@/lib/games";
 import { getWebLinks } from "@/lib/links";
-import { getSettings, coverKey, HERO_KEY, HERO_DEFAULT } from "@/lib/settings";
+import { getSettings, coverKey, gameMeta, HERO_KEY, HERO_DEFAULT } from "@/lib/settings";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -44,8 +44,8 @@ export default async function HomePage() {
   return (
     <div className="fade-in">
       {/* Hero */}
-      <section className="relative overflow-hidden bg-nb-cream dark:bg-[#1d1a3d] border-b-[3px] border-nb-ink dark:border-[var(--nb-ink)]">
-        <div aria-hidden="true" className="pointer-events-none absolute -top-10 -left-10 w-40 h-40 rounded-full bg-nb-yellow/60 dark:bg-nb-yellow/20" />
+      <section className="relative z-20 bg-nb-cream dark:bg-[#1d1a3d] border-b-[3px] border-nb-ink dark:border-[var(--nb-ink)]">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden"><div className="absolute -top-10 -left-10 w-40 h-40 rounded-full bg-nb-yellow/60 dark:bg-nb-yellow/20" /></div>
         <div className="relative container mx-auto max-w-[1200px] px-4 sm:px-5 py-6 sm:py-8 grid gap-6 lg:grid-cols-[1.2fr_1fr] items-center">
           <div className="max-lg:text-center">
             <h1 className="font-display font-bold text-nb-ink dark:text-white text-[1.75rem] leading-[1.1] sm:text-5xl">
@@ -82,9 +82,9 @@ export default async function HomePage() {
       {/* 1. Karya Admin Main-yuk */}
       <section id="game" className="px-4 pt-8 sm:pt-10 scroll-mt-20" aria-labelledby="game-judul">
         <div className="container mx-auto max-w-[1200px]">
-          <SectionHead id="game-judul" title="Karya Admin" mark="Main-yuk" desc="Game buatan Main-yuk. Yang bertanda ✏️ Custom soal bisa diisi soalmu sendiri." href="/game" linkText="Semua" />
+          <SectionHead id="game-judul" title="Karya Admin" mark="Main-yuk" desc="Game buatan Main-yuk. Tombol biru ✏️ artinya game itu bisa diisi soalmu sendiri." href="/game" linkText="Semua" />
           <div className="grid gap-3 sm:gap-5 grid-cols-2 lg:grid-cols-3">
-            {MAIN_GAMES.map((g) => <GameTile key={g.slug} game={g} cover={settings[coverKey(g.slug)]} />)}
+            {MAIN_GAMES.map((g) => <GameTile key={g.slug} game={g} cover={settings[coverKey(g.slug)]} meta={gameMeta(settings, g)} />)}
           </div>
           <Link href="/guru" className="mt-4 nb-sm nb-hover rounded-2xl bg-nb-mint/25 dark:bg-slate-900 px-4 py-3 flex items-center gap-3">
             <Icon name="chalkboard-user" className="text-2xl text-nb-ink dark:text-white shrink-0" />

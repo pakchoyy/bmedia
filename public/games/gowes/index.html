@@ -16,9 +16,9 @@
   .press:active { transform:translate(3px,3px); box-shadow:1px 1px 0 var(--ink); }
 
   /* ===== Menu ===== */
-  #menu { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:10px; overflow:auto;
+  #menu { position:absolute; inset:0; display:flex; align-items:flex-start; justify-content:center; padding:10px; overflow:auto;
     background: linear-gradient(#9fdcff 0 55%, #8fd66f 55% 75%, #6dbb52 75%); }
-  .card { background:#fff; border-radius:22px; padding:16px 20px; width:min(100%, 680px); text-align:center; }
+  .card { background:#fff; border-radius:22px; padding:16px 20px; width:min(100%, 760px); text-align:center; margin:auto; }
   .card h1 { font-size:clamp(26px, 5.5vh, 42px); line-height:1.05; font-weight:900; letter-spacing:-.5px; }
   .card h1 span { color:var(--orange); }
   .sub { font-size:13px; font-weight:700; opacity:.75; margin-top:4px; }
@@ -53,6 +53,9 @@
   .cloud.c2 { top:20%; animation-duration:52s; animation-delay:-20s; transform:scale(.8); }
   @keyframes drift { from { left:105%; } to { left:-25%; } }
   .hills { position:absolute; left:0; width:100%; bottom:var(--hb); height:34%; display:block; }
+  .decos { position:absolute; left:0; right:0; bottom:calc(var(--rb) - 4px); height:26%; pointer-events:none; z-index:0; }
+  .decos .deco { position:absolute; bottom:0; width:auto; overflow:visible; }
+  .decos .fl { height:22%; }
   .sawah { position:absolute; left:0; right:0; bottom:0; height:var(--sh);
     background: repeating-linear-gradient(100deg, #7cc95e 0 22px, #6ab84f 22px 44px); border-top:3px solid var(--ink); }
   .road { position:absolute; left:0; right:0; bottom:4%; display:flex; flex-direction:column; }
@@ -110,6 +113,15 @@
     .pad header { padding:2px 8px; } .topbar { padding:1px 8px; } .topbar .tb button { width:24px; height:24px; font-size:12px; }
   }
   @media (prefers-reduced-motion: reduce) { .cloud, .bike.go .wheel, .bike.wob { animation:none; } .bike { transition:none; } }
+  .mg-wrap { margin-top:10px; }
+  .mg-grid { display:grid; grid-template-columns:repeat(5, 1fr); gap:6px; margin-top:6px; }
+  .mg-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; padding:6px 2px; border-radius:12px; background:#fff; border:2px solid var(--ink); box-shadow:2px 2px 0 var(--ink); min-height:54px; }
+  .mg-btn .mg-i { font-size:clamp(16px, 3.2vh, 24px); font-weight:900; line-height:1; }
+  .mg-btn .mg-l { font-size:10px; font-weight:800; line-height:1.1; text-align:center; }
+  .mg-btn.on { background:var(--yellow); transform:translate(1px,1px); box-shadow:1px 1px 0 var(--ink); }
+  .mg-btn:active { transform:translate(2px,2px); box-shadow:0 0 0 var(--ink); }
+  @media (max-width:520px) { .mg-grid { grid-template-columns:repeat(4, 1fr); } }
+  @media (max-height:480px) { .mg-btn { min-height:38px; padding:3px 2px; } .mg-btn .mg-l { font-size:9px; } .mg-grid { gap:4px; } }
 </style>
 </head>
 <body>
@@ -141,8 +153,7 @@
     <div class="setinfo" id="setinfo">🧮 Soal matematika otomatis</div>
     <div class="row"><span class="lbl">Pemain</span>
       <div class="seg" id="segPlayers"><button class="nb-sm press" data-n="1">1 vs 🤖</button><button class="nb-sm press" data-n="2">2</button><button class="nb-sm press" data-n="3">3</button><button class="nb-sm press" data-n="4">4</button></div></div>
-    <div class="row mathonly"><span class="lbl">Soal</span>
-      <div class="seg multi" id="segOps"><button class="nb-sm press" data-n="add">+ Tambah</button><button class="nb-sm press" data-n="sub">− Kurang</button><button class="nb-sm press" data-n="mul">× Kali</button><button class="nb-sm press" data-n="div">÷ Bagi</button></div></div>
+    <div class="mg-wrap mathonly"><div class="lbl">Jenis soal</div><div class="mg-grid" id="mg"></div></div>
     <div class="row mathonly"><span class="lbl">Tingkat</span>
       <div class="seg" id="segLevel"><button class="nb-sm press" data-n="1">Mudah</button><button class="nb-sm press" data-n="2">Sedang</button><button class="nb-sm press" data-n="3">Sulit</button></div></div>
     <div class="row"><span class="lbl">Jarak</span>
@@ -155,12 +166,14 @@
 <div id="game" class="hidden"></div>
 <div id="result" class="hidden"></div>
 
+<script src="/games/_shared/mathgen.js"></script>
+<script src="/games/_shared/fx.js"></script>
 <script>
 (function () {
   'use strict';
   var COLORS = ['#ff7675', '#4aa8ff', '#55efc4', '#feca57'];
   var $ = function (id) { return document.getElementById(id); };
-  var setQ = null, setCode = null, nPlayers = 2, target = 12, level = 1, ops = { add: true, sub: true, mul: false, div: false };
+  var setQ = null, setCode = null, nPlayers = 2, target = 12, level = 1, mathMode = 'add';
   var sceneVars = '', players = [], bot = null, running = false, finished = false, startAt = 0, timerId = 0, botId = 0;
 
   // ---------- Suara ----------
@@ -185,24 +198,8 @@
   // ---------- Soal matematika ----------
   function rnd(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
   function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
-  function makeMath() {
-    var list = Object.keys(ops).filter(function (k) { return ops[k]; }); if (!list.length) list = ['add'];
-    var op = list[rnd(0, list.length - 1)], a, b, ans, sym;
-    var R = level === 1 ? [1, 10, 2, 5] : level === 2 ? [10, 99, 2, 10] : [100, 999, 6, 15];
-    if (op === 'add') { a = rnd(R[0], R[1]); b = rnd(R[0], R[1]); ans = a + b; sym = '+'; }
-    else if (op === 'sub') { a = rnd(R[0], R[1]); b = rnd(R[0], R[1]); if (b > a) { var t = a; a = b; b = t; } ans = a - b; sym = '−'; }
-    else if (op === 'mul') { a = rnd(R[2], R[3]); b = rnd(2, level === 3 ? 15 : 10); ans = a * b; sym = '×'; }
-    else { b = rnd(2, level === 1 ? 5 : 10); ans = rnd(R[2], R[3]); a = b * ans; sym = '÷'; }
-    var opts = [ans], spread = Math.max(3, Math.round(ans * 0.15));
-    var tries = 0;
-    while (opts.length < 4 && tries++ < 60) {
-      var d = [ans + 1, ans - 1, ans + 10, ans - 10, ans + rnd(-spread, spread), (op === 'mul' ? ans + b : ans + 2), (op === 'mul' ? ans - b : ans - 2)][rnd(0, 6)];
-      if (d >= 0 && opts.indexOf(d) < 0) opts.push(d);
-    }
-    while (opts.length < 4) opts.push(ans + opts.length * 3);
-    shuffle(opts);
-    return { q: a + ' ' + sym + ' ' + b + ' = ?', o: opts.map(String), a: opts.indexOf(ans), math: true };
-  }
+  function makeMath() { return MathGen.make(mathMode, level); }
+
 
   // ---------- Soal guru (opsional) ----------
   (function loadSet() {
@@ -238,10 +235,7 @@
   seg('segPlayers', function (n) { nPlayers = +n; renderNames(); }, function (n) { return +n === nPlayers; });
   seg('segTarget', function (n) { target = +n; }, function (n) { return +n === target; });
   seg('segLevel', function (n) { level = +n; }, function (n) { return +n === level; });
-  seg('segOps', function (n) {
-    ops[n] = !ops[n];
-    if (!Object.keys(ops).some(function (k) { return ops[k]; })) ops[n] = true; // minimal satu
-  }, function (n) { return ops[n]; });
+  MathGen.renderGrid($('mg'), mathMode, function (id) { mathMode = id; tone(600, 0, .06, 'sine', .08); });
   renderNames();
 
   // ---------- Permainan ----------
@@ -291,13 +285,15 @@
     btns[item.a].classList.add('good');
     if (ok) {
       sGood(); P.correct++; P.step++; P.lastAt = performance.now();
-      P.score += 100 + Math.max(0, Math.round((6000 - t) / 100));
+      var gain = 100 + Math.max(0, Math.round((6000 - t) / 100)); P.score += gain;
+      var c = Fx.center(btn); Fx.good(c[0], c[1], '+' + gain);
       P.el.querySelector('.score').textContent = '🚲 ' + P.step + '/' + target;
       P.bike.style.left = bikeLeft(P.step) + '%'; pedal(P.bike);
       if (P.step >= target) { finish(P); return; }
       setTimeout(function () { if (!finished) showQuestion(P); }, 450);
     } else {
       sBad(); btn.classList.add('bad'); P.wrong++;
+      var cb = Fx.center(btn); Fx.bad(P.el, cb[0], cb[1]);
       P.el.classList.add('frozen'); P.bike.classList.remove('wob'); void P.bike.offsetWidth; P.bike.classList.add('wob');
       setTimeout(function () { P.el.classList.remove('frozen'); if (!finished) showQuestion(P); }, 1500);
     }
@@ -320,12 +316,18 @@
     }, base * (0.7 + Math.random() * 0.6));
   }
 
+  function deco() {
+    var tree = function (x, s) { return '<svg class="deco" style="left:' + x + '%;height:' + s + '%" viewBox="0 0 40 60"><rect x="17" y="34" width="6" height="24" rx="2" fill="#8a5a3b" stroke="#1b1a3a" stroke-width="2.5"/><circle cx="20" cy="24" r="17" fill="#3fae5a" stroke="#1b1a3a" stroke-width="3"/><circle cx="13" cy="19" r="5" fill="#6fd27f"/></svg>'; };
+    var house = function (x, c) { return '<svg class="deco" style="left:' + x + '%;height:62%" viewBox="0 0 50 44"><rect x="6" y="18" width="38" height="24" fill="#fff6dc" stroke="#1b1a3a" stroke-width="3"/><path d="M2 20 L25 3 L48 20 Z" fill="' + c + '" stroke="#1b1a3a" stroke-width="3" stroke-linejoin="round"/><rect x="20" y="27" width="10" height="15" fill="#4aa8ff" stroke="#1b1a3a" stroke-width="2.5"/></svg>'; };
+    var flower = function (x) { return '<svg class="deco fl" style="left:' + x + '%" viewBox="0 0 20 20"><circle cx="10" cy="10" r="4" fill="#ffd23f" stroke="#1b1a3a" stroke-width="1.5"/><circle cx="10" cy="3" r="3" fill="#ff5d8f"/><circle cx="17" cy="10" r="3" fill="#ff5d8f"/><circle cx="10" cy="17" r="3" fill="#ff5d8f"/><circle cx="3" cy="10" r="3" fill="#ff5d8f"/></svg>'; };
+    return '<div class="decos">' + tree(3, 85) + house(12, '#ff5d8f') + tree(24, 70) + tree(29, 95) + house(42, '#4aa8ff') + tree(55, 80) + flower(20) + flower(37) + flower(63) + tree(67, 90) + house(74, '#2ec4b6') + '</div>';
+  }
   function sceneHTML(n) {
     var k = n <= 2 ? 0.17 : n === 3 ? 0.14 : 0.115, f = n * k * 100;
     sceneVars = '--rb:' + (4 + f) + '%;--sh:' + (f + 16) + '%;--hb:' + (f + 14) + '%';
     return '<div class="sun"></div><div class="cloud" style="top:10%"></div><div class="cloud c2"></div>' +
       '<svg class="hills" viewBox="0 0 400 60" preserveAspectRatio="none"><path d="M0 60 L60 12 L120 60 Z M90 60 L170 4 L250 60 Z M220 60 L300 18 L380 60 Z M330 60 L380 30 L430 60 Z" fill="#5aa1c9" stroke="#1b1a3a" stroke-width="2.5" stroke-linejoin="round"/></svg>' +
-      '<div class="sawah"></div>' +
+      '<div class="sawah"></div>' + deco() +
       '<svg class="school" viewBox="0 0 120 100"><rect x="10" y="40" width="100" height="56" fill="#fff6dc" stroke="#1b1a3a" stroke-width="4"/><path d="M2 44 L60 12 L118 44 Z" fill="#ff7a1a" stroke="#1b1a3a" stroke-width="4" stroke-linejoin="round"/><rect x="50" y="66" width="20" height="30" fill="#4aa8ff" stroke="#1b1a3a" stroke-width="3"/><rect x="20" y="54" width="20" height="16" fill="#bfe7ff" stroke="#1b1a3a" stroke-width="3"/><rect x="80" y="54" width="20" height="16" fill="#bfe7ff" stroke="#1b1a3a" stroke-width="3"/><text x="60" y="38" text-anchor="middle" font-size="10" font-weight="900" fill="#1b1a3a" font-family="sans-serif">SD</text><line x1="60" y1="12" x2="60" y2="-4" stroke="#1b1a3a" stroke-width="2.5"/><rect x="60" y="-4" width="14" height="5" fill="#e63946"/><rect x="60" y="1" width="14" height="5" fill="#fff" stroke="#1b1a3a" stroke-width=".8"/></svg>' +
       '<div class="road" style="--lh:calc(clamp(120px, 34vh, 300px) * ' + k + ')"></div>';
   }
@@ -370,7 +372,7 @@
   function finish(winner) {
     finished = true; running = false; clearInterval(timerId); clearTimeout(botId);
     var dur = Math.round((performance.now() - startAt) / 1000);
-    if (winner.isBot) { sBad(); } else { sWin(); winner.el.classList.add('win'); winner.el.querySelector('.wn').textContent = winner.name; }
+    if (winner.isBot) { sBad(); } else { sWin(); Fx.win(); winner.el.classList.add('win'); winner.el.querySelector('.wn').textContent = winner.name; }
     setTimeout(function () { showResult(winner, dur); }, 1500);
   }
 
