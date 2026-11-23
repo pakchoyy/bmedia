@@ -75,6 +75,8 @@ export default async function HomePage() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={hero} alt="Ilustrasi murid belajar dengan game di Main-yuk" className="w-full aspect-[16/9] object-cover block" />
             </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/maskot/halo.webp" alt="" aria-hidden="true" className="maskot-hero absolute -left-3 sm:-left-10 -bottom-8 w-24 sm:w-32 lg:w-36 -rotate-6 drop-shadow-[4px_4px_0_rgba(27,26,58,.3)] pointer-events-none" />
           </div>
         </div>
       </section>

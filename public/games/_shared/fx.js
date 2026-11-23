@@ -19,7 +19,14 @@
     '@keyframes fxFlash{from{opacity:.45}to{opacity:0}}' +
     '.fx-shake{animation:fxShake .4s ease-in-out}' +
     '@keyframes fxShake{20%{transform:translateX(-10px) rotate(-1deg)}40%{transform:translateX(9px) rotate(1deg)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}' +
-    '@media (prefers-reduced-motion:reduce){.fx-pop,.fx-shake{animation-duration:.01s}}';
+    '.fx-mascot{position:fixed;z-index:9999;right:14px;bottom:10px;width:clamp(90px,16vh,170px);pointer-events:none;filter:drop-shadow(4px 4px 0 rgba(27,26,58,.35));animation:fxMas 1.1s cubic-bezier(.2,1.4,.4,1) forwards}' +
+    '.fx-mascot.big{right:auto;left:50%;bottom:auto;top:50%;width:clamp(160px,34vh,300px);animation:fxMasBig 2.4s cubic-bezier(.2,1.4,.4,1) forwards}' +
+    '@keyframes fxMas{0%{transform:translateY(120%) rotate(-8deg)}22%{transform:translateY(0) rotate(4deg)}75%{transform:translateY(0) rotate(0)}100%{transform:translateY(130%)}}' +
+    '@keyframes fxMasBig{0%{transform:translate(-50%,-30%) scale(.3);opacity:0}18%{transform:translate(-50%,-50%) scale(1.08);opacity:1}85%{transform:translate(-50%,-50%) scale(1);opacity:1}100%{transform:translate(-50%,-50%) scale(.9);opacity:0}}' +
+    '.mascot-menu{position:absolute;right:-34px;bottom:-26px;width:clamp(84px,15vh,140px);transform:rotate(8deg);pointer-events:none;filter:drop-shadow(3px 3px 0 rgba(27,26,58,.3));animation:fxWave 2.6s ease-in-out infinite}' +
+    '@keyframes fxWave{0%,100%{transform:rotate(8deg)}50%{transform:rotate(2deg) translateY(-4px)}}' +
+    '@media (max-height:480px){.mascot-menu{display:none}}' +
+    '@media (prefers-reduced-motion:reduce){.fx-pop,.fx-shake,.fx-mascot,.mascot-menu{animation-duration:.01s}}';
   document.head.appendChild(css);
 
   function canvas() {
@@ -61,20 +68,35 @@
     setTimeout(function () { f.remove(); }, 480);
   }
 
+  var lastMascot = 0;
+  function mascot(pose, big) {
+    var now = Date.now(); if (!big && now - lastMascot < 1200) return; lastMascot = now;
+    var m = document.createElement('img'); m.src = '/maskot/' + pose + '.webp'; m.alt = ''; m.className = 'fx-mascot' + (big ? ' big' : '');
+    document.body.appendChild(m); setTimeout(function () { m.remove(); }, big ? 2500 : 1150);
+  }
+  // Maskot melambai di kartu menu
+  function menuMascot() {
+    var c = document.querySelector('#menu .card'); if (!c || c.querySelector('.mascot-menu')) return;
+    var m = document.createElement('img'); m.src = '/maskot/halo.webp'; m.alt = ''; m.className = 'mascot-menu'; c.appendChild(m);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', menuMascot); else menuMascot();
+
   global.Fx = {
+    mascot: mascot,
     good: function (x, y, t) {
       if (x == null) { x = innerWidth / 2; y = innerHeight / 2; }
       if (!reduce) burst(x, y, 34, 2.4, 11);
-      text(x, y, t || '✔');
+      text(x, y, t || '✔'); mascot('sorak');
       flash('radial-gradient(circle at ' + x + 'px ' + y + 'px, rgba(140,240,184,.9), transparent 55%)');
     },
     bad: function (el, x, y) {
       if (x == null) { x = innerWidth / 2; y = innerHeight / 2; }
-      text(x, y, '✖', true);
+      text(x, y, '✖', true); mascot('sedih');
       flash('rgba(255,93,143,.35)');
       if (el && !reduce) { el.classList.remove('fx-shake'); void el.offsetWidth; el.classList.add('fx-shake'); }
     },
     win: function () {
+      mascot('jempol', true);
       if (reduce) { flash('rgba(255,210,63,.6)'); return; }
       var k = 0, id = setInterval(function () {
         burst(Math.random() * innerWidth, -10, 18, 1.2, 4);
