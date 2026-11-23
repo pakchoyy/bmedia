@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Icon from "./Icon";
 import ThemeToggle from "./ThemeToggle";
 
@@ -17,11 +18,23 @@ const links = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
+  // Pintasan: ketuk logo 5x dalam 4 detik membuka halaman login admin (tetap wajib login)
+  const taps = useRef({ n: 0, t: 0 });
+  function onLogoClick(e: React.MouseEvent) {
+    const now = Date.now();
+    taps.current = now - taps.current.t > 4000 ? { n: 1, t: now } : { n: taps.current.n + 1, t: taps.current.t };
+    if (taps.current.n >= 5) {
+      e.preventDefault();
+      taps.current = { n: 0, t: 0 };
+      router.push("/admin/login");
+    }
+  }
 
   return (
     <nav className="sticky top-0 z-50 bg-nb-cream dark:bg-[#1d1a3d] border-b-[3px] border-nb-ink dark:border-[var(--nb-ink)]">
       <div className="container mx-auto max-w-[1200px] pl-5 pr-4 flex items-center justify-between h-14 w-full">
-        <Link href="/" className="flex items-center gap-2.5 font-display font-bold text-nb-ink dark:text-white">
+        <Link href="/" onClick={onLogoClick} className="flex items-center gap-2.5 font-display font-bold text-nb-ink dark:text-white">
           <img src="/logo-main-yuk.png" alt="" width={40} height={40} className="w-10 h-10 shrink-0" />
           <span className="whitespace-nowrap text-2xl leading-none">Main<span className="text-nb-orange">-yuk</span></span>
         </Link>

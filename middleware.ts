@@ -4,6 +4,7 @@ import type { AdminSessionData } from "@/lib/session";
 
 const sessionOptions = {
   password: process.env.SESSION_SECRET!,
+  ttl: 60 * 60 * 24 * 60, // harus sama dengan lib/session.ts
   cookieName: "bmedia_admin",
   cookieOptions: { secure: process.env.NODE_ENV === "production" },
 };

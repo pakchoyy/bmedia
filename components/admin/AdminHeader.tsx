@@ -29,7 +29,7 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
         <Icon name="bars" className="text-xl text-ink" />
       </button>
       <h1 className="flex-1 font-bold text-primary text-lg truncate">
-        Admin Bantu Guru Yuk
+        Admin Main-yuk
       </h1>
       <button
         onClick={handleLogout}
