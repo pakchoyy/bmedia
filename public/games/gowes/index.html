@@ -135,6 +135,18 @@
   .scene.is3d > :not(.g3d) { opacity:0 !important; pointer-events:none !important; }
   .scene.is3d .g3d { position:absolute; inset:0; width:100%; height:100%; display:block; }
   @media (max-height:480px) { .scene.is3d { height:40vh; } }
+  .names label .chbtn { flex:none; width:34px; height:30px; border:2px solid var(--ink); border-radius:9px; background:var(--c); font-size:16px; box-shadow:2px 2px 0 var(--ink); }
+  #charov { position:fixed; inset:0; z-index:50; display:flex; align-items:center; justify-content:center; padding:10px; background:rgba(27,26,58,.75); }
+  #charov .cc { background:#fff; border:4px solid var(--ink); box-shadow:8px 8px 0 var(--ink); border-radius:24px; width:min(100%,640px); max-height:96vh; overflow:auto; display:grid; grid-template-columns:200px 1fr; gap:12px; padding:14px; }
+  #charov canvas { width:100%; height:240px; background:linear-gradient(#bfe7ff,#ffe1c8); border:3px solid var(--ink); border-radius:16px; }
+  #charov h3 { font:700 22px Fredoka,sans-serif; margin-bottom:4px; }
+  #charov .grp { margin-top:8px; } #charov .grp b { font-size:12px; text-transform:uppercase; letter-spacing:.5px; }
+  #charov .ops { display:flex; flex-wrap:wrap; gap:5px; margin-top:4px; }
+  #charov .ops button { border:2px solid var(--ink); border-radius:10px; padding:5px 9px; font-weight:800; font-size:13px; background:#fff; }
+  #charov .ops button.on { background:var(--yellow); }
+  #charov .sw { width:30px; height:30px; padding:0 !important; }
+  #charov .done { margin-top:12px; width:100%; padding:10px; border:3px solid var(--ink); border-radius:14px; background:#22c55e; font-weight:900; font-size:17px; box-shadow:4px 4px 0 var(--ink); }
+  @media (max-width:560px), (max-height:480px) { #charov .cc { grid-template-columns:130px 1fr; } #charov canvas { height:170px; } }
 </style>
 <link rel="stylesheet" href="/games/_shared/theme.css">
 </head>
@@ -184,7 +196,7 @@
 <script src="/games/_shared/sfx.js"></script>
 <script src="/games/_shared/fx.js"></script>
 <script src="/games/_shared/ruang.js"></script>
-<script type="module">import { mount } from "/games/_shared/gowes3d.js"; window.Gowes3D = { mount };</script>
+<script type="module">import { mount, preview, CHAR_OPTS, defaultChar } from "/games/_shared/gowes3d.js"; window.Gowes3D = { mount, preview, CHAR_OPTS, defaultChar };</script>
 <script>
 (function () {
   'use strict';
@@ -236,11 +248,25 @@
   })();
 
   // ---------- Menu ----------
+  function getChar(i) { try { var c = JSON.parse(localStorage.getItem('bgy_char_' + i) || 'null'); if (c) return c; } catch (e) {} return window.Gowes3D ? Gowes3D.defaultChar(i) : null; }
+  function openChar(i) {
+    if (!window.Gowes3D) return;
+    var cfg = getChar(i), O = Gowes3D.CHAR_OPTS, ov = document.createElement('div'); ov.id = 'charov';
+    var grp = function (key, label, sw) { return '<div class="grp"><b>' + label + '</b><div class="ops" data-k="' + key + '">' + O[key].map(function (o) { return '<button type="button" data-v="' + o[0] + '"' + (sw ? ' class="sw" style="background:' + o[0] + '" title="' + o[1] + '" aria-label="' + o[1] + '"' : '') + '>' + (sw ? '' : o[1]) + '</button>'; }).join('') + '</div></div>'; };
+    ov.innerHTML = '<div class="cc"><canvas></canvas><div><h3>Karakter Pemain ' + (i + 1) + '</h3>' + grp('skin', 'Warna kulit', true) + grp('head', 'Kepala') + grp('seragam', 'Seragam') + '<button type="button" class="done">✔ Simpan</button></div></div>';
+    document.body.appendChild(ov);
+    var mark = function () { [].forEach.call(ov.querySelectorAll('.ops'), function (g) { [].forEach.call(g.children, function (b) { b.classList.toggle('on', cfg[g.dataset.k] === b.dataset.v); }); }); };
+    ov.addEventListener('click', function (e) { var b = e.target.closest('.ops button'); if (b) { cfg[b.parentNode.dataset.k] = b.dataset.v; mark(); tone(600, 0, .06, 'sine', .08); } });
+    mark();
+    var pv = Gowes3D.preview(ov.querySelector('canvas'), COLORS[i], function () { return cfg; });
+    ov.querySelector('.done').onclick = function () { try { localStorage.setItem('bgy_char_' + i, JSON.stringify(cfg)); } catch (e) {} if (pv) pv.destroy(); ov.remove(); };
+  }
   function renderNames() {
     var box = $('names'); box.innerHTML = '';
     for (var i = 0; i < nPlayers; i++) {
       var l = document.createElement('label'); l.style.setProperty('--c', COLORS[i]);
-      l.innerHTML = '<i></i><input maxlength="14" placeholder="Pemain ' + (i + 1) + '" autocomplete="off">';
+      l.innerHTML = '<i></i><input maxlength="14" placeholder="Pemain ' + (i + 1) + '" autocomplete="off"><button type="button" class="chbtn" title="Buat karakter" aria-label="Buat karakter pemain ' + (i + 1) + '" data-i="' + i + '">👕</button>';
+      l.querySelector('.chbtn').addEventListener('click', function (e) { e.preventDefault(); openChar(+this.dataset.i); });
       box.appendChild(l);
     }
   }
@@ -385,7 +411,7 @@
     function addLane(color, name, isBot) {
       var ln = document.createElement('div'); ln.className = 'rlane'; var b = makeBike(color, name, isBot); ln.appendChild(b); road.appendChild(ln); return b;
     }
-    players.forEach(function (P) { P.bike = addLane(COLORS[P.i], P.name, false); });
+    players.forEach(function (P) { P.bike = addLane(COLORS[P.i], P.name, false); var c = getChar(P.i); if (c) P.bike.dataset.char = JSON.stringify(c); });
     bot = null;
     ghosts = [];
     if (roomMode) { ['#b79cff', '#feca57', '#55efc4'].forEach(function (c) { var gb = addLane(c, '…', true); gb.style.visibility = 'hidden'; gb.style.opacity = '.8'; ghosts.push(gb); }); }
