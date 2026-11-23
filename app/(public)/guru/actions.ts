@@ -10,17 +10,20 @@ import { randomRoomCode } from "@/lib/ruang";
 
 export type SaveResult = { ok: true } | { ok: false; error: string };
 
-export async function createSet(): Promise<void> {
+export async function createSet(gameSlug?: string): Promise<void> {
   const guru = await getCurrentGuru();
   if (!guru) redirect("/guru/masuk");
+  const g = gameSlug ? getGame(gameSlug) : undefined;
+  const game = g && !g.noSet ? g.slug : "kupu-kupu";
+  const title = g && !g.noSet ? `Soal ${g.title}` : "Set Soal Baru";
 
   let id: string | null = null;
   // Ulangi jika kode kebetulan sudah dipakai
   for (let i = 0; i < 5 && !id; i++) {
     try {
       const rows = await sql`
-        INSERT INTO question_sets (teacher_id, title, code)
-        VALUES (${guru.guruId}, 'Set Soal Baru', ${randomCode()})
+        INSERT INTO question_sets (teacher_id, title, code, game)
+        VALUES (${guru.guruId}, ${title}, ${randomCode()}, ${game})
         RETURNING id
       `;
       id = (rows[0] as { id: string }).id;

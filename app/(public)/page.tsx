@@ -52,7 +52,7 @@ export default async function HomePage() {
               Belajar Jadi <span className="nb-mark">Seru</span> di <span className="text-nb-orange whitespace-nowrap">Main-yuk</span>
             </h1>
             <p className="mt-2 sm:mt-3 text-sm sm:text-base text-slate-700 dark:text-slate-300 max-w-[520px] max-lg:mx-auto">
-              Game edukasi SD–SMA yang bisa diisi soal buatan guru. Main sendiri, adu cepat di layar kelas, atau mabar pakai kode.
+              Game edukasi SD–SMA, sebagian bisa diisi soal buatan guru sendiri. Main sendiri, adu cepat di layar kelas, atau mabar pakai kode.
             </p>
             <SearchBox className="mt-4 sm:mt-5 max-w-[520px] max-lg:mx-auto" />
             <div className="mt-3 sm:mt-4 grid grid-cols-2 gap-2.5 sm:flex sm:flex-wrap sm:gap-3 max-lg:justify-center">
@@ -82,7 +82,7 @@ export default async function HomePage() {
       {/* 1. Karya Admin Main-yuk */}
       <section id="game" className="px-4 pt-8 sm:pt-10 scroll-mt-20" aria-labelledby="game-judul">
         <div className="container mx-auto max-w-[1200px]">
-          <SectionHead id="game-judul" title="Karya Admin" mark="Main-yuk" desc="Game buatan Main-yuk. Yang berpita merah muda bisa diisi soalmu sendiri." href="/game" linkText="Semua" />
+          <SectionHead id="game-judul" title="Karya Admin" mark="Main-yuk" desc="Game buatan Main-yuk. Yang bertanda ✏️ Custom soal bisa diisi soalmu sendiri." href="/game" linkText="Semua" />
           <div className="grid gap-3 sm:gap-5 grid-cols-2 lg:grid-cols-3">
             {MAIN_GAMES.map((g) => <GameTile key={g.slug} game={g} cover={settings[coverKey(g.slug)]} />)}
           </div>

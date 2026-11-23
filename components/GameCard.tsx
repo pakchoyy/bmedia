@@ -19,12 +19,16 @@ export default function GameCard({ media, categoryColor }: { media: Media; categ
       onClick={trackOpen}
       className="group nb nb-hover bg-white dark:bg-slate-900 rounded-2xl overflow-hidden flex flex-col"
     >
-      <div className="relative aspect-video overflow-hidden border-b-[3px] border-nb-ink dark:border-[var(--nb-ink)]">
+      <div className="relative aspect-[16/10] overflow-hidden border-b-[3px] border-nb-ink dark:border-[var(--nb-ink)]">
         <MediaThumb media={media} className="w-full h-full transition-transform duration-500 group-hover:scale-105" />
+        <span className="absolute top-2 left-2 z-10 inline-flex items-center gap-1 rounded-full border-2 border-nb-ink bg-white/85 backdrop-blur-sm px-2 py-0.5 text-[10px] sm:text-[11px] font-extrabold text-nb-ink shadow-[2px_2px_0_#1b1a3a]">
+          <span aria-hidden="true" className="w-2 h-2 rounded-full border border-nb-ink" style={{ backgroundColor: categoryColor || "#16a34a" }} />
+          {media.category}
+        </span>
         {media.featured && (
-          <div className="absolute top-2 right-2 z-10 nb-flat rounded-full bg-nb-yellow text-nb-ink px-2 py-0.5 text-[10px] sm:text-[11px] font-extrabold inline-flex items-center gap-1 shadow-[2px_2px_0_#1b1a3a]">
+          <span className="absolute top-2 right-2 z-10 inline-flex items-center gap-1 rounded-full border-2 border-nb-ink bg-nb-yellow/90 backdrop-blur-sm px-2 py-0.5 text-[10px] sm:text-[11px] font-extrabold text-nb-ink shadow-[2px_2px_0_#1b1a3a]">
             <Icon name="star" className="text-[10px]" /> Pilihan
-          </div>
+          </span>
         )}
       </div>
 
@@ -33,18 +37,15 @@ export default function GameCard({ media, categoryColor }: { media: Media; categ
           {media.title}
         </h3>
         <div className="flex flex-wrap gap-1">
-          <span className="inline-flex items-center gap-1 nb-flat rounded-md bg-white px-1.5 py-0.5 text-[10px] sm:text-[11px] font-bold text-nb-ink">
-            <span aria-hidden="true" className="w-2 h-2 rounded-full border border-nb-ink" style={{ backgroundColor: categoryColor || "#16a34a" }} />
-            {media.category}
-          </span>
           <span className="nb-flat rounded-md bg-nb-yellow/40 px-1.5 py-0.5 text-[10px] sm:text-[11px] font-bold text-nb-ink dark:text-slate-100">{media.mapel}</span>
           <span className="nb-flat rounded-md bg-nb-lilac/35 px-1.5 py-0.5 text-[10px] sm:text-[11px] font-bold text-nb-ink dark:text-slate-100">{media.jenjang}</span>
+          <span className="hidden sm:inline nb-flat rounded-md bg-nb-blue/15 px-1.5 py-0.5 text-[11px] font-bold text-nb-ink dark:text-slate-100">{media.kelas}</span>
         </div>
-        <p className="text-xs text-slate-600 dark:text-slate-400 truncate">
-          <span className="font-semibold text-nb-ink dark:text-slate-200">{media.guru_name}</span>
-          <span className="hidden sm:inline"> · {formatPlays(media.plays)}× dimainkan</span>
-        </p>
-        <div className="mt-auto nb-sm py-1.5 rounded-xl bg-nb-orange text-nb-ink font-extrabold text-xs sm:text-sm text-center group-hover:bg-nb-ink group-hover:text-white transition-colors">
+        <div className="mt-auto flex items-center justify-between gap-2 text-xs text-slate-600 dark:text-slate-400">
+          <span className="flex items-center gap-1 min-w-0"><Icon name="user-tie" className="shrink-0 text-nb-orange" /><span className="truncate font-semibold text-nb-ink dark:text-slate-200">{media.guru_name}</span></span>
+          <span className="flex items-center gap-1 shrink-0"><Icon name="users" className="text-nb-orange" />{formatPlays(media.plays)}×</span>
+        </div>
+        <div className="nb-sm py-1.5 sm:py-2 rounded-xl bg-nb-orange text-nb-ink font-extrabold text-xs sm:text-sm text-center group-hover:bg-nb-ink group-hover:text-white transition-colors">
           ▶ Main
         </div>
       </div>
