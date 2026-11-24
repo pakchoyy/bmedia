@@ -105,6 +105,8 @@
     <div class="mg-wrap mathonly"><div class="lbl">Jenis soal</div><div class="mg-grid" id="mg"></div></div>
     <div class="row mathonly"><span class="lbl">Tingkat</span>
       <div class="seg" id="segLevel"><button class="nb-sm press" data-n="1">Mudah</button><button class="nb-sm press" data-n="2">Sedang</button><button class="nb-sm press" data-n="3">Sulit</button></div></div>
+    <div class="row"><span class="lbl">Tempo</span>
+      <div class="seg" id="segTempo"><button class="nb-sm press" data-n="0.6">🐢 Lambat</button><button class="nb-sm press" data-n="1">🚶 Sedang</button><button class="nb-sm press" data-n="1.5">🚀 Cepat</button></div></div>
     <div class="row"><span class="lbl">Target</span>
       <div class="seg" id="segTarget"><button class="nb-sm press" data-n="8">8 balon</button><button class="nb-sm press" data-n="12">12 balon</button><button class="nb-sm press" data-n="18">18 balon</button></div></div>
     <div class="names" id="names"></div>
@@ -174,6 +176,8 @@
   }
   seg('segPlayers', function (n) { nPlayers = +n; renderNames(); }, function (n) { return +n === nPlayers; });
   seg('segTarget', function (n) { target = +n; }, function (n) { return +n === target; });
+  var tempo = 1; try { tempo = +localStorage.getItem('tempo_balon') || 1; } catch (e) {}
+  seg('segTempo', function (n) { tempo = +n; try { localStorage.setItem('tempo_balon', n); } catch (e) {} }, function (n) { return +n === tempo; });
   seg('segLevel', function (n) { level = +n; }, function (n) { return +n === level; });
   MathGen.renderGrid($('mg'), mathMode, function (id) { mathMode = id; tone(600, 0, .06, 'sine', .08); });
   renderNames();
@@ -217,7 +221,7 @@
     });
   }
 
-  function speedFor() { var el = (performance.now() - startAt) / 1000; return (setQ ? 34 : [0, 38, 34, 30][level]) + el * 0.25; }
+  function speedFor() { var el = (performance.now() - startAt) / 1000; return ((setQ ? 34 : [0, 38, 34, 30][level]) + el * 0.25) * tempo; }
 
   function burst(L, obj, text) {
     var r = obj.el.getBoundingClientRect(), s = L.sky.getBoundingClientRect();

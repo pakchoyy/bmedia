@@ -17,8 +17,9 @@
     '.tt-tools{position:absolute;top:10px;left:12px;display:flex;gap:6px;z-index:3}' +
     '.tt-tools button{font:900 12px Nunito,sans-serif;border:2px solid #1b1a3a;border-radius:99px;padding:4px 10px;background:#fff;color:#1b1a3a;box-shadow:2px 2px 0 #1b1a3a;cursor:pointer}' +
     '.tt-tools button.on{background:#ffd23f}' +
-    '.tt-hint{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:9400;display:flex;align-items:center;gap:8px;background:#fff;border:3px solid #1b1a3a;box-shadow:4px 4px 0 #1b1a3a;border-radius:16px;padding:6px 12px 6px 6px;font:800 14px Nunito,sans-serif;color:#1b1a3a;max-width:92vw;animation:ttIn .4s ease}' +
-    '.tt-hint img{width:46px}@keyframes ttIn{from{opacity:0;transform:translate(-50%,20px)}}' +
+    '.tt-hint{position:fixed;left:50%;top:46px;transform:translateX(-50%);z-index:9400;display:flex;align-items:center;gap:6px;background:#fff;border:2px solid #1b1a3a;box-shadow:3px 3px 0 #1b1a3a;border-radius:99px;padding:3px 4px 3px 4px;font:800 13px/1.2 Nunito,sans-serif;color:#1b1a3a;max-width:min(92vw,520px);white-space:nowrap;animation:ttIn .4s ease}' +
+    '.tt-hint span{overflow:hidden;text-overflow:ellipsis}.tt-hint button{flex:none;width:26px;height:26px;border-radius:50%;border:2px solid #1b1a3a;background:#ffd23f;font:900 12px Nunito,sans-serif;cursor:pointer}' +
+    '.tt-hint img{width:30px}@keyframes ttIn{from{opacity:0;transform:translate(-50%,-14px)}}' +
     '@media (prefers-reduced-motion:reduce){.tt-box img,.tt-hint{animation:none}.tt-hole,.tt-box{transition:none}}';
   document.head.appendChild(css);
 
@@ -79,7 +80,7 @@
       try { if (localStorage.getItem('bgy_hint_' + cfg.id) === '1') return; } catch (e) {}
       if (hintEl) hintEl.remove();
       hintEl = document.createElement('div'); hintEl.className = 'tt-hint';
-      hintEl.innerHTML = '<img src="/maskot/halo.webp" alt=""><span></span>'; hintEl.querySelector('span').textContent = cfg.inGame;
+      hintEl.innerHTML = '<img src="/maskot/halo.webp" alt=""><span></span><button type="button" aria-label="Tutup petunjuk">✕</button>'; hintEl.querySelector('span').textContent = cfg.inGame; hintEl.querySelector('button').onclick = function () { Tutor.done(); };
       document.body.appendChild(hintEl);
       var h = hintEl; setTimeout(function () { if (h === hintEl) Tutor.done(); }, 9000);
     },
