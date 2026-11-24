@@ -189,6 +189,8 @@
       <div class="seg" id="segTempo"><button class="nb-sm press" data-n="0.6">🐢 Lambat</button><button class="nb-sm press" data-n="1">🚶 Sedang</button><button class="nb-sm press" data-n="1.5">🚀 Cepat</button></div></div>
     <div class="row"><span class="lbl">Jarak</span>
       <div class="seg" id="segTarget"><button class="nb-sm press" data-n="8">Dekat</button><button class="nb-sm press" data-n="12">Sedang</button><button class="nb-sm press" data-n="18">Jauh</button></div></div>
+    <div class="row"><span class="lbl">Grafik</span>
+      <div class="seg" id="segGfx"><button class="nb-sm press" data-n="bagus">✨ Bagus</button><button class="nb-sm press" data-n="ringan">⚡ Ringan</button></div></div>
     <div class="names" id="names"></div>
     <button id="start" class="nb press">▶ GOWES!</button>
   </div>
@@ -308,6 +310,9 @@
   var tempo = 1; try { tempo = +localStorage.getItem('tempo_gowes') || 1; } catch (e) {}
   seg('segTempo', function (n) { tempo = +n; try { localStorage.setItem('tempo_gowes', n); } catch (e) {} }, function (n) { return +n === tempo; });
   seg('segLevel', function (n) { level = +n; }, function (n) { return +n === level; });
+  var gfx = 'bagus'; try { gfx = localStorage.getItem('bgy_gfx') || ((navigator.hardwareConcurrency || 8) <= 4 ? 'ringan' : 'bagus'); } catch (e) {}
+  seg('segGfx', function (n) { gfx = n; try { localStorage.setItem('bgy_gfx', n); } catch (e) {} }, function (n) { return n === gfx; });
+  try { if (!localStorage.getItem('bgy_gfx')) localStorage.setItem('bgy_gfx', gfx); } catch (e) {}
   MathGen.renderGrid($('mg'), mathMode, function (id) { mathMode = id; tone(600, 0, .06, 'sine', .08); });
   renderNames();
 
