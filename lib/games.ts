@@ -13,6 +13,8 @@ export interface GameInfo {
   portraitOk?: boolean;
   /** Game tidak memakai set soal guru (tidak muncul di editor soal) */
   noSet?: boolean;
+  /** Perangkat yang dibutuhkan: game ketik perlu keyboard (laptop/komputer) */
+  perlu?: "keyboard";
   /** Bawaan badge & halaman info (bisa diubah admin di Tampilan & Cover) */
   mapel: string;
   fase: string;
@@ -128,7 +130,8 @@ export const GAMES: GameInfo[] = [
     src: "/games/pahlawan-ketik/index.html",
     tagline: "Monster 3D menyerang sekolah! Ketik kata atau angka untuk menembaknya. 10 gelombang, kalimat, dan bos.",
     preview: "/games/pahlawan-ketik/cover.jpg",
-    modes: ["Kata & Angka", "Kalimat + Bos", "Tempo diatur"],
+    modes: ["Kata & Angka", "Kalimat + Bos", "💻 Pakai keyboard"],
+    perlu: "keyboard",
     portraitOk: true,
     noSet: true,
     mapel: "Mengetik & Bahasa",
@@ -143,8 +146,9 @@ export const GAMES: GameInfo[] = [
     src: "/games/hujan-kata/index.html",
     tagline: "Kata dan soal hitungan jatuh dari awan. Ketik jawabannya sebelum menyentuh sawah! Latihan mengetik dan berhitung cepat.",
     preview: "/games/hujan-kata/cover.jpg",
-    modes: ["Latihan Mengetik", "Hitung Cepat", "3 Tingkat"],
+    modes: ["Latihan Mengetik", "Hitung Cepat", "3 Tingkat", "💻 Pakai keyboard"],
     portraitOk: true,
+    perlu: "keyboard",
     noSet: true,
     mapel: "Mengetik & Hitung",
     fase: "SD–SMP",
