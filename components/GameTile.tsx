@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 import Icon from "./Icon";
 import DetailSheet, { useDetailSheet } from "./DetailSheet";
 import type { GameInfo } from "@/lib/games";
@@ -9,7 +10,6 @@ import type { GameMeta } from "@/lib/settings";
 /** Lencana cara main & perangkat. */
 export function gameBadges(game: GameInfo): string[] {
   const b: string[] = [];
-  if (game.cara?.includes("online")) b.push("👥 Mabar");
   if (game.cara?.includes("ifp")) b.push("📺 Layar kelas");
   if (game.perlu === "keyboard") b.push("💻 Laptop saja");
   return b;
@@ -22,28 +22,31 @@ export default function GameTile({ game, cover, meta, plays }: { game: GameInfo;
   const sheet = useDetailSheet();
   const badges = gameBadges(game);
   const img = cover || game.preview;
-  const openSheet = () => sheet.open({
+  const openSheet = (noPush?: boolean) => sheet.open({
     key: game.slug, title: game.title,
     // eslint-disable-next-line @next/next/no-img-element
     cover: <img src={img} alt="" className="w-full h-full object-cover" />,
-    badges: [m.mapel, m.fase, ...badges], desc: m.deskripsi, steps: game.caraMain,
+    badges: [m.mapel, m.fase, ...(game.cara?.includes("online") ? ["👥 Mabar"] : []), ...badges], desc: m.deskripsi, steps: game.caraMain,
     meta: plays ? `🎮 ${plays.toLocaleString("id-ID")}× dimainkan` : "🎮 Baru",
     actions: [
       { label: "▶ Main sekarang", href: `/game/${game.slug}`, tone: "main" },
       ...(custom ? [{ label: "✏️ Pakai soal sendiri", href: `/guru/baru?game=${game.slug}` }] : []),
     ],
-  });
+  }, noPush === true);
+  // dibuka dari tautan /?lihat=slug (mis. tombol Kembali dari game)
+  useEffect(() => { if (new URLSearchParams(location.search).get('lihat') === game.slug) { openSheet(true); document.getElementById('game')?.scrollIntoView(); } }, []); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <article className="group nb nb-hover bg-white dark:bg-slate-900 rounded-2xl overflow-hidden flex flex-col">
-      <button type="button" onClick={openSheet} className="block w-full border-b-[3px] border-nb-ink dark:border-[var(--nb-ink)]" aria-label={`Lihat detail ${game.title}`}>
-        <div className="aspect-video overflow-hidden bg-nb-cream">
+      <button type="button" onClick={() => openSheet()} className="block w-full border-b-[3px] border-nb-ink dark:border-[var(--nb-ink)]" aria-label={`Lihat detail ${game.title}`}>
+        <div className="relative aspect-video overflow-hidden bg-nb-cream">
+          {game.cara?.includes("online") && <span className="absolute top-2 right-2 z-10 rounded-full border-2 border-nb-ink bg-nb-pink text-white px-2.5 py-0.5 text-[11px] sm:text-xs font-extrabold shadow-[2px_2px_0_#1b1a3a]">👥 Mabar</span>}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={img} alt="" loading="lazy" className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300" />
         </div>
       </button>
       <div className="p-2.5 sm:p-4 flex flex-col gap-1.5 sm:gap-2 flex-1">
         <h3 className="font-display font-bold text-[15px] sm:text-xl text-nb-ink dark:text-white leading-tight">
-          <button type="button" onClick={openSheet} className="text-left hover:underline decoration-nb-yellow decoration-4 underline-offset-4">{game.title}</button>
+          <button type="button" onClick={() => openSheet()} className="text-left hover:underline decoration-nb-yellow decoration-4 underline-offset-4">{game.title}</button>
         </h3>
         <div className="flex flex-wrap gap-1">
           <span className="rounded-md border-2 border-nb-ink bg-nb-yellow px-1.5 py-0.5 text-[10px] sm:text-[11px] font-extrabold text-nb-ink">{m.mapel}</span>

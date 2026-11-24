@@ -25,9 +25,9 @@ const ITEMS = {
 };
 const CATN = { org: 'Organik', ano: 'Anorganik' };
 const LEVEL = {
-  1: { keys: ['pisang', 'daun', 'jeruk', 'botol', 'kaleng', 'gelas'], cross: 16, max: 6, gap: 2.4 },
-  2: { keys: ['pisang', 'daun', 'jeruk', 'sayur', 'telur', 'botol', 'kaleng', 'gelas', 'kardus', 'kertas'], cross: 12, max: 7, gap: 1.7 },
-  3: { keys: Object.keys(ITEMS), cross: 9, max: 8, gap: 1.2 },
+  1: { keys: ['pisang', 'daun', 'jeruk', 'botol', 'kaleng', 'gelas'], cross: 26, max: 6, gap: 3.2 },
+  2: { keys: ['pisang', 'daun', 'jeruk', 'sayur', 'telur', 'botol', 'kaleng', 'gelas', 'kardus', 'kertas'], cross: 20, max: 7, gap: 2.4 },
+  3: { keys: Object.keys(ITEMS), cross: 15, max: 8, gap: 1.8 },
 };
 const COLORS = ['#ff5d8f', '#4aa8ff', '#ffd23f', '#2ec4b6'];
 const LW = 3.2; // lebar sungai = 4 × LW
@@ -124,8 +124,8 @@ function mergeGeos(list) { const p = [], n = []; list.forEach((g) => { const ng 
 const world = { lanes: 0, group: null };
 const waterT = canvasTex(128, 128, (x, w, h) => {
   const g = x.createLinearGradient(0, 0, w, 0); g.addColorStop(0, '#2f8fcf'); g.addColorStop(.5, '#46a9e6'); g.addColorStop(1, '#2f8fcf'); x.fillStyle = g; x.fillRect(0, 0, w, h);
-  x.strokeStyle = 'rgba(255,255,255,.45)'; x.lineWidth = 2;
-  for (let i = 0; i < 26; i++) { const yy = Math.random() * h, xx = Math.random() * w; x.beginPath(); x.moveTo(xx, yy); x.quadraticCurveTo(xx + 8, yy + 4, xx + 18, yy); x.stroke(); }
+  x.strokeStyle = 'rgba(255,255,255,.28)'; x.lineWidth = 1.5;
+  for (let i = 0; i < 7; i++) { const yy = Math.random() * h, xx = Math.random() * w; x.beginPath(); x.moveTo(xx, yy); x.quadraticCurveTo(xx + 8, yy + 4, xx + 18, yy); x.stroke(); }
 }, [2, 10]);
 function buildWorld(lanes) {
   if (world.group) scene.remove(world.group);
@@ -380,7 +380,7 @@ function fishJump() {
   const s = sprite(E('1f41f'), 0.9); const x = (Math.random() - .5) * spanHalf * 1.6, z = (Math.random() - .5) * 8;
   s.position.set(x, -0.3, z); scene.add(s); fish.push({ s, x, z, t: 0, dir: Math.random() < .5 ? -1 : 1 });
 }
-const WATER_DIRTY = new THREE.Color(0xd9c49a), WATER_CLEAN = new THREE.Color(0xd2efff);
+const WATER_DIRTY = new THREE.Color(0xbfd6dc), WATER_CLEAN = new THREE.Color(0xd2efff);
 
 /* ---------------- alur ---------------- */
 function resize() {

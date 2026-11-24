@@ -10,6 +10,7 @@ const links = [
   { label: "Home", href: "/", icon: "house" },
   { label: "Mabar Yuk", href: "/main", icon: "users" },
   { label: "Ruang Guru", href: "/guru", icon: "chalkboard-user" },
+  { label: "Buat Game (AI)", href: "/buat/", icon: "gamepad" },
   { label: "Kirim Karya", href: "/submit", icon: "paper-plane" },
   { label: "Tentang & Saran", href: "/about", icon: "info" },
 ];

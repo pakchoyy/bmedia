@@ -15,9 +15,9 @@ export function useDetailSheet() {
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
   }, []);
-  const open = (d: SheetData) => {
+  const open = (d: SheetData, noPush = false) => {
     setData(d);
-    if (!pushed.current) { history.pushState({ sheet: d.key }, "", `?lihat=${encodeURIComponent(d.key)}`); pushed.current = true; }
+    if (!pushed.current && !noPush) { history.pushState({ sheet: d.key }, "", `?lihat=${encodeURIComponent(d.key)}`); pushed.current = true; }
   };
   const close = () => { if (pushed.current) history.back(); else setData(null); };
   return { data, open, close };
