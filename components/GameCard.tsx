@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Media } from "@/types/media";
 import { formatPlays } from "@/lib/utils";
 import MediaThumb from "./MediaThumb";
+import DetailSheet, { useDetailSheet } from "./DetailSheet";
 import Icon from "./Icon";
 
 export default function GameCard({ media, categoryColor }: { media: Media; categoryColor?: string }) {
@@ -13,10 +14,23 @@ export default function GameCard({ media, categoryColor }: { media: Media; categ
     } catch {}
   };
 
+  const sheet = useDetailSheet();
+  const openSheet = (e: React.MouseEvent) => {
+    e.preventDefault();
+    sheet.open({
+      key: media.id, title: media.title,
+      cover: <MediaThumb media={media} className="w-full h-full" />,
+      badges: [media.category, media.mapel, media.jenjang, media.kelas].filter(Boolean),
+      desc: media.description, meta: `Karya ${media.guru_name} · ${formatPlays(media.plays)}× dimainkan`,
+      actions: [{ label: "▶ Main sekarang", href: `/media/${media.id}`, tone: "main", onClick: trackOpen }],
+    });
+  };
+
   return (
+    <>
     <Link
       href={`/media/${media.id}`}
-      onClick={trackOpen}
+      onClick={openSheet}
       className="group nb nb-hover bg-white dark:bg-slate-900 rounded-2xl overflow-hidden flex flex-col"
     >
       <div className="relative aspect-[16/10] overflow-hidden border-b-[3px] border-nb-ink dark:border-[var(--nb-ink)]">
@@ -45,10 +59,12 @@ export default function GameCard({ media, categoryColor }: { media: Media; categ
           <span className="flex items-center gap-1 min-w-0"><Icon name="user-tie" className="shrink-0 text-nb-orange" /><span className="truncate font-semibold text-nb-ink dark:text-slate-200">{media.guru_name}</span></span>
           <span className="flex items-center gap-1 shrink-0"><Icon name="users" className="text-nb-orange" />{formatPlays(media.plays)}×</span>
         </div>
-        <div className="nb-sm py-1.5 sm:py-2 rounded-xl bg-nb-orange text-nb-ink font-extrabold text-xs sm:text-sm text-center group-hover:bg-nb-ink group-hover:text-white transition-colors">
+        <div className="nb-sm min-h-[40px] grid place-items-center rounded-xl bg-nb-yellow text-nb-ink font-extrabold text-xs sm:text-sm text-center group-hover:brightness-105 transition">
           ▶ Main
         </div>
       </div>
     </Link>
+    <DetailSheet data={sheet.data} onClose={sheet.close} />
+    </>
   );
 }
