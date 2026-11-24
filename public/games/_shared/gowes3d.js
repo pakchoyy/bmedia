@@ -525,6 +525,23 @@ export function mount(sceneEl) {
   const ro = new ResizeObserver(resize); ro.observe(sceneEl); resize();
 
   let last = performance.now(), camZ = 8, alive = true, slow = 0, finishAt = 0, podium = null, lastLeader = null, shake = 0;
+  // ---- efek: debu roda (Points daur ulang) & konfeti 3D (InstancedMesh daur ulang) ----
+  const DUST = 140, dPos = new Float32Array(DUST * 3), dVel = new Float32Array(DUST * 3), dLife = new Float32Array(DUST); let dNext = 0;
+  const dGeo = new THREE.BufferGeometry(); dGeo.setAttribute('position', new THREE.BufferAttribute(dPos, 3));
+  const dust = new THREE.Points(dGeo, new THREE.PointsMaterial({ color: 0xd9cbb0, size: 0.22, transparent: true, opacity: 0.7, depthWrite: false }));
+  dust.frustumCulled = false; scene.add(dust); for (let i = 0; i < DUST; i++) dPos[i * 3 + 1] = -5;
+  function puff(x, y, z, n) {
+    for (let k = 0; k < n; k++) { const i = dNext; dNext = (dNext + 1) % DUST; dPos[i * 3] = x + (Math.random() - .5) * .3; dPos[i * 3 + 1] = y; dPos[i * 3 + 2] = z; dVel[i * 3] = (Math.random() - .5) * .8; dVel[i * 3 + 1] = .4 + Math.random() * .6; dVel[i * 3 + 2] = 1.5 + Math.random() * 1.5; dLife[i] = .6 + Math.random() * .4; }
+  }
+  const CONF = 160, conf = new THREE.InstancedMesh(new THREE.PlaneGeometry(0.16, 0.26), new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }), CONF);
+  conf.frustumCulled = false; conf.visible = false; scene.add(conf);
+  const cData = [], cObj = new THREE.Object3D(), cCols = [0xff5d8f, 0xffd23f, 0x2ec4b6, 0x4aa8ff, 0xff7a1a, 0xb79cff, 0xffffff];
+  for (let i = 0; i < CONF; i++) { cData.push({ p: new THREE.Vector3(), v: new THREE.Vector3(), r: new THREE.Vector3(Math.random() * 6, Math.random() * 6, 0), s: 1 + Math.random() * 4 }); conf.setColorAt(i, new THREE.Color(cCols[i % cCols.length])); }
+  let confAt = null;
+  function confetti(at, spread) {
+    confAt = { c: at.clone(), spread }; conf.visible = true;
+    cData.forEach((d) => { d.p.set(at.x + (Math.random() - .5) * spread, at.y + Math.random() * 4, at.z + (Math.random() - .5) * spread); d.v.set((Math.random() - .5) * 2, -1 - Math.random() * 1.5, (Math.random() - .5) * 2); });
+  }
   // HUD: strip progres lintasan + posisi
   const hud = document.createElement('div'); hud.className = 'g3d-hud';
   hud.innerHTML = '<div class="g3d-track"><span class="g3d-fin">🏁</span></div><div class="g3d-speed"></div>';
@@ -558,6 +575,8 @@ export function mount(sceneEl) {
     // peringkat (berdasar target) → HUD, label, sorakan saat menyalip
     const ranked = [...riders.values()].filter((r) => r.visible).sort((a, b) => a.target - b.target);
     ranked.forEach((r, i) => {
+      if (!r.isBot && r.prevRank !== undefined && i < r.prevRank && !finishAt && r.target < -2 && window.Sfx && Sfx.bell) Sfx.bell();
+      r.prevRank = i;
       let d = dots.get(r); if (!d) { d = document.createElement('span'); d.className = 'g3d-dot'; d.style.background = r.hex; track.appendChild(d); dots.set(r, d); }
       d.style.left = Math.min(100, (-r.target / LEN) * 100) + '%'; d.textContent = i + 1; d.style.zIndex = 10 - i;
     });
@@ -578,6 +597,18 @@ export function mount(sceneEl) {
       r.wheels.forEach((w) => { w.rotation.x -= spin; });
       r.body.position.y = 1.12 + Math.abs(Math.sin(r.crankA)) * (moved > 0.002 ? 0.03 : 0);
       poseRider(r, r.crankA - spin * 0.55);
+      if (moved > 0.002 && r.visible && renderer.shadowMap.enabled && !(podium && podium.built)) {
+        if (Math.random() < 0.5 + r.boost) puff(r.group.position.x, 0.12, r.group.position.z + 0.9, r.boost > 0.4 ? 3 : 1);
+      }
+      if (r.podium && podium && podium.built) {                  // selebrasi di podium
+        const wave = Math.sin(now / 160 + r.lane);
+        if (r.podRank === 0) {
+          r.group.position.y += Math.abs(Math.sin(now / 260)) * 0.35;
+          r.arms.forEach((sh, k) => { sh.rotation.x = Math.PI + 0.2 + wave * 0.25 * (k ? 1 : -1); sh.rotation.z = (k ? -1 : 1) * 0.35; sh.userData.elbow.rotation.x = 0.25; });
+        } else {
+          r.arms.forEach((sh, k) => { sh.rotation.x = 1.3; sh.rotation.z = (k ? 1 : -1) * (0.45 + Math.max(0, wave) * 0.35); sh.userData.elbow.rotation.x = 0.9; });
+        }
+      }
       r.head.rotation.z = Math.sin(now / 400 + r.lane) * 0.05;
       r.tilt += ((r.wob ? Math.sin(now / 45) * 0.35 : Math.sin(now / 160) * (moved > 0.002 ? 0.04 : 0)) - r.tilt) * Math.min(1, dt * 8);
       r.group.rotation.z = r.tilt;
@@ -624,6 +655,19 @@ export function mount(sceneEl) {
       world.crowd.children.forEach((c, i) => { c.position.y = Math.abs(Math.sin(now / (200 + i * 35) + i * 2.1)) * 0.14; });
       const wv = Math.sin(now / 280) * 0.2; world.flag.forEach((f) => { f.rotation.y = wv; });
     }
+    // debu
+    const da = dGeo.attributes.position;
+    for (let i = 0; i < DUST; i++) { if (dLife[i] <= 0) continue; dLife[i] -= realDt; dPos[i * 3] += dVel[i * 3] * realDt; dPos[i * 3 + 1] += dVel[i * 3 + 1] * realDt; dPos[i * 3 + 2] += dVel[i * 3 + 2] * realDt; dVel[i * 3 + 1] -= realDt * .6; if (dLife[i] <= 0) dPos[i * 3 + 1] = -5; }
+    da.needsUpdate = true;
+    // konfeti
+    if (confAt) {
+      cData.forEach((d, i) => {
+        d.p.addScaledVector(d.v, realDt); d.r.x += realDt * d.s; d.r.y += realDt * d.s * .7;
+        if (d.p.y < 0.05) d.p.set(confAt.c.x + (Math.random() - .5) * confAt.spread, confAt.c.y + 3 + Math.random() * 2, confAt.c.z + (Math.random() - .5) * confAt.spread);
+        cObj.position.copy(d.p); cObj.rotation.set(d.r.x, d.r.y, 0); cObj.updateMatrix(); conf.setMatrixAt(i, cObj.matrix);
+      });
+      conf.instanceMatrix.needsUpdate = true;
+    }
     renderer.render(scene, cam);
     requestAnimationFrame(frame);
   }
@@ -638,11 +682,13 @@ export function mount(sceneEl) {
       const num = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ transparent: true, map: canvasTex(64, 64, (x) => { x.fillStyle = '#1b1a3a'; x.font = '900 52px Fredoka,sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(String(i + 1), 32, 36); }) }));
       num.position.set(p[0], p[1] / 2, 1.12); g.add(num);
       const r = order[i]; if (!r) return;
-      r.podium = new THREE.Vector3(p[0], p[1], podium.z);
+      r.podium = new THREE.Vector3(p[0], p[1], podium.z); r.podRank = i;
+      if (i === 0 && r.label) { r.group.remove(r.label); r.label = nameSprite('🏆 ' + (r.text || ''), '#ffd23f'); r.label.position.set(0, 3.4, 0); r.group.add(r.label); }
     });
     scene.add(g);
+    confetti(new THREE.Vector3(0, 6, podium.z), 7);
   }
-  return { finish() { if (!finishAt) { finishAt = performance.now(); podium = { at: finishAt + 1900, z: center0() - 12, built: false }; } }, destroy() { alive = false; ro.disconnect(); renderer.dispose(); canvas.remove(); } };
+  return { finish() { if (!finishAt) { finishAt = performance.now(); { let lz = 0, lx = 0; riders.forEach((r) => { if (r.visible && r.group.position.z < lz) { lz = r.group.position.z; lx = r.group.position.x; } }); confetti(new THREE.Vector3(lx, 6, lz - 2), 6); } podium = { at: finishAt + 1900, z: center0() - 12, built: false }; } }, destroy() { alive = false; ro.disconnect(); renderer.dispose(); canvas.remove(); } };
 }
 
 /** Pratinjau karakter berputar untuk menu Buat Karakter. */
