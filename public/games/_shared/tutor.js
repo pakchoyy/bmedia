@@ -13,7 +13,7 @@
     '.tt-bub .st{font-size:11px;opacity:.6;font-weight:900;letter-spacing:.5px}' +
     '.tt-bub .bt{display:flex;gap:6px;margin-top:8px;justify-content:flex-end}' +
     '.tt-bub button{font:900 14px Nunito,sans-serif;border:2px solid #1b1a3a;border-radius:10px;padding:5px 12px;cursor:pointer;background:#fff;color:#1b1a3a}' +
-    '.tt-bub button.go{background:#22c55e;box-shadow:2px 2px 0 #1b1a3a}' +
+    '.tt-bub button.go{background:#22c55e;box-shadow:2px 2px 0 #1b1a3a}.tt-bub button.say{margin-right:auto;min-width:40px}' +
     '.tt-tools{position:absolute;top:10px;left:12px;display:flex;gap:6px;z-index:3}#menu .card:has(.tt-tools){padding-top:54px}' +
     '.tt-tools button{font:900 13px Nunito,sans-serif;min-height:36px;border:2px solid #1b1a3a;border-radius:99px;padding:4px 12px;background:#fff;color:#1b1a3a;box-shadow:2px 2px 0 #1b1a3a;cursor:pointer}' +
     '.tt-tools button.on{background:#ffd23f}' +
@@ -24,6 +24,8 @@
   document.head.appendChild(css);
 
   var cfg = null, idx = 0, ov = null, hintEl = null;
+  // Petunjuk dibacakan otomatis (kecuali suara game dimatikan)
+  function speak(t) { if (global.Suara && !(global.Sfx && Sfx.muted && Sfx.muted())) Suara.read(t, { force: true }); }
   function seen() { try { return localStorage.getItem('bgy_tut_' + cfg.id) === '1'; } catch (e) { return false; } }
   function mark() { try { localStorage.setItem('bgy_tut_' + cfg.id, '1'); } catch (e) {} }
   function close() { if (ov) ov.remove(); ov = null; mark(); if (global.speechSynthesis) try { speechSynthesis.cancel(); } catch (e) {} }
@@ -41,15 +43,16 @@
       ov.querySelector('.tt-txt').textContent = s.text;
       ov.querySelector('.st').textContent = 'LANGKAH ' + (idx + 1) + ' DARI ' + cfg.steps.length;
       ov.querySelector('.go').textContent = idx === cfg.steps.length - 1 ? 'Ayo main! ▶' : 'Lanjut ▶';
-      if (global.Suara) Suara.read(s.text);
+      speak(s.text);
     }, el ? 260 : 0);
   }
   function run() {
     idx = 0; if (ov) ov.remove();
     ov = document.createElement('div'); ov.className = 'tt-ov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', 'Panduan cara main');
-    ov.innerHTML = '<div class="tt-hole"></div><div class="tt-box"><img src="/maskot/halo.webp" alt=""><div class="tt-bub"><div class="st"></div><div class="tt-txt" aria-live="polite"></div><div class="bt"><button type="button" class="skip">Lewati</button><button type="button" class="go">Lanjut ▶</button></div></div></div>';
+    ov.innerHTML = '<div class="tt-hole"></div><div class="tt-box"><img src="/maskot/halo.webp" alt=""><div class="tt-bub"><div class="st"></div><div class="tt-txt" aria-live="polite"></div><div class="bt"><button type="button" class="say" aria-label="Dengarkan petunjuk">🔈</button><button type="button" class="skip">Lewati</button><button type="button" class="go">Lanjut ▶</button></div></div></div>';
     document.body.appendChild(ov);
     ov.querySelector('.skip').onclick = close;
+    ov.querySelector('.say').onclick = function () { var st = cfg.steps[idx]; if (st && global.Suara) Suara.say(st.text); };
     ov.querySelector('.go').onclick = function () { idx++; if (idx >= cfg.steps.length) close(); else show(); };
     show();
   }
@@ -82,6 +85,7 @@
       hintEl = document.createElement('div'); hintEl.className = 'tt-hint';
       hintEl.innerHTML = '<img src="/maskot/halo.webp" alt=""><span></span><button type="button" aria-label="Tutup petunjuk">✕</button>'; hintEl.querySelector('span').textContent = cfg.inGame; hintEl.querySelector('button').onclick = function () { Tutor.done(); };
       document.body.appendChild(hintEl);
+      speak(cfg.inGame);
       var h = hintEl; setTimeout(function () { if (h === hintEl) Tutor.done(); }, 9000);
     },
     done: function () { if (hintEl) { hintEl.remove(); hintEl = null; try { localStorage.setItem('bgy_hint_' + cfg.id, '1'); } catch (e) {} } }
