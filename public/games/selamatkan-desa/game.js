@@ -2,6 +2,7 @@
    Mode: Belajar (kenali sampah + latihan), Battle (2–4 pemain rebutan di satu sungai, tiap pemain punya
    tempat sampah sendiri), Kerja Sama (1–4 pemain, dua tempat sampah bersama, skor gabungan). */
 import * as THREE from '/games/_shared/three.module.min.js';
+import { makeRider, defaultChar } from '/games/_shared/gowes3d.js';
 
 const $ = (id) => document.getElementById(id);
 const A = 'assets/';
@@ -57,22 +58,21 @@ function renderPlayersSeg() {
   el.onclick = (e) => { const b = e.target.closest('button'); if (!b) return; if (mode === 'battle') nBattle = +b.dataset.n; else nCoop = +b.dataset.n; mark(); renderNames(); Sfx.click(); };
   const mark = () => [...el.children].forEach((b) => b.classList.toggle('on', +b.dataset.n === np())); mark();
 }
-const charOf = (i) => { try { return localStorage.getItem('sd_char_' + i) || (i % 2 ? 'girl' : 'boy'); } catch (e) { return i % 2 ? 'girl' : 'boy'; } };
+// karakter sementara mengikuti karakter Gowes (bgy_char_i) sampai aset karakter khusus siap
+const charOf = (i) => { try { return JSON.parse(localStorage.getItem('bgy_char_' + i) || 'null') || defaultChar(i); } catch (e) { return defaultChar(i); } };
 const nameOf = (i) => { try { return localStorage.getItem('sd_name_' + i) || ''; } catch (e) { return ''; } };
 function renderNames() {
   const box = $('names'); box.innerHTML = '';
   for (let i = 0; i < np(); i++) {
     const d = document.createElement('div'); d.className = 'nm';
-    d.innerHTML = '<span class="dot"></span><input maxlength="16" autocomplete="off"><button class="ch nb-sm press" type="button" aria-label="Ganti karakter"><img alt=""></button>';
+    d.innerHTML = '<span class="dot"></span><input maxlength="16" autocomplete="off">';
     d.querySelector('.dot').style.background = COLORS[i];
     const inp = d.querySelector('input'); inp.placeholder = 'Pemain ' + (i + 1); inp.value = nameOf(i);
     inp.addEventListener('change', () => { try { localStorage.setItem('sd_name_' + i, inp.value.trim()); } catch (e) {} });
-    const img = d.querySelector('img'); img.src = A + charOf(i) + '.png';
-    d.querySelector('.ch').addEventListener('click', () => { const c = charOf(i) === 'boy' ? 'girl' : 'boy'; try { localStorage.setItem('sd_char_' + i, c); } catch (e) {} img.src = A + c + '.png'; Sfx.click(); });
     box.appendChild(d);
   }
 }
-function show(id) { ['menu', 'setup', 'learn', 'result', 'pause'].forEach((s) => $(s).classList.toggle('hidden', s !== id)); }
+function show(id) { ['menu', 'setup', 'learn', 'result', 'pause', 'brief'].forEach((s) => $(s).classList.toggle('hidden', s !== id)); }
 document.querySelectorAll('.mode').forEach((b) => b.addEventListener('click', () => {
   Sfx.click();
   if (b.dataset.m === 'learn') { renderLearn(); show('learn'); say('Kenali sampah organik dan anorganik. Ketuk gambar untuk mendengar penjelasannya.'); return; }
@@ -213,17 +213,17 @@ let players = [], items = [], running = false, finished = false, seq = [], seqI 
 let team = null; // skor bersama (Kerja Sama)
 const stageRect = () => stage.getBoundingClientRect();
 let spanHalf = 12; // setengah lebar sungai yang terlihat (unit dunia)
-const SLOTS = [-4.4, -2.2, 0, 2.2, 4.4];
-const ITEM_H = 1.55;
+const SLOTS = [-4.2, -1.4, 1.4, 4.2];
+const ITEM_H = 2.25;
 function newStats(o) { return Object.assign({ score: 0, org: 0, ano: 0, wrong: 0, combo: 0, best: 0 }, o); }
 
 function buildBins() {
-  const box = $('bins'); box.innerHTML = ''; box.classList.remove('hidden');
+  const box = $('bins'); box.innerHTML = ''; box.classList.remove('hidden'); box.classList.toggle('coop', mode !== 'battle');
   const groups = mode === 'battle' ? players : [{ i: -1, name: practice ? 'Latihan' : 'Tim Desa', color: '#ffffff', chars: players.map((p) => p.char) }];
   groups.forEach((P) => {
     const g = document.createElement('div'); g.className = 'grp'; g.style.setProperty('--c', P.color);
     const chars = P.chars || [P.char];
-    g.innerHTML = '<div class="gh">' + chars.map((c) => '<img src="' + A + c + '.png" alt="">').join('') + '<span class="nmx"></span><span class="sc">0</span></div>' +
+    g.innerHTML = '<div class="gh"><span class="dot"></span><span class="nmx"></span><span class="sc">0</span></div>' +
       '<div class="pair">' + ['org', 'ano'].map((c) => '<div class="bin ' + c + '" data-p="' + P.i + '" data-cat="' + c + '"><i class="lid"></i><i class="body"></i><span>' + CATN[c] + '</span></div>').join('') + '</div>';
     g.querySelector('.nmx').textContent = P.name;
     g.querySelectorAll('.bin').forEach((b) => { const url = 'url(' + A + (b.dataset.cat === 'org' ? 'bin-organik' : 'bin-anorganik') + '.png)'; b.querySelector('.lid').style.backgroundImage = url; b.querySelector('.body').style.backgroundImage = url; });
@@ -243,7 +243,7 @@ let resolved = 0;
 function progress() { return Math.min(1, mode === 'battle' ? resolved / target : (team.org + team.ano) / target); }
 
 /* sampah muncul bertahap, hanya bila ada ruang */
-function canSpawnAt(z, x0) { return !items.some((it) => it.state !== 'gone' && Math.abs(it.z - z) < 1.6 && it.x < x0 + 3.2); }
+function canSpawnAt(z, x0) { return !items.some((it) => it.state !== 'gone' && Math.abs(it.z - z) < 2.2 && it.x < x0 + 4.2); }
 function spawn(xStart) {
   if (mode === 'battle' && seqI >= target) return;
   const L = LEVEL[level], vis = items.filter((it) => it.state === 'float' || it.state === 'held').length;
@@ -253,7 +253,7 @@ function spawn(xStart) {
   const z = free[Math.floor(Math.random() * free.length)] + (Math.random() - 0.5) * 0.6;
   const key = seq[seqI++ % seq.length], it = ITEMS[key];
   const s = sprite(it.img, it.img.startsWith('emoji') ? ITEM_H * 0.9 : ITEM_H); s.position.set(x0, -0.1, z); scene.add(s);
-  const sh = new THREE.Mesh(new THREE.CircleGeometry(0.55, 16), new THREE.MeshBasicMaterial({ color: 0x0b3a5a, transparent: true, opacity: 0.25, depthWrite: false }));
+  const sh = new THREE.Mesh(new THREE.RingGeometry(0.55, 1.05, 24), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.45, depthWrite: false }));
   sh.rotation.x = -Math.PI / 2; sh.position.set(x0, -0.12, z); scene.add(sh);
   items.push({ key, s, sh, x: x0, z, v: (2 * spanHalf + 3) / L.cross * (0.88 + Math.random() * 0.24), ph: Math.random() * 6, state: 'float' });
 }
@@ -270,16 +270,16 @@ cv.addEventListener('pointerdown', (e) => {
   let best = null, bd = 1e9;
   for (const it of items) {
     if (it.state !== 'float') continue;
-    const p = screenOf(it), d = Math.hypot(p.x - e.clientX, p.y - e.clientY), r = Math.max(46, screenSize(it) * 0.75);
+    const p = screenOf(it), d = Math.hypot(p.x - e.clientX, p.y - e.clientY), r = Math.max(56, screenSize(it) * 0.8);
     if (d < r && d < bd) { bd = d; best = it; }
   }
   if (!best) return;
   if (window.Tutor) Tutor.done();
   best.state = 'held'; best.s.visible = false; best.sh.visible = false;
-  const size = Math.max(70, Math.min(130, screenSize(best) * 1.25));
+  const size = Math.max(84, Math.min(150, screenSize(best) * 1.3));
   const g = document.createElement('img'); g.className = 'ghost'; g.src = A + ITEMS[best.key].img + '.png'; g.style.width = size + 'px';
   g.style.left = e.clientX + 'px'; g.style.top = e.clientY + 'px'; document.body.appendChild(g);
-  drags.set(e.pointerId, { it: best, ghost: g, hot: null, size });
+  drags.set(e.pointerId, { it: best, ghost: g, hot: null, size }); setInstr();
   try { cv.setPointerCapture(e.pointerId); } catch (er) {}
   Sfx.pop();
 });
@@ -309,7 +309,7 @@ addEventListener('pointermove', (e) => {
 }, { passive: false });
 function endDrag(e) {
   const d = drags.get(e.pointerId); if (!d) return;
-  drags.delete(e.pointerId);
+  drags.delete(e.pointerId); setInstr();
   const b = d.hot; setHot(d, null);
   if (b && running) drop(d, b); else flyBack(d);
 }
@@ -336,12 +336,12 @@ function drop(d, bin) {
     if (mode === 'battle') { resolved++; } 
     Sfx.good(); if (Sfx.bell && P.combo > 1) Sfx.bell();
     if (window.Fx) Fx.good(cx, r.top + 10, '+' + gain);
-    const head = P.el && P.el.querySelectorAll('.gh img'); if (head) head.forEach((im) => { im.classList.remove('hop'); void im.offsetWidth; im.classList.add('hop'); });
+    cheer(+bin.dataset.p);
     if (P.combo >= 3 && P.combo % 3 === 0) toast('🔥 Combo ' + P.combo + '!' + (mode === 'battle' ? ' ' + P.name : ''), 'good');
     else if (mode !== 'battle') { const pr = progress(); if (pr >= 0.5 && !team.half) { team.half = true; toast('Hebat! Sungai semakin bersih! 🌊', 'good'); say('Hebat! Sungai semakin bersih!'); } }
     hud(); checkEnd();
   } else {
-    P.combo = 0; P.wrong++;
+    P.combo = 0; P.wrong++; sadden(+bin.dataset.p);
     bin.classList.remove('bad'); void bin.offsetWidth; bin.classList.add('bad');
     Sfx.bad();
     const txt = info.nama + ' termasuk ' + CATN[info.cat] + '. ' + info.info;
@@ -392,8 +392,77 @@ function resize() {
   const d = Math.max(13, 9.5 / tanV, 11 / (tanV * cam.aspect));
   cam.position.set(0, d * 0.66, d * 0.8); cam.lookAt(0, 0, -1.6); cam.updateProjectionMatrix();
   spanHalf = d * tanV * cam.aspect * 0.95;
+  placeAvatars();
 }
 addEventListener('resize', resize); new ResizeObserver(resize).observe(stage);
+/* ---------------- karakter (sementara pakai karakter Gowes, tanpa sepeda) ---------------- */
+let avatars = [];
+const ray = new THREE.Raycaster(), GROUND = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), hitP = new THREE.Vector3();
+function buildAvatars() {
+  avatars.forEach((a) => scene.remove(a.holder)); avatars = [];
+  players.forEach((P) => {
+    const r = makeRider(new THREE.Color(P.color), P.char);
+    r.group.remove(r.group.children[0]); // lepas sepedanya
+    r.group.rotation.y = Math.PI; // menghadap kamera
+    r.body.children.forEach((c) => { if (Math.abs(c.rotation.x + 0.4) < 0.01) c.rotation.x = -0.05; }); // badan tegak (tidak membungkuk seperti di sepeda)
+    r.legs.forEach((l) => { l.rotation.x = 0; l.userData.knee.rotation.x = 0; });
+    const holder = new THREE.Group(); holder.add(r.group); holder.rotation.x = -0.55; holder.scale.setScalar(1.05); // condong ke kamera agar wajah terlihat
+    scene.add(holder); avatars.push({ P, r, holder, jump: 0, sad: 0, ph: Math.random() * 6, win: false });
+  });
+  placeAvatars();
+}
+function placeAvatars() {
+  if (!avatars.length) return;
+  const sr = stageRect(); tmpV.set(0, 0, 8.9).project(cam); const ny = tmpV.y;
+  avatars.forEach((a, k) => {
+    let cx;
+    if (mode === 'battle' && a.P.el) { const r = a.P.el.getBoundingClientRect(); cx = r.left + r.width / 2; }
+    else cx = sr.left + sr.width * (k + 1) / (avatars.length + 1);
+    ray.setFromCamera(new THREE.Vector2((cx - sr.left) / sr.width * 2 - 1, ny), cam);
+    if (ray.ray.intersectPlane(GROUND, hitP)) a.base = hitP.clone();
+  });
+}
+function cheer(pi) { avatars.forEach((a) => { if (mode !== 'battle' || a.P.i === pi) { a.jump = 1; a.sad = 0; } }); }
+function sadden(pi) { avatars.forEach((a) => { if (mode !== 'battle' || a.P.i === pi) a.sad = 1; }); }
+function animAvatars(t, dt) {
+  avatars.forEach((a) => {
+    if (!a.base) return;
+    const r = a.r; a.jump = Math.max(0, a.jump - dt * 2.2); a.sad = Math.max(0, a.sad - dt * 1.2);
+    const j = a.win ? Math.abs(Math.sin(t / 230 + a.ph)) : Math.sin(a.jump * Math.PI);
+    a.holder.position.set(a.base.x, -0.3 + j * 0.9 + Math.sin(t / 500 + a.ph) * 0.03, a.base.z);
+    const up = a.win || a.jump > 0.05;
+    r.arms.forEach((sh, k) => {
+      if (up) { sh.rotation.x = Math.PI - 0.35 + Math.sin(t / 120 + k) * 0.25; sh.rotation.z = (k ? -1 : 1) * 0.35; sh.userData.elbow.rotation.x = 0.2; }
+      else { sh.rotation.x = 0.12 + Math.sin(t / 600 + a.ph + k) * 0.06; sh.rotation.z = (k ? 1 : -1) * (0.12 + a.sad * 0.1); sh.userData.elbow.rotation.x = 0.15; }
+    });
+    r.head.rotation.z = a.sad * 0.35 * Math.sin(t / 90); r.head.rotation.x = a.sad * 0.25;
+  });
+}
+
+/* ---------------- perintah (alert awal + baris di bawah header, bersuara) ---------------- */
+function instrText() {
+  if (drags.size) return 'Lepaskan di tempat sampah yang benar.';
+  if (practice) return 'Seret sampah ke Organik atau Anorganik. Bingung? Tekan Bantuan.';
+  return mode === 'battle' ? 'Rebut sampah! Seret ke tempat sampah warnamu.' : 'Seret sampah ke tempat Organik atau Anorganik.';
+}
+function setInstr() { const t = instrText(), el = $('instrT'); if (el.textContent !== t) { el.textContent = t; $('instr').classList.remove('flash'); void $('instr').offsetWidth; $('instr').classList.add('flash'); } }
+$('instrSay').addEventListener('click', () => { if (window.Suara) Suara.say(instrText()); });
+function brief(go) {
+  const t = practice ? ['📖', 'Latihan', 'Seret sampah dari sungai ke tempat sampah yang benar. Kalau bingung, tekan Bantuan.']
+    : mode === 'battle' ? ['⚔️', 'Misi Battle', 'Rebut sampah di sungai! Seret ke tempat sampah warnamu sendiri. Skor tertinggi menang.']
+      : ['🤝', 'Misi Kerja Sama', 'Bersama-sama, seret sampah ke tempat Organik atau Anorganik sampai sungai bersih.'];
+  $('bIcon').textContent = t[0]; $('bTitle').textContent = t[1]; $('bText').textContent = t[2];
+  show('brief'); say(t[2]);
+  $('bSay').onclick = () => { if (window.Suara) Suara.say(t[2]); };
+  $('bOk').onclick = () => { Sfx.click(); show(null); $('instr').classList.remove('hidden'); setInstr(); say(instrText()); go(); };
+}
+// tombol ☰ Main-yuk di header game (bukan melayang di atas sungai)
+if (window.parent !== window) {
+  $('bMenu').classList.remove('hidden');
+  try { parent.postMessage({ mainyuk: 'menu-in-header' }, location.origin); } catch (e) {}
+  $('bMenu').addEventListener('click', () => { try { parent.postMessage({ mainyuk: 'open-menu' }, location.origin); } catch (e) {} });
+}
+
 function clearItems() { items.forEach((it) => { scene.remove(it.s); scene.remove(it.sh); }); items = []; drags.forEach((d) => d.ghost.remove()); drags.clear(); document.querySelectorAll('.ghost').forEach((g) => g.remove()); fish.forEach((f) => scene.remove(f.s)); fish.length = 0; }
 function start() {
   try { localStorage.setItem('sd_nb', nBattle); localStorage.setItem('sd_nc', nCoop); localStorage.setItem('sd_level', level); localStorage.setItem('sd_target', target); localStorage.setItem('sd_time', timeLimit); } catch (e) {}
@@ -410,10 +479,10 @@ function start() {
   const L = LEVEL[level]; seq = []; for (let i = 0; i < 400; i++) seq.push(L.keys[Math.floor(Math.random() * L.keys.length)]); seqI = 0;
   show(null); $('topbar').classList.remove('hidden');
   timeLeft = practice ? 0 : timeLimit; $('hTime').classList.toggle('hidden', !timeLeft);
-  buildBins(); resize(); hud();
+  buildBins(); resize(); hud(); buildAvatars();
   scene.background.copy(SKY_RAIN); scene.fog.color.copy(SKY_RAIN); if (world.rain) world.rain.material.opacity = 0.5; conf.visible = false; confOn = false;
   let c = 3; const cd = () => { if (finished) return; if (c > 0) { banner(String(c)); Sfx.tick(); c--; setTimeout(cd, 750); } else { banner('MULAI!'); Sfx.go(); Sfx.music(true); running = true; startAt = performance.now(); spawnT = 0; spawn(-spanHalf * 0.55); spawn(-spanHalf * 0.15); if (window.Tutor) setTimeout(Tutor.hint, 1200); } };
-  cd();
+  brief(cd);
 }
 function checkEnd() {
   if (finished) return;
@@ -424,13 +493,14 @@ function end(ok) {
   if (finished) return; finished = true; running = false; Sfx.music(false);
   drags.forEach((d) => flyBack(d)); drags.clear();
   const secs = Math.round((performance.now() - startAt) / 1000);
-  if (ok) { Sfx.win(); Fx.win(); confetti(); }
+  if (ok) { Sfx.win(); Fx.win(); confetti(); if (mode !== 'battle') avatars.forEach((a) => { a.win = true; }); }
+  $('instr').classList.add('hidden');
   let title, sub, stat = '', rank = '';
   if (mode === 'battle') {
     const ord = players.slice().sort((a, b) => b.score - a.score || a.wrong - b.wrong);
-    ord[0].el && ord[0].el.classList.add('win');
+    ord[0].el && ord[0].el.classList.add('win'); avatars.forEach((a) => { a.win = a.P === ord[0]; });
     title = '🏆 ' + ord[0].name + ' menang!'; sub = 'Waktu ' + secs + ' detik · ' + target + ' sampah';
-    rank = ord.map((P, r) => '<div><b>' + ['🥇', '🥈', '🥉', '4'][r] + '</b><img src="' + A + P.char + '.png" alt=""><span>' + P.name.replace(/[<>]/g, '') + '<br><small>🌿 ' + P.org + ' · ♻️ ' + P.ano + ' · salah ' + P.wrong + ' · combo ' + P.best + '</small></span><b>' + P.score + '</b></div>').join('');
+    rank = ord.map((P, r) => '<div><b>' + ['🥇', '🥈', '🥉', '4'][r] + '</b><span class="dot" style="width:18px;height:18px;border-radius:50%;border:2px solid #1b1a3a;background:' + P.color + '"></span><span>' + P.name.replace(/[<>]/g, '') + '<br><small>🌿 ' + P.org + ' · ♻️ ' + P.ano + ' · salah ' + P.wrong + ' · combo ' + P.best + '</small></span><b>' + P.score + '</b></div>').join('');
     banner('🏆 ' + ord[0].name + ' menang!');
   } else {
     title = ok ? (practice ? 'Latihan selesai! 🎉' : 'Hebat! Sungai desa bersih! 🎉') : 'Waktu habis! ⏱';
@@ -444,7 +514,7 @@ function end(ok) {
   if (window.Koin && coins > 0) setTimeout(() => Koin.add(coins / 20, 'Selamatkan Desa'), 600);
   setTimeout(() => show('result'), ok ? 3200 : 600);
 }
-function toMenu() { running = false; finished = true; Sfx.music(false); clearItems(); $('topbar').classList.add('hidden'); $('bins').classList.add('hidden'); show('menu'); }
+function toMenu() { running = false; finished = true; Sfx.music(false); clearItems(); $('instr').classList.add('hidden'); $('topbar').classList.add('hidden'); $('bins').classList.add('hidden'); show('menu'); }
 $('start').addEventListener('click', () => { practice = false; start(); });
 $('again').addEventListener('click', start);
 $('toMenu').addEventListener('click', toMenu);
@@ -493,6 +563,7 @@ function frame(t) {
   if (world.rain) { const a = world.rain.geometry.attributes.position.array; for (let i = 0; i < a.length; i += 6) { a[i + 1] -= dt * 20; a[i + 4] -= dt * 20; if (a[i + 4] < 0) { a[i + 1] += 25; a[i + 4] += 25; } } world.rain.geometry.attributes.position.needsUpdate = true; }
   if (world.flag) world.flag.children.forEach((c, i) => { c.rotation.y = Math.sin(t / 250 + i) * 0.3; });
   if (confOn) { cData.forEach((d, i) => { d.p.addScaledVector(d.v, dt); d.r += dt * 4; if (d.p.y < 0) d.p.y = 10; _o.position.copy(d.p); _o.rotation.set(d.r, d.r * 0.7, 0); _o.scale.setScalar(1); _o.updateMatrix(); conf.setMatrixAt(i, _o.matrix); }); conf.instanceMatrix.needsUpdate = true; }
+  animAvatars(t, dt);
   renderer.render(scene, cam);
 }
 buildWorld(4); resize(); requestAnimationFrame(frame);

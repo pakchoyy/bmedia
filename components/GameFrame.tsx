@@ -14,6 +14,19 @@ export default function GameFrame({ title, src, portraitOk = false, slug, needsK
   const [run, setRun] = useState(0); // naik = muat ulang game
   const [touch, setTouch] = useState(false);
   const external = /^https?:/.test(src);
+  const frame = useRef<HTMLIFrameElement>(null);
+  // Game boleh menaruh tombol ☰ di header-nya sendiri (postMessage), supaya tidak menutupi area main
+  const [headerMenu, setHeaderMenu] = useState(false);
+  useEffect(() => {
+    const onMsg = (e: MessageEvent) => {
+      if (!frame.current || e.source !== frame.current.contentWindow) return;
+      const d = e.data as { mainyuk?: string } | null;
+      if (d?.mainyuk === "menu-in-header") setHeaderMenu(true);
+      if (d?.mainyuk === "open-menu") { setIntro(false); setMenu((v) => !v); }
+    };
+    window.addEventListener("message", onMsg);
+    return () => window.removeEventListener("message", onMsg);
+  }, []);
 
   useEffect(() => {
     const mq = window.matchMedia("(orientation: portrait) and (max-width: 900px)");
@@ -73,12 +86,13 @@ export default function GameFrame({ title, src, portraitOk = false, slug, needsK
 
   return (
     <div ref={box} className="fixed inset-0 bg-slate-900" style={{ zIndex: 2147483000 }}>
-      <iframe key={run} src={src} title={title} className="w-full h-full border-0" allow="fullscreen; autoplay" />
+      <iframe ref={frame} key={run} src={src} title={title} className="w-full h-full border-0" allow="fullscreen; autoplay" />
 
       {/* Satu tombol menu di tepi kiri-tengah: tidak menutupi tombol jawaban di bawah */}
       {!intro && (
-        <div className="absolute left-1.5 top-[36%] -translate-y-1/2 z-10">
+        <div className={headerMenu ? "absolute left-2 top-14 z-10" : "absolute left-1.5 top-[36%] -translate-y-1/2 z-10"}>
           <button
+            hidden={headerMenu}
             onClick={() => setMenu((v) => !v)}
             aria-label="Menu game"
             aria-expanded={menu}
@@ -88,7 +102,7 @@ export default function GameFrame({ title, src, portraitOk = false, slug, needsK
             {menu ? "✕" : "☰"}
           </button>
           {menu && (
-            <div role="menu" className="absolute left-0 top-14 w-52 rounded-2xl border-[3px] border-[#1b1a3a] bg-[#fff6dc] p-2 shadow-[4px_4px_0_#1b1a3a] grid gap-1.5">
+            <div role="menu" className={`absolute left-0 ${headerMenu ? "top-0" : "top-14"} w-52 rounded-2xl border-[3px] border-[#1b1a3a] bg-[#fff6dc] p-2 shadow-[4px_4px_0_#1b1a3a] grid gap-1.5`}>
               <button role="menuitem" className={item} onClick={() => setMenu(false)}>▶ Lanjut main</button>
               <button role="menuitem" className={item} onClick={() => { setMenu(false); setRun((n) => n + 1); }}>🔄 Main ulang</button>
               <Link role="menuitem" href={slug ? `/permainan/${slug}` : "/game"} className={item}>◀ Kembali</Link>
