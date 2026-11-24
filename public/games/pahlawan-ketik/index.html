@@ -9,53 +9,61 @@
 <style>
   :root { --ink:#1b1a3a; --cream:#fff6dc; --yellow:#ffd23f; --orange:#ff7a1a; --pink:#ff5d8f; --mint:#2ec4b6; --blue:#4aa8ff; }
   * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
-  html, body { width:100%; height:100%; overflow:hidden; background:#120f2e; color:var(--ink); }
+  html, body { width:100%; height:100%; overflow:hidden; background:#0d0b26; color:var(--ink); font-family:Nunito, sans-serif; }
   button { font:inherit; color:inherit; cursor:pointer; border:0; background:none; }
   .hidden { display:none !important; }
   .nb { border:3px solid var(--ink); box-shadow:4px 4px 0 var(--ink); }
   .nb-sm { border:2px solid var(--ink); box-shadow:2px 2px 0 var(--ink); }
   .press:active { transform:translate(3px,3px); box-shadow:1px 1px 0 var(--ink); }
   .screen { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:10px; overflow:auto; z-index:20; }
-  .card { background:#fff; border-radius:22px; padding:16px 20px; width:min(100%, 640px); text-align:center; margin:auto; }
-  .card h1 { font-size:clamp(28px, 6vh, 46px); line-height:1.05; }
+  .card { background:#fff; border-radius:22px; padding:16px 20px; width:min(100%, 600px); text-align:center; margin:auto; }
+  .card h1 { font:700 clamp(28px, 6vh, 46px)/1.05 Fredoka, sans-serif; }
   .card h1 span { color:var(--pink); }
-  .sub { font-size:14px; font-weight:700; opacity:.75; margin-top:4px; }
-  .setinfo { margin-top:8px; font-size:12px; font-weight:800; background:#fff3c4; border:2px solid var(--ink); border-radius:10px; padding:3px 10px; display:inline-block; }
-  .setinfo.ok { background:#c8f7dc; } .setinfo.err { background:#ffd6d6; }
-  .row { margin-top:10px; display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; }
-  .lbl { font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.6px; }
+  .sub { font-size:15px; font-weight:700; opacity:.8; margin-top:6px; }
+  .row { margin-top:12px; display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; }
+  .lbl { font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.6px; min-width:64px; }
   .seg { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; }
-  .seg button { padding:7px 13px; border-radius:12px; font-weight:900; font-size:15px; background:#fff; }
+  .seg button { min-height:44px; padding:8px 14px; border-radius:12px; font-weight:900; font-size:15px; background:#fff; }
   .seg button.on { background:var(--yellow); }
-  .off { opacity:.35; pointer-events:none; }
-  #name { margin-top:10px; width:100%; font:inherit; font-weight:800; border:2px solid var(--ink); border-radius:10px; padding:8px 10px; }
-  .best { margin-top:8px; font-weight:800; font-size:13px; }
-  #start { margin-top:12px; width:100%; padding:12px; border-radius:16px; background:var(--pink); }
-  #menu { background:radial-gradient(circle at 20% 20%, #3b2f8f, #120f2e 70%); }
+  .best { margin-top:8px; font-weight:800; font-size:14px; min-height:18px; }
+  #start { margin-top:12px; width:100%; min-height:52px; padding:12px; border-radius:16px; background:var(--pink); font:700 22px Fredoka, sans-serif; color:#fff; text-shadow:2px 2px 0 var(--ink); }
+  #err { margin-top:8px; font-weight:800; color:#c0143c; font-size:14px; }
+  #menu { background:radial-gradient(circle at 20% 20%, #3b2f8f, #0d0b26 70%); }
   #menu::before { content:''; position:absolute; inset:0; background:radial-gradient(#fff 1px, transparent 1.5px) 0 0/40px 40px; opacity:.25; pointer-events:none; }
 
-  #game { position:absolute; inset:0; }
-  #cv { position:absolute; inset:0; width:100%; height:100%; display:block; }
+  #game { position:absolute; inset:0; display:flex; flex-direction:column; }
+  #stage { position:relative; flex:1; min-height:0; overflow:hidden; }
+  #cv { position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none; }
+  #labels { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+  .lb { position:absolute; left:0; top:0; transform:translate(-50%,-100%); white-space:nowrap; font:800 clamp(15px, 2.4vw, 22px) Nunito, sans-serif; background:#fff; border:2.5px solid var(--ink); border-radius:10px; padding:1px 9px; box-shadow:2px 2px 0 var(--ink); will-change:transform; }
+  .lb.t { background:var(--yellow); }
+  .lb.boss { font-size:clamp(17px, 2.9vw, 26px); background:#ffe0ea; }
+  .lb.boss.t { background:var(--yellow); }
+  .lb i { font-style:normal; color:var(--orange); opacity:.6; }
+  .lb .clue { display:block; font-size:.72em; font-weight:800; opacity:.75; line-height:1.1; }
   .hud { position:absolute; top:6px; left:8px; right:8px; display:flex; gap:6px; align-items:center; z-index:5; font:800 14px Nunito, sans-serif; flex-wrap:wrap; }
-  .pill { background:#fff; border:2px solid var(--ink); box-shadow:2px 2px 0 var(--ink); border-radius:99px; padding:2px 11px; white-space:nowrap; }
+  .pill { background:#fff; border:2px solid var(--ink); box-shadow:2px 2px 0 var(--ink); border-radius:99px; padding:3px 11px; white-space:nowrap; }
   .pill.combo { background:var(--yellow); }
   .hud .sp { flex:1; }
-  .hud button { background:#fff; border:2px solid var(--ink); border-radius:99px; width:32px; height:32px; }
-  #inp { position:absolute; left:50%; bottom:8px; transform:translateX(-50%); width:min(92%, 380px); z-index:6; font:800 20px Nunito, sans-serif; text-align:center; border:3px solid var(--ink); border-radius:14px; padding:6px 10px; background:rgba(255,255,255,.92); text-transform:lowercase; }
+  @media (max-width:480px) { .hud { flex-wrap:nowrap; gap:4px; font-size:13px; } .pill { padding:3px 8px; } #hWpm, #hCombo { display:none !important; } .hud button { width:36px; height:36px; } }
+  .hud button { background:#fff; border:2px solid var(--ink); border-radius:99px; width:40px; height:40px; font-size:16px; }
+  .bar { flex:none; background:#1b1a3a; padding:8px 10px calc(8px + env(safe-area-inset-bottom)); display:flex; justify-content:center; }
+  #inp { width:min(100%, 420px); min-height:48px; font:800 22px Nunito, sans-serif; text-align:center; border:3px solid var(--ink); border-radius:14px; padding:6px 10px; background:#fff; }
   #inp:focus { outline:3px solid var(--yellow); }
-  .banner { position:absolute; left:50%; top:38%; transform:translate(-50%,-50%); z-index:6; font:700 clamp(30px, 8vh, 64px) Fredoka, sans-serif; color:#fff; text-shadow:4px 4px 0 var(--ink); pointer-events:none; animation:bn 1.6s forwards; white-space:nowrap; }
+  .banner { position:absolute; left:50%; top:40%; transform:translate(-50%,-50%); z-index:6; font:700 clamp(30px, 8vh, 64px) Fredoka, sans-serif; color:#fff; text-shadow:4px 4px 0 var(--ink); pointer-events:none; animation:bn 1.7s ease forwards; white-space:nowrap; }
   @keyframes bn { 0% { opacity:0; transform:translate(-50%,-50%) scale(.5); } 20% { opacity:1; transform:translate(-50%,-50%) scale(1.1); } 80% { opacity:1; } 100% { opacity:0; transform:translate(-50%,-70%); } }
+  .pop { position:absolute; transform:translate(-50%,-50%); font:700 26px Fredoka, sans-serif; color:var(--yellow); text-shadow:2px 2px 0 var(--ink); pointer-events:none; animation:pp 1s ease-out forwards; }
+  @keyframes pp { to { opacity:0; transform:translate(-50%,-150%); } }
 
-  #over { background:rgba(18,15,46,.82); }
+  #over { background:rgba(13,11,38,.82); }
   .stat { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:10px; }
   .stat div { background:var(--cream); border-radius:12px; padding:6px 2px; font:700 22px Fredoka, sans-serif; }
   .stat small { display:block; font:800 11px Nunito, sans-serif; opacity:.7; }
   .kb { margin-top:12px; display:grid; gap:4px; }
   .kb .r { display:flex; justify-content:center; gap:4px; }
-  .kb span { width:clamp(22px, 7vw, 36px); height:clamp(24px, 4.5vh, 34px); border:2px solid var(--ink); border-radius:7px; display:flex; align-items:center; justify-content:center; font:800 13px Nunito, sans-serif; text-transform:uppercase; background:#fff; }
-  .kbt { margin-top:10px; font-weight:900; font-size:13px; }
-  .btns { margin-top:12px; display:flex; gap:8px; } .btns button { flex:1; padding:12px; border-radius:14px; font-weight:900; font-size:16px; }
-  #saved { margin-top:8px; font-size:13px; font-weight:800; } #saved a { color:inherit; }
+  .kb span { width:clamp(22px, 7vw, 36px); height:clamp(24px, 4.5vh, 34px); border:2px solid var(--ink); border-radius:7px; display:flex; align-items:center; justify-content:center; font:800 13px Nunito, sans-serif; text-transform:uppercase; }
+  .kbt { margin-top:10px; font-weight:900; font-size:14px; }
+  .btns { margin-top:12px; display:flex; gap:8px; } .btns button { flex:1; min-height:48px; padding:12px; border-radius:14px; font-weight:900; font-size:16px; }
 </style>
 <link rel="stylesheet" href="/games/_shared/theme.css">
 </head>
@@ -63,31 +71,35 @@
 <div id="menu" class="screen">
   <div class="card nb">
     <h1>Pahlawan <span>Ketik</span> ⌨️</h1>
-    <div class="sub">Monster huruf menyerang sekolah! Ketik kata di tubuh monster untuk menembaknya sebelum sampai ke markas.</div>
-    <div class="setinfo" id="setinfo">🔤 Kata bawaan</div>
-    <div class="row mathonly"><span class="lbl">Isi</span>
-      <div class="seg" id="segMode"><button class="nb-sm press" data-n="kata">🔤 Kata</button><button class="nb-sm press" data-n="ipa">🔬 Istilah</button><button class="nb-sm press" data-n="hitung">🧮 Hitung</button></div></div>
+    <div class="sub">Monster menyerang sekolah! Ketik kata pada monster untuk menembaknya.</div>
+    <div class="row"><span class="lbl">Isi</span>
+      <div class="seg" id="segMode"><button class="nb-sm press" data-n="kata">🔤 Kata</button><button class="nb-sm press" data-n="angka">🔢 Angka</button></div></div>
     <div class="row"><span class="lbl">Tingkat</span>
       <div class="seg" id="segLevel"><button class="nb-sm press" data-n="1">Mudah</button><button class="nb-sm press" data-n="2">Sedang</button><button class="nb-sm press" data-n="3">Sulit</button></div></div>
-    <input id="name" maxlength="30" placeholder="Nama kamu (untuk skor kelas)" class="hidden" autocomplete="off">
+    <div class="row"><span class="lbl">Tempo</span>
+      <div class="seg" id="segTempo"><button class="nb-sm press" data-n="0.65">🐢 Lambat</button><button class="nb-sm press" data-n="1">🚶 Sedang</button><button class="nb-sm press" data-n="1.4">🚀 Cepat</button></div></div>
     <div class="best" id="best"></div>
+    <div id="err" class="hidden"></div>
     <button id="start" class="nb press">🚀 MULAI</button>
   </div>
 </div>
 
 <div id="game" class="hidden">
-  <canvas id="cv"></canvas>
-  <div class="hud">
-    <span class="pill" id="hScore">0</span>
-    <span class="pill" id="hWave">Gelombang 1</span>
-    <span class="pill" id="hLife">❤️❤️❤️</span>
-    <span class="pill combo hidden" id="hCombo"></span>
-    <span class="sp"></span>
-    <span class="pill" id="hWpm">0 kpm</span>
-    <button id="bMute" class="press" aria-label="Suara">🔊</button>
-    <button id="bExit" class="press" aria-label="Selesai">✖</button>
+  <div id="stage">
+    <canvas id="cv"></canvas>
+    <div id="labels"></div>
+    <div class="hud">
+      <span class="pill" id="hScore">0</span>
+      <span class="pill" id="hWave">Gelombang 1/10</span>
+      <span class="pill" id="hLife">❤️❤️❤️</span>
+      <span class="pill combo hidden" id="hCombo"></span>
+      <span class="sp"></span>
+      <span class="pill" id="hWpm">0 kpm</span>
+      <button id="bMute" class="press" aria-label="Suara">🔊</button>
+      <button id="bExit" class="press" aria-label="Selesai">✖</button>
+    </div>
   </div>
-  <input id="inp" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="ketik di sini…" aria-label="Ketik kata">
+  <div class="bar"><input id="inp" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="ketik di sini…" aria-label="Ketik kata"></div>
 </div>
 
 <div id="over" class="screen hidden">
@@ -101,7 +113,6 @@
     </div>
     <div class="kbt" id="oKbt">Tombol yang paling sering salah</div>
     <div class="kb" id="kb"></div>
-    <div id="saved"></div>
     <div class="btns"><button id="again" class="nb press" style="background:var(--pink)">🔄 Main Lagi</button><button id="toMenu" class="nb press" style="background:var(--yellow)">🏠 Menu</button></div>
   </div>
 </div>
@@ -112,293 +123,364 @@
 <script src="/games/_shared/tutor.js"></script>
 <script src="/games/_shared/koin.js"></script>
 <script src="/games/_shared/fx.js"></script>
-<script>
-(function () {
-  'use strict';
-  var $ = function (id) { return document.getElementById(id); };
-  var WORDS = {
+<script type="module">
+import * as THREE from '/games/_shared/three.module.min.js';
+const $ = (id) => document.getElementById(id);
+const WORDS = {
     kata: {
       1: 'buku pena meja tas topi bola ikan ayam sapi kuda nasi roti susu teh gula air api batu kayu daun bunga pohon padi rumah pintu kaca lampu jam bulan awan hujan angin laut gigi mata kaki jari ibu ayah adik guru kelas apel jeruk'.split(' '),
       2: 'sekolah belajar membaca menulis bermain sepeda kancil gajah harimau pelangi matahari sawah petani nelayan pasar jendela lemari pensil penggaris bendera garuda gunung sungai danau pantai hutan cuaca tanaman hewan sayuran olahraga upacara kantin halaman'.split(' '),
       3: 'perpustakaan kemerdekaan proklamasi musyawarah kebudayaan keberagaman persatuan lingkungan pelestarian pendidikan matematika kesehatan kebersihan kejujuran tanggungjawab nusantara kepulauan perjuangan pahlawan'.split(' ')
     },
-    ipa: {
-      1: 'akar daun batang bunga buah biji air udara tanah api panas dingin awan hujan petir angin magnet bumi bulan'.split(' '),
-      2: 'oksigen planet galaksi energi listrik cahaya bunyi getaran gravitasi tumbuhan herbivora karnivora omnivora kepompong ekosistem habitat'.split(' '),
-      3: 'fotosintesis metamorfosis perkembangbiakan pernapasan pencernaan peredaran evaporasi kondensasi presipitasi konduktor isolator klorofil'.split(' ')
+};
+const KALIMAT = {
+  1: ['aku suka buku', 'ibu ke pasar', 'adik minum susu', 'ayo ke sekolah', 'kucing tidur', 'aku sayang ibu'],
+  2: ['kami belajar bersama', 'ayo jaga kebersihan', 'buang sampah di tempatnya', 'aku rajin membaca', 'guru kami baik hati'],
+  3: ['rajin belajar pangkal pandai', 'hemat pangkal kaya', 'bersatu kita teguh', 'kebersihan sebagian dari iman', 'jagalah lingkungan sekolah']
+};
+let mode = 'kata', level = 1, tempo = 1;
+try { mode = localStorage.getItem('pk_mode') === 'angka' ? 'angka' : 'kata'; level = +localStorage.getItem('pk_level') || 1; tempo = +localStorage.getItem('tempo_pahlawan-ketik') || 1; } catch (e) {}
+
+function seg(id, fn, isOn) {
+  const el = $(id);
+  const mark = () => { [...el.children].forEach((b) => b.classList.toggle('on', isOn(b.dataset.n))); showBest(); };
+  el.addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; fn(b.dataset.n); mark(); Sfx.click(); });
+  mark();
+}
+const bestKey = () => 'pk_best_' + mode + level;
+const getBest = () => { try { return +localStorage.getItem(bestKey()) || 0; } catch (e) { return 0; } };
+function showBest() { const b = getBest(); $('best').textContent = b ? '🏆 Rekor kamu: ' + b : ''; }
+seg('segMode', (n) => { mode = n; }, (n) => n === mode);
+seg('segLevel', (n) => { level = +n; }, (n) => +n === level);
+seg('segTempo', (n) => { tempo = +n; try { localStorage.setItem('tempo_pahlawan-ketik', n); } catch (e) {} }, (n) => +n === tempo);
+
+// ================= 3D =================
+const cv = $('cv');
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true }); }
+catch (e) { $('err').textContent = 'Perangkat ini belum mendukung grafik 3D. Coba buka di Chrome terbaru.'; $('err').classList.remove('hidden'); $('start').disabled = true; $('start').style.opacity = .5; }
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0d0b26);
+scene.fog = new THREE.Fog(0x1a1550, 80, 170);
+const camera = new THREE.PerspectiveCamera(55, 1, 0.3, 300);
+const CAM = new THREE.Vector3(0, 14, 20);
+scene.add(new THREE.HemisphereLight(0x9fb4ff, 0x203018, 0.9));
+const moonLight = new THREE.DirectionalLight(0xfff0d0, 1.4); moonLight.position.set(20, 30, 10); scene.add(moonLight);
+const rim = new THREE.PointLight(0x66ccff, 30, 40); rim.position.set(0, 6, 8); scene.add(rim);
+
+const M = (c, o = {}) => new THREE.MeshStandardMaterial(Object.assign({ color: c, roughness: .7, metalness: .05 }, o));
+// tanah & langit
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), M(0x1f4a2c)); ground.rotation.x = -Math.PI / 2; scene.add(ground);
+{
+  const n = 900, p = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, b = Math.random() * Math.PI * .45, r = 160; p[i * 3] = Math.cos(a) * Math.cos(b) * r; p[i * 3 + 1] = Math.sin(b) * r + 5; p[i * 3 + 2] = Math.sin(a) * Math.cos(b) * r - 40; }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(p, 3));
+  scene.add(new THREE.Points(g, new THREE.PointsMaterial({ color: 0xffffff, size: 1.1, fog: false })));
+  const moon = new THREE.Mesh(new THREE.SphereGeometry(7, 24, 16), new THREE.MeshBasicMaterial({ color: 0xffe7a8, fog: false })); moon.position.set(55, 60, -130); scene.add(moon);
+  // pohon & bukit
+  for (let i = 0; i < 40; i++) {
+    const x = (Math.random() < .5 ? -1 : 1) * (18 + Math.random() * 40), z = -Math.random() * 90 + 10;
+    const t = new THREE.Group();
+    const tr = new THREE.Mesh(new THREE.CylinderGeometry(.3, .4, 2, 6), M(0x6b4423)); tr.position.y = 1; t.add(tr);
+    const lf = new THREE.Mesh(new THREE.ConeGeometry(1.8, 4, 7), M(0x2f7d46, { flatShading: true })); lf.position.y = 3.8; t.add(lf);
+    t.position.set(x, 0, z); t.scale.setScalar(.8 + Math.random() * .8); scene.add(t);
+  }
+  for (let i = 0; i < 6; i++) { const h = new THREE.Mesh(new THREE.SphereGeometry(30, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2), M(0x24563a, { flatShading: true })); h.position.set(-120 + i * 48, -8, -150); h.scale.y = .5; scene.add(h); }
+}
+// sekolah
+const SCHOOL = new THREE.Vector3(0, 0, 9);
+{
+  const g = new THREE.Group(); g.position.copy(SCHOOL);
+  const body = new THREE.Mesh(new THREE.BoxGeometry(14, 4.5, 5), M(0xfff1cf)); body.position.y = 2.25; g.add(body);
+  const roof = new THREE.Mesh(new THREE.CylinderGeometry(3, 3, 15, 3), M(0xff7a1a, { flatShading: true })); roof.rotation.z = Math.PI / 2; roof.rotation.y = 0; roof.scale.set(1, 1, 1); roof.position.y = 5.6; roof.rotation.x = Math.PI / 2; g.add(roof);
+  const winM = new THREE.MeshStandardMaterial({ color: 0xffd66b, emissive: 0xffc23a, emissiveIntensity: 1 });
+  for (let i = -2; i <= 2; i++) { if (!i) continue; const w = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 1.3), winM); w.position.set(i * 2.6, 2.6, -2.52); w.rotation.y = Math.PI; g.add(w); }
+  const door = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 2.6), M(0x8a4b2a)); door.position.set(0, 1.3, -2.52); door.rotation.y = Math.PI; g.add(door);
+  const c = document.createElement('canvas'); c.width = 512; c.height = 96; const x = c.getContext('2d');
+  x.fillStyle = '#ffd23f'; x.fillRect(0, 0, 512, 96); x.strokeStyle = '#1b1a3a'; x.lineWidth = 10; x.strokeRect(0, 0, 512, 96);
+  x.fillStyle = '#1b1a3a'; x.font = '700 60px Fredoka, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('SD MAIN-YUK', 256, 52);
+  const sign = new THREE.Mesh(new THREE.PlaneGeometry(6, 1.1), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c) })); sign.position.set(0, 4, -2.56); sign.rotation.y = Math.PI; g.add(sign);
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(.08, .08, 7), M(0xdddddd)); pole.position.set(-8.5, 3.5, -2); g.add(pole);
+  const flag = new THREE.Group(); flag.position.set(-8.5, 6.4, -2);
+  const fr = new THREE.Mesh(new THREE.PlaneGeometry(1.6, .5), new THREE.MeshBasicMaterial({ color: 0xe8202a, side: THREE.DoubleSide })); fr.position.set(.8, .25, 0); flag.add(fr);
+  const fw = new THREE.Mesh(new THREE.PlaneGeometry(1.6, .5), new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide })); fw.position.set(.8, -.25, 0); flag.add(fw);
+  g.add(flag); g.userData.flag = flag;
+  scene.add(g); scene.userData.school = g;
+}
+// kubah perisai
+const DOME_R = 10.5;
+const domeMat = new THREE.MeshStandardMaterial({ color: 0x66d9ff, emissive: 0x2299ff, emissiveIntensity: .6, transparent: true, opacity: .2, side: THREE.DoubleSide, depthWrite: false });
+const dome = new THREE.Mesh(new THREE.SphereGeometry(DOME_R, 40, 20, 0, Math.PI * 2, 0, Math.PI / 2), domeMat); dome.position.copy(SCHOOL); scene.add(dome);
+const domeWire = new THREE.Mesh(new THREE.SphereGeometry(DOME_R + .02, 20, 10, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0x9be8ff, wireframe: true, transparent: true, opacity: .18 })); domeWire.position.copy(SCHOOL); scene.add(domeWire);
+// roket
+const rocket = new THREE.Group(); rocket.position.set(0, 12, 9); rocket.scale.setScalar(.75);
+const rBody = new THREE.Group(); rocket.add(rBody); // menghadap -z lewat rotasi x
+{
+  const b = new THREE.Mesh(new THREE.CylinderGeometry(.55, .65, 2.4, 16), M(0xffffff, { metalness: .3, roughness: .4 })); rBody.add(b);
+  const n = new THREE.Mesh(new THREE.ConeGeometry(.55, 1.2, 16), M(0xff5d8f)); n.position.y = 1.8; rBody.add(n);
+  const w = new THREE.Mesh(new THREE.SphereGeometry(.28, 12, 8), M(0x4aa8ff, { emissive: 0x1d5fa8, emissiveIntensity: .8 })); w.position.set(0, .4, .55); rBody.add(w);
+  for (let i = 0; i < 3; i++) { const f = new THREE.Mesh(new THREE.BoxGeometry(.1, .9, .7), M(0xff5d8f)); const a = i / 3 * Math.PI * 2; f.position.set(Math.sin(a) * .65, -.9, Math.cos(a) * .65); f.rotation.y = a; rBody.add(f); }
+  const fl = new THREE.Mesh(new THREE.ConeGeometry(.4, 1.3, 12), new THREE.MeshBasicMaterial({ color: 0xffa31a, transparent: true, opacity: .9 })); fl.rotation.x = Math.PI; fl.position.y = -1.85; rBody.add(fl); rBody.userData.flame = fl;
+  rBody.rotation.x = Math.PI / 2;
+}
+scene.add(rocket);
+
+const COLORS = [0xff5d8f, 0x4aa8ff, 0x2ec4b6, 0xffd23f, 0xff7a1a, 0xb79cff, 0x8cf0b8];
+const eyeW = M(0xffffff, { roughness: .3 }), eyeB = M(0x1b1a3a, { roughness: .2 });
+const geoBody = new THREE.SphereGeometry(1, 24, 16), geoEye = new THREE.SphereGeometry(.28, 12, 8), geoPup = new THREE.SphereGeometry(.13, 10, 6), geoTen = new THREE.CapsuleGeometry(.16, .9, 4, 8);
+function makeMonster(col, boss) {
+  const g = new THREE.Group();
+  const mat = M(col, { roughness: .45, emissive: col, emissiveIntensity: .35 });
+  const body = new THREE.Mesh(geoBody, mat); body.scale.set(1, .92, 1); g.add(body);
+  const ten = [];
+  for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2; const t = new THREE.Mesh(geoTen, mat); const piv = new THREE.Group(); piv.position.set(Math.sin(a) * .55, -.65, Math.cos(a) * .55); t.position.y = -.5; piv.add(t); piv.userData.a = a; g.add(piv); ten.push(piv); }
+  [-1, 1].forEach((s) => { const e = new THREE.Mesh(geoEye, eyeW); e.position.set(s * .36, .22, .82); g.add(e); const p = new THREE.Mesh(geoPup, eyeB); p.position.set(s * .36, .22, 1.06); g.add(p); });
+  const mouth = new THREE.Mesh(new THREE.TorusGeometry(.25, .06, 6, 12, Math.PI), eyeB); mouth.position.set(0, -.18, .9); mouth.rotation.z = Math.PI; g.add(mouth);
+  [-1, 1].forEach((s) => { const h = new THREE.Mesh(new THREE.ConeGeometry(.14, .5, 8), mat); h.position.set(s * .5, .95, 0); h.rotation.z = -s * .4; g.add(h); });
+  if (boss) {
+    const cm = M(0xffd23f, { metalness: .6, roughness: .3, emissive: 0x6b4a00, emissiveIntensity: .4 });
+    const ring = new THREE.Mesh(new THREE.CylinderGeometry(.6, .6, .3, 16, 1, true), cm); ring.position.y = 1.05; g.add(ring);
+    for (let i = 0; i < 5; i++) { const a = i / 5 * Math.PI * 2; const sp = new THREE.Mesh(new THREE.ConeGeometry(.14, .45, 6), cm); sp.position.set(Math.sin(a) * .6, 1.4, Math.cos(a) * .6); g.add(sp); }
+  }
+  g.userData = { ten, mat };
+  return g;
+}
+
+// partikel ledakan
+const bursts = [];
+function burst(pos, col, n) {
+  const p = new Float32Array(n * 3), v = [];
+  for (let i = 0; i < n; i++) { p[i * 3] = pos.x; p[i * 3 + 1] = pos.y; p[i * 3 + 2] = pos.z; const d = new THREE.Vector3(Math.random() - .5, Math.random() - .3, Math.random() - .5).normalize().multiplyScalar(6 + Math.random() * 14); v.push(d); }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(p, 3));
+  const m = new THREE.PointsMaterial({ color: col, size: .55, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
+  const pts = new THREE.Points(g, m); scene.add(pts);
+  const ring = new THREE.Mesh(new THREE.RingGeometry(.5, .9, 24), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, side: THREE.DoubleSide, depthWrite: false })); ring.position.copy(pos); ring.lookAt(camera.position); scene.add(ring);
+  bursts.push({ pts, v, life: 1, ring });
+}
+const lasers = [];
+function laser(to) {
+  const from = new THREE.Vector3(0, 1.8, 0).applyMatrix4(rBody.matrixWorld);
+  const g = new THREE.BufferGeometry().setFromPoints([from, to.clone()]);
+  const l = new THREE.Line(g, new THREE.LineBasicMaterial({ color: 0xffe14d, transparent: true, blending: THREE.AdditiveBlending }));
+  scene.add(l); lasers.push({ l, life: .14 });
+  const s = new THREE.Mesh(new THREE.SphereGeometry(.35, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true })); s.position.copy(to); scene.add(s); lasers.push({ l: s, life: .1 });
+}
+
+// ================= game =================
+const labels = $('labels');
+let enemies = [], target = null, score = 0, lives = 3, combo = 0, wave = 1, toSpawn = 0, spawnT = 0, running = false, raf = 0, last = 0;
+let typed = 0, wrong = 0, words = 0, startAt = 0, shake = 0, miss = {}, waveBreak = 0, lookX = 0;
+const WAVES = 10;
+
+function pickWord(boss) {
+  const used = enemies.map((e) => e.word[0]);
+  if (mode === 'angka') {
+    let r, tries = 0;
+    do {
+      const lv = boss ? 3 : Math.min(3, level + (wave >= 8 ? 1 : 0));
+      const ops = lv === 1 ? ['add', 'sub'] : ['add', 'sub', 'mul', 'div'];
+      const m = MathGen.make(ops[Math.floor(Math.random() * ops.length)], lv);
+      r = { w: String(m.o[m.a]).replace(/\s/g, ''), clue: m.q.replace(' = ?', ' = ?') }; tries++;
+    } while (tries < 20 && (used.indexOf(r.w[0]) >= 0 || !/^-?\d+$/.test(r.w)));
+    if (!/^-?\d+$/.test(r.w)) { const a = 1 + Math.floor(Math.random() * 9), b = 1 + Math.floor(Math.random() * 9); r = { w: String(a + b), clue: a + ' + ' + b + ' = ?' }; }
+    return r;
+  }
+  const useK = boss || wave >= 8;
+  const list = useK ? KALIMAT[level] : (WORDS.kata[Math.min(3, level + (wave >= 6 ? 1 : 0))] || WORDS.kata[level]);
+  let w, tries = 0;
+  do { w = list[Math.floor(Math.random() * list.length)]; tries++; } while (tries < 20 && used.indexOf(w[0]) >= 0);
+  return { w };
+}
+
+function spawn(boss) {
+  const p = pickWord(boss);
+  const half = camera.aspect < 1 ? 11 : 22;
+  const mesh = makeMonster(boss ? 0xff3d6e : COLORS[Math.floor(Math.random() * COLORS.length)], boss);
+  const sc = boss ? 3.4 : 1.6 + Math.random() * .3;
+  mesh.scale.setScalar(sc);
+  const pos = new THREE.Vector3((Math.random() * 2 - 1) * half, 5 + Math.random() * 7, -75);
+  if (boss) pos.set(0, 9, -75);
+  mesh.position.copy(pos); scene.add(mesh);
+  const el = document.createElement('div'); el.className = 'lb' + (boss ? ' boss' : ''); labels.appendChild(el);
+  const e = { word: p.w, clue: p.clue, hit: 0, boss, mesh, el, sc, base: pos.clone(), t: 0, ph: Math.random() * 6.28, hurt: 0,
+    spd: (boss ? 2.4 : 3.6 + level * .7 + wave * .32) * tempo, hp: boss ? 1 : 1 };
+  drawLabel(e); enemies.push(e);
+}
+function esc(s) { return s.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
+function drawLabel(e) {
+  const hide = mode === 'angka';
+  const done = esc(e.word.slice(0, e.hit)), rest = hide ? '?'.repeat(e.word.length - e.hit) : esc(e.word.slice(e.hit));
+  e.el.innerHTML = (e.clue ? '<span class="clue">' + esc(e.clue) + '</span>' : '') + '<i>' + done + '</i>' + rest.replace(/ /g, '&nbsp;');
+  e.el.classList.toggle('t', e === target); e.w = 0;
+}
+function removeEnemy(e) { scene.remove(e.mesh); e.el.remove(); enemies = enemies.filter((x) => x !== e); }
+
+function banner(t) { const b = document.createElement('div'); b.className = 'banner'; b.textContent = t; $('stage').appendChild(b); setTimeout(() => b.remove(), 1700); }
+function popText(pos, t) {
+  const v = pos.clone().project(camera), r = cv.getBoundingClientRect();
+  const d = document.createElement('div'); d.className = 'pop'; d.textContent = t; d.style.left = ((v.x + 1) / 2 * r.width) + 'px'; d.style.top = ((1 - v.y) / 2 * r.height) + 'px';
+  $('stage').appendChild(d); setTimeout(() => d.remove(), 1000);
+}
+function startWave() {
+  toSpawn = 3 + wave + Math.floor(wave / 2); spawnT = 700;
+  const boss = wave === 5 || wave === WAVES;
+  banner(boss ? '👾 BOS DATANG!' : wave >= 8 ? 'Gelombang ' + wave + ': kalimat!' : 'Gelombang ' + wave);
+  if (boss) { toSpawn = Math.max(2, toSpawn - 3); setTimeout(() => { if (running) spawn(true); }, 1000); }
+  $('hWave').textContent = 'Gelombang ' + wave + '/' + WAVES;
+}
+
+function key(ch) {
+  if (window.Tutor && typed > 2) Tutor.done();
+  if (!running || waveBreak > 0) return;
+  ch = ch.toLowerCase();
+  if (!target) {
+    const cand = enemies.filter((e) => e.word[0] === ch).sort((a, b) => b.mesh.position.z - a.mesh.position.z);
+    if (cand.length) { target = cand[0]; enemies.forEach(drawLabel); }
+  }
+  if (target && target.word[target.hit] === ch) {
+    const e = target; e.hit++; typed++; e.hurt = 1; Sfx.click();
+    laser(e.mesh.position);
+    if (e.hit >= e.word.length) {
+      target = null; words++; combo++;
+      const mult = 1 + Math.floor(combo / 5), gain = e.word.replace(/ /g, '').length * 10 * mult * (e.boss ? 3 : 1);
+      score += gain;
+      const p = e.mesh.position.clone();
+      burst(p, e.boss ? 0xffd23f : e.mesh.userData.mat.color.getHex(), e.boss ? 260 : 90);
+      popText(p, '+' + gain); shake = e.boss ? 1.4 : .45; Sfx.pop();
+      if (e.boss) { Sfx.win(); Fx.mascot('sorak'); }
+      removeEnemy(e); enemies.forEach(drawLabel);
+    } else drawLabel(e);
+  } else {
+    wrong++; combo = 0; Sfx.bad();
+    const k = ch.length === 1 ? ch : '?'; miss[k] = (miss[k] || 0) + 1;
+    shake = Math.max(shake, .25);
+  }
+  hud();
+}
+const inp = $('inp');
+inp.addEventListener('input', () => { const v = inp.value; inp.value = ''; for (const c of v) if (c !== ' ' || (target && target.word[target.hit] === ' ')) key(c); });
+inp.addEventListener('keydown', (e) => { if (e.key === 'Escape' || e.key === 'Backspace') { target = null; enemies.forEach(drawLabel); if (e.key === 'Backspace') e.preventDefault(); } });
+$('stage').addEventListener('pointerdown', (e) => { if (!e.target.closest('button')) inp.focus(); });
+
+function hud() {
+  $('hScore').textContent = '⭐ ' + score;
+  $('hLife').textContent = '❤️'.repeat(Math.max(0, lives)) + '🖤'.repeat(Math.max(0, 3 - lives));
+  const c = $('hCombo'); c.classList.toggle('hidden', combo < 3); c.textContent = '🔥 ' + combo + ' · x' + (1 + Math.floor(combo / 5));
+  const min = Math.max(1 / 60, (performance.now() - startAt) / 60000); $('hWpm').textContent = Math.round(typed / 5 / min) + ' kpm';
+}
+
+function resize() {
+  const w = cv.clientWidth, h = cv.clientHeight; if (!w || !h || !renderer) return;
+  renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1)); renderer.setSize(w, h, false);
+  camera.aspect = w / h; camera.fov = camera.aspect < 1 ? 72 : 55; camera.updateProjectionMatrix();
+  CAM.set(0, camera.aspect < 1 ? 15 : 14, camera.aspect < 1 ? 23 : 20);
+}
+window.addEventListener('resize', resize);
+if (window.visualViewport) visualViewport.addEventListener('resize', resize);
+
+const tmp = new THREE.Vector3(), look = new THREE.Vector3();
+function frame(t) {
+  if (!running) return;
+  const dt = Math.min(.05, (t - (last || t)) / 1000); last = t;
+  if (waveBreak > 0) { waveBreak -= dt; if (waveBreak <= 0) { wave++; if (wave > WAVES) { end(true); return; } startWave(); } }
+  else {
+    spawnT -= dt * 1000;
+    if (toSpawn > 0 && spawnT <= 0) { spawn(false); toSpawn--; spawnT = Math.max(900, 2700 - wave * 120 - level * 160) / tempo; }
+    if (toSpawn <= 0 && !enemies.length) { waveBreak = 2.4; score += wave * 50; banner('Aman! +' + wave * 50); Sfx.coin && Sfx.coin(); hud(); }
+  }
+  // musuh
+  for (const e of enemies.slice()) {
+    e.t += dt;
+    const p = e.mesh.position;
+    const dir = tmp.set(SCHOOL.x - e.base.x, 4 - e.base.y, SCHOOL.z - e.base.z); const dist = dir.length(); dir.normalize();
+    e.base.addScaledVector(dir, e.spd * dt);
+    p.copy(e.base); p.x += Math.sin(e.t * 1.6 + e.ph) * (e.boss ? 2.5 : 1.6); p.y += Math.sin(e.t * 2.3 + e.ph) * .5;
+    e.mesh.lookAt(camera.position.x, p.y, camera.position.z);
+    e.mesh.userData.ten.forEach((pv, i) => { pv.rotation.x = Math.sin(e.t * 6 + i) * .45; pv.rotation.z = Math.cos(e.t * 5 + i * 1.3) * .35; });
+    e.hurt = Math.max(0, e.hurt - dt * 5);
+    e.mesh.userData.mat.emissiveIntensity = .35 + e.hurt * .9;
+    e.mesh.scale.setScalar(e.sc * (1 + e.hurt * .12));
+    if (p.distanceTo(SCHOOL) < DOME_R + e.sc * .8 || dist < 2) {
+      lives--; combo = 0; shake = 1.2; burst(p.clone(), 0xff5d8f, 120); Sfx.bad(); domeMat.opacity = .6;
+      if (e === target) target = null;
+      removeEnemy(e); hud();
+      if (lives <= 0) { end(false); return; }
     }
-  };
-  var mode = 'kata', level = 1, setQ = null, setCode = null;
-  try { mode = localStorage.getItem('pk_mode') || 'kata'; level = +localStorage.getItem('pk_level') || 1; } catch (e) {}
-
-  // ---------- soal guru (jawaban pendek diketik) ----------
-  (function loadSet() {
-    var code = (new URLSearchParams(location.search).get('set') || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
-    if (!code) return;
-    var info = $('setinfo'); info.textContent = '⏳ Memuat soal dari guru...';
-    fetch('/api/set/' + code).then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); }).then(function (d) {
-      var qs = [];
-      (Array.isArray(d.questions) ? d.questions : []).forEach(function (q, i) {
-        if (!q || !Array.isArray(q.o) || !(q.a >= 0 && q.a < q.o.length)) return;
-        var w = String(q.o[q.a]).toLowerCase().replace(/\s+/g, ' ').trim();
-        if (w.length >= 1 && w.length <= 16 && /^[a-z0-9\- ]+$/.test(w)) qs.push({ w: w, clue: String(q.q).slice(0, 60), idx: i });
-      });
-      if (!qs.length) throw new Error('tidak cocok');
-      setQ = qs; setCode = code;
-      info.textContent = '📚 Soal guru: ' + d.title + ' (' + qs.length + ' jawaban)'; info.className = 'setinfo ok';
-      document.querySelector('.mathonly').classList.add('off'); $('name').classList.remove('hidden');
-      try { $('name').value = localStorage.getItem('bgy_name') || ''; } catch (e) {}
-    }).catch(function (e) { info.textContent = e && e.message === 'tidak cocok' ? '⚠️ Jawaban soal guru terlalu panjang. Memakai kata bawaan.' : '⚠️ Kode soal tidak ditemukan. Memakai kata bawaan.'; info.className = 'setinfo err'; });
-  })();
-
-  function seg(id, fn, isOn) {
-    var el = $(id);
-    function mark() { [].forEach.call(el.children, function (b) { b.classList.toggle('on', isOn(b.dataset.n)); }); showBest(); }
-    el.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; fn(b.dataset.n); mark(); Sfx.click(); });
-    mark();
   }
-  function bestKey() { return 'pk_best_' + (setQ ? 'guru' : mode) + level; }
-  function getBest() { try { return +localStorage.getItem(bestKey()) || 0; } catch (e) { return 0; } }
-  function showBest() { var b = getBest(); $('best').textContent = b ? '🏆 Rekor kamu: ' + b : ''; }
-  seg('segMode', function (n) { mode = n; }, function (n) { return n === mode; });
-  seg('segLevel', function (n) { level = +n; }, function (n) { return +n === level; });
-
-  // ---------- kanvas ----------
-  var cv = $('cv'), ctx = cv.getContext('2d'), W = 0, H = 0, DPR = 1;
-  function resize() { DPR = Math.min(2, window.devicePixelRatio || 1); W = cv.clientWidth; H = cv.clientHeight; cv.width = W * DPR; cv.height = H * DPR; ctx.setTransform(DPR, 0, 0, DPR, 0, 0); }
-  window.addEventListener('resize', resize);
-  var stars = []; for (var i = 0; i < 90; i++) stars.push({ x: Math.random(), y: Math.random(), s: Math.random() * 1.8 + .4, v: Math.random() * .02 + .005 });
-  var COLORS = ['#ff5d8f', '#4aa8ff', '#2ec4b6', '#ffd23f', '#ff7a1a', '#b79cff', '#8cf0b8'];
-
-  // ---------- state ----------
-  var enemies = [], bullets = [], parts = [], target = null, score = 0, lives = 3, combo = 0, wave = 1, toSpawn = 0, spawnT = 0, running = false, raf = 0, last = 0;
-  var typed = 0, wrong = 0, words = 0, startAt = 0, shake = 0, miss = {}, qstats = {}, bag = [], waveBreak = 0, killedWave = 0;
-  var ship = { x: 0, y: 0, ang: -Math.PI / 2 };
-
-  function pickWord() {
-    if (setQ) { if (!bag.length) bag = setQ.slice().sort(function () { return Math.random() - .5; }); var q = bag.pop(); return { w: q.w, clue: q.clue, idx: q.idx }; }
-    if (mode === 'hitung') { var m = MathGen.make(['add', 'sub', 'mul', 'div'][Math.floor(Math.random() * (level === 1 ? 2 : 4))], level); return { w: m.o[m.a], clue: m.q.replace(' = ?', '') }; }
-    var list = WORDS[mode][Math.min(3, level + (wave > 6 ? 1 : 0))] || WORDS[mode][level];
-    var used = enemies.map(function (e) { return e.word[0]; }), w, tries = 0;
-    do { w = list[Math.floor(Math.random() * list.length)]; tries++; } while (tries < 20 && used.indexOf(w[0]) >= 0);
-    return { w: w };
+  // roket & kamera
+  const goal = target ? target.mesh.position : look.set(0, 8, -40);
+  rocket.lookAt(goal); rBody.userData.flame.scale.y = .8 + Math.random() * .5;
+  rocket.position.y = 12 + Math.sin(t / 400) * .15;
+  lookX += ((target ? target.mesh.position.x * .25 : 0) - lookX) * Math.min(1, dt * 3);
+  camera.position.copy(CAM); camera.position.x += lookX * .4;
+  if (shake > 0) { camera.position.x += (Math.random() - .5) * shake; camera.position.y += (Math.random() - .5) * shake; shake = Math.max(0, shake - dt * 2.5); }
+  camera.lookAt(lookX, 9, -30);
+  domeMat.opacity += ((.1 + lives * .05) - domeMat.opacity) * Math.min(1, dt * 3);
+  domeMat.color.setHex(lives <= 1 ? 0xff7a9a : 0x66d9ff);
+  const fl = scene.userData.school.userData.flag; fl.children.forEach((c, i) => { c.rotation.y = Math.sin(t / 250 + i) * .3; });
+  // efek
+  for (const b of bursts.slice()) {
+    b.life -= dt; const a = b.pts.geometry.attributes.position;
+    for (let i = 0; i < b.v.length; i++) { a.array[i * 3] += b.v[i].x * dt; a.array[i * 3 + 1] += b.v[i].y * dt; a.array[i * 3 + 2] += b.v[i].z * dt; b.v[i].y -= 9 * dt; b.v[i].multiplyScalar(.97); }
+    a.needsUpdate = true; b.pts.material.opacity = Math.max(0, b.life);
+    b.ring.scale.setScalar(1 + (1 - b.life) * 8); b.ring.material.opacity = Math.max(0, b.life - .4);
+    if (b.life <= 0) { scene.remove(b.pts); scene.remove(b.ring); b.pts.geometry.dispose(); bursts.splice(bursts.indexOf(b), 1); }
   }
-
-  function spawn(boss) {
-    var p = pickWord();
-    if (boss && !setQ && mode !== 'hitung') { var l3 = WORDS[mode][3]; p = { w: l3[Math.floor(Math.random() * l3.length)] }; }
-    var e = {
-      word: p.w, clue: p.clue, idx: p.idx, hit: 0, boss: !!boss,
-      x: W * (0.12 + Math.random() * 0.76), y: -40,
-      r: boss ? 46 : 24 + Math.min(10, p.w.length),
-      col: boss ? '#ff5d8f' : COLORS[Math.floor(Math.random() * COLORS.length)],
-      spd: (boss ? 14 : 22 + level * 6 + wave * 2.2) * (H / 700), wob: Math.random() * 6, hurt: 0
-    };
-    enemies.push(e);
+  for (const l of lasers.slice()) { l.life -= dt; l.l.material.opacity = Math.max(0, l.life * 7); if (l.life <= 0) { scene.remove(l.l); lasers.splice(lasers.indexOf(l), 1); } }
+  renderer.render(scene, camera);
+  // label
+  const r = { w: cv.clientWidth, h: cv.clientHeight }, placed = [];
+  for (const e of enemies.slice().sort((a, b) => b.mesh.position.z - a.mesh.position.z)) {
+    tmp.copy(e.mesh.position); tmp.y += e.sc * 1.25; tmp.project(camera);
+    if (tmp.z > 1) { e.el.style.display = 'none'; continue; }
+    e.el.style.display = '';
+    if (!e.w) { e.w = e.el.offsetWidth; e.h = e.el.offsetHeight; }
+    let sx = Math.max(e.w / 2 + 4, Math.min(r.w - e.w / 2 - 4, (tmp.x + 1) / 2 * r.w)), sy = Math.max(48 + e.h, (1 - tmp.y) / 2 * r.h);
+    for (let k = 0; k < 6; k++) { const hit = placed.find((q) => Math.abs(q.x - sx) < (q.w + e.w) / 2 + 4 && Math.abs(q.y - sy) < (q.h + e.h) / 2 + 2); if (!hit) break; sy = hit.y - (hit.h + e.h) / 2 - 3; }
+    placed.push({ x: sx, y: sy, w: e.w, h: e.h });
+    e.el.style.transform = 'translate(' + sx.toFixed(1) + 'px,' + sy.toFixed(1) + 'px) translate(-50%,-100%)';
+    e.el.style.zIndex = e === target ? 3 : 1 + Math.round((e.mesh.position.z + 80));
   }
+  if (Math.floor(t / 500) !== Math.floor((t - dt * 1000) / 500)) hud();
+  raf = requestAnimationFrame(frame);
+}
 
-  function banner(t) { var b = document.createElement('div'); b.className = 'banner'; b.textContent = t; $('game').appendChild(b); setTimeout(function () { b.remove(); }, 1700); }
-
-  function startWave() {
-    toSpawn = 4 + wave * 2; killedWave = 0; spawnT = 600;
-    banner(wave % 5 === 0 ? '👾 BOS DATANG!' : 'Gelombang ' + wave);
-    if (wave % 5 === 0) setTimeout(function () { if (running) spawn(true); }, 900);
-    $('hWave').textContent = 'Gelombang ' + wave;
-  }
-
-  function burst(x, y, col, n) {
-    for (var i = 0; i < n; i++) { var a = Math.random() * 6.28, s = 60 + Math.random() * 260; parts.push({ x: x, y: y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: .5 + Math.random() * .5, c: Math.random() < .3 ? '#fff' : col, r: 2 + Math.random() * 4 }); }
-  }
-  function floatText(x, y, t, c) { parts.push({ x: x, y: y, vx: 0, vy: -60, life: 1, txt: t, c: c || '#ffd23f' }); }
-
-  // ---------- input ----------
-  function key(ch) {
-    if (window.Tutor && typed > 2) Tutor.done();
-    if (!running || waveBreak > 0) return;
-    ch = ch.toLowerCase();
-    if (!target) {
-      var cand = enemies.filter(function (e) { return e.word[0] === ch && e.y > -30; }).sort(function (a, b) { return b.y - a.y; });
-      if (cand.length) target = cand[0];
-    }
-    if (target && target.word[target.hit] === ch) {
-      target.hit++; typed++; Sfx.click();
-      bullets.push({ x: ship.x, y: ship.y - 18, t: target, v: 1500 });
-      if (target.hit >= target.word.length) {
-        var e = target; target = null; words++; combo++; killedWave++;
-        if (e.idx != null) { var qs = qstats[e.idx] || (qstats[e.idx] = [0, 0]); qs[0]++; }
-        var mult = 1 + Math.floor(combo / 5);
-        var gain = e.word.replace(/ /g, '').length * 10 * mult * (e.boss ? 3 : 1);
-        score += gain; e.dead = true;
-        setTimeout(function () { burst(e.x, e.y, e.col, e.boss ? 90 : 36); floatText(e.x, e.y - e.r, '+' + gain); shake = e.boss ? 18 : 6; Sfx.pop(); if (e.boss) { Sfx.win(); Fx.mascot('sorak'); } }, 90);
-        enemies = enemies.filter(function (x) { return x !== e; });
-      }
-    } else {
-      wrong++; combo = 0; Sfx.bad();
-      var k = ch.length === 1 ? ch : '?'; miss[k] = (miss[k] || 0) + 1;
-      shake = Math.max(shake, 4);
-    }
-    hud();
-  }
-  var inp = $('inp');
-  inp.addEventListener('input', function () { var v = inp.value; inp.value = ''; for (var i = 0; i < v.length; i++) if (v[i] !== ' ' || (target && target.word[target.hit] === ' ')) key(v[i]); });
-  inp.addEventListener('keydown', function (e) { if (e.key === 'Escape') { target = null; } if (e.key === 'Backspace') { target = null; e.preventDefault(); } });
-  $('cv').addEventListener('pointerdown', function () { inp.focus(); });
-
-  function hud() {
-    $('hScore').textContent = score;
-    $('hLife').textContent = '❤️'.repeat(Math.max(0, lives)) + '🖤'.repeat(Math.max(0, 3 - lives));
-    var c = $('hCombo'); c.classList.toggle('hidden', combo < 3); c.textContent = '🔥 ' + combo + ' combo · x' + (1 + Math.floor(combo / 5));
-    var min = Math.max(1 / 60, (performance.now() - startAt) / 60000); $('hWpm').textContent = Math.round(typed / 5 / min) + ' kpm';
-  }
-
-  // ---------- gambar ----------
-  function rr(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
-  function drawShip(t) {
-    ctx.save(); ctx.translate(ship.x, ship.y); ctx.rotate(ship.ang + Math.PI / 2);
-    // api
-    ctx.fillStyle = '#ff7a1a'; ctx.beginPath(); ctx.moveTo(-9, 22); ctx.lineTo(0, 34 + Math.sin(t / 40) * 6); ctx.lineTo(9, 22); ctx.fill();
-    ctx.fillStyle = '#ffd23f'; ctx.beginPath(); ctx.moveTo(-5, 22); ctx.lineTo(0, 28 + Math.sin(t / 30) * 4); ctx.lineTo(5, 22); ctx.fill();
-    ctx.lineWidth = 3; ctx.strokeStyle = '#1b1a3a';
-    ctx.fillStyle = '#ff5d8f'; ctx.beginPath(); ctx.moveTo(-14, 16); ctx.lineTo(-24, 26); ctx.lineTo(-10, 22); ctx.closePath(); ctx.fill(); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(14, 16); ctx.lineTo(24, 26); ctx.lineTo(10, 22); ctx.closePath(); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(0, -28); ctx.quadraticCurveTo(16, -8, 12, 22); ctx.lineTo(-12, 22); ctx.quadraticCurveTo(-16, -8, 0, -28); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = '#4aa8ff'; ctx.beginPath(); ctx.arc(0, -4, 6, 0, 6.28); ctx.fill(); ctx.stroke();
-    ctx.restore();
-  }
-  function drawSchool() {
-    var y = H - 112;
-    ctx.fillStyle = '#2c6e3f'; ctx.fillRect(0, y + 34, W, H); ctx.fillStyle = '#3f8f52'; ctx.fillRect(0, y + 34, W, 6);
-    ctx.fillStyle = '#fff6dc'; ctx.strokeStyle = '#1b1a3a'; ctx.lineWidth = 3;
-    var w = Math.min(260, W * .5), x = W / 2 - w / 2;
-    rr(x, y - 6, w, 40, 6); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = '#ff7a1a'; ctx.beginPath(); ctx.moveTo(x - 10, y - 4); ctx.lineTo(W / 2, y - 30); ctx.lineTo(x + w + 10, y - 4); ctx.closePath(); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = 'rgba(74,168,255,.14)'; ctx.strokeStyle = 'rgba(140,220,255,' + (.35 + lives * .15) + ')'; ctx.beginPath(); ctx.arc(W / 2, y + 34, w * .7, Math.PI, 0); ctx.fill(); ctx.stroke(); // perisai
-    ctx.fillStyle = '#1b1a3a'; ctx.font = '900 14px Fredoka, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('SD MAIN-YUK', W / 2, y + 14);
-  }
-  function drawEnemy(e, t) {
-    var x = e.x + Math.sin(t / 500 + e.wob) * 6, y = e.y, r = e.r;
-    ctx.save(); ctx.translate(x, y);
-    if (e.hurt > 0) ctx.translate((Math.random() - .5) * 6, 0);
-    ctx.lineWidth = 3; ctx.strokeStyle = '#1b1a3a';
-    // tentakel
-    ctx.fillStyle = e.col; for (var k = -2; k <= 2; k++) { ctx.beginPath(); ctx.ellipse(k * r * .35, r * .75 + Math.sin(t / 120 + k) * 3, r * .16, r * .32, 0, 0, 6.28); ctx.fill(); ctx.stroke(); }
-    ctx.beginPath(); ctx.arc(0, 0, r, 0, 6.28); ctx.fill(); ctx.stroke();
-    if (e.boss) { ctx.fillStyle = '#ffd23f'; ctx.beginPath(); ctx.moveTo(-r * .6, -r * .8); ctx.lineTo(-r * .3, -r * 1.25); ctx.lineTo(0, -r * .85); ctx.lineTo(r * .3, -r * 1.25); ctx.lineTo(r * .6, -r * .8); ctx.closePath(); ctx.fill(); ctx.stroke(); }
-    // mata
-    var look = e === target ? 1 : 0;
-    [-1, 1].forEach(function (s) { ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(s * r * .36, -r * .1, r * .26, 0, 6.28); ctx.fill(); ctx.stroke(); ctx.fillStyle = '#1b1a3a'; ctx.beginPath(); ctx.arc(s * r * .36 + (ship.x - x) / W * 4, -r * .06 + 2 * look, r * .12, 0, 6.28); ctx.fill(); });
-    ctx.strokeStyle = '#1b1a3a'; ctx.beginPath(); ctx.arc(0, r * .3, r * .22, 0.1, Math.PI - 0.1); ctx.stroke();
-    ctx.restore();
-    // label kata
-    var fs = Math.max(15, Math.min(24, W / 38)) * (e.boss ? 1.2 : 1);
-    ctx.font = '800 ' + fs + 'px Nunito, sans-serif';
-    var label = e.word, tw = ctx.measureText(label).width + 18, ly = y + r + 22;
-    if (e.clue) { ctx.font = '700 ' + (fs * .75) + 'px Nunito, sans-serif'; var cw = ctx.measureText(e.clue).width + 14; ctx.fillStyle = 'rgba(255,255,255,.85)'; rr(x - cw / 2, y - r - 34, cw, fs, 8); ctx.fill(); ctx.fillStyle = '#1b1a3a'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(e.clue, x, y - r - 34 + fs / 2); ctx.font = '800 ' + fs + 'px Nunito, sans-serif'; }
-    var hide = !!e.clue && e.hit === 0 && setQ; // soal guru: jawaban disembunyikan sampai mulai ditebak
-    if (hide) { label = '?'.repeat(Math.min(e.word.length, 8)); tw = ctx.measureText(label).width + 18; }
-    ctx.fillStyle = e === target ? '#ffd23f' : '#fff'; ctx.strokeStyle = '#1b1a3a'; ctx.lineWidth = 2.5;
-    rr(x - tw / 2, ly - fs * .75, tw, fs * 1.45, 10); ctx.fill(); ctx.stroke();
-    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    var sx = x - tw / 2 + 9;
-    for (var i = 0; i < label.length; i++) {
-      ctx.fillStyle = i < e.hit ? '#ff7a1a' : '#1b1a3a';
-      if (i < e.hit) ctx.globalAlpha = .55;
-      ctx.fillText(hide ? label[i] : e.word[i], sx, ly); sx += ctx.measureText(hide ? label[i] : e.word[i]).width; ctx.globalAlpha = 1;
-    }
-  }
-
-  function frame(t) {
-    if (!running) return;
-    var dt = Math.min(.05, (t - (last || t)) / 1000); last = t;
-    ship.x = W / 2; ship.y = H - 170;
-    // logika
-    if (waveBreak > 0) { waveBreak -= dt; if (waveBreak <= 0) { wave++; startWave(); } }
-    else {
-      spawnT -= dt * 1000;
-      if (toSpawn > 0 && spawnT <= 0) { spawn(false); toSpawn--; spawnT = Math.max(650, 2100 - wave * 110 - level * 150); }
-      if (toSpawn <= 0 && !enemies.length) { waveBreak = 2.2; score += wave * 50; floatText(W / 2, H / 2, 'Gelombang selesai! +' + wave * 50, '#8cf0b8'); Sfx.coin && Sfx.coin(); }
-    }
-    enemies.forEach(function (e) {
-      var dx = ship.x - e.x, dy = (ship.y - 10) - e.y, d = Math.hypot(dx, dy) || 1;
-      e.x += dx / d * e.spd * dt * .35; e.y += dy / d * e.spd * dt; e.hurt = Math.max(0, e.hurt - dt * 4);
-      if (d < e.r + 30) { e.dead = true; lives--; combo = 0; shake = 16; burst(e.x, e.y, '#ff5d8f', 40); Sfx.bad(); Fx.bad(null, e.x, e.y);
-        if (e.idx != null) { var qs = qstats[e.idx] || (qstats[e.idx] = [0, 0]); qs[1]++; }
-        if (e === target) target = null; }
-    });
-    enemies = enemies.filter(function (e) { return !e.dead; });
-    if (target) ship.ang += (Math.atan2(target.y - ship.y, target.x - ship.x) - ship.ang) * Math.min(1, dt * 14);
-    else ship.ang += (-Math.PI / 2 - ship.ang) * Math.min(1, dt * 6);
-    bullets.forEach(function (b) { var dx = b.t.x - b.x, dy = b.t.y - b.y, d = Math.hypot(dx, dy); if (d < 18) { b.done = true; b.t.hurt = 1; burst(b.t.x, b.t.y, '#fff', 5); } else { b.x += dx / d * b.v * dt; b.y += dy / d * b.v * dt; } });
-    bullets = bullets.filter(function (b) { return !b.done; });
-    parts.forEach(function (p) { p.x += p.vx * dt; p.y += p.vy * dt; if (!p.txt) { p.vx *= .96; p.vy = p.vy * .96 + 200 * dt; } p.life -= dt; });
-    parts = parts.filter(function (p) { return p.life > 0; });
-    if (lives <= 0) { end(false); return; }
-    if (wave > 10) { end(true); return; }
-    // gambar
-    ctx.save();
-    if (shake > 0) { ctx.translate((Math.random() - .5) * shake, (Math.random() - .5) * shake); shake = Math.max(0, shake - dt * 40); }
-    var g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#120f2e'); g.addColorStop(.6, '#2b2470'); g.addColorStop(1, '#4b3a9a'); ctx.fillStyle = g; ctx.fillRect(-20, -20, W + 40, H + 40);
-    ctx.fillStyle = '#fff'; stars.forEach(function (s) { s.y += s.v * dt * 3; if (s.y > 1) s.y = 0; ctx.globalAlpha = .4 + .6 * Math.abs(Math.sin(t / 900 + s.x * 20)); ctx.fillRect(s.x * W, s.y * H, s.s, s.s); }); ctx.globalAlpha = 1;
-    ctx.fillStyle = 'rgba(255,214,120,.9)'; ctx.beginPath(); ctx.arc(W * .85, H * .14, Math.min(W, H) * .06, 0, 6.28); ctx.fill();
-    drawSchool();
-    enemies.forEach(function (e) { drawEnemy(e, t); });
-    ctx.strokeStyle = '#ffd23f'; ctx.lineWidth = 4; ctx.lineCap = 'round';
-    bullets.forEach(function (b) { ctx.beginPath(); ctx.moveTo(b.x, b.y); ctx.lineTo(b.x - (b.t.x - b.x) * .04, b.y - (b.t.y - b.y) * .04); ctx.stroke(); });
-    parts.forEach(function (p) {
-      ctx.globalAlpha = Math.max(0, Math.min(1, p.life * 2));
-      if (p.txt) { ctx.font = '700 24px Fredoka, sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 4; ctx.strokeStyle = '#1b1a3a'; ctx.strokeText(p.txt, p.x, p.y); ctx.fillStyle = p.c; ctx.fillText(p.txt, p.x, p.y); }
-      else { ctx.fillStyle = p.c; ctx.fillRect(p.x - p.r / 2, p.y - p.r / 2, p.r, p.r); }
-    }); ctx.globalAlpha = 1;
-    drawShip(t);
-    ctx.restore();
-    if (Math.floor(t / 500) !== Math.floor((t - dt * 1000) / 500)) hud();
-    raf = requestAnimationFrame(frame);
-  }
-
-  function start() {
-    if (window.Tutor) setTimeout(Tutor.hint, 1500);
-    if (setQ) { var nm = ($('name').value || '').trim().slice(0, 30); if (!nm) { $('name').focus(); $('name').placeholder = 'Tulis namamu dulu ya'; return; } try { localStorage.setItem('bgy_name', nm); } catch (e) {} }
-    try { localStorage.setItem('pk_mode', mode); localStorage.setItem('pk_level', level); } catch (e) {}
-    enemies = []; bullets = []; parts = []; target = null; score = 0; lives = 3; combo = 0; wave = 1; typed = 0; wrong = 0; words = 0; miss = {}; qstats = {}; bag = []; waveBreak = 0; shake = 0;
-    $('menu').classList.add('hidden'); $('over').classList.add('hidden'); $('game').classList.remove('hidden');
-    $('inp').setAttribute('inputmode', mode === 'hitung' && !setQ ? 'numeric' : 'text');
-    $('bMute').textContent = Sfx.muted() ? '🔇' : '🔊';
-    resize(); running = true; last = 0; startAt = performance.now(); hud(); startWave(); Sfx.go(); Sfx.music(true);
-    raf = requestAnimationFrame(frame); setTimeout(function () { inp.focus(); }, 60);
-  }
-
-  function end(win) {
-    if (window.Koin) setTimeout(function () { Koin.add(score / 20, 'Pahlawan Ketik'); }, 400);
-    running = false; cancelAnimationFrame(raf); Sfx.music(false);
-    var min = Math.max(1 / 60, (performance.now() - startAt) / 60000), acc = typed + wrong ? Math.round(typed / (typed + wrong) * 100) : 0;
-    var best = getBest(), rec = score > best; if (rec) try { localStorage.setItem(bestKey(), score); } catch (e) {}
-    $('oScore').textContent = score; $('oWpm').textContent = Math.round(typed / 5 / min); $('oAcc').textContent = acc + '%'; $('oWave').textContent = Math.min(wave, 10);
-    $('oTitle').textContent = win ? '🏆 Sekolah selamat!' : rec ? '🏆 Rekor baru!' : 'Markas jebol!';
-    // peta panas keyboard
-    var rows = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'], mx = Math.max.apply(null, [1].concat(Object.values(miss)));
-    $('kb').innerHTML = rows.map(function (r) { return '<div class="r">' + r.split('').map(function (c) { var n = miss[c] || 0, a = n / mx; return '<span style="background:' + (n ? 'rgba(255,93,143,' + (.25 + a * .75) + ')' : '#fff') + '">' + c + '</span>'; }).join('') + '</div>'; }).join('');
-    var top = Object.keys(miss).filter(function (k) { return /[a-z]/.test(k); }).sort(function (a, b) { return miss[b] - miss[a]; }).slice(0, 3);
-    $('oKbt').textContent = top.length ? 'Paling sering salah: ' + top.map(function (k) { return k.toUpperCase(); }).join(', ') : 'Hebat, hampir tanpa salah ketik!';
-    $('over').classList.remove('hidden');
-    if (win || rec) { Sfx.win(); Fx.win(); } else Fx.mascot('sedih');
-    var saved = $('saved'); saved.textContent = '';
-    if (setCode && words) {
-      saved.textContent = '⏳ Menyimpan skor ke kelas...';
-      fetch('/api/set/' + setCode + '/hasil', { method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true,
-        body: JSON.stringify({ name: $('name').value.trim().slice(0, 30), mode: 'edu', score: score, caught: words, quizRight: words, quizWrong: Math.max(0, 3 - lives), durationS: Math.round(min * 60), qStats: qstats })
-      }).then(function (r) { if (!r.ok) throw 0; saved.innerHTML = '✅ Skormu tersimpan di kelas · <a href="/papan/' + setCode + '" target="_top">🏆 Lihat peringkat</a>'; })
-        .catch(function () { saved.textContent = '⚠️ Skor belum tersimpan (periksa internet)'; });
-    }
-  }
-
-  $('start').addEventListener('click', start);
-  $('again').addEventListener('click', start);
-  $('toMenu').addEventListener('click', function () { $('over').classList.add('hidden'); $('game').classList.add('hidden'); $('menu').classList.remove('hidden'); showBest(); });
-  $('bExit').addEventListener('click', function () { if (confirm('Selesai bermain?')) end(false); });
-  $('bMute').addEventListener('click', function () { try { localStorage.setItem('bgy_muted', Sfx.muted() ? '0' : '1'); } catch (e) {} this.textContent = Sfx.muted() ? '🔇' : '🔊'; Sfx.music(!Sfx.muted() && running); inp.focus(); });
-  document.addEventListener('visibilitychange', function () { last = 0; });
-  if (window.Tutor) Tutor.init('pahlawan-ketik', [{"sel": "#segMode", "text": "Pilih isi: Kata, Istilah IPA, atau soal Hitung."}, {"sel": "#segLevel", "text": "Atur tingkat kesulitan katanya."}, {"sel": "#start", "text": "Tekan MULAI! Ketik kata di bawah monster untuk menembaknya."}], { inGame: "Ketik kata di bawah monster. Huruf pertama mengunci sasaranmu!" });
-})();
+function clearAll() { enemies.slice().forEach(removeEnemy); bursts.forEach((b) => { scene.remove(b.pts); scene.remove(b.ring); }); bursts.length = 0; lasers.forEach((l) => scene.remove(l.l)); lasers.length = 0; }
+function start() {
+  if (!renderer) return;
+  if (window.Tutor) setTimeout(Tutor.hint, 1500);
+  try { localStorage.setItem('pk_mode', mode); localStorage.setItem('pk_level', level); } catch (e) {}
+  clearAll(); target = null; score = 0; lives = 3; combo = 0; wave = 1; typed = 0; wrong = 0; words = 0; miss = {}; waveBreak = 0; shake = 0; lookX = 0;
+  $('menu').classList.add('hidden'); $('over').classList.add('hidden'); $('game').classList.remove('hidden');
+  inp.setAttribute('inputmode', mode === 'angka' ? 'numeric' : 'text');
+  inp.placeholder = mode === 'angka' ? 'ketik jawabannya…' : 'ketik kata…';
+  $('bMute').textContent = Sfx.muted() ? '🔇' : '🔊';
+  resize(); running = true; last = 0; startAt = performance.now(); hud(); startWave(); Sfx.go(); Sfx.music(true);
+  raf = requestAnimationFrame(frame); setTimeout(() => inp.focus(), 60);
+}
+function end(win) {
+  if (!running) return;
+  if (window.Koin) setTimeout(() => Koin.add(score / 20, 'Pahlawan Ketik'), 400);
+  running = false; cancelAnimationFrame(raf); Sfx.music(false);
+  const min = Math.max(1 / 60, (performance.now() - startAt) / 60000), acc = typed + wrong ? Math.round(typed / (typed + wrong) * 100) : 0;
+  const best = getBest(), rec = score > best; if (rec) try { localStorage.setItem(bestKey(), score); } catch (e) {}
+  $('oScore').textContent = score; $('oWpm').textContent = Math.round(typed / 5 / min); $('oAcc').textContent = acc + '%'; $('oWave').textContent = Math.min(wave, WAVES);
+  $('oTitle').textContent = win ? '🏆 Sekolah selamat!' : rec ? '🏆 Rekor baru!' : 'Perisai jebol!';
+  const rows = mode === 'angka' ? ['1234567890'] : ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'], mx = Math.max(1, ...Object.values(miss));
+  $('kb').innerHTML = rows.map((r) => '<div class="r">' + r.split('').map((c) => { const n = miss[c] || 0, a = n / mx; return '<span style="background:' + (n ? 'rgba(255,93,143,' + (.25 + a * .75) + ')' : '#fff') + '">' + c + '</span>'; }).join('') + '</div>').join('');
+  const top = Object.keys(miss).filter((k) => /[a-z0-9]/.test(k)).sort((a, b) => miss[b] - miss[a]).slice(0, 3);
+  $('oKbt').textContent = top.length ? 'Paling sering salah: ' + top.map((k) => k.toUpperCase()).join(', ') : 'Hebat, hampir tanpa salah ketik!';
+  $('over').classList.remove('hidden');
+  if (win || rec) { Sfx.win(); Fx.win(); } else Fx.mascot('sedih');
+}
+$('start').addEventListener('click', start);
+$('again').addEventListener('click', start);
+$('toMenu').addEventListener('click', () => { clearAll(); $('over').classList.add('hidden'); $('game').classList.add('hidden'); $('menu').classList.remove('hidden'); showBest(); });
+$('bExit').addEventListener('click', () => { if (confirm('Selesai bermain?')) end(false); });
+$('bMute').addEventListener('click', function () { try { localStorage.setItem('bgy_muted', Sfx.muted() ? '0' : '1'); } catch (e) {} this.textContent = Sfx.muted() ? '🔇' : '🔊'; Sfx.music(!Sfx.muted() && running); });
+document.addEventListener('visibilitychange', () => { last = 0; });
+window.__pk = { key, state: () => ({ wave, lives, score, n: enemies.length, words: enemies.map((e) => e.word), running }) };
+if (window.Tutor) Tutor.init('pahlawan-ketik', [{ sel: '#segMode', text: 'Pilih isi: Kata atau Angka.' }, { sel: '#segTempo', text: 'Atur kecepatan monster.' }, { sel: '#start', text: 'Tekan MULAI. Ketik kata pada monster untuk menembak.' }], { inGame: 'Ketik huruf pertama untuk mengunci monster.' });
 </script>
 <script src="/games/_shared/twemoji.min.js"></script>
 <script src="/games/_shared/emoji.js"></script>
