@@ -82,6 +82,38 @@ export default function SetEditor({ set }: { set: QuestionSet }) {
     addImported({ soal: hasil, noKey: [], skipped: skipped ? [`${skipped} baris tidak lengkap`] : [] }, "CSV");
   }
 
+  async function importPdf(file: File) {
+    setBusy(true);
+    try {
+      const base = "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.0.379/build/";
+      const pdfjs = await import(/* webpackIgnore: true */ base + "pdf.min.mjs");
+      pdfjs.GlobalWorkerOptions.workerSrc = base + "pdf.worker.min.mjs";
+      const doc = await pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
+      const lines: string[] = [];
+      for (let n = 1; n <= doc.numPages; n++) {
+        const page = await doc.getPage(n);
+        const { items } = await page.getTextContent();
+        let cur = "", lastY: number | null = null;
+        for (const it of items as { str: string; transform: number[]; hasEOL?: boolean }[]) {
+          const y = Math.round(it.transform[5]);
+          if (lastY !== null && Math.abs(y - lastY) > 2 && cur.trim()) { lines.push(cur.trim()); cur = ""; }
+          cur += it.str; lastY = y;
+          if (it.hasEOL && cur.trim()) { lines.push(cur.trim()); cur = ""; lastY = null; }
+        }
+        if (cur.trim()) lines.push(cur.trim());
+      }
+      if (lines.join("").replace(/\s/g, "").length < 20) {
+        setMsg({ type: "err", text: "PDF ini tidak berisi teks (mungkin hasil scan/foto). Ketik ulang soal atau pakai file Word." });
+        return;
+      }
+      addImported(parsePlainText(lines.join("\n")), "PDF");
+    } catch {
+      setMsg({ type: "err", text: "File PDF tidak bisa dibaca. Coba file lain atau pakai Tempel teks." });
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function importWord(file: File) {
     if (/\.doc$/i.test(file.name)) {
       setMsg({ type: "err", text: "File .doc (Word lama) belum didukung. Buka di Word lalu Simpan Sebagai → .docx." });
@@ -156,6 +188,11 @@ export default function SetEditor({ set }: { set: QuestionSet }) {
             {busy ? "Membaca..." : "📄 Impor Word"}
             <input type="file" accept=".docx,.doc,application/vnd.openxmlformats-officedocument.wordprocessingml.document" className="hidden" disabled={busy}
               onChange={(e) => { const f = e.target.files?.[0]; if (f) importWord(f); e.target.value = ""; }} />
+          </label>
+          <label className={`px-3 py-2 rounded-lg nb-sm nb-press bg-nb-pink text-white font-bold cursor-pointer ${busy ? "opacity-60" : ""}`}>
+            📕 Impor PDF
+            <input type="file" accept=".pdf,application/pdf" className="hidden" disabled={busy}
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) importPdf(f); e.target.value = ""; }} />
           </label>
           <button onClick={() => setPasteOpen((v) => !v)} className="px-3 py-2 rounded-lg nb-sm nb-press bg-white dark:bg-slate-800 font-bold">
             📋 Tempel teks
