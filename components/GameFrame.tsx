@@ -91,8 +91,7 @@ export default function GameFrame({ title, src, portraitOk = false, slug, needsK
       {/* Satu tombol menu di tepi kiri-tengah: tidak menutupi tombol jawaban di bawah */}
       {!intro && (
         <div className={headerMenu ? "absolute left-2 top-14 z-10" : "absolute left-1.5 top-[36%] -translate-y-1/2 z-10"}>
-          <button
-            hidden={headerMenu}
+          {!headerMenu && <button
             onClick={() => setMenu((v) => !v)}
             aria-label="Menu game"
             aria-expanded={menu}
@@ -100,7 +99,7 @@ export default function GameFrame({ title, src, portraitOk = false, slug, needsK
             onPointerDown={() => setDim(false)}
           >
             {menu ? "✕" : "☰"}
-          </button>
+          </button>}
           {menu && (
             <div role="menu" className={`absolute left-0 ${headerMenu ? "top-0" : "top-14"} w-52 rounded-2xl border-[3px] border-[#1b1a3a] bg-[#fff6dc] p-2 shadow-[4px_4px_0_#1b1a3a] grid gap-1.5`}>
               <button role="menuitem" className={item} onClick={() => setMenu(false)}>▶ Lanjut main</button>

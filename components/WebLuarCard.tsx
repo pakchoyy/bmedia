@@ -1,10 +1,25 @@
+"use client";
+
 import Icon from "./Icon";
+import DetailSheet, { useDetailSheet } from "./DetailSheet";
 import { hostOf, WEB_COLORS } from "@/lib/web-link-utils";
 import type { WebLuar } from "@/lib/links";
 
 export default function WebLuarCard({ w, i = 0 }: { w: WebLuar; i?: number }) {
+  const sheet = useDetailSheet();
+  const openSheet = (e: React.MouseEvent) => {
+    e.preventDefault();
+    sheet.open({
+      key: "web-" + w.id, title: w.name,
+      // eslint-disable-next-line @next/next/no-img-element
+      cover: w.cover ? <img src={w.cover} alt="" className="w-full h-full object-cover" /> : undefined,
+      badges: [w.kategori, w.mapel].filter(Boolean), desc: w.description, meta: hostOf(w.url),
+      actions: [{ label: "↗ Buka situsnya", href: w.url, tone: "main", external: true }],
+    });
+  };
   return (
-    <a href={w.url} target="_blank" rel="noopener noreferrer"
+    <>
+    <a href={w.url} target="_blank" rel="noopener noreferrer" onClick={openSheet}
       className="group nb nb-hover nb-press rounded-2xl bg-white dark:bg-slate-900 overflow-hidden flex flex-col h-full">
       <div className="relative aspect-video overflow-hidden border-b-[3px] border-nb-ink dark:border-[var(--nb-ink)] bg-nb-cream">
         {w.cover ? (
@@ -27,5 +42,7 @@ export default function WebLuarCard({ w, i = 0 }: { w: WebLuar; i?: number }) {
         </div>
       </div>
     </a>
+    <DetailSheet data={sheet.data} onClose={sheet.close} />
+    </>
   );
 }

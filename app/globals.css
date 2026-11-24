@@ -201,3 +201,10 @@ button {
 .maskot-hero { animation: maskot-goyang 3s ease-in-out infinite; }
 @keyframes maskot-goyang { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(0deg) translateY(-6px); } }
 @media (prefers-reduced-motion: reduce) { .maskot-hero { animation: none; } }
+
+/* panel detail */
+@keyframes sheetUp { from { transform: translateY(40px); opacity: 0; } }
+@keyframes sheetFade { from { opacity: 0; } }
+.sheet-up { animation: sheetUp .22s cubic-bezier(.2,1.1,.4,1); }
+.sheet-fade { animation: sheetFade .15s ease; }
+@media (prefers-reduced-motion: reduce) { .sheet-up, .sheet-fade { animation: none; } }
