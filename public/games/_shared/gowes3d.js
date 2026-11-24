@@ -37,16 +37,28 @@ function canvasTex(w, h, draw) {
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
 }
 function faceMat(skin) {
-  const key = 'face' + skin;
+  const key = 'face2' + skin;
   if (mats.has(key)) return mats.get(key);
-  const t = canvasTex(64, 64, (x) => {
-    x.fillStyle = skin; x.fillRect(0, 0, 64, 64);
-    x.fillStyle = '#1b1a3a'; x.fillRect(16, 24, 8, 11); x.fillRect(40, 24, 8, 11);
-    x.fillStyle = '#fff'; x.fillRect(18, 25, 3, 3); x.fillRect(42, 25, 3, 3);
-    x.fillStyle = 'rgba(255,93,143,.55)'; x.fillRect(10, 38, 9, 5); x.fillRect(45, 38, 9, 5);
-    x.strokeStyle = '#1b1a3a'; x.lineWidth = 3; x.beginPath(); x.arc(32, 40, 8, 0.2, Math.PI - 0.2); x.stroke();
+  const t = canvasTex(256, 256, (x) => {
+    x.fillStyle = skin; x.fillRect(0, 0, 256, 256);
+    // alis
+    x.strokeStyle = '#3a2618'; x.lineWidth = 9; x.lineCap = 'round';
+    [[62, 92], [194, 92]].forEach(([cx, cy]) => { x.beginPath(); x.arc(cx, cy + 18, 26, Math.PI * 1.25, Math.PI * 1.75); x.stroke(); });
+    // mata besar berkilau
+    [[72, 128], [184, 128]].forEach(([cx, cy]) => {
+      x.fillStyle = '#1b1a3a'; x.beginPath(); x.ellipse(cx, cy, 21, 27, 0, 0, Math.PI * 2); x.fill();
+      x.fillStyle = '#5b3a24'; x.beginPath(); x.ellipse(cx, cy + 4, 14, 18, 0, 0, Math.PI * 2); x.fill();
+      x.fillStyle = '#1b1a3a'; x.beginPath(); x.ellipse(cx, cy + 4, 8, 10, 0, 0, Math.PI * 2); x.fill();
+      x.fillStyle = '#fff'; x.beginPath(); x.arc(cx - 7, cy - 9, 7, 0, Math.PI * 2); x.fill(); x.beginPath(); x.arc(cx + 8, cy + 10, 3.5, 0, Math.PI * 2); x.fill();
+    });
+    // pipi
+    x.fillStyle = 'rgba(255,93,143,.35)'; [[46, 172], [210, 172]].forEach(([cx, cy]) => { x.beginPath(); x.ellipse(cx, cy, 22, 13, 0, 0, Math.PI * 2); x.fill(); });
+    // mulut senyum
+    x.fillStyle = '#7a2230'; x.beginPath(); x.moveTo(104, 176); x.quadraticCurveTo(128, 214, 152, 176); x.closePath(); x.fill();
+    x.fillStyle = '#ff8fa8'; x.beginPath(); x.ellipse(128, 194, 12, 6, 0, 0, Math.PI * 2); x.fill();
   });
-  const m = new THREE.MeshLambertMaterial({ map: t }); mats.set(key, m); return m;
+  t.anisotropy = 4;
+  const m = new THREE.MeshStandardMaterial({ map: t, roughness: 0.65 }); mats.set(key, m); return m;
 }
 
 function nameSprite(text, bg) {
@@ -64,7 +76,7 @@ function nameSprite(text, bg) {
 
 
 /* ---------- sepeda 3D ---------- */
-const LEG = 0.4, CRANK = 0.16, BB = new THREE.Vector3(0, 0.44, 0.05);
+const LEG = 0.4, ARM = 0.33, CRANK = 0.16, BB = new THREE.Vector3(0, 0.44, 0.05), GRIP = new THREE.Vector3(0, 1.42, -0.48);
 const G = {
   tire: new THREE.TorusGeometry(0.385, 0.06, 10, 28).rotateY(Math.PI / 2),
   rim: new THREE.TorusGeometry(0.33, 0.022, 6, 28).rotateY(Math.PI / 2),
@@ -78,6 +90,8 @@ const G = {
   saddle: new THREE.SphereGeometry(1, 16, 10),
   fender: new THREE.TorusGeometry(0.43, 0.035, 6, 20, Math.PI * 0.7).rotateY(Math.PI / 2),
   thigh: new THREE.CapsuleGeometry(0.075, LEG - 0.12, 4, 10),
+  arm2: new THREE.CapsuleGeometry(0.07, ARM - 0.1, 4, 10),
+  hand: new THREE.SphereGeometry(0.085, 12, 8),
   sock: new THREE.CylinderGeometry(0.08, 0.08, 0.08, 10),
   shoe: new THREE.CapsuleGeometry(0.075, 0.12, 4, 10).rotateX(Math.PI / 2),
 };
@@ -87,6 +101,24 @@ function smat(color, rough = 0.45, metal = 0.1) {
   return mats.get(k);
 }
 const UP = new THREE.Vector3(0, 1, 0);
+const rgeos = new Map();
+/** Kotak bersudut membulat (tanpa addon): titik BoxGeometry ditarik ke kulit bulat. */
+function rgeo(w, h, d, r) {
+  r = Math.min(r, w / 2, h / 2, d / 2) * 0.999;
+  const k = [w, h, d, r].map((v) => v.toFixed(3)).join(',');
+  if (rgeos.has(k)) return rgeos.get(k);
+  const geo = new THREE.BoxGeometry(w, h, d, 5, 5, 5), pos = geo.attributes.position, v = new THREE.Vector3(), c = new THREE.Vector3();
+  const hx = w / 2 - r, hy = h / 2 - r, hz = d / 2 - r;
+  for (let i = 0; i < pos.count; i++) {
+    v.fromBufferAttribute(pos, i);
+    c.set(Math.max(-hx, Math.min(hx, v.x)), Math.max(-hy, Math.min(hy, v.y)), Math.max(-hz, Math.min(hz, v.z)));
+    v.sub(c); if (v.lengthSq() > 1e-9) v.setLength(r); v.add(c); pos.setXYZ(i, v.x, v.y, v.z);
+  }
+  geo.computeVertexNormals(); rgeos.set(k, geo); return geo;
+}
+function rbox(w, h, d, color) {
+  const m = new THREE.Mesh(rgeo(w, h, d, Math.min(w, h, d) * 0.32), smat(color, 0.65, 0)); m.castShadow = true; return m;
+}
 function tube(a, b, r, m, seg = 10) {
   const d = new THREE.Vector3().subVectors(b, a), len = d.length();
   const mesh = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len, seg), m);
@@ -160,6 +192,15 @@ function poseRider(r, a) {
     l.rotation.x = phi + alpha;
     l.userData.knee.rotation.x = -2 * alpha;
   });
+  // tangan memegang grip (koordinat lokal badan)
+  (r.arms || []).forEach((sh) => {
+    const ty = GRIP.y - hy, tz = GRIP.z - hz;
+    const dy = ty - sh.position.y, dz = tz - sh.position.z;
+    const D = Math.min(ARM * 2 - 0.001, Math.max(0.1, Math.hypot(dy, dz)));
+    const alpha = Math.acos(Math.min(1, D / (2 * ARM)));
+    sh.rotation.x = Math.atan2(-dz, -dy) - alpha;
+    sh.userData.elbow.rotation.x = 2 * alpha;
+  });
 }
 
 /** Anak sekolah bersepeda, proporsi chibi (kepala besar). */
@@ -168,6 +209,7 @@ export function makeRider(color, ch) {
   const skin = new THREE.Color(ch.skin).getHex();
   const u = UNIFORM[ch.seragam] || UNIFORM.sd;
   const g = new THREE.Group();
+  const box = rbox;
   // sepeda (stylized: tabung halus, roda berjari-jari, crank + pedal + rantai)
   const bike = buildBike(color); g.add(bike.group);
   const wheels = bike.wheels;
@@ -176,10 +218,18 @@ export function makeRider(color, ch) {
   const top = box(0.62, 0.62, 0.42, u.top); top.position.set(0, 0.4, -0.12); top.rotation.x = -0.4; body.add(top);
   if (u.tie) { const tie = box(0.12, 0.32, 0.05, u.tie); tie.position.set(0, 0.42, -0.36); tie.rotation.x = -0.4; body.add(tie); }
   const girl = ch.gender === 'p' && ch.seragam !== 'olahraga';
-  const bot = girl ? new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.46, 0.42, 8), mat(u.bottom)) : box(0.58, 0.26, 0.48, u.bottom);
+  const bot = girl ? new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.46, 0.42, 8), smat(u.bottom)) : box(0.58, 0.26, 0.48, u.bottom);
   bot.castShadow = true; bot.position.set(0, girl ? -0.02 : 0.04, 0); body.add(bot);
   const bag = box(0.5, 0.52, 0.22, color); bag.position.set(0, 0.48, 0.24); bag.rotation.x = -0.4; body.add(bag);
-  [-0.36, 0.36].forEach((x) => { const a = box(0.15, 0.15, 0.62, u.top); a.position.set(x, 0.48, -0.5); a.rotation.x = 0.45; body.add(a); const h = box(0.15, 0.15, 0.15, skin); h.position.set(x, 0.33, -0.8); body.add(h); });
+  const arms = [];
+  [-0.34, 0.34].forEach((x) => {
+    const sh = new THREE.Group(); sh.position.set(x, 0.66, -0.26); body.add(sh);
+    const up = new THREE.Mesh(G.arm2, smat(u.top, 0.7, 0)); up.position.y = -ARM / 2; up.castShadow = true; sh.add(up);
+    const el = new THREE.Group(); el.position.y = -ARM; sh.add(el);
+    const lo = new THREE.Mesh(G.arm2, smat(ch.seragam === 'olahraga' ? skin : u.top, 0.7, 0)); lo.position.y = -ARM / 2; el.add(lo);
+    const hand = new THREE.Mesh(G.hand, smat(skin, 0.7, 0)); hand.position.y = -ARM - 0.02; el.add(hand);
+    sh.userData.elbow = el; sh.userData.gx = x; arms.push(sh);
+  });
   const legs = [];
   const legC = ch.seragam === 'olahraga' ? u.bottom : skin;
   [-0.15, 0.15].forEach((x) => {
@@ -193,13 +243,13 @@ export function makeRider(color, ch) {
   });
   // kepala besar
   const head = new THREE.Group(); head.position.set(0, 1.12, -0.38); body.add(head);
-  const skinM = mat(skin), faceM = faceMat(ch.skin);
+  const skinM = smat(skin), faceM = faceMat(ch.skin);
   // urutan sisi BoxGeometry: +x,-x,+y,-y,+z,-z (wajah ke depan = -z)
-  const skull = new THREE.Mesh(new THREE.BoxGeometry(0.82, 0.78, 0.78), [skinM, skinM, skinM, skinM, skinM, faceM]); skull.castShadow = true; head.add(skull);
+  const skull = new THREE.Mesh(rgeo(0.82, 0.78, 0.78, 0.2), [skinM, skinM, skinM, skinM, skinM, faceM]); skull.castShadow = true; head.add(skull);
   const hair = 0x2a1d14;
   if (ch.head === 'jilbab') {
     const j = box(0.92, 0.88, 0.86, 0xffffff); j.position.set(0, 0.03, 0.05); head.add(j);
-    const front = new THREE.Mesh(new THREE.BoxGeometry(0.66, 0.6, 0.02), [skinM, skinM, skinM, skinM, skinM, faceM]); front.position.set(0, -0.02, -0.4); head.add(front);
+    const front = new THREE.Mesh(rgeo(0.66, 0.6, 0.04, 0.015), [skinM, skinM, skinM, skinM, skinM, faceM]); front.position.set(0, -0.02, -0.4); head.add(front);
     const cape = box(1, 0.4, 0.7, 0xffffff); cape.position.set(0, -0.5, 0.1); head.add(cape);
   } else {
     const cap = box(0.86, 0.22, 0.82, hair); cap.position.set(0, 0.4, 0.02); head.add(cap);
@@ -213,12 +263,12 @@ export function makeRider(color, ch) {
   if (ak === 'kacamata') { [-0.2, 0.2].forEach((x) => { const l = box(0.24, 0.18, 0.04, 0x1b1a3a); l.position.set(x, 0.05, -0.41); head.add(l); const g2 = box(0.18, 0.12, 0.02, 0x9fd8ff); g2.position.set(x, 0.05, -0.43); head.add(g2); }); const br = box(0.16, 0.05, 0.04, 0x1b1a3a); br.position.set(0, 0.07, -0.41); head.add(br); }
   if (ak === 'dasi') { [-0.1, 0.1].forEach((x) => { const d = box(0.16, 0.14, 0.05, 0xff5d8f); d.position.set(x, 0.7, -0.4); d.rotation.z = x > 0 ? 0.4 : -0.4; body.add(d); }); }
   if (ak === 'headset') { const band = box(0.92, 0.1, 0.12, 0x1b1a3a); band.position.set(0, 0.5, 0.02); head.add(band); [-0.46, 0.46].forEach((x) => { const e = box(0.12, 0.3, 0.3, color); e.position.set(x, 0.05, 0.02); head.add(e); }); }
-  if (ak === 'mahkota') { const c = box(0.7, 0.18, 0.66, 0xffd23f); c.position.set(0, 0.72, 0.02); head.add(c); [-0.26, 0, 0.26].forEach((x) => { const t = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.22, 4), mat(0xffd23f)); t.position.set(x, 0.92, -0.25); head.add(t); }); }
-  if (ak === 'tanduk') { [-0.28, 0.28].forEach((x) => { const t = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.32, 6), mat(0xff7a1a)); t.position.set(x, 0.72, 0); t.rotation.z = x > 0 ? -0.3 : 0.3; head.add(t); }); }
+  if (ak === 'mahkota') { const c = box(0.7, 0.18, 0.66, 0xffd23f); c.position.set(0, 0.72, 0.02); head.add(c); [-0.26, 0, 0.26].forEach((x) => { const t = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.22, 4), smat(0xffd23f)); t.position.set(x, 0.92, -0.25); head.add(t); }); }
+  if (ak === 'tanduk') { [-0.28, 0.28].forEach((x) => { const t = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.32, 6), smat(0xff7a1a)); t.position.set(x, 0.72, 0); t.rotation.z = x > 0 ? -0.3 : 0.3; head.add(t); }); }
   if (ak === 'sayap') { [-1, 1].forEach((sx) => { const w = box(0.06, 0.55, 0.75, 0xffffff); w.position.set(sx * 0.42, 0.55, 0.32); w.rotation.z = sx * 0.6; body.add(w); }); }
   if (ch.head !== 'peci' && ch.head !== 'topi') { const helm = box(0.9, 0.16, 0.86, color); helm.position.set(0, ch.head === 'jilbab' ? 0.53 : 0.56, 0.02); head.add(helm); }
   g.scale.setScalar(1.15);
-  const rider = { group: g, wheels, legs, body, head, crank: bike.crank, pedals: bike.pedals, crankA: 0.6 };
+  const rider = { group: g, wheels, legs, body, head, arms, crank: bike.crank, pedals: bike.pedals, crankA: 0.6 };
   poseRider(rider, 0.6);
   return rider;
 }
