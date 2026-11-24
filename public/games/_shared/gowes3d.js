@@ -62,23 +62,115 @@ function nameSprite(text, bg) {
   s.scale.set(2.4, 0.6, 1); s.renderOrder = 10; return s;
 }
 
+
+/* ---------- sepeda 3D ---------- */
+const LEG = 0.4, CRANK = 0.16, BB = new THREE.Vector3(0, 0.44, 0.05);
+const G = {
+  tire: new THREE.TorusGeometry(0.385, 0.06, 10, 28).rotateY(Math.PI / 2),
+  rim: new THREE.TorusGeometry(0.33, 0.022, 6, 28).rotateY(Math.PI / 2),
+  hub: new THREE.CylinderGeometry(0.055, 0.055, 0.14, 12).rotateZ(Math.PI / 2),
+  spoke: new THREE.CylinderGeometry(0.009, 0.009, 0.66, 4),
+  ring: new THREE.TorusGeometry(0.12, 0.018, 6, 24).rotateY(Math.PI / 2),
+  cog: new THREE.TorusGeometry(0.055, 0.016, 6, 16).rotateY(Math.PI / 2),
+  arm: new THREE.CapsuleGeometry(0.022, CRANK, 3, 8),
+  pedal: new THREE.BoxGeometry(0.14, 0.035, 0.09),
+  grip: new THREE.CapsuleGeometry(0.035, 0.1, 4, 10).rotateZ(Math.PI / 2),
+  saddle: new THREE.SphereGeometry(1, 16, 10),
+  fender: new THREE.TorusGeometry(0.43, 0.035, 6, 20, Math.PI * 0.7).rotateY(Math.PI / 2),
+  thigh: new THREE.CapsuleGeometry(0.075, LEG - 0.12, 4, 10),
+  sock: new THREE.CylinderGeometry(0.08, 0.08, 0.08, 10),
+  shoe: new THREE.CapsuleGeometry(0.075, 0.12, 4, 10).rotateX(Math.PI / 2),
+};
+function smat(color, rough = 0.45, metal = 0.1) {
+  const k = 's' + new THREE.Color(color).getHex() + '_' + rough + '_' + metal;
+  if (!mats.has(k)) mats.set(k, new THREE.MeshStandardMaterial({ color, roughness: rough, metalness: metal }));
+  return mats.get(k);
+}
+const UP = new THREE.Vector3(0, 1, 0);
+function tube(a, b, r, m, seg = 10) {
+  const d = new THREE.Vector3().subVectors(b, a), len = d.length();
+  const mesh = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len, seg), m);
+  mesh.position.copy(a).addScaledVector(d, 0.5); mesh.quaternion.setFromUnitVectors(UP, d.normalize()); mesh.castShadow = true;
+  return mesh;
+}
+function joint(p, r, m) { const s = new THREE.Mesh(new THREE.SphereGeometry(r, 10, 8), m); s.position.copy(p); return s; }
+function buildBike(color) {
+  const g = new THREE.Group();
+  const paint = smat(color, 0.32, 0.25), chrome = smat(0xdfe5ee, 0.25, 0.6), rubber = smat(0x262536, 0.85, 0), dark = smat(0x3a3950, 0.5, 0.3);
+  const V = (x, y, z) => new THREE.Vector3(x, y, z);
+  const R = V(0, 0.45, 0.72), F = V(0, 0.45, -0.72);
+  const S = V(0, 0.98, 0.3), H = V(0, 1.02, -0.52), Hb = V(0, 0.8, -0.58);
+  // roda
+  const wheels = [];
+  [F, R].forEach((c) => {
+    const w = new THREE.Group(); w.position.copy(c);
+    const tire = new THREE.Mesh(G.tire, rubber); tire.castShadow = true; w.add(tire);
+    w.add(new THREE.Mesh(G.rim, chrome));
+    w.add(new THREE.Mesh(G.hub, paint));
+    for (let i = 0; i < 6; i++) { const sp = new THREE.Mesh(G.spoke, chrome); sp.rotation.x = i * Math.PI / 6; w.add(sp); }
+    g.add(w); wheels.push(w);
+    const fe = new THREE.Mesh(G.fender, paint); fe.position.copy(c); fe.rotation.x = c === F ? 0.25 : 0.75; g.add(fe);
+  });
+  // rangka
+  const fr = 0.045;
+  g.add(tube(S, H, fr, paint), tube(Hb, BB, fr * 1.15, paint), tube(BB, S, fr, paint), tube(Hb, H, fr * 1.2, paint));
+  [-1, 1].forEach((sx) => {
+    const off = V(sx * 0.07, 0, 0);
+    g.add(tube(BB.clone().add(off), R.clone().add(off), 0.028, paint), tube(S.clone().add(V(sx * 0.03, 0, 0)), R.clone().add(off), 0.026, paint));
+    g.add(tube(Hb.clone().add(V(sx * 0.03, 0, 0)), F.clone().add(off), 0.03, chrome));
+  });
+  [S, H, Hb, BB].forEach((p) => g.add(joint(p, fr * 1.15, paint)));
+  // setang & grip
+  const top = V(0, 1.38, -0.5);
+  g.add(tube(H, top, 0.03, chrome));
+  const barL = V(-0.36, 1.42, -0.48), barR = V(0.36, 1.42, -0.48);
+  g.add(tube(barL, barR, 0.024, chrome));
+  [barL, barR].forEach((p) => { const gr = new THREE.Mesh(G.grip, smat(0xff5d8f, 0.7, 0)); gr.position.copy(p); gr.position.x *= 0.92; g.add(gr); });
+  // sadel
+  const post = V(0, 1.08, 0.34); g.add(tube(S, post, 0.022, chrome));
+  const sad = new THREE.Mesh(G.saddle, smat(0x2b2a40, 0.6, 0)); sad.scale.set(0.13, 0.05, 0.2); sad.position.set(0, 1.11, 0.33); sad.castShadow = true; g.add(sad);
+  const nose = new THREE.Mesh(G.saddle, sad.material); nose.scale.set(0.06, 0.04, 0.12); nose.position.set(0, 1.1, 0.2); g.add(nose);
+  // gir, rantai, crank, pedal
+  const ringX = 0.1;
+  const ring = new THREE.Mesh(G.ring, chrome); ring.position.copy(BB).setX(ringX); g.add(ring);
+  const cog = new THREE.Mesh(G.cog, chrome); cog.position.copy(R).setX(ringX); g.add(cog);
+  g.add(tube(V(ringX, BB.y + 0.12, BB.z), V(ringX, R.y + 0.055, R.z), 0.012, dark, 5), tube(V(ringX, BB.y - 0.12, BB.z), V(ringX, R.y - 0.055, R.z), 0.012, dark, 5));
+  const crank = new THREE.Group(); crank.position.copy(BB); g.add(crank);
+  crank.add(new THREE.Mesh(G.hub, dark));
+  const pedals = [];
+  [[0.13, -1], [-0.13, 1]].forEach(([x, dir]) => {
+    const arm = new THREE.Mesh(G.arm, chrome); arm.position.set(x, dir * CRANK / 2, 0); crank.add(arm);
+    const pd = new THREE.Group(); pd.position.set(x + Math.sign(x) * 0.05, dir * CRANK, 0); crank.add(pd);
+    pd.add(new THREE.Mesh(G.pedal, dark)); pedals.push(pd);
+  });
+  return { group: g, wheels, crank, pedals };
+}
+/** Atur crank, pedal (tetap datar), dan kaki (IK 2 tulang) ke sudut crank a. */
+function poseRider(r, a) {
+  r.crankA = a; r.crank.rotation.x = a;
+  r.pedals.forEach((p) => { p.rotation.x = -a; });
+  const hy = r.body.position.y, hz = r.body.position.z;
+  r.legs.forEach((l, i) => {
+    const aa = a + (i ? 0 : Math.PI);
+    const py = BB.y - Math.cos(aa) * CRANK * (i ? 1 : 1), pz = BB.z - Math.sin(aa) * CRANK;
+    const dy = py - (hy + l.position.y), dz = pz - (hz + l.position.z);
+    const D = Math.min(LEG * 2 - 0.001, Math.max(0.12, Math.hypot(dy, dz)));
+    const phi = Math.atan2(-dz, -dy);
+    const alpha = Math.acos(Math.min(1, D / (2 * LEG)));
+    l.rotation.x = phi + alpha;
+    l.userData.knee.rotation.x = -2 * alpha;
+  });
+}
+
 /** Anak sekolah bersepeda, proporsi chibi (kepala besar). */
 export function makeRider(color, ch) {
   ch = Object.assign(defaultChar(0), ch || {});
   const skin = new THREE.Color(ch.skin).getHex();
   const u = UNIFORM[ch.seragam] || UNIFORM.sd;
   const g = new THREE.Group();
-  // sepeda
-  const wheels = [];
-  [-0.75, 0.75].forEach((z) => {
-    const w = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.09, 8, 20), mat(0x2b2a40)); w.rotation.y = Math.PI / 2; w.position.set(0, 0.47, z); g.add(w); wheels.push(w);
-    const sp = box(0.06, 0.7, 0.06, 0xcccccc); sp.position.set(0, 0.47, z); w.userData.sp = sp; g.add(sp); wheels.push(sp);
-  });
-  const fr = box(0.14, 0.14, 1.4, color); fr.position.set(0, 0.85, 0); g.add(fr);
-  const dn = box(0.12, 0.55, 0.12, color); dn.position.set(0, 0.65, 0.1); g.add(dn);
-  const fk = box(0.1, 0.6, 0.1, 0x555566); fk.position.set(0, 0.75, -0.72); g.add(fk);
-  const bar = box(0.8, 0.09, 0.09, INK); bar.position.set(0, 1.1, -0.65); g.add(bar);
-  const seat = box(0.26, 0.1, 0.36, INK); seat.position.set(0, 1.06, 0.4); g.add(seat);
+  // sepeda (stylized: tabung halus, roda berjari-jari, crank + pedal + rantai)
+  const bike = buildBike(color); g.add(bike.group);
+  const wheels = bike.wheels;
   // badan
   const body = new THREE.Group(); body.position.set(0, 1.12, 0.3); g.add(body);
   const top = box(0.62, 0.62, 0.42, u.top); top.position.set(0, 0.4, -0.12); top.rotation.x = -0.4; body.add(top);
@@ -89,7 +181,16 @@ export function makeRider(color, ch) {
   const bag = box(0.5, 0.52, 0.22, color); bag.position.set(0, 0.48, 0.24); bag.rotation.x = -0.4; body.add(bag);
   [-0.36, 0.36].forEach((x) => { const a = box(0.15, 0.15, 0.62, u.top); a.position.set(x, 0.48, -0.5); a.rotation.x = 0.45; body.add(a); const h = box(0.15, 0.15, 0.15, skin); h.position.set(x, 0.33, -0.8); body.add(h); });
   const legs = [];
-  [-0.17, 0.17].forEach((x) => { const l = new THREE.Group(); l.position.set(x, -0.04, -0.08); const t = box(0.17, 0.48, 0.17, ch.seragam === 'olahraga' ? u.bottom : skin); t.position.y = -0.24; l.add(t); const sh = box(0.2, 0.12, 0.28, 0xffffff); sh.position.set(0, -0.5, -0.05); l.add(sh); body.add(l); legs.push(l); });
+  const legC = ch.seragam === 'olahraga' ? u.bottom : skin;
+  [-0.15, 0.15].forEach((x) => {
+    const l = new THREE.Group(); l.position.set(x, -0.04, -0.08);
+    const t = new THREE.Mesh(G.thigh, smat(legC, 0.8)); t.position.y = -LEG / 2; t.castShadow = true; l.add(t);
+    const knee = new THREE.Group(); knee.position.y = -LEG; l.add(knee);
+    const sh = new THREE.Mesh(G.thigh, smat(legC, 0.8)); sh.position.y = -LEG / 2; sh.castShadow = true; knee.add(sh);
+    const sock = new THREE.Mesh(G.sock, smat(0xffffff, 0.8)); sock.position.y = -LEG + 0.04; knee.add(sock);
+    const shoe = new THREE.Mesh(G.shoe, smat(0x2b2a40, 0.6)); shoe.position.set(0, -LEG - 0.02, -0.06); shoe.castShadow = true; knee.add(shoe);
+    l.userData.knee = knee; body.add(l); legs.push(l);
+  });
   // kepala besar
   const head = new THREE.Group(); head.position.set(0, 1.12, -0.38); body.add(head);
   const skinM = mat(skin), faceM = faceMat(ch.skin);
@@ -117,7 +218,9 @@ export function makeRider(color, ch) {
   if (ak === 'sayap') { [-1, 1].forEach((sx) => { const w = box(0.06, 0.55, 0.75, 0xffffff); w.position.set(sx * 0.42, 0.55, 0.32); w.rotation.z = sx * 0.6; body.add(w); }); }
   if (ch.head !== 'peci' && ch.head !== 'topi') { const helm = box(0.9, 0.16, 0.86, color); helm.position.set(0, ch.head === 'jilbab' ? 0.53 : 0.56, 0.02); head.add(helm); }
   g.scale.setScalar(1.15);
-  return { group: g, wheels, legs, body, head };
+  const rider = { group: g, wheels, legs, body, head, crank: bike.crank, pedals: bike.pedals, crankA: 0.6 };
+  poseRider(rider, 0.6);
+  return rider;
 }
 
 /* ---------- lingkungan ---------- */
@@ -312,10 +415,10 @@ export function mount(sceneEl) {
       const moved = Math.abs(r.z - before);
       const vz = center + (r.z - center) * K;
       if (podium && podium.built) { r.group.visible = !!r.podium; if (r.podium) { r.group.position.copy(r.podium); r.group.rotation.y = Math.PI; } } else r.group.position.set(r.lane, 0, vz);
-      r.wheels.forEach((w) => { w.rotation.x -= moved * 2.4 + dt * 0.5; });
-      const pedal = moved > 0.002 ? 0.9 : 0.15;
-      r.legs[0].rotation.x = Math.sin(now / 80) * pedal; r.legs[1].rotation.x = -r.legs[0].rotation.x;
-      r.body.position.y = 1.12 + Math.abs(Math.sin(now / 80)) * (moved > 0.002 ? 0.06 : 0);
+      const spin = moved * 2.4 + dt * 0.5;                      // roda & crank satu sumber gerak
+      r.wheels.forEach((w) => { w.rotation.x -= spin; });
+      r.body.position.y = 1.12 + Math.abs(Math.sin(r.crankA)) * (moved > 0.002 ? 0.03 : 0);
+      poseRider(r, r.crankA - spin * 0.55);
       r.head.rotation.z = Math.sin(now / 400 + r.lane) * 0.05;
       r.tilt += ((r.wob ? Math.sin(now / 45) * 0.35 : Math.sin(now / 160) * (moved > 0.002 ? 0.04 : 0)) - r.tilt) * Math.min(1, dt * 8);
       r.group.rotation.z = r.tilt;
