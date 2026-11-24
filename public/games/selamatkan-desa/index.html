@@ -9,157 +9,117 @@
 <style>
   :root { --ink:#1b1a3a; --cream:#fff6dc; --yellow:#ffd23f; --orange:#ff7a1a; --pink:#ff5d8f; --mint:#2ec4b6; --blue:#4aa8ff; --green:#22c55e; }
   * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
-  html, body { width:100%; height:100%; overflow:hidden; background:#7cc06a; color:var(--ink); font-family:Nunito, sans-serif; touch-action:none; }
+  html, body { width:100%; height:100%; overflow:hidden; background:#6fb7d8; color:var(--ink); font-family:Nunito, sans-serif; touch-action:manipulation; }
   button { font:inherit; color:inherit; cursor:pointer; border:0; background:none; }
   .hidden { display:none !important; }
   .nb { border:3px solid var(--ink); box-shadow:4px 4px 0 var(--ink); }
   .nb-sm { border:2px solid var(--ink); box-shadow:2px 2px 0 var(--ink); }
   .press:active { transform:translate(3px,3px); box-shadow:1px 1px 0 var(--ink); }
-  #cv { position:fixed; inset:0; width:100%; height:100%; display:block; }
+
+  #app { position:fixed; inset:0; display:flex; flex-direction:column; }
+  #stage { position:relative; flex:1; min-height:0; }
+  #cv { position:absolute; inset:0; width:100%; height:100%; display:block; }
+  #pads { flex:none; display:grid; gap:0; border-top:3px solid var(--ink); background:var(--ink); }
 
   .screen { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; padding:12px; overflow:auto; z-index:20; }
-  #menu { background:linear-gradient(160deg, rgba(74,168,255,.55), rgba(46,196,182,.55)); }
-  .card { background:#fff; border-radius:22px; padding:16px 20px; width:min(100%, 620px); text-align:center; margin:auto; }
+  #menu { background:linear-gradient(160deg, rgba(74,168,255,.6), rgba(46,196,182,.6)); }
+  .card { background:#fff; border-radius:22px; padding:16px 20px; width:min(100%, 640px); text-align:center; margin:auto; }
   .card h1 { font:700 clamp(26px, 5.5vh, 42px)/1.05 Fredoka, sans-serif; }
-  .card h1 span { color:var(--green); }
+  .card h1 span { color:#1e9be0; }
   .sub { font-size:15px; font-weight:700; opacity:.8; margin-top:6px; }
-  .row { margin-top:12px; display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; }
+  .row { margin-top:10px; display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; }
   .lbl { font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.6px; min-width:64px; }
   .seg { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; }
-  .seg button { min-height:44px; padding:8px 14px; border-radius:12px; font-weight:900; font-size:15px; background:#fff; }
+  .seg button { min-height:44px; padding:8px 13px; border-radius:12px; font-weight:900; font-size:15px; background:#fff; }
   .seg button.on { background:var(--yellow); }
-  .chars { display:flex; gap:12px; justify-content:center; margin-top:12px; }
-  .char { width:min(42vw, 150px); border-radius:18px; background:var(--cream); padding:8px 6px 6px; display:flex; flex-direction:column; align-items:center; gap:4px; font-weight:900; }
-  .char img { height:min(24vh, 170px); object-fit:contain; pointer-events:none; }
-  .char.on { background:var(--yellow); outline:4px solid var(--green); }
-  .best { margin-top:8px; font-weight:800; font-size:14px; min-height:18px; }
-  #start { margin-top:12px; width:100%; min-height:52px; padding:12px; border-radius:16px; background:var(--green); font:700 22px Fredoka, sans-serif; color:#fff; text-shadow:2px 2px 0 var(--ink); }
+  .names { margin-top:10px; display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:8px; }
+  .nm { display:flex; align-items:center; gap:6px; }
+  .nm .dot { width:14px; height:14px; border-radius:50%; border:2px solid var(--ink); flex:none; }
+  .nm input { flex:1; min-width:0; min-height:44px; font:inherit; font-weight:800; border:2px solid var(--ink); border-radius:10px; padding:6px 10px; }
+  .nm .ch { width:48px; height:48px; border-radius:12px; background:var(--cream); flex:none; display:grid; place-items:center; overflow:hidden; }
+  .nm .ch img { height:44px; }
+  #start { margin-top:12px; width:100%; min-height:52px; padding:12px; border-radius:16px; background:#1e9be0; font:700 22px Fredoka, sans-serif; color:#fff; text-shadow:2px 2px 0 var(--ink); }
 
-  /* cerita */
-  #story { background:rgba(27,26,58,.75); }
-  #story .card { max-width:520px; }
-  #story .big { font-size:72px; line-height:1.1; }
-  #story p { font-weight:900; font-size:clamp(17px, 2.6vh, 22px); margin-top:8px; line-height:1.35; }
-  #story .btns { margin-top:14px; display:flex; gap:8px; }
-  #story .btns button { flex:1; min-height:48px; border-radius:14px; font-weight:900; font-size:16px; }
+  .topbar { position:absolute; top:6px; left:8px; right:8px; display:flex; gap:6px; align-items:center; z-index:5; pointer-events:none; }
+  .pill { background:#fff; border:2px solid var(--ink); box-shadow:2px 2px 0 var(--ink); border-radius:99px; padding:3px 12px; font:800 14px Nunito, sans-serif; white-space:nowrap; }
+  .topbar .sp { flex:1; }
+  .topbar button { pointer-events:auto; background:#fff; border:2px solid var(--ink); box-shadow:2px 2px 0 var(--ink); border-radius:99px; width:40px; height:40px; font-size:16px; }
+  .banner { position:absolute; left:50%; top:38%; transform:translate(-50%,-50%); z-index:6; font:700 clamp(30px, 9vh, 72px) Fredoka, sans-serif; color:#fff; text-shadow:4px 4px 0 var(--ink); pointer-events:none; white-space:nowrap; animation:bn 1.6s ease forwards; }
+  @keyframes bn { 0% { opacity:0; transform:translate(-50%,-50%) scale(.5); } 20% { opacity:1; transform:translate(-50%,-50%) scale(1.1); } 80% { opacity:1; } 100% { opacity:0; } }
 
-  /* HUD */
-  .hud { position:fixed; top:8px; left:8px; right:8px; display:flex; gap:6px; align-items:flex-start; z-index:5; pointer-events:none; flex-wrap:wrap; }
-  .pill { background:#fff; border:2px solid var(--ink); box-shadow:2px 2px 0 var(--ink); border-radius:99px; padding:4px 12px; font:800 14px Nunito, sans-serif; white-space:nowrap; pointer-events:auto; }
-  .mission { background:var(--cream); }
-  .hud .sp { flex:1; }
-  .hud button { pointer-events:auto; background:#fff; border:2px solid var(--ink); box-shadow:2px 2px 0 var(--ink); border-radius:99px; width:40px; height:40px; font-size:16px; }
-  .bag { display:flex; gap:4px; align-items:center; background:#fff; border:2px solid var(--ink); box-shadow:2px 2px 0 var(--ink); border-radius:14px; padding:3px 6px; }
-  .bag .slot { width:38px; height:38px; border-radius:10px; background:#eef5ff; border:2px dashed #b9c3d6; display:grid; place-items:center; }
-  .bag .slot img { max-width:32px; max-height:32px; }
-  .bag .slot.capit { background:#ffe3ea; border-color:#ff9aa8; }
-  .bag small { font-weight:900; font-size:11px; }
-  .toast { position:fixed; left:50%; top:62px; transform:translateX(-50%); z-index:30; background:#fff; border:3px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:16px; padding:8px 14px; font-weight:900; font-size:clamp(14px, 2.2vh, 18px); max-width:min(92vw, 560px); text-align:center; pointer-events:none; animation:tin .25s ease; }
-  .toast.good { background:#c8f7dc; } .toast.bad { background:#ffe0e6; } .toast.warn { background:#fff3c4; }
-  @keyframes tin { from { opacity:0; transform:translate(-50%,-10px); } }
+  /* panel pemain */
+  .pad { background:#fff; border-right:3px solid var(--ink); display:flex; flex-direction:column; min-width:0; position:relative; }
+  .pad:last-child { border-right:0; }
+  .pad header { background:var(--c); border-bottom:3px solid var(--ink); display:flex; align-items:center; gap:6px; padding:3px 8px; font-weight:900; font-size:clamp(12px, 2vh, 16px); }
+  .pad header .nmx { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .pad header .kh { font-size:11px; opacity:.7; }
+  .pad .sc { background:#fff; border:2px solid var(--ink); border-radius:99px; padding:0 8px; }
+  .pad .clean { height:7px; background:#d6e4ee; }
+  .pad .clean i { display:block; height:100%; width:100%; background:linear-gradient(90deg, #4aa8ff, #22c55e); transition:width .3s; }
+  .pad .body { flex:1; display:grid; grid-template-columns:1fr auto 1fr; gap:6px; padding:6px; align-items:stretch; min-height:0; }
+  .pad .cur { width:clamp(54px, 11vh, 96px); display:grid; place-items:center; border-radius:14px; background:#eaf6ff; border:2px dashed #9cc9e8; }
+  .pad .cur img { max-width:90%; max-height:90%; }
+  .pad .cur.ready { background:#fff3c4; border:3px solid var(--orange); animation:pulse .6s ease infinite alternate; }
+  @keyframes pulse { to { transform:scale(1.06); } }
+  .pad .bt { border-radius:16px; min-height:64px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; font:900 clamp(13px, 2.2vh, 18px) Nunito, sans-serif; }
+  .pad .bt img { height:clamp(30px, 8vh, 72px); pointer-events:none; }
+  .pad .bt.org { background:#c8f7d6; } .pad .bt.ano { background:#cfe8ff; }
+  .pad .msg { position:absolute; left:6px; right:6px; bottom:6px; background:#ffe0e6; border:2px solid var(--ink); border-radius:12px; padding:4px 8px; font-weight:900; font-size:clamp(11px, 1.8vh, 14px); text-align:center; pointer-events:none; }
+  .pad.frozen .body { opacity:.45; animation:shk .35s; }
+  .pad.good .cur { background:#c8f7dc; }
+  @keyframes shk { 25% { transform:translateX(-6px); } 75% { transform:translateX(6px); } }
+  .pad.win { background:var(--yellow); }
+  @media (min-width:900px) and (pointer:fine) { .pad header .kh { display:inline; } }
+  @media (max-width:899px), (pointer:coarse) { .pad header .kh { display:none; } }
 
-  /* kontrol */
-  #joy { position:fixed; left:18px; bottom:18px; width:140px; height:140px; border-radius:50%; background:rgba(255,255,255,.35); border:3px solid rgba(27,26,58,.5); z-index:6; touch-action:none; }
-  #joy i { position:absolute; left:50%; top:50%; width:62px; height:62px; margin:-31px 0 0 -31px; border-radius:50%; background:#fff; border:3px solid var(--ink); box-shadow:2px 2px 0 var(--ink); }
-  #act { position:fixed; right:18px; bottom:22px; z-index:6; min-width:128px; min-height:72px; padding:8px 16px; border-radius:20px; background:var(--yellow); font:900 17px Nunito, sans-serif; line-height:1.15; }
-  #act.dim { background:#e6e6ea; color:#777; box-shadow:2px 2px 0 #999; border-color:#999; }
-  #act2 { position:fixed; right:18px; bottom:106px; z-index:6; min-width:128px; min-height:56px; padding:6px 14px; border-radius:18px; background:#ffe0e6; font:900 15px Nunito, sans-serif; }
-  .keys { position:fixed; left:12px; bottom:12px; z-index:5; background:rgba(255,255,255,.85); border:2px solid var(--ink); border-radius:12px; padding:4px 10px; font-weight:800; font-size:12px; }
-
-  /* pos pemilahan */
-  #sort { background:rgba(27,26,58,.55); z-index:15; }
-  #sort .card { max-width:640px; }
-  #sort h2 { font:700 24px Fredoka, sans-serif; }
-  .sitems { display:flex; gap:10px; justify-content:center; margin-top:10px; min-height:96px; flex-wrap:wrap; }
-  .sitem { width:92px; height:92px; border-radius:16px; background:var(--cream); display:grid; place-items:center; touch-action:none; cursor:grab; }
-  .sitem img { max-width:76px; max-height:76px; pointer-events:none; }
-  .sitem.sel { background:var(--yellow); outline:4px solid var(--orange); }
-  .bins { display:flex; gap:14px; justify-content:center; margin-top:14px; }
-  .bin { width:min(40vw, 170px); border-radius:18px; padding:8px; background:#f4f7fb; display:flex; flex-direction:column; align-items:center; gap:4px; font-weight:900; }
-  .bin img { height:min(20vh, 150px); pointer-events:none; }
-  .bin.hot { outline:4px solid var(--orange); background:#fff3c4; }
-  .ghost { position:fixed; z-index:9999; width:80px; height:80px; pointer-events:none; transform:translate(-50%,-50%) scale(1.15); }
-  #sort .close { margin-top:12px; min-height:48px; padding:8px 18px; border-radius:14px; background:#fff; font-weight:900; }
-  .hint2 { font-weight:800; opacity:.75; margin-top:6px; font-size:14px; }
-
-  /* menang */
-  #win { background:rgba(27,26,58,.55); }
-  .stars { font-size:48px; letter-spacing:4px; margin-top:6px; }
-  .stat { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px; }
-  .stat div { background:var(--cream); border-radius:12px; padding:6px 2px; font:700 22px Fredoka, sans-serif; }
-  .stat small { display:block; font:800 12px Nunito, sans-serif; opacity:.75; }
+  #result { background:rgba(27,26,58,.6); }
+  .rank { margin-top:10px; display:grid; gap:6px; }
+  .rank div { display:flex; align-items:center; gap:10px; background:var(--cream); border-radius:12px; padding:6px 12px; font-weight:900; text-align:left; }
+  .rank b { font:700 22px Fredoka, sans-serif; width:30px; }
+  .rank span { flex:1; } .rank small { opacity:.7; font-weight:800; }
   .wbtns { margin-top:14px; display:flex; gap:8px; } .wbtns button { flex:1; min-height:50px; border-radius:14px; font-weight:900; font-size:16px; }
-  @media (max-height:520px) { #sort .card { padding:10px 14px; } #sort h2 { font-size:19px; } .hint2 { font-size:12px; margin-top:2px; } .sitems { min-height:70px; margin-top:6px; } .sitem { width:68px; height:68px; } .sitem img { max-width:56px; max-height:56px; } .bins { margin-top:8px; } .bin img { height:22vh; } #sort .close { margin-top:6px; min-height:40px; } .toast { top:8px; } }
-  @media (max-width:600px) { .pill { font-size:12px; padding:3px 9px; } .bag .slot { width:32px; height:32px; } .bag .slot img { max-width:26px; max-height:26px; } #act { min-width:110px; min-height:64px; font-size:15px; } #joy { width:120px; height:120px; } }
 </style>
 <link rel="stylesheet" href="/games/_shared/theme.css">
 </head>
 <body>
-<canvas id="cv"></canvas>
+<div id="app">
+  <div id="stage">
+    <canvas id="cv"></canvas>
+    <div class="topbar hidden" id="topbar">
+      <span class="pill" id="hTarget">Target 15</span>
+      <span class="sp"></span>
+      <button id="bMute" aria-label="Suara">🔊</button>
+      <button id="bExit" aria-label="Selesai">✖</button>
+    </div>
+  </div>
+  <div id="pads" class="hidden"></div>
+</div>
 
 <div id="menu" class="screen">
   <div class="card nb">
-    <h1>Misi Selamatkan <span>Desa</span> 🌧️</h1>
-    <div class="sub">Desa banjir karena saluran tersumbat sampah. Ambil sampahnya, lalu pilah ke tempat yang benar.</div>
-    <div class="chars" id="chars">
-      <button class="char nb-sm press" data-c="boy"><img src="assets/boy.png" alt="Anak laki-laki">Laki-laki</button>
-      <button class="char nb-sm press" data-c="girl"><img src="assets/girl.png" alt="Anak perempuan berjilbab">Perempuan</button>
-    </div>
+    <h1>Misi Selamatkan <span>Desa</span> 🌊</h1>
+    <div class="sub">Hujan membuat sampah hanyut di sungai. Siapa paling cepat memilah sampah?</div>
+    <div class="row"><span class="lbl">Pemain</span>
+      <div class="seg" id="segPlayers"><button class="nb-sm press" data-n="1">1 vs 🤖</button><button class="nb-sm press" data-n="2">2</button><button class="nb-sm press" data-n="3">3</button><button class="nb-sm press" data-n="4">4</button></div></div>
+    <div class="names" id="names"></div>
     <div class="row"><span class="lbl">Tingkat</span>
-      <div class="seg" id="segLevel"><button class="nb-sm press" data-n="1">Mudah</button><button class="nb-sm press" data-n="2">Normal</button><button class="nb-sm press" data-n="3">Seru ⏱</button></div></div>
+      <div class="seg" id="segLevel"><button class="nb-sm press" data-n="1">Mudah</button><button class="nb-sm press" data-n="2">Sedang</button><button class="nb-sm press" data-n="3">Sulit</button></div></div>
+    <div class="row"><span class="lbl">Tempo</span>
+      <div class="seg" id="segTempo"><button class="nb-sm press" data-n="0.7">🐢 Lambat</button><button class="nb-sm press" data-n="1">🚶 Sedang</button><button class="nb-sm press" data-n="1.35">🚀 Cepat</button></div></div>
+    <div class="row"><span class="lbl">Target</span>
+      <div class="seg" id="segTarget"><button class="nb-sm press" data-n="10">10 sampah</button><button class="nb-sm press" data-n="15">15</button><button class="nb-sm press" data-n="20">20</button></div></div>
     <div class="row"><span class="lbl">Grafik</span>
       <div class="seg" id="segGfx"><button class="nb-sm press" data-n="bagus">✨ Bagus</button><button class="nb-sm press" data-n="ringan">⚡ Ringan</button></div></div>
-    <div class="best" id="best"></div>
-    <button id="start" class="nb press">▶ MULAI MISI</button>
+    <button id="start" class="nb press">▶ MULAI</button>
   </div>
 </div>
 
-<div id="story" class="screen hidden">
+<div id="result" class="screen hidden">
   <div class="card nb">
-    <div class="big" id="stIcon">🌧️</div>
-    <p id="stText"></p>
-    <div class="btns"><button id="stSkip" class="nb-sm press" style="background:#fff">Lewati</button><button id="stNext" class="nb press" style="background:var(--green);color:#fff">Lanjut ▶</button></div>
-  </div>
-</div>
-
-<div id="hud" class="hud hidden">
-  <span class="pill" id="hScore">⭐ 0</span>
-  <span class="pill mission" id="hMission">Saluran bersih 0/3</span>
-  <span class="pill hidden" id="hTime">⏱ 4:00</span>
-  <div class="bag" id="bag"></div>
-  <span class="sp"></span>
-  <button id="bMute" aria-label="Suara">🔊</button>
-  <button id="bExit" aria-label="Selesai">✖</button>
-</div>
-<div id="joy" class="hidden" aria-hidden="true"><i></i></div>
-<button id="act2" class="nb press hidden"></button>
-<button id="act" class="nb press hidden">Dekati sampah</button>
-<div class="keys hidden" id="keys">⌨ WASD / panah = jalan · Spasi = aksi · klik tanah = jalan ke sana</div>
-
-<div id="sort" class="screen hidden">
-  <div class="card nb">
-    <h2>Pos Pemilahan</h2>
-    <div class="hint2">Seret sampah ke tempat sampah yang benar. Bisa juga ketuk sampah, lalu ketuk tempatnya.</div>
-    <div class="sitems" id="sitems"></div>
-    <div class="bins">
-      <div class="bin nb-sm" data-cat="organik"><img src="assets/bin-organik.png" alt="">🌿 Organik</div>
-      <div class="bin nb-sm" data-cat="anorganik"><img src="assets/bin-anorganik.png" alt="">♻️ Anorganik</div>
-    </div>
-    <button class="close nb-sm press" id="sortClose">Kembali jalan</button>
-  </div>
-</div>
-
-<div id="win" class="screen hidden">
-  <div class="card nb">
-    <h1 id="wTitle">Desa selamat! 🎉</h1>
-    <div class="stars" id="wStars">⭐⭐⭐</div>
-    <div class="sub" id="wSub"></div>
-    <div class="stat">
-      <div><span id="wOrg">0</span><small>🌿 Organik</small></div>
-      <div><span id="wAno">0</span><small>♻️ Anorganik</small></div>
-      <div><span id="wB3">0</span><small>☢️ B3 aman</small></div>
-    </div>
-    <div class="wbtns"><button id="again" class="nb press" style="background:var(--green);color:#fff">🔄 Main lagi</button><button id="toMenu" class="nb press" style="background:var(--yellow)">🏠 Menu</button></div>
+    <h1 id="rTitle">Sungai bersih! 🎉</h1>
+    <div class="sub" id="rSub"></div>
+    <div class="rank" id="rank"></div>
+    <div class="wbtns"><button id="again" class="nb press" style="background:#1e9be0;color:#fff">🔄 Main lagi</button><button id="toMenu" class="nb press" style="background:var(--yellow)">🏠 Menu</button></div>
   </div>
 </div>
 
