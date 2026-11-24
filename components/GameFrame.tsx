@@ -7,7 +7,8 @@ export default function GameFrame({ title, src, portraitOk = false, slug, needsK
   const box = useRef<HTMLDivElement>(null);
   const [portrait, setPortrait] = useState(false);
   const [full, setFull] = useState(false);
-  const [intro, setIntro] = useState(() => !/[?&]room=/.test(src));
+  const [intro, setIntro] = useState(true);
+  const inRoom = /[?&]room=/.test(src);
   const [menu, setMenu] = useState(false);
   const [dim, setDim] = useState(false);
   const [run, setRun] = useState(0); // naik = muat ulang game
@@ -108,9 +109,9 @@ export default function GameFrame({ title, src, portraitOk = false, slug, needsK
               {touch && <span className="block mt-1">Layar ini sepertinya sentuh saja. Papan ketik belum tentu muncul dengan baik.</span>}
             </p>
           )}
-          <button onClick={() => begin(true)} className={`${btn} bg-[#22c55e] text-lg px-8 py-3 min-h-[52px]`}>▶ MAIN (LAYAR PENUH)</button>
-          <button onClick={() => begin(false)} className="underline text-sm font-bold min-h-[44px] px-3">Main tanpa layar penuh</button>
-          <Link href={slug ? `/permainan/${slug}` : "/game"} className="underline text-xs font-bold opacity-80 min-h-[44px] grid place-items-center px-3">◀ Kembali</Link>
+          <button onClick={() => begin(true)} className={`${btn} bg-[#22c55e] text-lg px-8 py-3 min-h-[52px]`}>{inRoom ? "▶ MASUK RUANG (LAYAR PENUH)" : "▶ MAIN (LAYAR PENUH)"}</button>
+          <button onClick={() => begin(false)} className="underline text-sm font-bold min-h-[44px] px-3">{inRoom ? "Masuk tanpa layar penuh" : "Main tanpa layar penuh"}</button>
+          {!inRoom && <Link href={slug ? `/permainan/${slug}` : "/game"} className="underline text-xs font-bold opacity-80 min-h-[44px] grid place-items-center px-3">◀ Kembali</Link>}
         </div>
       )}
 
