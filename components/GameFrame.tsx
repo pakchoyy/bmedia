@@ -61,6 +61,11 @@ export default function GameFrame({ title, src, portraitOk = false, slug }: { ti
             <span aria-hidden="true">🏠</span> Beranda
           </Link>
         )}
+        {/^https?:/.test(src) && !full && (
+          <a href={src} target="_blank" rel="noopener" className={`${btn} bg-white`} aria-label="Buka game di tab baru">
+            <span aria-hidden="true">↗</span> Tab baru
+          </a>
+        )}
         <button onClick={toggleFull} className={`${btn} bg-white`} aria-label={full ? "Keluar layar penuh" : "Layar penuh"}>
           <span aria-hidden="true">{full ? "↙" : "⛶"}</span> {full ? "Keluar" : "Layar penuh"}
         </button>
