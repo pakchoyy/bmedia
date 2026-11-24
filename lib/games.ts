@@ -40,10 +40,10 @@ export const GAMES: GameInfo[] = [
     src: "/games/kupu-kupu/index.html",
     tagline: "Tangkap kupu-kupu di taman. Tiap beberapa tangkapan, jawab soal untuk poin ekstra!",
     preview: "/games/kupu-kupu/cover.jpg",
-    modes: ["Main Bebas", "Edukasi", "Duel 2 Pemain", "Layar Bersama 2–4", "Mabar Online"],
+    modes: ["Belajar Metamorfosis", "Misi Sendiri", "Kerja Sama 2 Pemain"],
     mapel: "Semua mapel",
     fase: "SD (Fase A–C)",
-    caraMain: ["Gerakkan anak dengan joystick atau tombol panah.", "Tangkap kupu-kupu dengan jaring; tiap beberapa tangkapan muncul soal.", "Jawab benar untuk poin ekstra. Pilih mode Duel atau Layar Bersama untuk main berdua sampai berempat."],
+    caraMain: ["Pilih Belajar untuk mengenal metamorfosis kupu-kupu.", "Main Sendiri: ikuti misi, misalnya tangkap 2 kupu biru atau temukan ulat.", "Kerja Sama: dua pemain menyelesaikan misi bersama dengan skor tim."],
     cara: ["sendiri", "ifp", "online"],
   },
   {
