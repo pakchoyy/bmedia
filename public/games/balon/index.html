@@ -119,6 +119,7 @@
 
 <script src="/games/_shared/mathgen.js"></script>
 <script src="/games/_shared/sfx.js"></script>
+<script src="/games/_shared/dialog.js"></script>
 <script src="/games/_shared/suara.js"></script>
 <script src="/games/_shared/tutor.js"></script>
 <script src="/games/_shared/koin.js"></script>
@@ -291,7 +292,7 @@
     lanes = names.map(function (n, i) { return buildLane(i, n); });
     lanes.forEach(function (L) { wrap.appendChild(L.el); });
     $('bMute').onclick = function () { muted = !muted; try { localStorage.setItem('bgy_muted', muted ? '1' : '0'); } catch (e) {} this.textContent = muted ? '🔇' : '🔊'; };
-    $('bExit').onclick = function () { if (confirm('Keluar dari permainan?')) toMenu(); };
+    $('bExit').onclick = function () { Dialog.ask('Selesai bermain sekarang?', function () { toMenu(); }); };
     var n = roomMode ? 0 : 3, ov = document.createElement('div');
     ov.style.cssText = 'position:absolute;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:rgba(27,26,58,.6);color:#fff;font-weight:900;font-size:22vh';
     g.appendChild(ov);

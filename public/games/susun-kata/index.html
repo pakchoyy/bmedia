@@ -68,6 +68,8 @@
   .review { margin-top:10px; max-height:30vh; overflow:auto; text-align:left; font-size:13px; font-weight:700; }
   .review div { padding:3px 6px; border-bottom:1px dashed rgba(27,26,58,.2); }
   @media (prefers-reduced-motion: reduce) { .slots.good .slot.filled, .slots.bad, .toast { animation:none; } }
+  .how { font-weight:800; font-size:clamp(13px, 2.2vh, 16px); opacity:.75; text-align:center; }
+  .slots.reveal .slot { background:#ffe08a; }
   .clue .pic { font-size:clamp(64px, 18vh, 140px); line-height:1.1; display:block; }
   .slot.fixed { background:#c8f7dc; cursor:default; }
   .slot.hot { background:#fff3c4; border-color:var(--orange); transform:scale(1.08); }
@@ -106,13 +108,13 @@
   </div>
   <div class="clue nb"><small id="clueLbl">Petunjuk</small><p id="clue"></p></div>
   <div class="slots" id="slots" aria-live="polite"></div>
+  <div class="how" id="how">Seret huruf ke kotak kosong. Bisa juga ketuk hurufnya.</div>
   <div class="pool" id="pool"></div>
   <div class="tools">
     <button class="nb-sm press" id="bSay">🔈 Dengar</button>
     <button class="nb-sm press" id="bUndo">⌫ Hapus</button>
-    <button class="nb-sm press" id="bShuffle">🔀 Acak</button>
     <button class="nb-sm press" id="bHint">💡 Bantuan</button>
-    <button class="nb-sm press" id="bSkip">⏭ Lewati</button>
+    <button class="nb-sm press" id="bSkip">🏳️ Menyerah</button>
   </div>
 </div>
 
@@ -127,6 +129,7 @@
 </div>
 
 <script src="/games/_shared/sfx.js"></script>
+<script src="/games/_shared/dialog.js"></script>
 <script src="/games/_shared/suara.js"></script>
 <script src="/games/_shared/tutor.js"></script>
 <script src="/games/_shared/koin.js"></script>
@@ -146,7 +149,7 @@
   };
   var COLORS = ['#ffd23f', '#2ec4b6', '#ff7a1a', '#4aa8ff', '#ff5d8f', '#b79cff'];
   var tema = 'acak', level = 1, timeLimit = 0, setQ = null, setCode = null;
-  var queue = [], cur = null, fill = [], fixed = [], tiles = [], score = 0, right = 0, skipped = 0, num = 0, timeLeft = 0, timerId = 0, running = false, history = [], qstats = {}, startAt = 0, hintUsed = 0;
+  var total = 10, queue = [], cur = null, fill = [], fixed = [], tiles = [], score = 0, right = 0, skipped = 0, num = 0, timeLeft = 0, timerId = 0, running = false, history = [], qstats = {}, startAt = 0, hintUsed = 0;
   try { tema = localStorage.getItem('sk_tema') || 'acak'; level = +localStorage.getItem('sk_level') || 1; } catch (e) {}
   function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
   function norm(s) { return s.toLowerCase().replace(/\s+/g, ' ').trim(); }
@@ -187,24 +190,28 @@
   function fits(w) { var n = w.length; return level === 1 ? n <= 4 : level === 2 ? n >= 5 && n <= 6 : n >= 7; }
   function buildQueue() {
     if (setQ) return shuffle(setQ.slice());
-    var src = tema === 'acak' ? [].concat.apply([], Object.keys(BANK).map(function (k) { return BANK[k]; })) : BANK[tema];
+    var src = [].concat.apply([], (tema === 'acak' ? Object.keys(BANK) : [tema]).map(function (k) { return BANK[k].map(function (x) { return [x[0], x[1], k]; }); }));
     var list = src.filter(function (x) { return fits(x[0]); });
     if (list.length < 4) list = src.filter(function (x) { return level === 1 ? x[0].length <= 5 : level === 2 ? x[0].length >= 4 && x[0].length <= 7 : x[0].length >= 6; });
     if (list.length < 3) list = src;
-    return shuffle(list.map(function (x) { return { w: x[0], pic: x[1] }; }));
+    return shuffle(list.map(function (x) { return { w: x[0], pic: x[1], cat: x[2] }; })).slice(0, ROUND);
   }
 
+  var ROUND = 10, HINTS = 3, hintsLeft = HINTS;
+  var ASK = { kelas: 'Benda apa ini di kelas?', rumah: 'Benda apa ini di rumah?', hewan: 'Hewan apa ini?', buah: 'Buah atau sayur apa ini?', tubuh: 'Bagian tubuh apa ini?', kendaraan: 'Kendaraan apa ini?', warna: 'Warna apa ini?' };
+  function askFor(c) { return (c && ASK[c.cat]) || 'Ini apa?'; }
   function nextWord() {
-    if (!queue.length) queue = buildQueue();
+    if (!queue.length) { if (num > 0) { end(); return; } queue = buildQueue(); total = queue.length; }
     cur = queue.pop(); num++; hintUsed = 0;
-    $('count').textContent = '#' + num;
+    $('count').textContent = 'Soal ' + num + ' dari ' + total;
+    $('how').textContent = 'Seret huruf ke kotak kosong. Bisa juga ketuk hurufnya.';
     var chars = cur.w.split('');
     fill = chars.map(function () { return null; });
     fixed = chars.map(function (c, i) { return c === ' ' || c === '-' || (!setQ && level === 1 && i === 0); });
     if (cur.pic) {
-      $('clueLbl').textContent = 'Ini apa? · ' + cur.w.replace(/[^a-z]/g, '').length + ' huruf';
+      $('clueLbl').textContent = askFor(cur) + ' · ' + cur.w.replace(/[^a-z]/g, '').length + ' huruf';
       $('clue').innerHTML = '<span class="pic">' + cur.pic + '</span>';
-      if (window.Suara) Suara.read('Ini apa?');
+      if (window.Suara) Suara.read(askFor(cur));
     } else {
       $('clueLbl').textContent = 'Soal'; $('clue').textContent = cur.clue;
       if (window.Suara) Suara.read(cur.clue);
@@ -312,22 +319,25 @@
   }
 
   function hint() {
-    if (!running) return;
+    if (!running || hintsLeft <= 0) return;
     var k = -1;
     for (var j = 0; j < fill.length; j++) if (!fixed[j] && (fill[j] == null || tiles[fill[j]].c !== cur.w[j])) { k = j; break; }
     if (k < 0) return;
     if (fill[k] != null) { tiles[fill[k]].used = false; fill[k] = null; }
     var i = tiles.findIndex(function (t) { return !t.used && t.c === cur.w[k]; });
     if (i < 0) { var o = fill.findIndex(function (p, j) { return p != null && tiles[p].c === cur.w[k]; }); if (o >= 0) { i = fill[o]; fill[o] = null; tiles[i].used = false; } }
-    if (i >= 0) { hintUsed++; place(i, k); }
+    if (i >= 0) { hintUsed++; hintsLeft--; hintLbl(); place(i, k); }
   }
 
+  function hintLbl() { var b = $('bHint'); b.textContent = '💡 Bantuan ' + hintsLeft + '/' + HINTS; b.disabled = hintsLeft <= 0; b.style.opacity = hintsLeft <= 0 ? .45 : 1; }
   function skip() {
     if (!running) return;
     skipped++; history.push({ w: cur.w, pic: cur.pic, ok: false });
     if (cur.idx != null) { var qs = qstats[cur.idx] || (qstats[cur.idx] = [0, 0]); qs[1]++; }
-    toast(cur.w.toUpperCase()); Sfx.bad();
-    running = false; setTimeout(function () { running = true; nextWord(); }, 1000);
+    // tampilkan jawaban di kotak, lalu lanjut
+    fill = fill.map(function () { return null; }); fixed = fixed.map(function () { return true; }); tiles.forEach(function (t) { t.used = true; }); render(); $('slots').classList.add('reveal');
+    $('how').textContent = 'Jawabannya: ' + cur.w.toUpperCase(); Sfx.bad(); if (window.Suara) Suara.read(cur.w, { force: !!cur.pic });
+    running = false; setTimeout(function () { running = true; nextWord(); }, 1800);
   }
 
   function tick() {
@@ -342,7 +352,7 @@
     if (window.Tutor) setTimeout(Tutor.hint, 400);
     if (setQ) { var nm = ($('name').value || '').trim().replace(/\s+/g, ' ').slice(0, 30); if (!nm) { $('name').focus(); $('name').placeholder = 'Tulis namamu dulu ya'; return; } try { localStorage.setItem('bgy_name', nm); } catch (e) {} }
     try { localStorage.setItem('sk_tema', tema); localStorage.setItem('sk_level', level); } catch (e) {}
-    queue = buildQueue(); score = 0; right = 0; skipped = 0; num = 0; history = []; qstats = {};
+    queue = buildQueue(); total = queue.length; hintsLeft = HINTS; hintLbl(); score = 0; right = 0; skipped = 0; num = 0; history = []; qstats = {};
     $('score').textContent = '⭐ 0';
     $('barBox').style.visibility = timeLimit ? 'visible' : 'hidden';
     timeLeft = timeLimit; $('bar').style.width = '100%';
@@ -380,11 +390,10 @@
   $('again').addEventListener('click', start);
   $('toMenu').addEventListener('click', function () { Sfx.music(false); $('over').classList.add('hidden'); $('game').classList.add('hidden'); $('menu').classList.remove('hidden'); });
   $('bUndo').addEventListener('click', undo);
-  $('bShuffle').addEventListener('click', function () { if (!running) return; clearAll(); shuffle(tiles); render(); });
   $('bHint').addEventListener('click', hint);
   $('bSkip').addEventListener('click', skip);
-  $('bSay').addEventListener('click', function () { if (cur && window.Suara) Suara.say(cur.pic ? 'Ini apa?' : cur.clue); });
-  $('bExit').addEventListener('click', function () { if (confirm('Selesai bermain?')) end(); });
+  $('bSay').addEventListener('click', function () { if (cur && window.Suara) Suara.say(cur.pic ? askFor(cur) : cur.clue); });
+  $('bExit').addEventListener('click', function () { Dialog.ask('Selesai bermain sekarang?', function () { end(); }); });
   $('bMute').addEventListener('click', function () { try { localStorage.setItem('bgy_muted', Sfx.muted() ? '0' : '1'); } catch (e) {} this.textContent = Sfx.muted() ? '🔇' : '🔊'; Sfx.music(!Sfx.muted() && running); });
   window.addEventListener('keydown', function (e) {
     if (!running || $('game').classList.contains('hidden')) return;

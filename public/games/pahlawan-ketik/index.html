@@ -72,6 +72,7 @@
   <div class="card nb">
     <h1>Pahlawan <span>Ketik</span> ⌨️</h1>
     <div class="sub">Monster menyerang sekolah! Ketik kata pada monster untuk menembaknya.</div>
+    <div class="sub" style="font-weight:900;color:#c0143c">⌨️ Dimainkan dengan keyboard. Pakai laptop atau komputer.</div>
     <div class="row"><span class="lbl">Isi</span>
       <div class="seg" id="segMode"><button class="nb-sm press" data-n="kata">🔤 Kata</button><button class="nb-sm press" data-n="angka">🔢 Angka</button></div></div>
     <div class="row"><span class="lbl">Tingkat</span>
@@ -119,6 +120,7 @@
 
 <script src="/games/_shared/mathgen.js"></script>
 <script src="/games/_shared/sfx.js"></script>
+<script src="/games/_shared/dialog.js"></script>
 <script src="/games/_shared/suara.js"></script>
 <script src="/games/_shared/tutor.js"></script>
 <script src="/games/_shared/koin.js"></script>
@@ -483,7 +485,7 @@ function end(win) {
 $('start').addEventListener('click', start);
 $('again').addEventListener('click', start);
 $('toMenu').addEventListener('click', () => { clearAll(); $('over').classList.add('hidden'); $('game').classList.add('hidden'); $('menu').classList.remove('hidden'); showBest(); });
-$('bExit').addEventListener('click', () => { if (confirm('Selesai bermain?')) end(false); });
+$('bExit').addEventListener('click', () => { Dialog.ask('Selesai bermain sekarang?', function () { end(false); }); });
 $('bMute').addEventListener('click', function () { try { localStorage.setItem('bgy_muted', Sfx.muted() ? '0' : '1'); } catch (e) {} this.textContent = Sfx.muted() ? '🔇' : '🔊'; Sfx.music(!Sfx.muted() && running); });
 document.addEventListener('visibilitychange', () => { last = 0; });
 window.__pk = { key, state: () => ({ wave, lives, score, n: enemies.length, words: enemies.map((e) => e.word), running }) };

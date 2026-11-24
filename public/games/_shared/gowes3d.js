@@ -475,9 +475,10 @@ export function mount(sceneEl) {
   if (!hasWebGL() || !sceneEl) return null;
   sceneEl.classList.add('is3d');
   const canvas = document.createElement('canvas'); canvas.className = 'g3d'; sceneEl.appendChild(canvas);
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-  let pr = Math.min(window.devicePixelRatio || 1, 1.5); renderer.setPixelRatio(pr);
-  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  let lite = false; try { lite = localStorage.getItem('bgy_gfx') === 'ringan'; } catch (e) {}
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: !lite, powerPreference: lite ? 'low-power' : 'default' });
+  let pr = lite ? Math.min(window.devicePixelRatio || 1, 0.9) : Math.min(window.devicePixelRatio || 1, 1.5); renderer.setPixelRatio(pr);
+  renderer.shadowMap.enabled = !lite; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
   const scene = new THREE.Scene();
@@ -495,7 +496,7 @@ export function mount(sceneEl) {
   function sync() {
     const bikes = sceneEl.querySelectorAll('.rlane .bike');
     const n = bikes.length;
-    if (n !== worldLanes) { worldLanes = n; if (!world) world = buildWorld(scene, Math.max(n, 2)); }
+    if (n !== worldLanes) { worldLanes = n; if (!world) { world = buildWorld(scene, Math.max(n, 2)); if (lite) { world.crowd.children.forEach((c, i) => { c.visible = i === 0; }); scene.fog.near = 40; scene.fog.far = 120; cam.far = 140; cam.updateProjectionMatrix(); } } }
     const roadInner = Math.max(n, 2) * LANE_W;
     bikes.forEach((el, i) => {
       let r = riders.get(el);

@@ -72,6 +72,7 @@
   <div class="card nb">
     <h1>Hujan <span>Kata</span> 🌧️</h1>
     <div class="sub">Ketik kata yang jatuh dari awan sebelum menyentuh sawah. Latihan mengetik dan berhitung!</div>
+    <div class="sub" style="font-weight:900;color:#c0143c">⌨️ Dimainkan dengan keyboard. Pakai laptop atau komputer.</div>
     <div class="row"><span class="lbl">Isi</span>
       <div class="seg" id="segMode"><button class="nb-sm press" data-n="kata">🔤 Kata</button><button class="nb-sm press" data-n="hitung">🧮 Hitung</button></div></div>
     <div class="row"><span class="lbl">Tingkat</span>
@@ -107,6 +108,7 @@
 </div>
 
 <script src="/games/_shared/sfx.js"></script>
+<script src="/games/_shared/dialog.js"></script>
 <script src="/games/_shared/fx.js"></script>
 <script>
 (function () {
@@ -244,7 +246,7 @@
   $('start').addEventListener('click', start);
   $('again').addEventListener('click', start);
   $('toMenu').addEventListener('click', function () { $('over').classList.add('hidden'); $('game').classList.add('hidden'); $('menu').classList.remove('hidden'); showBest(); });
-  $('bExit').addEventListener('click', function () { if (confirm('Keluar dari permainan?')) end(); });
+  $('bExit').addEventListener('click', function () { Dialog.ask('Selesai bermain sekarang?', function () { end(); }); });
   $('bMute').addEventListener('click', function () { muted = !muted; try { localStorage.setItem('bgy_muted', muted ? '1' : '0'); } catch (e) {} this.textContent = muted ? '🔇' : '🔊'; $('inp').focus(); });
   $('sky').addEventListener('pointerdown', function () { if (running) setTimeout(function () { $('inp').focus(); }, 0); });
   document.addEventListener('visibilitychange', function () { if (document.hidden && running) { lastT = 0; } });
