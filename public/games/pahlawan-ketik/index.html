@@ -161,9 +161,9 @@ try { renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true }); }
 catch (e) { $('err').textContent = 'Perangkat ini belum mendukung grafik 3D. Coba buka di Chrome terbaru.'; $('err').classList.remove('hidden'); $('start').disabled = true; $('start').style.opacity = .5; }
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0d0b26);
-scene.fog = new THREE.Fog(0x1a1550, 80, 170);
+scene.fog = new THREE.Fog(0x1a1550, 90, 200);
 const camera = new THREE.PerspectiveCamera(55, 1, 0.3, 300);
-const CAM = new THREE.Vector3(0, 14, 20);
+const CAM = new THREE.Vector3(15, 5, 31);
 scene.add(new THREE.HemisphereLight(0x9fb4ff, 0x203018, 0.9));
 const moonLight = new THREE.DirectionalLight(0xfff0d0, 1.4); moonLight.position.set(20, 30, 10); scene.add(moonLight);
 const rim = new THREE.PointLight(0x66ccff, 30, 40); rim.position.set(0, 6, 8); scene.add(rim);
@@ -176,21 +176,25 @@ const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), M(0x1f4a2c)); g
   for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, b = Math.random() * Math.PI * .45, r = 160; p[i * 3] = Math.cos(a) * Math.cos(b) * r; p[i * 3 + 1] = Math.sin(b) * r + 5; p[i * 3 + 2] = Math.sin(a) * Math.cos(b) * r - 40; }
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(p, 3));
   scene.add(new THREE.Points(g, new THREE.PointsMaterial({ color: 0xffffff, size: 1.1, fog: false })));
-  const moon = new THREE.Mesh(new THREE.SphereGeometry(7, 24, 16), new THREE.MeshBasicMaterial({ color: 0xffe7a8, fog: false })); moon.position.set(55, 60, -130); scene.add(moon);
+  const moon = new THREE.Mesh(new THREE.SphereGeometry(7, 24, 16), new THREE.MeshBasicMaterial({ color: 0xffe7a8, fog: false })); moon.position.set(-60, 95, -90); scene.add(moon);
   // pohon & bukit
-  for (let i = 0; i < 40; i++) {
-    const x = (Math.random() < .5 ? -1 : 1) * (18 + Math.random() * 40), z = -Math.random() * 90 + 10;
-    const t = new THREE.Group();
-    const tr = new THREE.Mesh(new THREE.CylinderGeometry(.3, .4, 2, 6), M(0x6b4423)); tr.position.y = 1; t.add(tr);
-    const lf = new THREE.Mesh(new THREE.ConeGeometry(1.8, 4, 7), M(0x2f7d46, { flatShading: true })); lf.position.y = 3.8; t.add(lf);
-    t.position.set(x, 0, z); t.scale.setScalar(.8 + Math.random() * .8); scene.add(t);
+  {
+    const trunks = new THREE.InstancedMesh(new THREE.CylinderGeometry(.3, .4, 2, 6), M(0x6b4423), 40);
+    const leaves = new THREE.InstancedMesh(new THREE.ConeGeometry(1.8, 4, 7), M(0x2f7d46, { flatShading: true }), 40);
+    const o = new THREE.Object3D();
+    for (let i = 0; i < 40; i++) {
+      const x = (Math.random() < .5 ? -1 : 1) * (18 + Math.random() * 40), z = -Math.random() * 90 + 10, k = .8 + Math.random() * .8;
+      o.scale.setScalar(k); o.position.set(x, k, z); o.updateMatrix(); trunks.setMatrixAt(i, o.matrix);
+      o.position.set(x, 3.8 * k, z); o.updateMatrix(); leaves.setMatrixAt(i, o.matrix);
+    }
+    scene.add(trunks, leaves);
   }
   for (let i = 0; i < 6; i++) { const h = new THREE.Mesh(new THREE.SphereGeometry(30, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2), M(0x24563a, { flatShading: true })); h.position.set(-120 + i * 48, -8, -150); h.scale.y = .5; scene.add(h); }
 }
 // sekolah
 const SCHOOL = new THREE.Vector3(0, 0, 9);
 {
-  const g = new THREE.Group(); g.position.copy(SCHOOL);
+  const g = new THREE.Group(); g.position.copy(SCHOOL); g.rotation.y = Math.PI - .5;
   const body = new THREE.Mesh(new THREE.BoxGeometry(14, 4.5, 5), M(0xfff1cf)); body.position.y = 2.25; g.add(body);
   const roof = new THREE.Mesh(new THREE.CylinderGeometry(3, 3, 15, 3), M(0xff7a1a, { flatShading: true })); roof.rotation.z = Math.PI / 2; roof.rotation.y = 0; roof.scale.set(1, 1, 1); roof.position.y = 5.6; roof.rotation.x = Math.PI / 2; g.add(roof);
   const winM = new THREE.MeshStandardMaterial({ color: 0xffd66b, emissive: 0xffc23a, emissiveIntensity: 1 });
@@ -298,8 +302,8 @@ function spawn(boss) {
   const mesh = makeMonster(boss ? 0xff3d6e : COLORS[Math.floor(Math.random() * COLORS.length)], boss);
   const sc = boss ? 3.4 : 1.6 + Math.random() * .3;
   mesh.scale.setScalar(sc);
-  const pos = new THREE.Vector3((Math.random() * 2 - 1) * half, 5 + Math.random() * 7, -75);
-  if (boss) pos.set(0, 9, -75);
+  const pos = new THREE.Vector3((Math.random() * 2 - 1) * half * 1.3, 48 + Math.random() * 14, -55 + Math.random() * 30);
+  if (boss) pos.set(0, 62, -40);
   mesh.position.copy(pos); scene.add(mesh);
   const el = document.createElement('div'); el.className = 'lb' + (boss ? ' boss' : ''); labels.appendChild(el);
   const e = { word: p.w, clue: p.clue, hit: 0, boss, mesh, el, sc, base: pos.clone(), t: 0, ph: Math.random() * 6.28, hurt: 0,
@@ -353,7 +357,7 @@ function key(ch) {
   } else {
     wrong++; combo = 0; Sfx.bad();
     const k = ch.length === 1 ? ch : '?'; miss[k] = (miss[k] || 0) + 1;
-    shake = Math.max(shake, .25);
+    shake = Math.max(shake, .1);
   }
   hud();
 }
@@ -371,17 +375,19 @@ function hud() {
 
 function resize() {
   const w = cv.clientWidth, h = cv.clientHeight; if (!w || !h || !renderer) return;
-  renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1)); renderer.setSize(w, h, false);
+  renderer.setPixelRatio(Math.min(lowQ ? 1 : 1.5, window.devicePixelRatio || 1)); renderer.setSize(w, h, false);
   camera.aspect = w / h; camera.fov = camera.aspect < 1 ? 72 : 55; camera.updateProjectionMatrix();
-  CAM.set(0, camera.aspect < 1 ? 15 : 14, camera.aspect < 1 ? 23 : 20);
+  if (camera.aspect < 1) CAM.set(9, 4, 33); else CAM.set(15, 5, 31);
 }
 window.addEventListener('resize', resize);
 if (window.visualViewport) visualViewport.addEventListener('resize', resize);
 
 const tmp = new THREE.Vector3(), look = new THREE.Vector3();
+let lowQ = false, slowN = 0;
 function frame(t) {
   if (!running) return;
   const dt = Math.min(.05, (t - (last || t)) / 1000); last = t;
+  if (!lowQ && dt > .03 && ++slowN > 60) { lowQ = true; resize(); rim.visible = false; }
   if (waveBreak > 0) { waveBreak -= dt; if (waveBreak <= 0) { wave++; if (wave > WAVES) { end(true); return; } startWave(); } }
   else {
     spawnT -= dt * 1000;
@@ -392,10 +398,10 @@ function frame(t) {
   for (const e of enemies.slice()) {
     e.t += dt;
     const p = e.mesh.position;
-    const dir = tmp.set(SCHOOL.x - e.base.x, 4 - e.base.y, SCHOOL.z - e.base.z); const dist = dir.length(); dir.normalize();
+    const dir = tmp.set(SCHOOL.x - e.base.x, 9 - e.base.y, SCHOOL.z - e.base.z); const dist = dir.length(); dir.normalize();
     e.base.addScaledVector(dir, e.spd * dt);
     p.copy(e.base); p.x += Math.sin(e.t * 1.6 + e.ph) * (e.boss ? 2.5 : 1.6); p.y += Math.sin(e.t * 2.3 + e.ph) * .5;
-    e.mesh.lookAt(camera.position.x, p.y, camera.position.z);
+    e.mesh.lookAt(camera.position);
     e.mesh.userData.ten.forEach((pv, i) => { pv.rotation.x = Math.sin(e.t * 6 + i) * .45; pv.rotation.z = Math.cos(e.t * 5 + i * 1.3) * .35; });
     e.hurt = Math.max(0, e.hurt - dt * 5);
     e.mesh.userData.mat.emissiveIntensity = .35 + e.hurt * .9;
@@ -414,7 +420,7 @@ function frame(t) {
   lookX += ((target ? target.mesh.position.x * .25 : 0) - lookX) * Math.min(1, dt * 3);
   camera.position.copy(CAM); camera.position.x += lookX * .4;
   if (shake > 0) { camera.position.x += (Math.random() - .5) * shake; camera.position.y += (Math.random() - .5) * shake; shake = Math.max(0, shake - dt * 2.5); }
-  camera.lookAt(lookX, 9, -30);
+  camera.lookAt(lookX - 2, camera.aspect < 1 ? 24 : 19, -18);
   domeMat.opacity += ((.1 + lives * .05) - domeMat.opacity) * Math.min(1, dt * 3);
   domeMat.color.setHex(lives <= 1 ? 0xff7a9a : 0x66d9ff);
   const fl = scene.userData.school.userData.flag; fl.children.forEach((c, i) => { c.rotation.y = Math.sin(t / 250 + i) * .3; });
@@ -435,10 +441,11 @@ function frame(t) {
     if (tmp.z > 1) { e.el.style.display = 'none'; continue; }
     e.el.style.display = '';
     if (!e.w) { e.w = e.el.offsetWidth; e.h = e.el.offsetHeight; }
-    let sx = Math.max(e.w / 2 + 4, Math.min(r.w - e.w / 2 - 4, (tmp.x + 1) / 2 * r.w)), sy = Math.max(48 + e.h, (1 - tmp.y) / 2 * r.h);
+    let sx = Math.max(e.w / 2 + 4, Math.min(r.w - e.w / 2 - 4, (tmp.x + 1) / 2 * r.w)), sy = Math.max(92 + e.h, (1 - tmp.y) / 2 * r.h);
     for (let k = 0; k < 6; k++) { const hit = placed.find((q) => Math.abs(q.x - sx) < (q.w + e.w) / 2 + 4 && Math.abs(q.y - sy) < (q.h + e.h) / 2 + 2); if (!hit) break; sy = hit.y - (hit.h + e.h) / 2 - 3; }
     placed.push({ x: sx, y: sy, w: e.w, h: e.h });
-    e.el.style.transform = 'translate(' + sx.toFixed(1) + 'px,' + sy.toFixed(1) + 'px) translate(-50%,-100%)';
+    const tr = 'translate(' + Math.round(sx) + 'px,' + Math.round(sy) + 'px) translate(-50%,-100%)';
+    if (tr !== e.tr) { e.el.style.transform = tr; e.tr = tr; }
     e.el.style.zIndex = e === target ? 3 : 1 + Math.round((e.mesh.position.z + 80));
   }
   if (Math.floor(t / 500) !== Math.floor((t - dt * 1000) / 500)) hud();
