@@ -26,6 +26,7 @@ export default function Footer() {
             <li><Link href="/game" className="hover:text-nb-yellow">Karya Admin Main-yuk</Link></li>
             <li><Link href="/main" className="hover:text-nb-yellow">Mabar Yuk</Link></li>
             <li><Link href="/guru" className="hover:text-nb-yellow">Ruang Guru</Link></li>
+            <li><a href="/buat/" className="hover:text-nb-yellow">Buat Game (AI)</a></li>
             <li><Link href="/submit" className="hover:text-nb-yellow">Kirim Karya</Link></li>
             <li><Link href="/usulan" className="hover:text-nb-yellow">Ulasan & Saran</Link></li>
           </ul>
