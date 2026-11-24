@@ -183,6 +183,8 @@
     <div class="mg-wrap mathonly"><div class="lbl">Jenis soal</div><div class="mg-grid" id="mg"></div></div>
     <div class="row mathonly"><span class="lbl">Tingkat</span>
       <div class="seg" id="segLevel"><button class="nb-sm press" data-n="1">Mudah</button><button class="nb-sm press" data-n="2">Sedang</button><button class="nb-sm press" data-n="3">Sulit</button></div></div>
+    <div class="row"><span class="lbl">Tempo</span>
+      <div class="seg" id="segTempo"><button class="nb-sm press" data-n="0.6">🐢 Lambat</button><button class="nb-sm press" data-n="1">🚶 Sedang</button><button class="nb-sm press" data-n="1.5">🚀 Cepat</button></div></div>
     <div class="row"><span class="lbl">Jarak</span>
       <div class="seg" id="segTarget"><button class="nb-sm press" data-n="8">Dekat</button><button class="nb-sm press" data-n="12">Sedang</button><button class="nb-sm press" data-n="18">Jauh</button></div></div>
     <div class="names" id="names"></div>
@@ -301,6 +303,8 @@
   }
   seg('segPlayers', function (n) { nPlayers = +n; renderNames(); }, function (n) { return +n === nPlayers; });
   seg('segTarget', function (n) { target = +n; }, function (n) { return +n === target; });
+  var tempo = 1; try { tempo = +localStorage.getItem('tempo_gowes') || 1; } catch (e) {}
+  seg('segTempo', function (n) { tempo = +n; try { localStorage.setItem('tempo_gowes', n); } catch (e) {} }, function (n) { return +n === tempo; });
   seg('segLevel', function (n) { level = +n; }, function (n) { return +n === level; });
   MathGen.renderGrid($('mg'), mathMode, function (id) { mathMode = id; tone(600, 0, .06, 'sine', .08); });
   renderNames();
@@ -387,7 +391,7 @@
 
   function botLoop() {
     // Lawan komputer: Mudah ±4,5 dtk, Sedang ±3,5 dtk, Sulit ±2,8 dtk per kayuhan
-    var base = setQ ? 4200 : [0, 4500, 3500, 2800][level];
+    var base = (setQ ? 4200 : [0, 4500, 3500, 2800][level]) / tempo;
     botId = setTimeout(function () {
       if (!running || finished) return;
       if (Math.random() < 0.85) { bot.step++; bot.bike.style.left = bikeLeft(bot.step) + '%'; pedal(bot.bike); }
