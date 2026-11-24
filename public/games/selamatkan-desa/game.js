@@ -1,48 +1,67 @@
-/* Main-yuk · Misi Selamatkan Desa — Duel Sungai 1–4 pemain (Three.js r160).
-   Sampah hanyut di sungai, satu jalur per pemain. Saat sampah tiba di depanmu,
-   tekan Organik atau Anorganik. Pertama yang mencapai target menang. */
+/* Main-yuk · Misi Selamatkan Desa — seret & pilah sampah di sungai (Three.js r160, tanpa library lain).
+   Mode: Belajar (kenali sampah + latihan), Battle (2–4 pemain rebutan di satu sungai, tiap pemain punya
+   tempat sampah sendiri), Kerja Sama (1–4 pemain, dua tempat sampah bersama, skor gabungan). */
 import * as THREE from '/games/_shared/three.module.min.js';
 
 const $ = (id) => document.getElementById(id);
 const A = 'assets/';
+const E = (c) => 'emoji/' + c; // gambar sementara (Twemoji, CC-BY 4.0) sampai aset buatan sendiri tersedia
 const ITEMS = {
-  daun: { nama: 'Daun kering', cat: 'org', why: 'Daun kering bisa membusuk. Itu Organik.' },
-  pisang: { nama: 'Kulit pisang', cat: 'org', why: 'Kulit pisang mudah membusuk. Itu Organik.' },
-  botol: { nama: 'Botol plastik', cat: 'ano', why: 'Plastik tidak membusuk. Itu Anorganik.' },
-  kaleng: { nama: 'Kaleng', cat: 'ano', why: 'Kaleng dari logam. Itu Anorganik.' },
-  kardus: { nama: 'Kardus', cat: 'ano', why: 'Kardus didaur ulang jadi kertas. Itu Anorganik.' },
+  pisang: { nama: 'Kulit pisang', cat: 'org', img: 'pisang', info: 'Berasal dari buah. Cepat membusuk.', hint: 'Kulit pisang berasal dari buah. Termasuk sampah apa?' },
+  daun: { nama: 'Daun kering', cat: 'org', img: 'daun', info: 'Berasal dari pohon. Bisa jadi kompos.', hint: 'Daun berasal dari pohon, makhluk hidup. Termasuk sampah apa?' },
+  jeruk: { nama: 'Kulit jeruk', cat: 'org', img: E('1f34a'), info: 'Berasal dari buah. Mudah membusuk.', hint: 'Jeruk itu buah. Kulitnya mudah membusuk. Masuk ke mana?' },
+  sayur: { nama: 'Sisa sayuran', cat: 'org', img: E('1f96c'), info: 'Berasal dari tumbuhan. Bisa jadi pupuk.', hint: 'Sayuran berasal dari tumbuhan. Termasuk sampah apa?' },
+  telur: { nama: 'Cangkang telur', cat: 'org', img: E('1f95a'), info: 'Berasal dari ayam. Bisa terurai di tanah.', hint: 'Telur berasal dari ayam, makhluk hidup. Masuk ke mana?' },
+  nasi: { nama: 'Sisa makanan', cat: 'org', img: E('1f35a'), info: 'Sisa nasi dan makanan mudah membusuk.', hint: 'Sisa makanan akan membusuk. Termasuk sampah apa?' },
+  ranting: { nama: 'Ranting', cat: 'org', img: E('1fab5'), info: 'Berasal dari pohon. Lama-lama lapuk.', hint: 'Ranting berasal dari pohon. Termasuk sampah apa?' },
+  botol: { nama: 'Botol plastik', cat: 'ano', img: 'botol', info: 'Plastik sangat lama terurai. Bisa didaur ulang.', hint: 'Plastik dibuat di pabrik dan tidak membusuk. Masuk ke mana?' },
+  kaleng: { nama: 'Kaleng', cat: 'ano', img: 'kaleng', info: 'Terbuat dari logam. Bisa didaur ulang.', hint: 'Kaleng terbuat dari logam. Logam tidak membusuk. Masuk ke mana?' },
+  kardus: { nama: 'Kardus', cat: 'ano', img: 'kardus', info: 'Bisa didaur ulang jadi kertas baru.', hint: 'Kardus dibuat di pabrik dan bisa didaur ulang. Masuk ke mana?' },
+  kaca: { nama: 'Botol kaca', cat: 'ano', img: E('1f37e'), info: 'Kaca tidak membusuk. Bisa dilebur dan dipakai lagi.', hint: 'Kaca tidak membusuk. Termasuk sampah apa?' },
+  bungkus: { nama: 'Bungkus makanan', cat: 'ano', img: E('1f961'), info: 'Bungkus dari pabrik. Lama terurai.', hint: 'Bungkus ini dibuat di pabrik. Masuk ke mana?' },
+  gelas: { nama: 'Gelas plastik', cat: 'ano', img: E('1f964'), info: 'Plastik sangat lama terurai. Bisa didaur ulang.', hint: 'Gelas ini dari plastik. Plastik masuk ke mana?' },
+  kertas: { nama: 'Kertas', cat: 'ano', img: E('1f4f0'), info: 'Kertas bekas bisa didaur ulang jadi kertas baru.', hint: 'Kertas bekas bisa didaur ulang. Masuk ke mana?' },
 };
-const LEVEL_KEYS = { 1: ['daun', 'pisang', 'botol', 'kaleng'], 2: ['daun', 'pisang', 'botol', 'kaleng', 'kardus'], 3: ['daun', 'pisang', 'botol', 'kaleng', 'kardus'] };
+const CATN = { org: 'Organik', ano: 'Anorganik' };
+const LEVEL = {
+  1: { keys: ['pisang', 'daun', 'jeruk', 'botol', 'kaleng', 'gelas'], cross: 16, max: 6, gap: 2.4 },
+  2: { keys: ['pisang', 'daun', 'jeruk', 'sayur', 'telur', 'botol', 'kaleng', 'gelas', 'kardus', 'kertas'], cross: 12, max: 7, gap: 1.7 },
+  3: { keys: Object.keys(ITEMS), cross: 9, max: 8, gap: 1.2 },
+};
 const COLORS = ['#ff5d8f', '#4aa8ff', '#ffd23f', '#2ec4b6'];
-const KEYS = [['a', 's'], ['g', 'h'], ['k', 'l'], ['arrowleft', 'arrowright']];
-const KEYLBL = ['A · S', 'G · H', 'K · L', '← · →'];
-const LW = 3.2;               // lebar satu jalur
-const SPAWN_Z = -46, CATCH_Z = 1.2, MISS_Z = 3.2, FRONT_Z = -9; // zona tangkap: FRONT_Z..MISS_Z
+const LW = 3.2; // lebar sungai = 4 × LW
 
-/* ---------------- menu ---------------- */
-let nPlayers = 2, level = 2, tempo = 1, target = 15, gfx = 'bagus';
+/* ---------------- menu & pengaturan ---------------- */
+let mode = 'battle', practice = false, nBattle = 2, nCoop = 1, level = 1, target = 15, timeLimit = 0, gfx = 'bagus';
 try {
-  nPlayers = +localStorage.getItem('sd_np') || 2; level = +localStorage.getItem('sd_level') || 2;
-  tempo = +localStorage.getItem('tempo_selamatkan-desa') || 1; target = +localStorage.getItem('sd_target') || 15;
+  nBattle = +localStorage.getItem('sd_nb') || 2; nCoop = +localStorage.getItem('sd_nc') || 1; level = +localStorage.getItem('sd_level') || 1;
+  target = +localStorage.getItem('sd_target') || 15; timeLimit = +localStorage.getItem('sd_time') || 0;
   gfx = localStorage.getItem('bgy_gfx') || ((navigator.hardwareConcurrency || 8) <= 4 ? 'ringan' : 'bagus');
 } catch (e) {}
 const lite = () => gfx === 'ringan';
+const say = (t) => { if (window.Suara && !Sfx.muted()) Suara.read(t, { force: true }); };
 function seg(id, fn, isOn) {
   const el = $(id);
-  const mark = () => [...el.children].forEach((b) => b.classList.toggle('on', isOn(b.dataset.n)));
-  el.addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; fn(b.dataset.n); mark(); Sfx.click(); });
-  mark();
+  el._mark = () => [...el.children].forEach((b) => b.classList.toggle('on', isOn(b.dataset.n)));
+  el.addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; fn(b.dataset.n); el._mark(); Sfx.click(); });
+  el._mark();
 }
-seg('segPlayers', (n) => { nPlayers = +n; renderNames(); }, (n) => +n === nPlayers);
+const np = () => (mode === 'battle' ? nBattle : nCoop);
 seg('segLevel', (n) => { level = +n; }, (n) => +n === level);
-seg('segTempo', (n) => { tempo = +n; try { localStorage.setItem('tempo_selamatkan-desa', n); } catch (e) {} }, (n) => +n === tempo);
 seg('segTarget', (n) => { target = +n; }, (n) => +n === target);
+seg('segTime', (n) => { timeLimit = +n; }, (n) => +n === timeLimit);
 seg('segGfx', (n) => { gfx = n; try { localStorage.setItem('bgy_gfx', n); } catch (e) {} }, (n) => n === gfx);
+function renderPlayersSeg() {
+  const el = $('segPlayers'), opts = mode === 'battle' ? [2, 3, 4] : [1, 2, 3, 4];
+  el.innerHTML = opts.map((n) => '<button class="nb-sm press" data-n="' + n + '">' + n + '</button>').join('');
+  el.onclick = (e) => { const b = e.target.closest('button'); if (!b) return; if (mode === 'battle') nBattle = +b.dataset.n; else nCoop = +b.dataset.n; mark(); renderNames(); Sfx.click(); };
+  const mark = () => [...el.children].forEach((b) => b.classList.toggle('on', +b.dataset.n === np())); mark();
+}
 const charOf = (i) => { try { return localStorage.getItem('sd_char_' + i) || (i % 2 ? 'girl' : 'boy'); } catch (e) { return i % 2 ? 'girl' : 'boy'; } };
 const nameOf = (i) => { try { return localStorage.getItem('sd_name_' + i) || ''; } catch (e) { return ''; } };
 function renderNames() {
   const box = $('names'); box.innerHTML = '';
-  for (let i = 0; i < nPlayers; i++) {
+  for (let i = 0; i < np(); i++) {
     const d = document.createElement('div'); d.className = 'nm';
     d.innerHTML = '<span class="dot"></span><input maxlength="16" autocomplete="off"><button class="ch nb-sm press" type="button" aria-label="Ganti karakter"><img alt=""></button>';
     d.querySelector('.dot').style.background = COLORS[i];
@@ -53,7 +72,28 @@ function renderNames() {
     box.appendChild(d);
   }
 }
-renderNames();
+function show(id) { ['menu', 'setup', 'learn', 'result', 'pause'].forEach((s) => $(s).classList.toggle('hidden', s !== id)); }
+document.querySelectorAll('.mode').forEach((b) => b.addEventListener('click', () => {
+  Sfx.click();
+  if (b.dataset.m === 'learn') { renderLearn(); show('learn'); say('Kenali sampah organik dan anorganik. Ketuk gambar untuk mendengar penjelasannya.'); return; }
+  mode = b.dataset.m; practice = false;
+  $('suTitle').textContent = mode === 'battle' ? '⚔️ Battle' : '🤝 Kerja Sama';
+  renderPlayersSeg(); renderNames(); show('setup');
+}));
+document.querySelectorAll('[data-back]').forEach((b) => b.addEventListener('click', () => { Sfx.click(); if (window.speechSynthesis) speechSynthesis.cancel(); show('menu'); }));
+function renderLearn() {
+  ['org', 'ano'].forEach((c) => {
+    const box = $(c === 'org' ? 'lcOrg' : 'lcAno'); if (box.childElementCount) return;
+    Object.entries(ITEMS).filter(([, it]) => it.cat === c).forEach(([, it]) => {
+      const b = document.createElement('button'); b.className = 'lc nb-sm press'; b.type = 'button';
+      b.innerHTML = '<img alt=""><span><b></b><small></small></span>';
+      b.querySelector('img').src = A + it.img + '.png'; b.querySelector('b').textContent = it.nama; b.querySelector('small').textContent = it.info;
+      b.addEventListener('click', () => { Sfx.click(); if (window.Suara) Suara.say(it.nama + '. ' + it.info + ' Termasuk sampah ' + CATN[c] + '.'); });
+      box.appendChild(b);
+    });
+  });
+}
+$('practice').addEventListener('click', () => { mode = 'coop'; practice = true; start(); });
 
 /* ---------------- renderer & adegan ---------------- */
 const cv = $('cv'), stage = $('stage');
@@ -76,7 +116,7 @@ function canvasTex(w, h, draw, rep) { const c = document.createElement('canvas')
 const loader = new THREE.TextureLoader(), texCache = {};
 function tex(n) { if (!texCache[n]) { const t = loader.load(A + n + '.png'); t.colorSpace = THREE.SRGBColorSpace; texCache[n] = t; } return texCache[n]; }
 const aspects = {}; // lebar/tinggi tiap PNG
-Object.keys(ITEMS).concat(['boy', 'girl', 'bin-organik', 'bin-anorganik']).forEach((n) => { const im = new Image(); im.onload = () => { aspects[n] = im.width / im.height; }; im.src = A + n + '.png'; });
+Object.values(ITEMS).map((it) => it.img).concat(['boy', 'girl', 'emoji/1f41f']).forEach((n) => { const im = new Image(); im.onload = () => { aspects[n] = im.width / im.height; }; im.src = A + n + '.png'; });
 function sprite(n, h) { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex(n), transparent: true, alphaTest: 0.06 })); s.center.set(0.5, 0); s.userData = { n, h }; fitSprite(s); return s; }
 function fitSprite(s) { const ar = aspects[s.userData.n] || 0.6; s.scale.set(s.userData.h * ar * (s.userData.flip || 1), s.userData.h, 1); }
 function mergeGeos(list) { const p = [], n = []; list.forEach((g) => { const ng = g.index ? g.toNonIndexed() : g; p.push(...ng.attributes.position.array); n.push(...ng.attributes.normal.array); }); const m = new THREE.BufferGeometry(); m.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); m.setAttribute('normal', new THREE.Float32BufferAttribute(n, 3)); return m; }
@@ -92,23 +132,9 @@ function buildWorld(lanes) {
   const G = new THREE.Group(); scene.add(G); world.group = G; world.lanes = lanes;
   const RW = lanes * LW, half = RW / 2;
   // air
-  const water = new THREE.Mesh(new THREE.PlaneGeometry(RW, 80), new THREE.MeshStandardMaterial({ map: waterT, roughness: 0.15, metalness: 0.15, color: 0x9fbfd0 }));
+  const water = new THREE.Mesh(new THREE.PlaneGeometry(RW, 80), new THREE.MeshStandardMaterial({ map: waterT, roughness: 0.4, metalness: 0, color: 0xd2efff }));
   water.rotation.x = -Math.PI / 2; water.position.set(0, -0.15, -30); water.receiveShadow = true; G.add(water); world.water = water;
-  waterT.repeat.set(lanes * 0.8, 10);
-  // pembatas jalur: tali + pelampung
-  const buoyM = [M(0xff4d4d, { roughness: 0.4 }), M(0xffffff, { roughness: 0.4 })];
-  for (let l = 1; l < lanes; l++) {
-    const x = -half + l * LW;
-    const rope = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 70, 5), M(0xf5f5f5)); rope.rotation.x = Math.PI / 2; rope.position.set(x, -0.05, -30); G.add(rope);
-    for (let z = 2; z > -60; z -= 1.6) { const b = new THREE.Mesh(new THREE.SphereGeometry(0.16, 10, 8), buoyM[Math.round(z / 1.6) & 1]); b.position.set(x, -0.05, z); G.add(b); }
-  }
-  // garis zona tangkap per jalur
-  world.zones = [];
-  for (let l = 0; l < lanes; l++) {
-    const zx = -half + LW / 2 + l * LW;
-    const z = new THREE.Mesh(new THREE.PlaneGeometry(LW - 0.3, MISS_Z - FRONT_Z), new THREE.MeshBasicMaterial({ color: new THREE.Color(COLORS[l]), transparent: true, opacity: 0.13, depthWrite: false }));
-    z.rotation.x = -Math.PI / 2; z.position.set(zx, -0.1, (MISS_Z + FRONT_Z) / 2); G.add(z); world.zones.push(z);
-  }
+  waterT.repeat.set(2, 9);
   // tepi sungai: tanah, batu, rumput
   const grassT = canvasTex(128, 128, (x, w, h) => { x.fillStyle = '#6cbd4e'; x.fillRect(0, 0, w, h); for (let i = 0; i < 800; i++) { x.fillStyle = Math.random() < .5 ? '#5eae41' : '#7fcd5c'; x.fillRect(Math.random() * w, Math.random() * h, 2, 3); } }, [20, 20]);
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshStandardMaterial({ map: grassT, roughness: 0.95 }));
@@ -118,12 +144,6 @@ function buildWorld(lanes) {
     box(1.4, 0.5, 80, M(0xa27a52), s * (half + 0.7), 0.0, -30, G);
   });
   ground.position.x = 0; ground.geometry = holedGround(RW);
-  // depan (tempat berdiri pemain): dermaga kayu
-  const deckT = canvasTex(128, 64, (x) => { x.fillStyle = '#b07a46'; x.fillRect(0, 0, 128, 64); x.strokeStyle = '#7d5230'; x.lineWidth = 3; for (let i = 0; i < 8; i++) { x.beginPath(); x.moveTo(i * 16, 0); x.lineTo(i * 16, 64); x.stroke(); } }, [lanes * 2, 1]);
-  box(RW + 2.8, 0.35, 3.6, new THREE.MeshStandardMaterial({ map: deckT, roughness: 0.8 }), 0, 0.05, 5.4, G);
-  // jembatan di hulu (asal sampah)
-  box(RW + 6, 0.6, 3, 0xc9ced6, 0, 1.6, -50, G); box(RW + 6, 0.8, 0.25, 0xa7adb6, 0, 2.3, -48.6, G); box(RW + 6, 0.8, 0.25, 0xa7adb6, 0, 2.3, -51.4, G);
-  [-1, 1].forEach((s) => box(0.8, 2, 3, 0xbfc4cc, s * (half + 0.4), 0.6, -50, G));
   // batu-batu di tepi
   const rocks = []; for (let z = 4; z > -58; z -= 1.3) [-1, 1].forEach((s) => { if (Math.random() < .55) rocks.push([s * (half + 0.3 + Math.random() * .7), z + Math.random(), 0.25 + Math.random() * .35]); });
   inst(G, new THREE.DodecahedronGeometry(1, 0), M(0x8d939c, { flatShading: true }), rocks, (o, p) => { o.position.set(p[0], 0.1, p[1]); o.scale.set(p[2] * 1.3, p[2], p[2]); o.rotation.set(p[1], p[0], 0); });
@@ -131,6 +151,7 @@ function buildWorld(lanes) {
   const palms = [], round = [], bush = [];
   for (let z = 6; z > -62; z -= 3.2) [-1, 1].forEach((s) => {
     const x = s * (half + 3 + Math.random() * 7);
+    if (s < 0) { bush.push([s * (half + 1.6 + Math.random() * 1.2), z + 1.5, 0.45 + Math.random() * .35]); return; } // tepi dekat kamera: hanya semak rendah
     if (Math.random() < .55) palms.push([x, z, 0.8 + Math.random() * .5, Math.random() * 6]); else round.push([x, z, 0.8 + Math.random() * .5]);
     bush.push([s * (half + 1.8 + Math.random() * 1.5), z + 1.5, 0.6 + Math.random() * .5]);
   });
@@ -142,13 +163,15 @@ function buildWorld(lanes) {
   inst(G, new THREE.IcosahedronGeometry(0.7, 1), M(0x3cbf55, { flatShading: true }), bush, (o, p) => { o.position.set(p[0], 0.4 * p[2], p[1]); o.scale.set(p[2], p[2] * 0.75, p[2]); });
   // rumah desa di kejauhan + sekolah berbendera
   const roofs = [0xd8432f, 0x2f7de0, 0xff8a1f, 0xd8432f];
-  [[-1, -24], [1, -30], [-1, -40], [1, -18], [1, -42], [-1, -12]].forEach(([s, z], i) => house(G, s * (half + 12 + (i % 2) * 3), z, roofs[i % 4], i % 3 === 0 ? 'kayu' : 'bata'));
-  school(G, -(half + 13), -54);
+  [-14, -22, -30, -38, -46, -6, 2].forEach((z, i) => house(G, half + 12 + (i % 2) * 4, z, roofs[i % 4], i % 3 === 0 ? 'kayu' : 'bata'));
+  school(G, half + 9, -26);
   // hujan
   const N = lite() ? 250 : 800, pos = new Float32Array(N * 6);
-  for (let i = 0; i < N; i++) { const x = (Math.random() - .5) * 50, y = Math.random() * 25, z = -50 + Math.random() * 60; pos.set([x, y, z, x + .1, y - .9, z + .2], i * 6); }
+  for (let i = 0; i < N; i++) { const x = (Math.random() - .5) * 26, y = Math.random() * 25, z = -62 + Math.random() * 52; pos.set([x, y, z, x + .1, y - .9, z + .2], i * 6); }
   const rg = new THREE.BufferGeometry(); rg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
   world.rain = new THREE.LineSegments(rg, new THREE.LineBasicMaterial({ color: 0xe6f4ff, transparent: true, opacity: 0.5 })); world.rain.frustumCulled = false; G.add(world.rain);
+  // sungai melintang layar: hulu (jembatan) di kiri, arus ke kanan
+  G.rotation.y = Math.PI / 2; G.position.x = 28;
 }
 function holedGround(RW) {
   // tanah berlubang selebar sungai: dua bidang kiri & kanan + depan
@@ -185,232 +208,301 @@ function school(G, x, z) {
   world.flag = fl;
 }
 
-/* ---------------- pemain di tepi + sampah ---------------- */
-let players = [], items = [], running = false, finished = false, seq = [], spawnT = 0, seqI = 0, startAt = 0, robot = null;
-const laneX = (l) => -world.lanes * LW / 2 + LW / 2 + l * LW;
-function nameSprite(text, color) {
-  const t = canvasTex(256, 64, (x) => { x.font = '800 30px Nunito, sans-serif'; const w = Math.min(250, x.measureText(text).width + 34); x.fillStyle = '#1b1a3a'; x.beginPath(); x.roundRect((256 - w) / 2 + 3, 9, w, 46, 23); x.fill(); x.fillStyle = color; x.beginPath(); x.roundRect((256 - w) / 2, 6, w, 46, 23); x.fill(); x.lineWidth = 4; x.strokeStyle = '#1b1a3a'; x.stroke(); x.fillStyle = '#1b1a3a'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(text, 128, 30); });
-  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, depthTest: false })); s.scale.set(2.2, 0.55, 1); s.renderOrder = 10; return s;
-}
-function shadow(r) { const m = new THREE.Mesh(new THREE.CircleGeometry(r, 20), new THREE.MeshBasicMaterial({ color: 0, transparent: true, opacity: 0.28, depthWrite: false })); m.rotation.x = -Math.PI / 2; m.position.y = 0.25; return m; }
-function makeStand(P) {
-  const g = new THREE.Group(); g.position.set(laneX(P.i), 0.22, 5.4); world.group.add(g);
-  const ch = sprite(P.char, 2.3); g.add(ch); if (P.bot) ch.material.color.setHex(0xb8bcc8);
-  g.add(shadow(0.5));
-  const bo = sprite('bin-organik', 1.15); bo.position.set(-1.0, 0, 0.2); g.add(bo);
-  const ba = sprite('bin-anorganik', 1.15); ba.position.set(1.0, 0, 0.2); g.add(ba);
-  const lbl = nameSprite(P.name, P.color); lbl.position.set(0, 2.75, 0); g.add(lbl);
-  P.stand = { g, ch, bo, ba, jump: 0 };
-}
-function spawn(z0) {
-  const key = seq[seqI++ % seq.length], drift = (Math.random() - 0.5) * 0.9, spin = (Math.random() - 0.5) * 1.2;
-  players.forEach((P) => {
-    if (P.done) return;
-    const s = sprite(key, key === 'kardus' ? 1.35 : 1.2);
-    s.position.set(laneX(P.i) + drift, -0.12, z0 != null ? z0 : SPAWN_Z);
-    world.group.add(s);
-    items.push({ key, s, P, x0: laneX(P.i) + drift, ph: Math.random() * 6, spin, state: 'float', t: 0 });
+/* ---------------- permainan ---------------- */
+let players = [], items = [], running = false, finished = false, seq = [], seqI = 0, spawnT = 0, startAt = 0, timeLeft = 0, pausedAt = 0;
+let team = null; // skor bersama (Kerja Sama)
+const stageRect = () => stage.getBoundingClientRect();
+let spanHalf = 12; // setengah lebar sungai yang terlihat (unit dunia)
+const SLOTS = [-4.4, -2.2, 0, 2.2, 4.4];
+const ITEM_H = 1.55;
+function newStats(o) { return Object.assign({ score: 0, org: 0, ano: 0, wrong: 0, combo: 0, best: 0 }, o); }
+
+function buildBins() {
+  const box = $('bins'); box.innerHTML = ''; box.classList.remove('hidden');
+  const groups = mode === 'battle' ? players : [{ i: -1, name: practice ? 'Latihan' : 'Tim Desa', color: '#ffffff', chars: players.map((p) => p.char) }];
+  groups.forEach((P) => {
+    const g = document.createElement('div'); g.className = 'grp'; g.style.setProperty('--c', P.color);
+    const chars = P.chars || [P.char];
+    g.innerHTML = '<div class="gh">' + chars.map((c) => '<img src="' + A + c + '.png" alt="">').join('') + '<span class="nmx"></span><span class="sc">0</span></div>' +
+      '<div class="pair">' + ['org', 'ano'].map((c) => '<div class="bin ' + c + '" data-p="' + P.i + '" data-cat="' + c + '"><i class="lid"></i><i class="body"></i><span>' + CATN[c] + '</span></div>').join('') + '</div>';
+    g.querySelector('.nmx').textContent = P.name;
+    g.querySelectorAll('.bin').forEach((b) => { const url = 'url(' + A + (b.dataset.cat === 'org' ? 'bin-organik' : 'bin-anorganik') + '.png)'; b.querySelector('.lid').style.backgroundImage = url; b.querySelector('.body').style.backgroundImage = url; });
+    box.appendChild(g); P.el = g;
   });
+  if (mode !== 'battle') team.el = box.firstChild;
 }
-function frontItem(P) {
-  let best = null;
-  for (const it of items) if (it.P === P && it.state === 'float' && it.s.position.z > FRONT_Z && it.s.position.z < MISS_Z) { if (!best || it.s.position.z > best.s.position.z) best = it; }
+function owner(i) { return mode === 'battle' ? players[i] : team; }
+function hud() {
+  const done = mode === 'battle' ? seqI - items.filter((x) => x.state !== 'gone').length : team.org + team.ano;
+  $('hProg').textContent = '♻️ ' + Math.min(target, mode === 'battle' ? resolved : team.org + team.ano) + '/' + target;
+  $('hScore').classList.toggle('hidden', mode === 'battle'); if (team) $('hScore').textContent = '⭐ ' + team.score;
+  (mode === 'battle' ? players : [team]).forEach((P) => { if (P.el) P.el.querySelector('.sc').textContent = P.score; });
+  if (timeLimit) { const s = Math.max(0, Math.ceil(timeLeft)); $('hTime').textContent = '⏱ ' + Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
+}
+let resolved = 0;
+function progress() { return Math.min(1, mode === 'battle' ? resolved / target : (team.org + team.ano) / target); }
+
+/* sampah muncul bertahap, hanya bila ada ruang */
+function canSpawnAt(z, x0) { return !items.some((it) => it.state !== 'gone' && Math.abs(it.z - z) < 1.6 && it.x < x0 + 3.2); }
+function spawn(xStart) {
+  if (mode === 'battle' && seqI >= target) return;
+  const L = LEVEL[level], vis = items.filter((it) => it.state === 'float' || it.state === 'held').length;
+  if (vis >= L.max) return;
+  const x0 = xStart != null ? xStart : -spanHalf - 1.2;
+  const free = SLOTS.filter((z) => canSpawnAt(z, x0)); if (!free.length) return;
+  const z = free[Math.floor(Math.random() * free.length)] + (Math.random() - 0.5) * 0.6;
+  const key = seq[seqI++ % seq.length], it = ITEMS[key];
+  const s = sprite(it.img, it.img.startsWith('emoji') ? ITEM_H * 0.9 : ITEM_H); s.position.set(x0, -0.1, z); scene.add(s);
+  const sh = new THREE.Mesh(new THREE.CircleGeometry(0.55, 16), new THREE.MeshBasicMaterial({ color: 0x0b3a5a, transparent: true, opacity: 0.25, depthWrite: false }));
+  sh.rotation.x = -Math.PI / 2; sh.position.set(x0, -0.12, z); scene.add(sh);
+  items.push({ key, s, sh, x: x0, z, v: (2 * spanHalf + 3) / L.cross * (0.88 + Math.random() * 0.24), ph: Math.random() * 6, state: 'float' });
+}
+function removeItem(it) { it.state = 'gone'; scene.remove(it.s); scene.remove(it.sh); }
+
+/* ---------------- seret & lepas (pointer events, multi-sentuh) ---------------- */
+const drags = new Map(); // pointerId → {it, ghost, hot}
+const tmpV = new THREE.Vector3();
+function screenOf(it) { tmpV.set(it.x, 0.7, it.z).project(cam); const r = stageRect(); return { x: r.left + (tmpV.x + 1) / 2 * r.width, y: r.top + (1 - tmpV.y) / 2 * r.height }; }
+function screenSize(it) { const a = tmpV.set(it.x, 0, it.z).project(cam).y, b = tmpV.set(it.x, ITEM_H, it.z).project(cam).y; return Math.abs(a - b) / 2 * stageRect().height; }
+cv.addEventListener('pointerdown', (e) => {
+  if (!running) return;
+  e.preventDefault();
+  let best = null, bd = 1e9;
+  for (const it of items) {
+    if (it.state !== 'float') continue;
+    const p = screenOf(it), d = Math.hypot(p.x - e.clientX, p.y - e.clientY), r = Math.max(46, screenSize(it) * 0.75);
+    if (d < r && d < bd) { bd = d; best = it; }
+  }
+  if (!best) return;
+  if (window.Tutor) Tutor.done();
+  best.state = 'held'; best.s.visible = false; best.sh.visible = false;
+  const size = Math.max(70, Math.min(130, screenSize(best) * 1.25));
+  const g = document.createElement('img'); g.className = 'ghost'; g.src = A + ITEMS[best.key].img + '.png'; g.style.width = size + 'px';
+  g.style.left = e.clientX + 'px'; g.style.top = e.clientY + 'px'; document.body.appendChild(g);
+  drags.set(e.pointerId, { it: best, ghost: g, hot: null, size });
+  try { cv.setPointerCapture(e.pointerId); } catch (er) {}
+  Sfx.pop();
+});
+function binAt(x, y) {
+  let best = null, bd = 1e9;
+  document.querySelectorAll('#bins .bin').forEach((b) => {
+    const r = b.getBoundingClientRect(), pad = 34; // area magnet
+    if (x > r.left - pad && x < r.right + pad && y > r.top - pad * 2 && y < r.bottom + pad) {
+      const d = Math.hypot(x - (r.left + r.width / 2), y - (r.top + r.height / 2)); if (d < bd) { bd = d; best = b; }
+    }
+  });
   return best;
 }
-
-/* ---------------- panel pemain ---------------- */
-function buildPads() {
-  const pads = $('pads'); pads.innerHTML = ''; pads.style.gridTemplateColumns = 'repeat(' + players.length + ', 1fr)';
-  players.forEach((P) => {
-    const el = document.createElement('section'); el.className = 'pad'; el.style.setProperty('--c', P.color);
-    el.innerHTML = '<header><span class="nmx"></span><span class="kh">⌨ ' + (P.bot ? '' : KEYLBL[P.i]) + '</span><span class="sc">0/' + target + '</span></header><div class="clean"><i></i></div>' +
-      '<div class="body"><button class="bt org nb-sm press" type="button"><img src="' + A + 'bin-organik.png" alt="">Organik</button><div class="cur"></div><button class="bt ano nb-sm press" type="button"><img src="' + A + 'bin-anorganik.png" alt="">Anorganik</button></div>';
-    el.querySelector('.nmx').textContent = P.name;
-    if (P.bot) el.querySelectorAll('.bt').forEach((b) => { b.disabled = true; b.style.opacity = .55; });
-    el.querySelector('.org').addEventListener('pointerdown', (e) => { e.preventDefault(); press(P, 'org'); });
-    el.querySelector('.ano').addEventListener('pointerdown', (e) => { e.preventDefault(); press(P, 'ano'); });
-    pads.appendChild(el); P.el = el;
-  });
+function setHot(d, b) {
+  if (d.hot === b) return;
+  if (d.hot) { d.hot._n = (d.hot._n || 1) - 1; if (!d.hot._n) d.hot.classList.remove('hot'); }
+  d.hot = b;
+  if (b) { b._n = (b._n || 0) + 1; b.classList.add('hot'); }
 }
-function padUpdate(P) {
-  P.el.querySelector('.sc').textContent = P.score + '/' + target;
-  P.el.querySelector('.clean i').style.width = Math.max(0, P.clean) + '%';
-  const it = frontItem(P), cur = P.el.querySelector('.cur');
-  const key = it ? it.key : '';
-  if (cur.dataset.k !== key) { cur.dataset.k = key; cur.innerHTML = key ? '<img src="' + A + key + '.png" alt="' + ITEMS[key].nama + '">' : ''; }
-  cur.classList.toggle('ready', !!it && it.s.position.z > -3);
+addEventListener('pointermove', (e) => {
+  const d = drags.get(e.pointerId); if (!d) return;
+  e.preventDefault();
+  const b = binAt(e.clientX, e.clientY); setHot(d, b);
+  let x = e.clientX, y = e.clientY;
+  if (b) { const r = b.getBoundingClientRect(); x += (r.left + r.width / 2 - x) * 0.25; y += (r.top + r.height * 0.35 - y) * 0.25; } // tarikan magnet
+  d.ghost.style.left = x + 'px'; d.ghost.style.top = y + 'px';
+}, { passive: false });
+function endDrag(e) {
+  const d = drags.get(e.pointerId); if (!d) return;
+  drags.delete(e.pointerId);
+  const b = d.hot; setHot(d, null);
+  if (b && running) drop(d, b); else flyBack(d);
 }
-function msg(P, text) {
-  let m = P.el.querySelector('.msg'); if (!m) { m = document.createElement('div'); m.className = 'msg'; P.el.appendChild(m); }
-  m.textContent = text; clearTimeout(P.msgT); P.msgT = setTimeout(() => m.remove(), 1800);
+addEventListener('pointerup', endDrag); addEventListener('pointercancel', endDrag);
+function flyBack(d, after) {
+  const it = d.it, p = screenOf(it);
+  const an = d.ghost.animate([{ left: d.ghost.style.left, top: d.ghost.style.top }, { left: p.x + 'px', top: p.y + 'px' }], { duration: 260, easing: 'ease-out', fill: 'forwards' });
+  an.onfinish = () => { d.ghost.remove(); if (it.state === 'held') { it.state = 'float'; it.s.visible = true; it.sh.visible = true; } after && after(); };
 }
-
-/* ---------------- tekan tombol ---------------- */
-function press(P, cat) {
-  if (!running || P.done || performance.now() < P.frozen) return;
-  if (window.Tutor) Tutor.done();
-  const it = frontItem(P);
-  if (!it) { return; }
-  if (ITEMS[it.key].cat === cat) {
-    it.state = 'fly'; it.t = 0; it.from = it.s.position.clone();
-    const bin = cat === 'org' ? P.stand.bo : P.stand.ba; it.to = new THREE.Vector3().setFromMatrixPosition(bin.matrixWorld).add(new THREE.Vector3(0, 1.1, 0));
-    P.score++; P.combo++; P.right++;
-    P.stand.jump = 1; splash(it.s.position, 0xffffff, 18);
-    if (!P.bot) { Sfx.good(); if (P.combo % 5 === 0) { Sfx.coin && Sfx.coin(); msg(P, '🔥 ' + P.combo + ' benar berturut-turut!'); } }
-    P.el.classList.remove('good'); void P.el.offsetWidth; P.el.classList.add('good');
-    if (P.score >= target) finish(P);
+function drop(d, bin) {
+  const it = d.it, info = ITEMS[it.key], cat = bin.dataset.cat, P = owner(+bin.dataset.p);
+  const r = bin.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height * 0.3;
+  if (info.cat === cat) {
+    // masuk: melengkung, mengecil, lalu hilang
+    const x0 = parseFloat(d.ghost.style.left), y0 = parseFloat(d.ghost.style.top);
+    d.ghost.animate([
+      { left: x0 + 'px', top: y0 + 'px', transform: 'translate(-50%,-50%) scale(1.1) rotate(-6deg)' },
+      { left: (x0 + cx) / 2 + 'px', top: Math.min(y0, cy) - 50 + 'px', transform: 'translate(-50%,-50%) scale(.85) rotate(90deg)', offset: 0.5 },
+      { left: cx + 'px', top: cy + 'px', transform: 'translate(-50%,-50%) scale(.2) rotate(200deg)' },
+    ], { duration: 380, easing: 'ease-in', fill: 'forwards' }).onfinish = () => { d.ghost.remove(); bin.classList.remove('eat'); void bin.offsetWidth; bin.classList.add('eat'); };
+    removeItem(it);
+    P.combo++; P.best = Math.max(P.best, P.combo); P[cat]++;
+    const gain = 10 + Math.min(10, (P.combo - 1) * 2); P.score += gain;
+    if (mode === 'battle') { resolved++; } 
+    Sfx.good(); if (Sfx.bell && P.combo > 1) Sfx.bell();
+    if (window.Fx) Fx.good(cx, r.top + 10, '+' + gain);
+    const head = P.el && P.el.querySelectorAll('.gh img'); if (head) head.forEach((im) => { im.classList.remove('hop'); void im.offsetWidth; im.classList.add('hop'); });
+    if (P.combo >= 3 && P.combo % 3 === 0) toast('🔥 Combo ' + P.combo + '!' + (mode === 'battle' ? ' ' + P.name : ''), 'good');
+    else if (mode !== 'battle') { const pr = progress(); if (pr >= 0.5 && !team.half) { team.half = true; toast('Hebat! Sungai semakin bersih! 🌊', 'good'); say('Hebat! Sungai semakin bersih!'); } }
+    hud(); checkEnd();
   } else {
-    P.combo = 0; P.wrong++; P.frozen = performance.now() + 1000;
-    it.bounce = 1;
-    if (!P.bot) Sfx.bad();
-    P.el.classList.remove('frozen'); void P.el.offsetWidth; P.el.classList.add('frozen'); setTimeout(() => P.el.classList.remove('frozen'), 1000);
-    msg(P, '❌ ' + ITEMS[it.key].why);
-    if (players.filter((x) => !x.bot).length === 1 && window.Suara) Suara.read(ITEMS[it.key].why, { force: !Sfx.muted() });
+    P.combo = 0; P.wrong++;
+    bin.classList.remove('bad'); void bin.offsetWidth; bin.classList.add('bad');
+    Sfx.bad();
+    const txt = info.nama + ' termasuk ' + CATN[info.cat] + '. ' + info.info;
+    toast('❌ ' + txt, 'bad'); if (mode !== 'battle' || players.length === 1) say(txt);
+    flyBack(d); hud();
   }
-  padUpdate(P);
 }
-addEventListener('keydown', (e) => {
-  if (!running || e.repeat) return;
-  const k = e.key.toLowerCase();
-  players.forEach((P) => { if (P.bot) return; const ks = KEYS[P.i]; if (k === ks[0]) { e.preventDefault(); press(P, 'org'); } else if (k === ks[1]) { e.preventDefault(); press(P, 'ano'); } });
+
+/* ---------------- bantuan ---------------- */
+let hintRing = null;
+$('bHint').addEventListener('click', () => {
+  if (!running) return;
+  let it = [...drags.values()][0]?.it;
+  if (!it) it = items.filter((x) => x.state === 'float').sort((a, b) => b.x - a.x)[0];
+  if (!it) { toast('Tunggu sampah berikutnya hanyut, ya.', 'hint'); return; }
+  const info = ITEMS[it.key];
+  toast('💡 ' + info.hint, 'hint'); say(info.hint); Sfx.click();
+  if (!hintRing) { hintRing = new THREE.Mesh(new THREE.RingGeometry(0.75, 0.95, 32), new THREE.MeshBasicMaterial({ color: 0xffd23f, transparent: true, depthWrite: false })); hintRing.rotation.x = -Math.PI / 2; scene.add(hintRing); }
+  hintRing.userData = { it, t: 2.5 }; hintRing.visible = true;
+  if (mode !== 'battle') { // latihan & kerja sama: tunjukkan tempat sampah yang tepat
+    document.querySelectorAll('#bins .bin.' + info.cat).forEach((b) => { b.classList.add('reveal'); setTimeout(() => b.classList.remove('reveal'), 2500); });
+  }
 });
 
 /* ---------------- efek ---------------- */
-const SPL = 220, sPos = new Float32Array(SPL * 3), sVel = new Float32Array(SPL * 3), sLife = new Float32Array(SPL); let sNext = 0;
-for (let i = 0; i < SPL; i++) sPos[i * 3 + 1] = -9;
-const sGeo = new THREE.BufferGeometry(); sGeo.setAttribute('position', new THREE.BufferAttribute(sPos, 3));
-const splashPts = new THREE.Points(sGeo, new THREE.PointsMaterial({ color: 0xe8f7ff, size: 0.16, transparent: true, opacity: 0.9, depthWrite: false })); splashPts.frustumCulled = false; scene.add(splashPts);
-function splash(p, c, n) { for (let k = 0; k < n; k++) { const i = sNext; sNext = (sNext + 1) % SPL; sPos.set([p.x, 0, p.z], i * 3); const a = Math.random() * 6.28, v = 1 + Math.random() * 2; sVel.set([Math.cos(a) * v, 2.5 + Math.random() * 2.5, Math.sin(a) * v], i * 3); sLife[i] = 0.8; } }
-const CONF = 160, conf = new THREE.InstancedMesh(new THREE.PlaneGeometry(0.14, 0.22), new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }), CONF);
+function toast(t, k) { const o = stage.querySelector('.toast'); if (o) o.remove(); const d = document.createElement('div'); d.className = 'toast ' + (k || ''); d.textContent = t; stage.appendChild(d); clearTimeout(toast.t); toast.t = setTimeout(() => d.remove(), 2800); }
+function banner(t) { const b = document.createElement('div'); b.className = 'banner'; b.textContent = t; stage.appendChild(b); setTimeout(() => b.remove(), 1600); }
+const CONF = 160, conf = new THREE.InstancedMesh(new THREE.PlaneGeometry(0.16, 0.24), new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }), CONF);
 conf.visible = false; conf.frustumCulled = false; scene.add(conf);
 const cData = []; for (let i = 0; i < CONF; i++) { cData.push({ p: new THREE.Vector3(), v: new THREE.Vector3(), r: Math.random() * 6 }); conf.setColorAt(i, new THREE.Color([0xff5d8f, 0xffd23f, 0x2ec4b6, 0x4aa8ff, 0xff7a1a, 0xffffff][i % 6])); }
-let confC = null;
-function confetti(c) { confC = c; conf.visible = true; cData.forEach((d) => { d.p.set(c.x + (Math.random() - .5) * 6, c.y + Math.random() * 4, c.z + (Math.random() - .5) * 4); d.v.set((Math.random() - .5) * 1.5, -1.2 - Math.random(), (Math.random() - .5) * 1.5); }); }
-function banner(t) { const b = document.createElement('div'); b.className = 'banner'; b.textContent = t; stage.appendChild(b); setTimeout(() => b.remove(), 1600); }
+let confOn = false;
+function confetti() { confOn = true; conf.visible = true; cData.forEach((d) => { d.p.set((Math.random() - .5) * 24, 6 + Math.random() * 6, (Math.random() - .5) * 10); d.v.set((Math.random() - .5) * 1.5, -1.5 - Math.random(), (Math.random() - .5) * 1.5); }); }
+// ikan melompat saat sungai makin bersih
+const fish = [];
+function fishJump() {
+  const s = sprite(E('1f41f'), 0.9); const x = (Math.random() - .5) * spanHalf * 1.6, z = (Math.random() - .5) * 8;
+  s.position.set(x, -0.3, z); scene.add(s); fish.push({ s, x, z, t: 0, dir: Math.random() < .5 ? -1 : 1 });
+}
+const WATER_DIRTY = new THREE.Color(0xd9c49a), WATER_CLEAN = new THREE.Color(0xd2efff);
 
 /* ---------------- alur ---------------- */
 function resize() {
   const w = stage.clientWidth, h = stage.clientHeight; if (!w || !h) return;
   renderer.setPixelRatio(Math.min(lite() ? 1 : 1.5, devicePixelRatio || 1)); renderer.setSize(w, h, false);
-  cam.aspect = w / h;
-  const RW = Math.max(2, world.lanes || 2) * LW;
-  // jaga semua jalur terlihat: jarak kamera menyesuaikan lebar sungai & rasio layar
-  const fitW = (RW + 5) / 2 / Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)) / cam.aspect;
-  const d = Math.max(11, fitW * 0.95);
-  cam.position.set(0, d * 0.6, 9 + d * 0.62); cam.lookAt(0, 0, -9); cam.updateProjectionMatrix();
+  cam.aspect = w / h; cam.fov = 45;
+  // sungai (lebar ±6.4 di sumbu z) harus terlihat penuh; lebar tampak sumbu x mengikuti rasio layar
+  const tanV = Math.tan(THREE.MathUtils.degToRad(cam.fov / 2));
+  const d = Math.max(13, 9.5 / tanV, 11 / (tanV * cam.aspect));
+  cam.position.set(0, d * 0.66, d * 0.8); cam.lookAt(0, 0, -1.6); cam.updateProjectionMatrix();
+  spanHalf = d * tanV * cam.aspect * 0.95;
 }
-addEventListener('resize', resize);
-new ResizeObserver(resize).observe(stage);
+addEventListener('resize', resize); new ResizeObserver(resize).observe(stage);
+function clearItems() { items.forEach((it) => { scene.remove(it.s); scene.remove(it.sh); }); items = []; drags.forEach((d) => d.ghost.remove()); drags.clear(); document.querySelectorAll('.ghost').forEach((g) => g.remove()); fish.forEach((f) => scene.remove(f.s)); fish.length = 0; }
 function start() {
-  try { localStorage.setItem('sd_np', nPlayers); localStorage.setItem('sd_level', level); localStorage.setItem('sd_target', target); } catch (e) {}
-  const names = [...$('names').querySelectorAll('input')].map((inp, i) => (inp.value || '').trim().replace(/[<>]/g, '') || ('Pemain ' + (i + 1)));
-  players = names.map((n, i) => ({ i, name: n, color: COLORS[i], char: charOf(i), score: 0, right: 0, wrong: 0, miss: 0, combo: 0, clean: 100, frozen: 0 }));
-  if (nPlayers === 1) players.push({ i: 1, name: '🤖 Robot', color: '#b8bcc8', char: 'boy', score: 0, right: 0, wrong: 0, miss: 0, combo: 0, clean: 100, frozen: 0, bot: true, think: 0 });
-  items.forEach((it) => it.s.parent && it.s.parent.remove(it.s)); items = [];
+  try { localStorage.setItem('sd_nb', nBattle); localStorage.setItem('sd_nc', nCoop); localStorage.setItem('sd_level', level); localStorage.setItem('sd_target', target); localStorage.setItem('sd_time', timeLimit); } catch (e) {}
+  const n = practice ? 1 : np();
+  const inputs = [...$('names').querySelectorAll('input')];
+  players = []; for (let i = 0; i < n; i++) players.push(newStats({ i, name: (inputs[i] && inputs[i].value.trim().replace(/[<>]/g, '')) || ('Pemain ' + (i + 1)), color: COLORS[i], char: charOf(i) }));
+  team = mode === 'battle' ? null : newStats({ i: -1, name: 'Tim' });
+  const tgt = practice ? 10 : target;
+  if (practice) { level = 1; }
+  target = tgt;
+  clearItems(); resolved = 0; finished = false; running = false;
   renderer.shadowMap.enabled = !lite();
-  buildWorld(players.length);
-  players.forEach(makeStand);
-  const keys = LEVEL_KEYS[level]; seq = []; for (let i = 0; i < 200; i++) seq.push(keys[Math.floor(Math.random() * keys.length)]); seqI = 0;
-  $('menu').classList.add('hidden'); $('result').classList.add('hidden'); $('pads').classList.remove('hidden'); $('topbar').classList.remove('hidden');
-  $('hTarget').textContent = '🎯 Target ' + target + ' sampah';
-  buildPads(); resize();
-  scene.background.copy(SKY_RAIN); scene.fog.color.copy(SKY_RAIN); world.rain.material.opacity = 0.5; conf.visible = false; confC = null;
-  finished = false; running = false; spawnT = 0.2;
-  let n = 3; const cd = () => { if (n > 0) { banner(String(n)); Sfx.tick(); n--; setTimeout(cd, 800); } else { banner('MULAI!'); Sfx.go(); Sfx.music(true); running = true; startAt = performance.now(); { const gap = speed() * (level === 3 ? 1.35 : level === 2 ? 1.6 : 1.9) / tempo; for (let z = -18; z > SPAWN_Z; z -= gap) spawn(z); spawnT = 0.4; } if (window.Tutor) setTimeout(Tutor.hint, 1500); } };
+  if (!world.group) buildWorld(4);
+  const L = LEVEL[level]; seq = []; for (let i = 0; i < 400; i++) seq.push(L.keys[Math.floor(Math.random() * L.keys.length)]); seqI = 0;
+  show(null); $('topbar').classList.remove('hidden');
+  timeLeft = practice ? 0 : timeLimit; $('hTime').classList.toggle('hidden', !timeLeft);
+  buildBins(); resize(); hud();
+  scene.background.copy(SKY_RAIN); scene.fog.color.copy(SKY_RAIN); if (world.rain) world.rain.material.opacity = 0.5; conf.visible = false; confOn = false;
+  let c = 3; const cd = () => { if (finished) return; if (c > 0) { banner(String(c)); Sfx.tick(); c--; setTimeout(cd, 750); } else { banner('MULAI!'); Sfx.go(); Sfx.music(true); running = true; startAt = performance.now(); spawnT = 0; spawn(-spanHalf * 0.55); spawn(-spanHalf * 0.15); if (window.Tutor) setTimeout(Tutor.hint, 1200); } };
   cd();
 }
-function finish(W) {
-  if (finished) return; finished = true; running = false;
-  players.forEach((P) => { P.done = true; P.el.querySelectorAll('.bt').forEach((b) => { b.disabled = true; }); });
-  W.el.classList.add('win'); Sfx.music(false);
-  if (W.bot) Sfx.bad(); else { Sfx.win(); Fx.win(); }
-  confetti(new THREE.Vector3(laneX(W.i), 3, 4));
-  banner('🏆 ' + W.name + ' menang!');
-  setTimeout(showResult, 3600);
+function checkEnd() {
+  if (finished) return;
+  if (mode === 'battle') { if (resolved >= target) end(true); }
+  else if (team.org + team.ano >= target) end(true);
 }
-function showResult() {
-  const ord = players.slice().sort((a, b) => b.score - a.score || a.wrong - b.wrong);
-  $('rTitle').textContent = ord[0].bot ? 'Robot menang! Coba lagi 💪' : '🏆 ' + ord[0].name + ' menang!';
+function end(ok) {
+  if (finished) return; finished = true; running = false; Sfx.music(false);
+  drags.forEach((d) => flyBack(d)); drags.clear();
   const secs = Math.round((performance.now() - startAt) / 1000);
-  $('rSub').textContent = 'Waktu ' + secs + ' detik · target ' + target + ' sampah';
-  $('rank').innerHTML = ord.map((P, r) => '<div><b>' + (r + 1) + '</b><span>' + P.name.replace(/[<>]/g, '') + '<br><small>' + P.right + ' benar · ' + P.wrong + ' salah · ' + P.miss + ' lewat</small></span><b>' + P.score + '</b></div>').join('');
-  $('result').classList.remove('hidden');
-  const best = players.filter((p) => !p.bot).reduce((m, p) => Math.max(m, p.score * 10 - p.wrong * 5), 0);
-  if (window.Koin && best > 0) Koin.add(best / 10, 'Selamatkan Desa');
+  if (ok) { Sfx.win(); Fx.win(); confetti(); }
+  let title, sub, stat = '', rank = '';
+  if (mode === 'battle') {
+    const ord = players.slice().sort((a, b) => b.score - a.score || a.wrong - b.wrong);
+    ord[0].el && ord[0].el.classList.add('win');
+    title = '🏆 ' + ord[0].name + ' menang!'; sub = 'Waktu ' + secs + ' detik · ' + target + ' sampah';
+    rank = ord.map((P, r) => '<div><b>' + ['🥇', '🥈', '🥉', '4'][r] + '</b><img src="' + A + P.char + '.png" alt=""><span>' + P.name.replace(/[<>]/g, '') + '<br><small>🌿 ' + P.org + ' · ♻️ ' + P.ano + ' · salah ' + P.wrong + ' · combo ' + P.best + '</small></span><b>' + P.score + '</b></div>').join('');
+    banner('🏆 ' + ord[0].name + ' menang!');
+  } else {
+    title = ok ? (practice ? 'Latihan selesai! 🎉' : 'Hebat! Sungai desa bersih! 🎉') : 'Waktu habis! ⏱';
+    sub = ok ? 'Kerja sama kalian menyelamatkan desa. Ikan kembali berenang!' : 'Sungai belum bersih. Ayo coba lagi bersama!';
+    stat = [['⭐', team.score, 'Skor'], ['🌿', team.org, 'Organik'], ['♻️', team.ano, 'Anorganik'], ['❌', team.wrong, 'Salah']].map((s) => '<div>' + s[1] + '<small>' + s[0] + ' ' + s[2] + '</small></div>').join('');
+    sub += ' Waktu ' + secs + ' detik.';
+    if (ok) say(practice ? 'Latihan selesai. Hebat!' : 'Hebat! Sungai desa bersih!');
+  }
+  $('rTitle').textContent = title; $('rSub').textContent = sub; $('rStat').innerHTML = stat; $('rStat').classList.toggle('hidden', !stat); $('rank').innerHTML = rank;
+  const coins = mode === 'battle' ? Math.max(...players.map((p) => p.score)) : team.score;
+  if (window.Koin && coins > 0) setTimeout(() => Koin.add(coins / 20, 'Selamatkan Desa'), 600);
+  setTimeout(() => show('result'), ok ? 3200 : 600);
 }
-function toMenu() { running = false; finished = true; Sfx.music(false); ['pads', 'topbar', 'result'].forEach((id) => $(id).classList.add('hidden')); $('menu').classList.remove('hidden'); }
-$('start').addEventListener('click', start);
+function toMenu() { running = false; finished = true; Sfx.music(false); clearItems(); $('topbar').classList.add('hidden'); $('bins').classList.add('hidden'); show('menu'); }
+$('start').addEventListener('click', () => { practice = false; start(); });
 $('again').addEventListener('click', start);
 $('toMenu').addEventListener('click', toMenu);
+$('pMenu').addEventListener('click', toMenu);
 $('bExit').addEventListener('click', () => Dialog.ask('Selesai bermain sekarang?', toMenu));
+$('bPause').addEventListener('click', () => { if (!running) return; running = false; pausedAt = performance.now(); drags.forEach((d) => flyBack(d)); drags.clear(); Sfx.music(false); show('pause'); });
+$('resume').addEventListener('click', () => { show(null); startAt += performance.now() - pausedAt; running = true; last = 0; Sfx.music(true); });
 $('bMute').addEventListener('click', function () { try { localStorage.setItem('bgy_muted', Sfx.muted() ? '0' : '1'); } catch (e) {} this.textContent = Sfx.muted() ? '🔇' : '🔊'; Sfx.music(!Sfx.muted() && running); });
 $('bMute').textContent = Sfx.muted() ? '🔇' : '🔊';
+document.addEventListener('visibilitychange', () => { if (document.hidden && running) $('bPause').click(); });
 
 /* ---------------- loop ---------------- */
-let last = 0; const tmp = new THREE.Vector3();
-function speed() { return (3.6 + (level - 1) * 0.7) * tempo; }
+let last = 0, fishT = 0;
 function frame(t) {
   requestAnimationFrame(frame);
   const dt = Math.min(0.05, (t - (last || t)) / 1000); last = t;
   if (!world.group) return;
   if (running) {
-    spawnT -= dt;
-    if (spawnT <= 0) { spawn(); spawnT = (level === 3 ? 1.35 : level === 2 ? 1.6 : 1.9) / tempo; }
-    // robot
-    players.forEach((P) => {
-      if (!P.bot || P.done) return;
-      const it = frontItem(P); if (!it) return;
-      if (it.s.position.z > -1 + (P.think || 0)) {
-        const acc = [0, 0.72, 0.82, 0.9][level];
-        const c = ITEMS[it.key].cat; press(P, Math.random() < acc ? c : c === 'org' ? 'ano' : 'org'); P.think = Math.random() * 3.2 - 0.8;
-      }
-    });
+    if (timeLeft) { timeLeft -= dt; if (Math.floor(timeLeft + dt) !== Math.floor(timeLeft)) hud(); if (timeLeft <= 0) { mode === 'battle' ? end(true) : end(false); } }
+    spawnT -= dt; if (spawnT <= 0) { spawn(); spawnT = LEVEL[level].gap * (0.8 + Math.random() * 0.4); }
   }
-  // sampah hanyut / terbang ke tempat sampah
-  const v = speed();
+  // sampah mengambang & hanyut
   for (let k = items.length - 1; k >= 0; k--) {
-    const it = items[k], s = it.s;
-    if (it.state === 'float') {
-      if (running || finished) s.position.z += v * dt * (running ? 1 : 0.3);
-      s.position.x = it.x0 + Math.sin(t / 700 + it.ph) * 0.35;
-      s.position.y = -0.12 + Math.abs(Math.sin(t / 380 + it.ph)) * 0.08;
-      s.material.rotation = Math.sin(t / 900 + it.ph) * 0.25 + it.spin * 0.2;
-      if (it.bounce) { it.bounce = Math.max(0, it.bounce - dt * 2.5); s.position.y += Math.sin(it.bounce * Math.PI) * 0.8; s.position.z -= dt * 1.5 * it.bounce; }
-      if (s.position.z > MISS_Z && !it.missed) { it.missed = true; it.P.miss++; it.P.combo = 0; it.P.clean -= 8; if (!it.P.bot && running) msg(it.P, '💧 Sampah lewat! Sungai makin kotor.'); }
-      if (s.position.z > 7) { s.parent && s.parent.remove(s); items.splice(k, 1); }
-    } else if (it.state === 'fly') {
-      it.t += dt * 2.4; const u = Math.min(1, it.t);
-      s.position.lerpVectors(it.from, it.to, u); s.position.y += Math.sin(u * Math.PI) * 2.2;
-      s.material.rotation += dt * 8;
-      if (u >= 1) { s.parent && s.parent.remove(s); items.splice(k, 1); }
+    const it = items[k];
+    if (it.state === 'gone') { items.splice(k, 1); continue; }
+    if (it.state !== 'float') continue;
+    if (running) it.x += it.v * dt;
+    const bob = Math.sin(t / 420 + it.ph) * 0.07;
+    it.s.position.set(it.x, -0.1 + bob, it.z + Math.sin(t / 900 + it.ph) * 0.18);
+    it.s.material.rotation = Math.sin(t / 800 + it.ph) * 0.22;
+    it.sh.position.set(it.x, -0.12, it.z);
+    if (it.x > spanHalf + 1.4) { // lewat
+      removeItem(it); items.splice(k, 1);
+      if (running) { if (mode === 'battle') { resolved++; hud(); checkEnd(); } else { team.combo = 0; toast('💧 Ada sampah yang lewat. Ayo lebih cepat!', 'bad'); } }
     }
   }
-  // karakter melompat, nomor panel
-  players.forEach((P) => {
-    if (!P.stand) return;
-    P.stand.jump = Math.max(0, P.stand.jump - dt * 3);
-    P.stand.ch.position.y = Math.sin(P.stand.jump * Math.PI) * 0.6 + (P.done && P.el.classList.contains('win') ? Math.abs(Math.sin(t / 220)) * 0.5 : 0);
-    if (P.el) padUpdate(P);
-  });
-  // langit makin cerah saat sungai makin bersih (kemajuan pemain terbaik)
-  const prog = players.length ? Math.min(1, Math.max(...players.map((p) => p.score)) / target) : 0;
-  scene.background.lerpColors(SKY_RAIN, SKY_SUN, prog); scene.fog.color.copy(scene.background);
-  sun.intensity = 1.2 + prog * 1.0; if (world.rain) world.rain.material.opacity = 0.5 * (1 - prog);
-  waterT.offset.y += dt * v * 0.05;
+  if (hintRing && hintRing.visible) { const h = hintRing.userData; h.t -= dt; const it = h.it; if (h.t <= 0 || it.state === 'gone') hintRing.visible = false; else { hintRing.position.set(it.x, -0.05, it.z); hintRing.scale.setScalar(1 + Math.sin(t / 120) * 0.12); } }
+  // sungai makin bersih → air jernih, hujan reda, langit cerah, ikan muncul
+  const pr = (mode === 'battle' || team) ? progress() : 0;
+  if (world.water) world.water.material.color.lerpColors(WATER_DIRTY, WATER_CLEAN, pr);
+  scene.background.lerpColors(SKY_RAIN, SKY_SUN, pr); scene.fog.color.copy(scene.background);
+  sun.intensity = 1.2 + pr * 1.0; if (world.rain) world.rain.material.opacity = 0.5 * (1 - pr);
+  if (pr > 0.35 && !lite()) { fishT -= dt; if (fishT <= 0) { fishJump(); fishT = 3.5 - pr * 2.2; } }
+  for (let k = fish.length - 1; k >= 0; k--) { const f = fish[k]; f.t += dt * 0.9; const u = Math.min(1, f.t); f.s.position.set(f.x + f.dir * u * 2.2, -0.3 + Math.sin(u * Math.PI) * 1.6, f.z); f.s.material.rotation = f.dir * (0.9 - u * 1.8); f.s.scale.x = Math.abs(f.s.scale.x) * -f.dir; if (u >= 1) { scene.remove(f.s); fish.splice(k, 1); } }
+  waterT.offset.y += dt * (0.1 + 0.6 / LEVEL[level].cross);
   if (world.rain) { const a = world.rain.geometry.attributes.position.array; for (let i = 0; i < a.length; i += 6) { a[i + 1] -= dt * 20; a[i + 4] -= dt * 20; if (a[i + 4] < 0) { a[i + 1] += 25; a[i + 4] += 25; } } world.rain.geometry.attributes.position.needsUpdate = true; }
   if (world.flag) world.flag.children.forEach((c, i) => { c.rotation.y = Math.sin(t / 250 + i) * 0.3; });
-  for (let i = 0; i < SPL; i++) { if (sLife[i] <= 0) continue; sLife[i] -= dt; sVel[i * 3 + 1] -= 9 * dt; sPos[i * 3] += sVel[i * 3] * dt; sPos[i * 3 + 1] += sVel[i * 3 + 1] * dt; sPos[i * 3 + 2] += sVel[i * 3 + 2] * dt; if (sLife[i] <= 0) sPos[i * 3 + 1] = -9; }
-  sGeo.attributes.position.needsUpdate = true;
-  if (confC) { cData.forEach((d, i) => { d.p.addScaledVector(d.v, dt); d.r += dt * 4; if (d.p.y < 0) d.p.set(confC.x + (Math.random() - .5) * 6, confC.y + 4, confC.z + (Math.random() - .5) * 4); _o.position.copy(d.p); _o.rotation.set(d.r, d.r * 0.7, 0); _o.scale.setScalar(1); _o.updateMatrix(); conf.setMatrixAt(i, _o.matrix); }); conf.instanceMatrix.needsUpdate = true; }
+  if (confOn) { cData.forEach((d, i) => { d.p.addScaledVector(d.v, dt); d.r += dt * 4; if (d.p.y < 0) d.p.y = 10; _o.position.copy(d.p); _o.rotation.set(d.r, d.r * 0.7, 0); _o.scale.setScalar(1); _o.updateMatrix(); conf.setMatrixAt(i, _o.matrix); }); conf.instanceMatrix.needsUpdate = true; }
   renderer.render(scene, cam);
 }
-// adegan latar di menu
-buildWorld(2); resize(); requestAnimationFrame(frame);
-setInterval(() => { players.forEach((P) => P.stand && fitSprite(P.stand.ch)); }, 1000); // pastikan rasio PNG benar setelah termuat
+buildWorld(4); resize(); requestAnimationFrame(frame);
+// adegan menu: beberapa sampah hanyut di latar
+seq = LEVEL[1].keys.slice(); level = level || 1;
 
-window.__sd = { state: () => ({ running, finished, players: players.map((p) => ({ n: p.name, s: p.score, w: p.wrong, m: p.miss, bot: !!p.bot })), front: players.map((p) => { const it = frontItem(p); return it ? { key: it.key, cat: ITEMS[it.key].cat, z: it.s.position.z } : null; }) }), press: (i, c) => press(players[i], c) };
+window.__sd = {
+  state: () => ({ running, finished, mode, resolved, target, team: team && { s: team.score, o: team.org, a: team.ano, w: team.wrong }, players: players.map((p) => ({ n: p.name, s: p.score, o: p.org, a: p.ano, w: p.wrong })), items: items.filter((i) => i.state === 'float').map((i) => ({ key: i.key, cat: ITEMS[i.key].cat, ...screenOf(i) })) }),
+};
 if (window.Tutor) Tutor.init('selamatkan-desa', [
-  { sel: '#segPlayers', text: 'Pilih jumlah pemain. Satu orang melawan robot, atau 2 sampai 4 teman.' },
-  { sel: '#names', text: 'Tulis nama dan ketuk gambar untuk ganti karakter.' },
-  { sel: '#start', text: 'Sampah hanyut ke arahmu. Tekan Organik atau Anorganik sebelum lewat!' },
-], { inGame: 'Lihat sampah di tengah panelmu, lalu tekan Organik atau Anorganik.' });
+  { sel: '.modes', text: 'Pilih Belajar untuk mengenal sampah, Battle untuk berlomba, atau Kerja Sama untuk bermain satu tim.' },
+  { sel: '.mode.learn', text: 'Belum yakin? Mulai dari Belajar dulu.' },
+], { inGame: 'Sentuh sampah di sungai, lalu seret ke tempat sampah yang benar.' });
