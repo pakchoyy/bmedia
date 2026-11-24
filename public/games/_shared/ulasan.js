@@ -33,7 +33,7 @@
     };
     document.body.appendChild(c);
   }
-  function vis(el) { return el && el.offsetParent !== null && getComputedStyle(el).visibility !== 'hidden' && !el.classList.contains('hidden'); }
+  function vis(el) { if (el && el.classList.contains('modal-overlay')) return el.classList.contains('visible'); return el && el.offsetParent !== null && getComputedStyle(el).visibility !== 'hidden' && !el.classList.contains('hidden'); }
   new MutationObserver(function () {
     if (shown) return;
     for (var i = 0; i < IDS.length; i++) { var el = document.getElementById(IDS[i]); if (vis(el)) { setTimeout(show, 1800); return; } }
