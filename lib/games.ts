@@ -82,7 +82,7 @@ export const GAMES: GameInfo[] = [
     mapel: "Matematika",
     fase: "SD–SMP",
     caraMain: ["Pilih jumlah pemain dan jenis soal.", "Balon berisi jawaban terbang ke atas; ketuk balon yang benar.", "Pecahkan target balon paling dulu untuk menang."],
-    cara: ["sendiri", "ifp", "online"],
+    cara: ["sendiri", "ifp"],
   },
   {
     slug: "tebak-emoji",

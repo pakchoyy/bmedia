@@ -104,7 +104,7 @@ export default function GameFrame({ title, src, portraitOk = false, slug, needsK
             <div role="menu" className={`absolute left-0 ${headerMenu ? "top-0" : "top-14"} w-52 rounded-2xl border-[3px] border-[#1b1a3a] bg-[#fff6dc] p-2 shadow-[4px_4px_0_#1b1a3a] grid gap-1.5`}>
               <button role="menuitem" className={item} onClick={() => setMenu(false)}>▶ Lanjut main</button>
               <button role="menuitem" className={item} onClick={() => { setMenu(false); setRun((n) => n + 1); }}>🔄 Main ulang</button>
-              <Link role="menuitem" href={slug ? `/permainan/${slug}` : "/game"} className={item}>◀ Kembali</Link>
+              <Link role="menuitem" href={slug ? `/?lihat=${slug}` : "/game"} className={item}>◀ Kembali</Link>
               <button role="menuitem" className={item} onClick={() => { setMenu(false); void toggleFull(); }}>{full ? "↙ Keluar layar penuh" : "⛶ Layar penuh"}</button>
               {external && <a role="menuitem" href={src} target="_blank" rel="noopener" className={item}>↗ Buka di tab baru</a>}
               <Link role="menuitem" href="/" className={item}>🏠 Beranda</Link>
@@ -124,7 +124,7 @@ export default function GameFrame({ title, src, portraitOk = false, slug, needsK
           )}
           <button onClick={() => begin(true)} className={`${btn} bg-[#22c55e] text-lg px-8 py-3 min-h-[52px]`}>{inRoom ? "▶ MASUK RUANG (LAYAR PENUH)" : "▶ MAIN (LAYAR PENUH)"}</button>
           <button onClick={() => begin(false)} className="underline text-sm font-bold min-h-[44px] px-3">{inRoom ? "Masuk tanpa layar penuh" : "Main tanpa layar penuh"}</button>
-          {!inRoom && <Link href={slug ? `/permainan/${slug}` : "/game"} className="underline text-xs font-bold opacity-80 min-h-[44px] grid place-items-center px-3">◀ Kembali</Link>}
+          {!inRoom && <Link href={slug ? `/?lihat=${slug}` : "/game"} className="underline text-xs font-bold opacity-80 min-h-[44px] grid place-items-center px-3">◀ Kembali</Link>}
         </div>
       )}
 

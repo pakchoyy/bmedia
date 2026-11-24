@@ -51,7 +51,7 @@ export default function MabarPage({ searchParams }: { searchParams: { e?: string
                     <p className="text-sm text-slate-700 dark:text-slate-300">{c.desc}</p>
                     <ul className="flex flex-wrap gap-1.5">
                       {games.map((g) => (
-                        <li key={g.slug}><Link href={c.key === "online" ? `/permainan/${g.slug}` : `/game/${g.slug}`} className="inline-block rounded-full border-2 border-nb-ink bg-nb-cream dark:bg-slate-800 px-2.5 py-0.5 text-xs font-extrabold text-nb-ink dark:text-white hover:bg-nb-yellow">{g.title}</Link></li>
+                        <li key={g.slug}><Link href={c.key === "online" ? `/?lihat=${g.slug}` : `/game/${g.slug}`} className="inline-block rounded-full border-2 border-nb-ink bg-nb-cream dark:bg-slate-800 px-2.5 py-0.5 text-xs font-extrabold text-nb-ink dark:text-white hover:bg-nb-yellow">{g.title}</Link></li>
                       ))}
                     </ul>
                     {c.key === "online" && <p className="mt-auto text-xs font-bold text-slate-500">Butuh kode 5 angka dari guru → ketik di kotak “Punya kode?” di atas.</p>}
