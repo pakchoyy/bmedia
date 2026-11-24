@@ -148,6 +148,8 @@
   #charov .sw { width:30px; height:30px; padding:0 !important; }
   #charov .done { margin-top:12px; width:100%; padding:10px; border:3px solid var(--ink); border-radius:14px; background:#22c55e; font-weight:900; font-size:17px; box-shadow:4px 4px 0 var(--ink); }
   @media (max-width:560px), (max-height:480px) { #charov .cc { grid-template-columns:130px 1fr; } #charov canvas { height:170px; } }
+  .pad .kh { font-size:12px; font-weight:900; opacity:.6; margin-left:auto; margin-right:8px; }
+  @media (max-width:899px), (pointer:coarse) { .pad .kh { display:none; } }
 </style>
 <link rel="stylesheet" href="/games/_shared/theme.css">
 </head>
@@ -339,7 +341,8 @@
 
   function buildPad(i, name) {
     var el = document.createElement('section'); el.className = 'pad'; el.style.setProperty('--c', COLORS[i]);
-    el.innerHTML = '<header><span class="name"></span><span class="score">🚲 0' + (roomMode ? '' : '/' + target) + '</span></header>' +
+    var kh = ['1–4', 'Q–R', 'A–F', 'Z–V'][i] || '';
+    el.innerHTML = '<header><span class="name"></span><span class="kh">⌨ ' + kh + '</span><span class="score">🚲 0' + (roomMode ? '' : '/' + target) + '</span></header>' +
       '<div class="qcard nb-sm"><div class="q"></div></div><div class="opts"></div>' +
       '<div class="ov freeze">💥 Oleng!<small style="font-size:.5em">tunggu sebentar…</small></div>' +
       '<div class="ov win">🏆<div><span class="wn"></span> sampai duluan!</div></div>';
@@ -527,10 +530,16 @@
     });
   }
   // Uji di laptop: tombol 1–4 menjawab untuk pemain 1
+  // Keyboard: pemain 1 = 1 2 3 4 (5), pemain 2 = Q W E R (T), pemain 3 = A S D F (G), pemain 4 = Z X C V (B)
+  var KEYS = ['12345', 'qwert', 'asdfg', 'zxcvb'];
   window.addEventListener('keydown', function (e) {
-    if (!running || !players[0]) return;
-    var k = '12345'.indexOf(e.key); if (k < 0) return;
-    var b = players[0].el.querySelectorAll('.opt')[k]; if (b) answer(players[0], k, b);
+    if (!running || e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+    var key = (e.key || '').toLowerCase();
+    for (var pi = 0; pi < players.length && pi < KEYS.length; pi++) {
+      var k = KEYS[pi].indexOf(key); if (k < 0) continue;
+      var b = players[pi].el.querySelectorAll('.opt')[k]; if (b) answer(players[pi], k, b);
+      return;
+    }
   });
   if (window.Tutor) Tutor.init('gowes', [{"sel": "#segPlayers", "text": "Pilih jumlah pemain: 1 lawan robot, atau 2–4 teman di satu layar kelas."}, {"sel": "#mg", "text": "Pilih jenis soal matematikanya, misalnya Tambah atau Perkalian."}, {"sel": "#segLevel", "text": "Atur tingkat kesulitan: Mudah, Sedang, atau Sulit."}, {"sel": ".chbtn", "text": "Ketuk tombol baju untuk membuat karakter anak sekolahmu."}, {"sel": "#start", "text": "Tekan GOWES! Jawab benar untuk mengayuh sampai ke sekolah."}], { inGame: "Ketuk jawaban yang benar untuk mengayuh sepedamu!" });
 })();
