@@ -2,6 +2,28 @@
    Logika game tetap di index.html: lapisan ini membaca elemen .bike (style.left %, visibility,
    kelas wob/go, data-char) lalu menggambar adegan 3D. Tanpa WebGL → tampilan 2D lama. */
 import * as THREE from '/games/_shared/three.module.min.js';
+import { GLTFLoader } from '/games/_shared/addons/GLTFLoader.js';
+import * as SkeletonUtils from '/games/_shared/addons/SkeletonUtils.js';
+
+/* Model robot 3D (RobotExpressive oleh Tomás Laulhé/Quaternius, CC0) untuk lawan Robot. */
+let robotGLB = null, robotLoading = null;
+function loadRobot() {
+  if (!robotLoading) robotLoading = new GLTFLoader().loadAsync('/games/_shared/models/robot.glb').then((g) => { robotGLB = g; return g; }).catch(() => null);
+  return robotLoading;
+}
+function attachRobot(r) {
+  if (!robotGLB) return false;
+  const m = SkeletonUtils.clone(robotGLB.scene);
+  m.traverse((o) => { if (o.isMesh) { o.castShadow = true; } });
+  m.scale.setScalar(0.42); m.position.set(0, 0.55, 0.32); m.rotation.y = Math.PI;
+  r.body.visible = false; r.legs.forEach((l) => { l.visible = false; });
+  r.group.add(m);
+  r.mixer = new THREE.AnimationMixer(m);
+  const clip = (n) => THREE.AnimationClip.findByName(robotGLB.animations, n);
+  r.robotActs = { sit: r.mixer.clipAction(clip('Sitting')), wave: r.mixer.clipAction(clip('Wave')), dance: r.mixer.clipAction(clip('Dance')) };
+  r.robotActs.sit.play();
+  r.robot = m; return true;
+}
 
 const LEN = 140;
 const LANE_W = 2.6;
@@ -518,6 +540,7 @@ export function mount(sceneEl) {
       const tgt = -Math.max(0, Math.min(1, (left - 2) / 76)) * LEN;
       if (r.target !== undefined && tgt < r.target - 0.5) r.boost = 1;
       r.target = tgt; r.wob = el.classList.contains('wob'); r.isBot = el.classList.contains('bot');
+      if (r.isBot && !r.robot && !r.robotTried) { r.robotTried = true; loadRobot().then(() => attachRobot(r)); }
     });
     riders.forEach((r, el) => { if (!el.isConnected) { scene.remove(r.group); riders.delete(el); } });
   }
@@ -596,6 +619,7 @@ export function mount(sceneEl) {
       if (podium && podium.built) { r.group.visible = !!r.podium; if (r.podium) { r.group.position.copy(r.podium); r.group.rotation.y = Math.PI; } } else r.group.position.set(r.lane, 0, vz);
       const spin = moved * 2.4 + dt * 0.5;                      // roda & crank satu sumber gerak
       r.wheels.forEach((w) => { w.rotation.x -= spin; });
+      if (r.mixer) { r.mixer.update(realDt); if (podium && podium.built && r.podium && !r.celebrated) { r.celebrated = true; r.robotActs.sit.fadeOut(0.3); (r.podRank === 0 ? r.robotActs.dance : r.robotActs.wave).reset().fadeIn(0.3).play(); } }
       r.body.position.y = 1.12 + Math.abs(Math.sin(r.crankA)) * (moved > 0.002 ? 0.03 : 0);
       poseRider(r, r.crankA - spin * 0.55);
       if (moved > 0.002 && r.visible && renderer.shadowMap.enabled && !(podium && podium.built)) {

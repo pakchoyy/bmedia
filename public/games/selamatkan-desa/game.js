@@ -14,12 +14,12 @@ const ITEMS = {
   sayur: { nama: 'Sisa sayuran', cat: 'org', img: E('1f96c'), info: 'Berasal dari tumbuhan. Bisa jadi pupuk.', hint: 'Sayuran berasal dari tumbuhan. Termasuk sampah apa?' },
   telur: { nama: 'Cangkang telur', cat: 'org', img: E('1f95a'), info: 'Berasal dari ayam. Bisa terurai di tanah.', hint: 'Telur berasal dari ayam, makhluk hidup. Masuk ke mana?' },
   nasi: { nama: 'Sisa makanan', cat: 'org', img: E('1f35a'), info: 'Sisa nasi dan makanan mudah membusuk.', hint: 'Sisa makanan akan membusuk. Termasuk sampah apa?' },
+  mangga: { nama: 'Kulit mangga', cat: 'org', img: E('1f96d'), info: 'Berasal dari buah. Cepat membusuk.', hint: 'Mangga itu buah. Kulitnya mudah membusuk. Masuk ke mana?' },
   ranting: { nama: 'Ranting', cat: 'org', img: E('1fab5'), info: 'Berasal dari pohon. Lama-lama lapuk.', hint: 'Ranting berasal dari pohon. Termasuk sampah apa?' },
   botol: { nama: 'Botol plastik', cat: 'ano', img: 'botol', info: 'Plastik sangat lama terurai. Bisa didaur ulang.', hint: 'Plastik dibuat di pabrik dan tidak membusuk. Masuk ke mana?' },
   kaleng: { nama: 'Kaleng', cat: 'ano', img: 'kaleng', info: 'Terbuat dari logam. Bisa didaur ulang.', hint: 'Kaleng terbuat dari logam. Logam tidak membusuk. Masuk ke mana?' },
   kardus: { nama: 'Kardus', cat: 'ano', img: 'kardus', info: 'Bisa didaur ulang jadi kertas baru.', hint: 'Kardus dibuat di pabrik dan bisa didaur ulang. Masuk ke mana?' },
   kaca: { nama: 'Botol kaca', cat: 'ano', img: E('1f37e'), info: 'Kaca tidak membusuk. Bisa dilebur dan dipakai lagi.', hint: 'Kaca tidak membusuk. Termasuk sampah apa?' },
-  bungkus: { nama: 'Bungkus makanan', cat: 'ano', img: E('1f961'), info: 'Bungkus dari pabrik. Lama terurai.', hint: 'Bungkus ini dibuat di pabrik. Masuk ke mana?' },
   gelas: { nama: 'Gelas plastik', cat: 'ano', img: E('1f964'), info: 'Plastik sangat lama terurai. Bisa didaur ulang.', hint: 'Gelas ini dari plastik. Plastik masuk ke mana?' },
   kertas: { nama: 'Kertas', cat: 'ano', img: E('1f4f0'), info: 'Kertas bekas bisa didaur ulang jadi kertas baru.', hint: 'Kertas bekas bisa didaur ulang. Masuk ke mana?' },
 };
