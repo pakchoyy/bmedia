@@ -26,7 +26,7 @@ export interface GameInfo {
 export type Cara = "sendiri" | "ifp" | "online";
 export const CARA_LABEL: Record<Cara, { icon: string; label: string }> = {
   sendiri: { icon: "🙋", label: "Main sendiri" },
-  ifp: { icon: "🖥️", label: "Layar kelas 1–4" },
+  ifp: { icon: "🖥️", label: "Layar IFP 1–4" },
   online: { icon: "🌐", label: "Mabar online" },
 };
 

@@ -434,7 +434,7 @@ function buildWorld(scene, lanes) {
   const gate = new THREE.Group();
   [-1, 1].forEach((s) => { const p = box(0.5, 5, 0.5, 0xff5d8f); p.position.set(s * (half + 0.6), 2.5, -LEN); gate.add(p); });
   const banner = new THREE.Mesh(new THREE.BoxGeometry(roadW + 2, 1.2, 0.3), [mat(0xffd23f), mat(0xffd23f), mat(0xffd23f), mat(0xffd23f),
-    new THREE.MeshBasicMaterial({ map: canvasTex(512, 96, (x) => { x.fillStyle = '#ffd23f'; x.fillRect(0, 0, 512, 96); x.fillStyle = '#1b1a3a'; x.font = '900 46px Fredoka, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('FINIS · SD MAIN-YUK', 256, 50); }) }), mat(0xffd23f)]);
+    new THREE.MeshBasicMaterial({ map: canvasTex(512, 96, (x) => { x.fillStyle = '#ffd23f'; x.fillRect(0, 0, 512, 96); x.fillStyle = '#1b1a3a'; x.font = '900 46px Fredoka, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('FINIS', 256, 50); }) }), mat(0xffd23f)]);
   banner.position.set(0, 5, -LEN); gate.add(banner); scene.add(gate);
   const fin = new THREE.Mesh(new THREE.PlaneGeometry(roadW, 1.4), new THREE.MeshBasicMaterial({ map: (() => { const t = canvasTex(64, 16, (x) => { for (let i = 0; i < 16; i++) for (let j = 0; j < 4; j++) { x.fillStyle = (i + j) % 2 ? '#1b1a3a' : '#fff'; x.fillRect(i * 4, j * 4, 4, 4); } }); t.magFilter = THREE.NearestFilter; return t; })() }));
   fin.rotation.x = -Math.PI / 2; fin.position.set(0, 0.08, -LEN); scene.add(fin);
@@ -454,7 +454,7 @@ function buildWorld(scene, lanes) {
   sch.add(instanced(new THREE.BoxGeometry(0.12, 1.2, 0.12), 0x2ec4b6, fp));
   [-1, 1].forEach((s) => { const gp = box(0.7, 3.6, 0.7, 0x2ec4b6); gp.position.set(s * (half + 1.2), 1.8, 6.5); sch.add(gp); });
   const gs = new THREE.Mesh(new THREE.BoxGeometry(roadW + 3, 0.9, 0.25), [mat(0x2ec4b6), mat(0x2ec4b6), mat(0x2ec4b6), mat(0x2ec4b6),
-    new THREE.MeshBasicMaterial({ map: canvasTex(512, 64, (x) => { x.fillStyle = '#2ec4b6'; x.fillRect(0, 0, 512, 64); x.fillStyle = '#fff'; x.font = '900 40px Fredoka, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('SD NEGERI MAIN-YUK', 256, 34); }) }), mat(0x2ec4b6)]);
+    new THREE.MeshBasicMaterial({ map: canvasTex(512, 64, (x) => { x.fillStyle = '#2ec4b6'; x.fillRect(0, 0, 512, 64); x.fillStyle = '#fff'; x.font = '900 40px Fredoka, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('SEKOLAH KITA', 256, 34); }) }), mat(0x2ec4b6)]);
   gs.position.set(0, 3.8, 6.5); sch.add(gs);
   scene.add(sch);
   // gunung & awan

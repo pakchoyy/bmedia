@@ -10,7 +10,7 @@ import type { GameMeta } from "@/lib/settings";
 /** Lencana cara main & perangkat. */
 export function gameBadges(game: GameInfo): string[] {
   const b: string[] = [];
-  if (game.cara?.includes("ifp")) b.push("📺 Layar kelas");
+  if (game.cara?.includes("ifp")) b.push("📺 Layar IFP");
   if (game.perlu === "keyboard") b.push("💻 Laptop saja");
   return b;
 }
@@ -39,7 +39,7 @@ export default function GameTile({ game, cover, meta, plays }: { game: GameInfo;
     <article className="group nb nb-hover bg-white dark:bg-slate-900 rounded-2xl overflow-hidden flex flex-col">
       <button type="button" onClick={() => openSheet()} className="block w-full border-b-[3px] border-nb-ink dark:border-[var(--nb-ink)]" aria-label={`Lihat detail ${game.title}`}>
         <div className="relative aspect-video overflow-hidden bg-nb-cream">
-          {game.cara?.includes("online") && <span className="absolute top-2 right-2 z-10 rounded-full border-2 border-nb-ink bg-nb-pink text-white px-2.5 py-0.5 text-[11px] sm:text-xs font-extrabold shadow-[2px_2px_0_#1b1a3a]">👥 Mabar</span>}
+          {game.cara?.includes("online") && <span className="absolute top-2 right-2 z-10 rounded-full border-2 border-nb-ink bg-[#2f7de0] text-white px-2.5 py-0.5 text-[11px] sm:text-xs font-extrabold shadow-[2px_2px_0_#1b1a3a]">👥 Mabar</span>}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={img} alt="" loading="lazy" className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300" />
         </div>

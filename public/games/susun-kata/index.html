@@ -50,7 +50,12 @@
   .slot.filled { background:#fff; border:3px solid var(--ink); box-shadow:3px 3px 0 var(--ink); cursor:pointer; }
   .slot.space { visibility:hidden; width:clamp(12px, 2vw, 20px); }
   .slots.good .slot.filled { background:#8cf0b8; animation:bounce .5s; }
-  .slots.bad { animation:shake .35s; } .slots.bad .slot.filled { background:#ff9aa8; }
+  .slots.bad { animation:bigshake .55s; } .slots.bad .slot.filled { background:#ff6b81; color:#fff; transform:rotate(-6deg); }
+  @keyframes bigshake { 15% { transform:translateX(-16px) rotate(-2deg); } 35% { transform:translateX(14px) rotate(2deg); } 55% { transform:translateX(-10px); } 75% { transform:translateX(6px); } }
+  .oops { position:fixed; left:50%; top:42%; transform:translate(-50%,-50%); z-index:60; font:700 clamp(30px, 8vh, 60px) Fredoka, sans-serif; color:#fff; text-shadow:4px 4px 0 #1b1a3a; pointer-events:none; animation:oops .9s ease forwards; }
+  @keyframes oops { 0% { opacity:0; transform:translate(-50%,-50%) scale(.4) rotate(-10deg); } 25% { opacity:1; transform:translate(-50%,-50%) scale(1.15) rotate(4deg); } 80% { opacity:1; } 100% { opacity:0; transform:translate(-50%,-80%) scale(1); } }
+  .redflash { position:fixed; inset:0; z-index:59; pointer-events:none; background:radial-gradient(circle, rgba(255,80,110,0) 40%, rgba(255,80,110,.45)); animation:rf .5s ease forwards; }
+  @keyframes rf { to { opacity:0; } }
   @keyframes bounce { 50% { transform:translateY(-8px); } }
   @keyframes shake { 25% { transform:translateX(-8px); } 75% { transform:translateX(8px); } }
   .tile { background:var(--c, var(--yellow)); border:3px solid var(--ink); box-shadow:4px 4px 0 var(--ink); }
@@ -312,7 +317,10 @@
       Sfx.good(); if (window.Suara) Suara.read(cur.w, { force: !!cur.pic });
       running = false; setTimeout(function () { running = true; nextWord(); }, 1300);
     } else {
-      $('slots').classList.add('bad'); Sfx.bad(); var cb = Fx.center($('slots')); Fx.bad(null, cb[0], cb[1]);
+      $('slots').classList.remove('bad'); void $('slots').offsetWidth; $('slots').classList.add('bad'); Sfx.bad(); var cb = Fx.center($('slots')); Fx.bad(null, cb[0], cb[1]);
+      var oo = document.createElement('div'); oo.className = 'oops'; oo.textContent = ['Ups! Coba lagi 💪', 'Hampir! 🤏', 'Belum tepat 🙈'][Math.floor(Math.random() * 3)]; document.body.appendChild(oo); setTimeout(function () { oo.remove(); }, 950);
+      var rf = document.createElement('div'); rf.className = 'redflash'; document.body.appendChild(rf); setTimeout(function () { rf.remove(); }, 520);
+      try { navigator.vibrate && navigator.vibrate(120); } catch (e) {}
       // kembalikan huruf yang salah tempat saja
       setTimeout(function () { $('slots').classList.remove('bad'); cur.w.split('').forEach(function (c, k) { if (fill[k] != null && tiles[fill[k]].c !== c) { tiles[fill[k]].used = false; fill[k] = null; } }); render(); }, 600);
     }
@@ -330,8 +338,12 @@
   }
 
   function hintLbl() { var b = $('bHint'); b.textContent = '💡 Bantuan ' + hintsLeft + '/' + HINTS; b.disabled = hintsLeft <= 0; b.style.opacity = hintsLeft <= 0 ? .45 : 1; }
+  var SKIPS = 2, skipsLeft = SKIPS;
+  function skipLbl() { var b = $('bSkip'); b.textContent = skipsLeft > 0 ? '🏳️ Menyerah ' + skipsLeft + '/' + SKIPS : '🏠 Selesai'; }
   function skip() {
     if (!running) return;
+    if (skipsLeft <= 0) { end(); return; }
+    skipsLeft--; skipLbl();
     skipped++; history.push({ w: cur.w, pic: cur.pic, ok: false });
     if (cur.idx != null) { var qs = qstats[cur.idx] || (qstats[cur.idx] = [0, 0]); qs[1]++; }
     // tampilkan jawaban di kotak, lalu lanjut
@@ -352,7 +364,7 @@
     if (window.Tutor) setTimeout(Tutor.hint, 400);
     if (setQ) { var nm = ($('name').value || '').trim().replace(/\s+/g, ' ').slice(0, 30); if (!nm) { $('name').focus(); $('name').placeholder = 'Tulis namamu dulu ya'; return; } try { localStorage.setItem('bgy_name', nm); } catch (e) {} }
     try { localStorage.setItem('sk_tema', tema); localStorage.setItem('sk_level', level); } catch (e) {}
-    queue = buildQueue(); total = queue.length; hintsLeft = HINTS; hintLbl(); score = 0; right = 0; skipped = 0; num = 0; history = []; qstats = {};
+    queue = buildQueue(); total = queue.length; hintsLeft = HINTS; hintLbl(); skipsLeft = SKIPS; skipLbl(); score = 0; right = 0; skipped = 0; num = 0; history = []; qstats = {};
     $('score').textContent = '⭐ 0';
     $('barBox').style.visibility = timeLimit ? 'visible' : 'hidden';
     timeLeft = timeLimit; $('bar').style.width = '100%';

@@ -190,7 +190,28 @@
         .mission-bar button { flex:none; width:40px; height:40px; border-radius:50%; border:2px solid #5b3a29; background:#ffd23f; font-size:17px; cursor:pointer; }
         .mission-bar.done { background:#c8f7dc; animation:mpop .5s ease; }
         @keyframes mpop { 40% { transform:translateX(-50%) scale(1.12); } }
-        .learn-card { max-width:560px; }
+        .learn-card { position:relative; max-width:600px; }
+        .learn-x { position:absolute; right:10px; top:10px; width:44px; height:44px; border-radius:50%; border:3px solid #5b3a29; background:#fff; font:900 18px Nunito,sans-serif; cursor:pointer; z-index:3; }
+        .cycle { position:relative; width:min(78vw, 340px); aspect-ratio:1; margin:4px auto; }
+        .cycle .ring { position:absolute; inset:14%; border-radius:50%; border:5px dashed #c9b49a; }
+        .cycle .arr { position:absolute; font:900 26px Nunito,sans-serif; color:#a8865f; transform:translate(-50%,-50%); }
+        .cycle .st { position:absolute; width:36%; aspect-ratio:1; transform:translate(-50%,-50%) scale(.82); border-radius:50%; background:#fff8e7; border:4px solid #5b3a29; display:grid; place-items:center; transition:transform .35s cubic-bezier(.2,1.3,.4,1), opacity .3s, box-shadow .3s; opacity:.55; cursor:pointer; }
+        .cycle .st svg { width:78%; height:78%; }
+        .cycle .st b { position:absolute; left:-6px; top:-6px; width:32px; height:32px; border-radius:50%; background:#8c7ae6; color:#fff; border:3px solid #5b3a29; display:grid; place-items:center; font:900 15px Nunito,sans-serif; }
+        .cycle .st.on { transform:translate(-50%,-50%) scale(1.25); opacity:1; z-index:2; box-shadow:0 0 0 6px #ffd23f, 0 6px 0 #5b3a29; }
+        .cycle.all .st { opacity:1; transform:translate(-50%,-50%) scale(.9); }
+        .order-wrap { margin:4px 0 10px; }
+        .slots, .pool { display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; }
+        .pool { margin-top:10px; min-height:88px; }
+        .slot { min-height:96px; border:3px dashed #a8865f; border-radius:16px; background:#fffdf6; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; font:900 22px Nunito,sans-serif; color:#a8865f; }
+        .slot.hot { background:#fff3c4; border-color:#ff7a1a; }
+        .slot.ok { border-style:solid; border-color:#22c55e; background:#dcf7e3; }
+        .card-st { border:3px solid #5b3a29; border-radius:16px; background:#fff8e7; display:flex; flex-direction:column; align-items:center; padding:4px; font:900 12px Nunito,sans-serif; color:#3b2a20; cursor:grab; touch-action:none; user-select:none; min-height:88px; }
+        .card-st svg { height:56px; pointer-events:none; } .card-st.sel { outline:4px solid #ff7a1a; }
+        .card-st.bad { animation:shk .35s; background:#ffe0e6; }
+        .slot .card-st { border:0; background:none; cursor:default; }
+        .ghost-st { position:fixed; z-index:99999; pointer-events:none; transform:translate(-50%,-50%) scale(1.1) rotate(-4deg); width:90px; box-shadow:6px 8px 0 rgba(0,0,0,.25); }
+
         .learn-step { font:900 13px Nunito, sans-serif; color:#8c7ae6; letter-spacing:1px; }
         .learn-art { height:min(30vh, 200px); display:grid; place-items:center; margin:6px 0; }
         .learn-art svg { height:100%; max-width:100%; }
@@ -204,6 +225,11 @@
         @keyframes shk { 25% { transform:translateX(-6px); } 75% { transform:translateX(6px); } }
         @media (max-height:520px) { .mission-bar { top:66px; } .learn-art { height:22vh; } }
         .is-duel .mission-bar { top:80px; }
+        /* laptop (mouse): sembunyikan kontrol sentuh; HP/IFP sentuh: sembunyikan petunjuk keyboard */
+        @media (pointer: fine) { .joystick-zone, .catch-btn-zone { display: none !important; } }
+        @media (pointer: coarse) { .desktop-hint { display: none !important; } }
+        .hud-group { gap: 14px; }
+        .badge-title { margin-right: 8px; }
         .duel-only, .p2-ctl { display: none; }
         #game-container:not(.is-duel) .p2-ctl, #game-container:not(.is-duel) .duel-only { display: none !important; }
         .is-duel .duel-only { display: flex; }
@@ -645,8 +671,7 @@
             .quiz-tag { font-size: 10px; margin-bottom: 4px; }
             .quiz-feedback { min-height: 16px; margin-top: 6px; font-size: 12px; }
         }
-      @media (pointer:coarse), (max-width:900px) { .desktop-hint { display:none !important; } }
-</style>
+    </style>
 </head>
 <body>
 
@@ -789,25 +814,6 @@
                 Ikuti misi: cari kupu-kupu yang diminta atau temukan ulat di taman. Selesaikan misi sebanyak-banyaknya sebelum waktu habis!
             </p>
 
-            <div class="species-guide">
-                <div class="species-item">
-                    <span class="dot-swatch" style="background:#ffeaa7;"></span>
-                    <span>Kuning (+10)</span>
-                </div>
-                <div class="species-item">
-                    <span class="dot-swatch" style="background:#74b9ff;"></span>
-                    <span>Biru Cepat (+20)</span>
-                </div>
-                <div class="species-item">
-                    <span class="dot-swatch" style="background:#fd79a8;"></span>
-                    <span>Merah Muda (+35)</span>
-                </div>
-                <div class="species-item">
-                    <span class="dot-swatch" style="background:linear-gradient(135deg,#feca57,#ff6b6b,#48dbfb);"></span>
-                    <span>Raja Emas (+75)</span>
-                </div>
-            </div>
-
             <div class="mode-buttons">
                 <button class="secondary-btn" id="btn-mode-learn">📖 BELAJAR METAMORFOSIS</button>
                 <button class="primary-btn" id="btn-mode-free">🎯 MAIN SENDIRI</button>
@@ -827,16 +833,20 @@
     <!-- BELAJAR METAMORFOSIS -->
     <div class="modal-overlay" id="modal-learn">
         <div class="modal-card learn-card">
-            <div class="learn-step" id="learn-step">TAHAP 1 DARI 4</div>
-            <div class="learn-art" id="learn-art"></div>
-            <h2 class="game-logo-title" id="learn-title" style="font-size:30px;">Telur</h2>
+            <button class="learn-x" id="learn-close" aria-label="Tutup">✕</button>
+            <div class="learn-step" id="learn-step">SIKLUS HIDUP KUPU-KUPU</div>
+            <div class="cycle" id="cycle"></div>
+            <h2 class="game-logo-title" id="learn-title" style="font-size:28px;">Telur</h2>
             <p class="learn-text" id="learn-text"></p>
-            <div class="learn-order" id="learn-order" style="display:none"></div>
+            <div class="order-wrap" id="order-wrap" style="display:none">
+                <div class="slots" id="order-slots"></div>
+                <div class="pool" id="order-pool"></div>
+            </div>
             <div class="learn-btns">
-                <button class="secondary-btn" id="learn-say">🔊 Dengar</button>
+                <button class="secondary-btn" id="learn-prev">◀ Sebelumnya</button>
+                <button class="secondary-btn" id="learn-say" aria-label="Dengar">🔊</button>
                 <button class="primary-btn" id="learn-next">Lanjut ▶</button>
             </div>
-            <button class="secondary-btn" id="learn-close" style="margin-top:6px">🏠 Menu</button>
         </div>
     </div>
 
@@ -1129,8 +1139,8 @@
 
     // Ukuran Dunia Meadow Adventure
     const WORLD = {
-        width: 2600,
-        height: 1950,
+        width: 3400,
+        height: 2550,
         padding: 90
     };
 
@@ -2027,42 +2037,71 @@
         { t: 'Kepompong', d: 'Ulat yang sudah besar membungkus diri menjadi kepompong. Di dalamnya, tubuhnya berubah.', svg: '<svg viewBox="0 0 200 140"><path d="M20 18 L180 14" stroke="#7a4a2b" stroke-width="9" stroke-linecap="round"/><path d="M100 16 L100 30" stroke="#5b3a29" stroke-width="3"/><path d="M100 30 C130 40 132 100 100 126 C68 100 70 40 100 30 Z" fill="#a3c96b" stroke="#5b3a29" stroke-width="5"/><path d="M86 56 Q100 64 114 56 M84 78 Q100 86 116 78 M88 100 Q100 106 112 100" stroke="#6f9440" stroke-width="3" fill="none"/></svg>' },
         { t: 'Kupu-kupu', d: 'Dari kepompong keluar kupu-kupu bersayap indah. Ia terbang mencari bunga dan bertelur lagi.', svg: '<svg viewBox="0 0 200 140"><g stroke="#5b3a29" stroke-width="5"><path d="M100 70 C60 10 10 30 30 70 C10 100 70 120 100 80 Z" fill="#74b9ff"/><path d="M100 70 C140 10 190 30 170 70 C190 100 130 120 100 80 Z" fill="#74b9ff"/></g><g fill="#0984e3"><circle cx="58" cy="54" r="10"/><circle cx="142" cy="54" r="10"/></g><rect x="94" y="44" width="12" height="62" rx="6" fill="#3b2a20"/><path d="M98 46 L86 24 M102 46 L114 24" stroke="#3b2a20" stroke-width="3"/></svg>' },
     ];
-    let learnI = 0, orderNext = 0;
+    let learnI = 0;
     const mLearn = document.getElementById('modal-learn');
+    const $L = (id) => document.getElementById(id);
+    function buildCycle() {
+        const c = $L('cycle'); if (c.childElementCount) return;
+        c.innerHTML = '<div class="ring"></div>';
+        const pos = [[50, 13], [87, 50], [50, 87], [13, 50]], arr = [[77, 22, '↘'], [77, 78, '↙'], [23, 78, '↖'], [23, 22, '↗']];
+        LEARN.forEach((L, k) => { const d = document.createElement('div'); d.className = 'st'; d.style.left = pos[k][0] + '%'; d.style.top = pos[k][1] + '%'; d.innerHTML = '<b>' + (k + 1) + '</b>' + L.svg; d.onclick = () => { if (learnI < 4) { learnI = k; learnShow(); } }; c.appendChild(d); });
+        arr.forEach((a) => { const d = document.createElement('span'); d.className = 'arr'; d.style.left = a[0] + '%'; d.style.top = a[1] + '%'; d.textContent = a[2]; c.appendChild(d); });
+    }
     function learnShow() {
-        const L = LEARN[learnI];
-        document.getElementById('learn-order').style.display = 'none';
-        document.getElementById('learn-art').style.display = '';
-        document.getElementById('learn-step').textContent = 'TAHAP ' + (learnI + 1) + ' DARI 4';
-        document.getElementById('learn-art').innerHTML = L.svg;
-        document.getElementById('learn-title').textContent = (learnI + 1) + '. ' + L.t;
-        document.getElementById('learn-text').textContent = L.d;
-        document.getElementById('learn-next').textContent = learnI < 3 ? 'Lanjut ▶' : 'Coba urutkan ▶';
+        buildCycle();
+        const L = LEARN[learnI], c = $L('cycle');
+        c.style.display = ''; c.classList.remove('all'); $L('order-wrap').style.display = 'none';
+        [...c.querySelectorAll('.st')].forEach((d, k) => d.classList.toggle('on', k === learnI));
+        $L('learn-step').textContent = 'TAHAP ' + (learnI + 1) + ' DARI 4';
+        $L('learn-title').textContent = L.t; $L('learn-text').textContent = L.d;
+        $L('learn-prev').style.visibility = learnI > 0 ? 'visible' : 'hidden';
+        $L('learn-next').textContent = learnI < 3 ? 'Lanjut ▶' : 'Coba urutkan ▶';
         SAY(L.t + '. ' + L.d);
     }
+    // ---- tantangan: seret gambar ke kotak bernomor (ketuk juga bisa) ----
+    let selCard = null;
     function learnOrder() {
-        learnI = 4; orderNext = 0;
-        document.getElementById('learn-step').textContent = 'TANTANGAN';
-        document.getElementById('learn-art').style.display = 'none';
-        document.getElementById('learn-title').textContent = 'Urutkan siklusnya!';
-        const tx = 'Ketuk gambar dari tahap pertama sampai terakhir.';
-        document.getElementById('learn-text').textContent = tx; SAY(tx);
-        const box = document.getElementById('learn-order'); box.style.display = ''; box.innerHTML = '';
-        shuffle([0, 1, 2, 3]).forEach(k => {
-            const b = document.createElement('button'); b.innerHTML = LEARN[k].svg + '<span>' + LEARN[k].t + '</span>';
-            b.onclick = () => {
-                if (b.classList.contains('ok')) return;
-                if (k === orderNext) { orderNext++; b.classList.add('ok'); b.insertAdjacentHTML('afterbegin', '<b>' + orderNext + '</b>'); sound.playCatch(false, 1);
-                    if (orderNext === 4) { const w = 'Hebat! Telur, ulat, kepompong, lalu kupu-kupu.'; document.getElementById('learn-text').textContent = w; SAY(w); document.getElementById('learn-next').textContent = '🎯 Main misi ▶'; }
-                } else { b.classList.remove('no'); void b.offsetWidth; b.classList.add('no'); const h = 'Belum. Tahap ke-' + (orderNext + 1) + ' adalah ' + LEARN[orderNext].t + '.'; document.getElementById('learn-text').textContent = h; SAY(h); }
-            };
-            box.appendChild(b);
+        learnI = 4; selCard = null;
+        $L('cycle').style.display = 'none'; $L('order-wrap').style.display = '';
+        $L('learn-step').textContent = 'TANTANGAN'; $L('learn-title').textContent = 'Urutkan siklusnya!';
+        const tx = 'Seret gambar ke kotak nomor 1 sampai 4.'; $L('learn-text').textContent = tx; SAY(tx);
+        $L('learn-prev').style.visibility = 'visible'; $L('learn-next').textContent = 'Lewati ▶';
+        const slots = $L('order-slots'), pool = $L('order-pool'); slots.innerHTML = ''; pool.innerHTML = '';
+        for (let k = 0; k < 4; k++) { const sl = document.createElement('div'); sl.className = 'slot'; sl.dataset.k = k; sl.textContent = k + 1; sl.onclick = () => { if (selCard) dropCard(selCard, sl); }; slots.appendChild(sl); }
+        shuffle([0, 1, 2, 3]).forEach((k) => {
+            const cd = document.createElement('div'); cd.className = 'card-st'; cd.dataset.k = k; cd.innerHTML = LEARN[k].svg + '<span>' + LEARN[k].t + '</span>';
+            cd.addEventListener('pointerdown', (e) => dragCard(e, cd)); pool.appendChild(cd);
         });
-        document.getElementById('learn-next').textContent = 'Lewati ▶';
+    }
+    function slotAt(x, y) { return [...document.querySelectorAll('#order-slots .slot')].find((sl) => { const r = sl.getBoundingClientRect(); return x > r.left - 10 && x < r.right + 10 && y > r.top - 10 && y < r.bottom + 10; }); }
+    function dragCard(e, cd) {
+        if (cd.parentElement.classList.contains('slot')) return;
+        e.preventDefault(); const sx = e.clientX, sy = e.clientY; let moved = false, hot = null;
+        const g = cd.cloneNode(true); g.className = 'card-st ghost-st'; g.style.left = sx + 'px'; g.style.top = sy + 'px'; g.style.display = 'none'; document.body.appendChild(g);
+        const mv = (ev) => { if (Math.hypot(ev.clientX - sx, ev.clientY - sy) > 8) { moved = true; g.style.display = ''; cd.style.opacity = .3; } g.style.left = ev.clientX + 'px'; g.style.top = ev.clientY + 'px'; const h = slotAt(ev.clientX, ev.clientY); if (h !== hot) { hot && hot.classList.remove('hot'); hot = h; hot && hot.classList.add('hot'); } };
+        const up = (ev) => { removeEventListener('pointermove', mv); removeEventListener('pointerup', up); g.remove(); cd.style.opacity = ''; hot && hot.classList.remove('hot');
+            if (!moved) { document.querySelectorAll('#order-pool .card-st').forEach((c) => c.classList.remove('sel')); selCard = selCard === cd ? null : cd; if (selCard) cd.classList.add('sel'); return; }
+            const sl = slotAt(ev.clientX, ev.clientY); if (sl) dropCard(cd, sl); };
+        addEventListener('pointermove', mv); addEventListener('pointerup', up);
+    }
+    function dropCard(cd, sl) {
+        selCard = null; cd.classList.remove('sel');
+        if (sl.classList.contains('ok')) return;
+        if (+cd.dataset.k === +sl.dataset.k) {
+            sl.textContent = ''; sl.classList.add('ok'); sl.appendChild(cd); sound.playCatch(false, 1);
+            if (document.querySelectorAll('#order-slots .slot.ok').length === 4) {
+                const w = 'Hebat! Telur, ulat, kepompong, lalu kupu-kupu. Lalu kupu-kupu bertelur lagi.'; $L('learn-text').textContent = w; SAY(w);
+                $L('learn-next').textContent = '🎯 Main misi ▶';
+            }
+        } else {
+            cd.classList.remove('bad'); void cd.offsetWidth; cd.classList.add('bad');
+            const h = 'Belum tepat. ' + LEARN[+cd.dataset.k].t + ' adalah tahap ke-' + (+cd.dataset.k + 1) + '.'; $L('learn-text').textContent = h; SAY(h);
+        }
     }
     document.getElementById('btn-mode-learn').addEventListener('click', () => { sound.init(); sound.playButton(); modalStart.classList.remove('visible'); mLearn.classList.add('visible'); learnI = 0; learnShow(); });
     document.getElementById('learn-next').addEventListener('click', () => { sound.playButton(); if (learnI < 3) { learnI++; learnShow(); } else if (learnI === 3) learnOrder(); else { mLearn.classList.remove('visible'); requestStart('free'); } });
-    document.getElementById('learn-say').addEventListener('click', () => { const L = LEARN[learnI]; SAY(L ? L.t + '. ' + L.d : document.getElementById('learn-text').textContent); });
+    document.getElementById('learn-prev').addEventListener('click', () => { sound.playButton(); learnI = learnI >= 4 ? 3 : Math.max(0, learnI - 1); learnShow(); });
+    document.getElementById('learn-say').addEventListener('click', () => { const L = LEARN[learnI]; SAY(L ? L.t + '. ' + L.d : $L('learn-text').textContent); });
     document.getElementById('learn-close').addEventListener('click', () => { mLearn.classList.remove('visible'); modalStart.classList.add('visible'); try { speechSynthesis.cancel(); } catch (e) {} });
 
     // ==========================================

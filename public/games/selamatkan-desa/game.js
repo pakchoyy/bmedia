@@ -360,14 +360,14 @@ $('bHint').addEventListener('click', () => {
   const info = ITEMS[it.key];
   toast('💡 ' + info.hint, 'hint'); say(info.hint); Sfx.click();
   if (!hintRing) { hintRing = new THREE.Mesh(new THREE.RingGeometry(0.75, 0.95, 32), new THREE.MeshBasicMaterial({ color: 0xffd23f, transparent: true, depthWrite: false })); hintRing.rotation.x = -Math.PI / 2; scene.add(hintRing); }
-  hintRing.userData = { it, t: 2.5 }; hintRing.visible = true;
+  hintRing.userData = { it, t: 8 }; hintRing.visible = true;
   if (mode !== 'battle') { // latihan & kerja sama: tunjukkan tempat sampah yang tepat
     document.querySelectorAll('#bins .bin.' + info.cat).forEach((b) => { b.classList.add('reveal'); setTimeout(() => b.classList.remove('reveal'), 2500); });
   }
 });
 
 /* ---------------- efek ---------------- */
-function toast(t, k) { const o = stage.querySelector('.toast'); if (o) o.remove(); const d = document.createElement('div'); d.className = 'toast ' + (k || ''); d.textContent = t; stage.appendChild(d); clearTimeout(toast.t); toast.t = setTimeout(() => d.remove(), 2800); }
+function toast(t, k) { const o = stage.querySelector('.toast'); if (o) o.remove(); const d = document.createElement('div'); d.className = 'toast ' + (k || ''); d.innerHTML = '<span class="tx"></span><button class="x" aria-label="Tutup">✕</button>'; d.querySelector('.tx').textContent = t; d.querySelector('.x').onclick = () => d.remove(); stage.appendChild(d); clearTimeout(toast.t); toast.t = setTimeout(() => d.remove(), k === 'hint' ? 8000 : k === 'bad' ? 4500 : 2800); }
 function banner(t) { const b = document.createElement('div'); b.className = 'banner'; b.textContent = t; stage.appendChild(b); setTimeout(() => b.remove(), 1600); }
 const CONF = 160, conf = new THREE.InstancedMesh(new THREE.PlaneGeometry(0.16, 0.24), new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }), CONF);
 conf.visible = false; conf.frustumCulled = false; scene.add(conf);
@@ -459,8 +459,12 @@ function brief(go) {
 // tombol ☰ Main-yuk di header game (bukan melayang di atas sungai)
 if (window.parent !== window) {
   $('bMenu').classList.remove('hidden');
-  try { parent.postMessage({ mainyuk: 'menu-in-header' }, location.origin); } catch (e) {}
-  $('bMenu').addEventListener('click', () => { try { parent.postMessage({ mainyuk: 'open-menu' }, location.origin); } catch (e) {} });
+  { let n = 0; const tk = setInterval(() => { try { parent.postMessage({ mainyuk: 'menu-in-header' }, location.origin); } catch (e) {} if (++n > 20) clearInterval(tk); }, 700); }
+  $('bHome').classList.remove('hidden');
+  $('bHome').addEventListener('click', () => { try { parent.postMessage({ mainyuk: 'home' }, location.origin); } catch (e) {} });
+  let menuPaused = false;
+  $('bMenu').addEventListener('click', () => { if (running) { $('bPause').click(); menuPaused = true; } try { parent.postMessage({ mainyuk: 'open-menu' }, location.origin); } catch (e) {} });
+  addEventListener('message', (e) => { if (e.source === parent && e.data && e.data.mainyuk === 'resume' && menuPaused) { menuPaused = false; $('resume').click(); } });
 }
 
 function clearItems() { items.forEach((it) => { scene.remove(it.s); scene.remove(it.sh); }); items = []; drags.forEach((d) => d.ghost.remove()); drags.clear(); document.querySelectorAll('.ghost').forEach((g) => g.remove()); fish.forEach((f) => scene.remove(f.s)); fish.length = 0; }
@@ -551,7 +555,7 @@ function frame(t) {
       if (running) { if (mode === 'battle') { resolved++; hud(); checkEnd(); } else { team.combo = 0; toast('💧 Ada sampah yang lewat. Ayo lebih cepat!', 'bad'); } }
     }
   }
-  if (hintRing && hintRing.visible) { const h = hintRing.userData; h.t -= dt; const it = h.it; if (h.t <= 0 || it.state === 'gone') hintRing.visible = false; else { hintRing.position.set(it.x, -0.05, it.z); hintRing.scale.setScalar(1 + Math.sin(t / 120) * 0.12); } }
+  if (hintRing && hintRing.visible) { const h = hintRing.userData; h.t -= dt; const it = h.it; if (h.t <= 0 || it.state === 'gone') hintRing.visible = false; else { hintRing.position.set(it.x, -0.05, it.z); } }
   // sungai makin bersih → air jernih, hujan reda, langit cerah, ikan muncul
   const pr = (mode === 'battle' || team) ? progress() : 0;
   if (world.water) world.water.material.color.lerpColors(WATER_DIRTY, WATER_CLEAN, pr);

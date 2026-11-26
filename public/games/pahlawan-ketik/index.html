@@ -205,7 +205,7 @@ const SCHOOL = new THREE.Vector3(0, 0, 9);
   const c = document.createElement('canvas'); c.width = 512; c.height = 96; const x = c.getContext('2d');
   x.fillStyle = '#ffd23f'; x.fillRect(0, 0, 512, 96); x.strokeStyle = '#1b1a3a'; x.lineWidth = 10; x.strokeRect(0, 0, 512, 96);
   x.fillStyle = '#1b1a3a'; x.font = '700 60px Fredoka, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('SD MAIN-YUK', 256, 52);
-  const sign = new THREE.Mesh(new THREE.PlaneGeometry(6, 1.1), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c) })); sign.position.set(0, 4, -2.56); sign.rotation.y = Math.PI; g.add(sign);
+  const sign = new THREE.Mesh(new THREE.PlaneGeometry(6, 1.1), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c) })); sign.visible = false; // papan nama dihapus
   const pole = new THREE.Mesh(new THREE.CylinderGeometry(.08, .08, 7), M(0xdddddd)); pole.position.set(-8.5, 3.5, -2); g.add(pole);
   const flag = new THREE.Group(); flag.position.set(-8.5, 6.4, -2);
   const fr = new THREE.Mesh(new THREE.PlaneGeometry(1.6, .5), new THREE.MeshBasicMaterial({ color: 0xe8202a, side: THREE.DoubleSide })); fr.position.set(.8, .25, 0); flag.add(fr);
@@ -310,14 +310,14 @@ function spawn(boss) {
   mesh.position.copy(pos); scene.add(mesh);
   const el = document.createElement('div'); el.className = 'lb' + (boss ? ' boss' : ''); labels.appendChild(el);
   const e = { word: p.w, clue: p.clue, hit: 0, boss, mesh, el, sc, base: pos.clone(), t: 0, ph: Math.random() * 6.28, hurt: 0,
-    spd: (boss ? 2.4 : 3.6 + level * .7 + wave * .32) * tempo, hp: boss ? 1 : 1 };
+    spd: (boss ? 1.8 : 3.6 + level * .7 + wave * .32) * tempo, hp: boss ? (wave === WAVES ? 3 : 2) : 1, hpMax: boss ? (wave === WAVES ? 3 : 2) : 1 };
   drawLabel(e); enemies.push(e);
 }
 function esc(s) { return s.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
 function drawLabel(e) {
   const hide = mode === 'angka';
   const done = esc(e.word.slice(0, e.hit)), rest = hide ? '?'.repeat(e.word.length - e.hit) : esc(e.word.slice(e.hit));
-  e.el.innerHTML = (e.clue ? '<span class="clue">' + esc(e.clue) + '</span>' : '') + '<i>' + done + '</i>' + rest.replace(/ /g, '&nbsp;');
+  e.el.innerHTML = (e.boss && e.hpMax > 1 ? '<span class="clue">👑 ' + '❤️'.repeat(e.hp) + '🖤'.repeat(e.hpMax - e.hp) + '</span>' : '') + (e.clue ? '<span class="clue">' + esc(e.clue) + '</span>' : '') + '<i>' + done + '</i>' + rest.replace(/ /g, '&nbsp;');
   e.el.classList.toggle('t', e === target); e.w = 0;
 }
 function removeEnemy(e) { scene.remove(e.mesh); e.el.remove(); enemies = enemies.filter((x) => x !== e); }
@@ -331,7 +331,7 @@ function popText(pos, t) {
 function startWave() {
   toSpawn = 3 + wave + Math.floor(wave / 2); spawnT = 700;
   const boss = wave === 5 || wave === WAVES;
-  banner(boss ? '👾 BOS DATANG!' : wave >= 8 ? 'Gelombang ' + wave + ': kalimat!' : 'Gelombang ' + wave);
+  banner(boss ? (wave === WAVES ? '👑 BOS TERAKHIR!' : '👾 BOS DATANG!') : wave >= 8 ? 'Gelombang ' + wave + ': kalimat!' : 'Gelombang ' + wave);
   if (boss) { toSpawn = Math.max(2, toSpawn - 3); setTimeout(() => { if (running) spawn(true); }, 1000); }
   $('hWave').textContent = 'Gelombang ' + wave + '/' + WAVES;
 }
@@ -347,7 +347,12 @@ function key(ch) {
   if (target && target.word[target.hit] === ch) {
     const e = target; e.hit++; typed++; e.hurt = 1; Sfx.click();
     laser(e.mesh.position);
-    if (e.hit >= e.word.length) {
+    if (e.hit >= e.word.length && e.boss && e.hp > 1) {
+      // bos belum kalah: kata berikutnya
+      e.hp--; e.hit = 0; e.word = pickWord(true).w; target = null; words++; combo++; score += 40;
+      burst(e.mesh.position.clone(), 0xffd23f, 80); popText(e.mesh.position.clone(), 'Bos tinggal ' + e.hp + '!'); shake = .8; Sfx.pop();
+      e.base.y += 6; drawLabel(e); enemies.forEach(drawLabel);
+    } else if (e.hit >= e.word.length) {
       target = null; words++; combo++;
       const mult = 1 + Math.floor(combo / 5), gain = e.word.replace(/ /g, '').length * 10 * mult * (e.boss ? 3 : 1);
       score += gain;
@@ -417,7 +422,7 @@ function frame(t) {
     }
   }
   // roket & kamera
-  const goal = target ? target.mesh.position : look.set(0, 8, -40);
+  const goal = target ? target.mesh.position : look.set(rocket.position.x, rocket.position.y + 60, rocket.position.z - 0.01); // diam: menghadap ke atas
   rocket.lookAt(goal); rBody.userData.flame.scale.y = .8 + Math.random() * .5;
   rocket.position.y = 12 + Math.sin(t / 400) * .15;
   lookX += ((target ? target.mesh.position.x * .25 : 0) - lookX) * Math.min(1, dt * 3);
@@ -447,7 +452,7 @@ function frame(t) {
     let sx = Math.max(e.w / 2 + 4, Math.min(r.w - e.w / 2 - 4, (tmp.x + 1) / 2 * r.w)), sy = Math.max(92 + e.h, (1 - tmp.y) / 2 * r.h);
     for (let k = 0; k < 6; k++) { const hit = placed.find((q) => Math.abs(q.x - sx) < (q.w + e.w) / 2 + 4 && Math.abs(q.y - sy) < (q.h + e.h) / 2 + 2); if (!hit) break; sy = hit.y - (hit.h + e.h) / 2 - 3; }
     placed.push({ x: sx, y: sy, w: e.w, h: e.h });
-    const tr = 'translate(' + Math.round(sx) + 'px,' + Math.round(sy) + 'px) translate(-50%,-100%)';
+    const tr = 'translate3d(' + sx.toFixed(1) + 'px,' + sy.toFixed(1) + 'px,0) translate(-50%,-100%)';
     if (tr !== e.tr) { e.el.style.transform = tr; e.tr = tr; }
     e.el.style.zIndex = e === target ? 3 : 1 + Math.round((e.mesh.position.z + 80));
   }
