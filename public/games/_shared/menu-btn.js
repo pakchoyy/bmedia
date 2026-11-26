@@ -32,7 +32,7 @@
 
   var css = document.createElement('style');
   css.textContent = '.my-hb{flex:none;width:40px;height:40px;min-width:40px;border-radius:12px;border:2px solid #1b1a3a;box-shadow:2px 2px 0 #1b1a3a;color:#1b1a3a;font:900 19px/1 Nunito,sans-serif;cursor:pointer;display:inline-grid;place-items:center;pointer-events:auto;position:relative;z-index:5}' +
-    '.my-menu{background:#ffd23f;margin-left:4px}.my-home{background:#fff;margin-right:4px}' +
+    '#bExit{background:#ff5d5d !important;color:#fff !important}.my-menu{background:#ffd23f;margin:0 4px}'+'.my-home{background:#fff;margin-right:4px}' +
     '.my-hb:active{transform:translate(2px,2px);box-shadow:none}' +
     '.my-float{position:fixed;top:8px;z-index:9000}.my-menu.my-float{right:8px}.my-home.my-float{left:8px}';
   document.head.appendChild(css);
@@ -52,7 +52,7 @@
       var groups = host.querySelectorAll(':scope > .hud-group'); // Tangkap Kupu: tombol masuk ke grup kiri & kanan
       var L = groups.length ? groups[0] : host, R = groups.length ? groups[groups.length - 1] : host;
       if (!L.querySelector(':scope > .my-home')) L.insertBefore(mk('home'), L.firstChild);
-      if (!R.querySelector(':scope > .my-menu')) R.appendChild(mk('menu'));
+      if (!document.querySelector('.my-menu:not(.my-float)')) { var x = document.getElementById('bExit'); if (x && host.contains(x)) x.parentNode.insertBefore(mk('menu'), x); else R.appendChild(mk('menu')); }
       if (fl) fl.forEach(function (b) { b.style.display = 'none'; });
     } else {
       if (!fl) { fl = [mk('home'), mk('menu')]; fl.forEach(function (b) { b.classList.add('my-float'); document.body.appendChild(b); }); }

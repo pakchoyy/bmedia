@@ -1,0 +1,2 @@
+robot.glb: "RobotExpressive" oleh Tomás Laulhé (Quaternius), CC0 1.0.
+Sumber: three.js r160 examples/models/gltf/RobotExpressive
