@@ -5,16 +5,18 @@ import Link from "next/link";
 
 export default function GameFrame({ title, src, portraitOk = false, slug, needsKeyboard = false }: { title: string; src: string; portraitOk?: boolean; slug?: string; needsKeyboard?: boolean }) {
   const box = useRef<HTMLDivElement>(null);
+  const frameRef = useRef<HTMLIFrameElement>(null);
   const [portrait, setPortrait] = useState(false);
   const [full, setFull] = useState(false);
   const [intro, setIntro] = useState(true);
   const inRoom = /[?&]room=/.test(src);
-  const [menu, setMenu] = useState(false);
+  const [menu, setMenuRaw] = useState(false);
+  const setMenu = (v: boolean | ((x: boolean) => boolean)) => setMenuRaw((prev) => { const nv = typeof v === 'function' ? v(prev) : v; if (prev && !nv) { try { frameRef.current?.contentWindow?.postMessage({ mainyuk: 'resume' }, '*'); } catch { /* abaikan */ } } return nv; });
   const [dim, setDim] = useState(false);
   const [run, setRun] = useState(0); // naik = muat ulang game
   const [touch, setTouch] = useState(false);
   const external = /^https?:/.test(src);
-  const frame = useRef<HTMLIFrameElement>(null);
+  const frame = frameRef;
   // Game boleh menaruh tombol ☰ di header-nya sendiri (postMessage), supaya tidak menutupi area main
   const [headerMenu, setHeaderMenu] = useState(false);
   useEffect(() => {
@@ -22,7 +24,8 @@ export default function GameFrame({ title, src, portraitOk = false, slug, needsK
       if (!frame.current || e.source !== frame.current.contentWindow) return;
       const d = e.data as { mainyuk?: string } | null;
       if (d?.mainyuk === "menu-in-header") setHeaderMenu(true);
-      if (d?.mainyuk === "open-menu") { setIntro(false); setMenu((v) => !v); }
+      if (d?.mainyuk === "open-menu") { setIntro(false); setMenu(true); }
+      if (d?.mainyuk === "home") window.location.assign("/");
     };
     window.addEventListener("message", onMsg);
     return () => window.removeEventListener("message", onMsg);
@@ -90,7 +93,7 @@ export default function GameFrame({ title, src, portraitOk = false, slug, needsK
 
       {/* Satu tombol menu di tepi kiri-tengah: tidak menutupi tombol jawaban di bawah */}
       {!intro && (
-        <div className={headerMenu ? "absolute left-2 top-14 z-10" : "absolute left-1.5 top-[36%] -translate-y-1/2 z-10"}>
+        <div className={headerMenu ? "absolute right-2 top-14 z-10" : "absolute left-1.5 top-[36%] -translate-y-1/2 z-10"}>
           {!headerMenu && <button
             onClick={() => setMenu((v) => !v)}
             aria-label="Menu game"
@@ -101,7 +104,7 @@ export default function GameFrame({ title, src, portraitOk = false, slug, needsK
             {menu ? "✕" : "☰"}
           </button>}
           {menu && (
-            <div role="menu" className={`absolute left-0 ${headerMenu ? "top-0" : "top-14"} w-52 rounded-2xl border-[3px] border-[#1b1a3a] bg-[#fff6dc] p-2 shadow-[4px_4px_0_#1b1a3a] grid gap-1.5`}>
+            <div role="menu" className={`absolute ${headerMenu ? "right-0 top-0" : "left-0 top-14"} w-52 rounded-2xl border-[3px] border-[#1b1a3a] bg-[#fff6dc] p-2 shadow-[4px_4px_0_#1b1a3a] grid gap-1.5`}>
               <button role="menuitem" className={item} onClick={() => setMenu(false)}>▶ Lanjut main</button>
               <button role="menuitem" className={item} onClick={() => { setMenu(false); setRun((n) => n + 1); }}>🔄 Main ulang</button>
               <Link role="menuitem" href={slug ? `/?lihat=${slug}` : "/game"} className={item}>◀ Kembali</Link>
