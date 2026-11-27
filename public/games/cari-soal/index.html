@@ -66,6 +66,13 @@
   .stat { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px; }
   .stat div { background:var(--cream); border-radius:12px; padding:6px 2px; font:700 24px Fredoka, sans-serif; }
   .stat small { display:block; font:800 12px Nunito, sans-serif; opacity:.75; }
+  #compass { position:fixed; right:14px; top:58px; z-index:6; display:flex; flex-direction:column; align-items:center; gap:4px; pointer-events:none; }
+  #compass .dial { position:relative; width:76px; height:76px; border-radius:50%; background:radial-gradient(#fff 55%, #f1f5ff); border:3px solid var(--ink); box-shadow:3px 3px 0 var(--ink); }
+  #compass .n { position:absolute; left:50%; top:2px; transform:translateX(-50%); font:900 11px Nunito,sans-serif; color:#888; }
+  #compass .ndl { position:absolute; left:50%; top:50%; width:0; height:0; margin-left:-9px; margin-top:-30px; border-left:9px solid transparent; border-right:9px solid transparent; border-bottom:30px solid var(--h, #ff5d5d); transform-origin:9px 30px; transition:transform .15s; }
+  #compass .ndl::after { content:''; position:absolute; left:-9px; top:30px; border-left:9px solid transparent; border-right:9px solid transparent; border-top:26px solid #b8bcc8; }
+  #compass .tx { background:var(--h, #fff); border:2px solid var(--ink); border-radius:99px; padding:2px 10px; font-size:13px; font-weight:900; color:#1b1a3a; white-space:nowrap; }
+  @media (max-height:500px) { #compass { top:52px; } #compass .dial { width:60px; height:60px; } }
 </style>
 <link rel="stylesheet" href="/games/_shared/theme.css">
 </head>
@@ -81,6 +88,7 @@
     <div class="how">
       <div>🚶 Jalan: <b>WASD / panah</b> di laptop, <b>joystick</b> di HP</div>
       <div>📄 Dekati kertas, tekan <b>Buka</b> (atau Spasi)</div>
+      <div>🧭 Ikuti <b>kompas</b>: makin panas, makin dekat</div>
       <div>🎯 Temukan semua kertas sebelum waktu habis</div>
     </div>
     <button id="start" class="go nb press">▶ MULAI MENCARI</button>
@@ -96,6 +104,7 @@
   <button id="bExit" aria-label="Selesai">✖</button>
 </div>
 <div id="instr" class="hidden"></div>
+<div id="compass" class="hidden" aria-label="Kompas kertas terdekat"><div class="dial"><span class="n">U</span><i class="ndl"></i></div><b class="tx">❄️ Dingin</b></div>
 <div id="joy" class="hidden" aria-hidden="true"><i></i></div>
 <button id="act" class="nb press hidden">Cari kertas…</button>
 <div class="keys hidden" id="keys">⌨ WASD / panah: jalan · Spasi: buka kertas · seret mouse: putar kamera</div>
