@@ -11,19 +11,32 @@ const SAY = (t) => { try { if (window.Suara && !Sfx.muted()) Suara.say(t); } cat
 const COLORS = ['#ff5d8f', '#4aa8ff', '#ffd23f', '#2ec4b6', '#ff7a1a', '#b79cff', '#8cf0b8', '#ff9f43'];
 
 /* ---------------- soal ---------------- */
+// Demo: Latihan Matematika Kelas 2 (penjumlahan, pengurangan, membandingkan, mengurutkan)
 const DEMO = [
-  { q: 'Ibu kota Indonesia adalah ...', o: ['Bandung', 'Jakarta', 'Surabaya', 'Medan'], a: 1 },
-  { q: '7 × 8 = ...', o: ['54', '56', '58', '64'], a: 1 },
-  { q: 'Hewan pemakan tumbuhan disebut ...', o: ['Karnivora', 'Omnivora', 'Herbivora', 'Insektivora'], a: 2 },
-  { q: 'Lawan kata "rajin" adalah ...', o: ['Malas', 'Pintar', 'Cepat', 'Kuat'], a: 0 },
-  { q: 'Sila pertama Pancasila berlambang ...', o: ['Rantai', 'Bintang', 'Pohon beringin', 'Padi dan kapas'], a: 1 },
-  { q: '125 + 75 = ...', o: ['190', '200', '205', '210'], a: 1 },
-  { q: 'Bagian tumbuhan yang menyerap air adalah ...', o: ['Daun', 'Batang', 'Akar', 'Bunga'], a: 2 },
-  { q: 'Planet tempat kita tinggal adalah ...', o: ['Mars', 'Bumi', 'Venus', 'Jupiter'], a: 1 },
+  { q: '23 + 14 = ...', o: ['47', '36', '39', '37'], a: 3 },
+  { q: '32 + 25 = ...', o: ['59', '67', '57', '56'], a: 2 },
+  { q: '41 + 16 = ...', o: ['67', '57', '59', '56'], a: 1 },
+  { q: '24 + 13 = ...', o: ['47', '39', '36', '37'], a: 3 },
+  { q: '52 + 17 = ...', o: ['69', '79', '68', '71'], a: 0 },
+  { q: '35 − 12 = ...', o: ['24', '23', '34', '13'], a: 1 },
+  { q: '48 − 23 = ...', o: ['25', '36', '26', '15'], a: 0 },
+  { q: '57 − 14 = ...', o: ['44', '54', '43', '33'], a: 2 },
+  { q: '69 − 25 = ...', o: ['34', '45', '44', '55'], a: 2 },
+  { q: '76 − 32 = ...', o: ['55', '34', '45', '44'], a: 3 },
+  { q: 'Isi tanda yang tepat: 35 ... 53', o: ['>', '=', '<'], a: 2 },
+  { q: 'Isi tanda yang tepat: 42 ... 39', o: ['=', '<', '>'], a: 2 },
+  { q: 'Isi tanda yang tepat: 67 ... 67', o: ['=', '>', '<'], a: 0 },
+  { q: 'Isi tanda yang tepat: 28 ... 32', o: ['>', '<', '='], a: 1 },
+  { q: 'Isi tanda yang tepat: 81 ... 78', o: ['<', '=', '>'], a: 2 },
+  { q: 'Urutkan dari yang terkecil: 24, 18, 32, 15, 27, 21', o: ['15, 21, 18, 24, 27, 32', '15, 18, 21, 24, 27, 32', '15, 18, 21, 27, 24, 32', '32, 27, 24, 21, 18, 15'], a: 1 },
+  { q: 'Urutkan dari yang terkecil: 45, 38, 52, 41, 36, 49', o: ['36, 38, 41, 49, 45, 52', '36, 41, 38, 45, 49, 52', '36, 38, 41, 45, 49, 52', '52, 49, 45, 41, 38, 36'], a: 2 },
+  { q: 'Urutkan dari yang terkecil: 63, 57, 71, 68, 54, 60', o: ['54, 60, 57, 63, 68, 71', '54, 57, 60, 63, 68, 71', '71, 68, 63, 60, 57, 54', '54, 57, 60, 68, 63, 71'], a: 1 },
+  { q: 'Urutkan dari yang terkecil: 29, 35, 22, 41, 18, 32', o: ['18, 29, 22, 32, 35, 41', '41, 35, 32, 29, 22, 18', '18, 22, 29, 35, 32, 41', '18, 22, 29, 32, 35, 41'], a: 3 },
+  { q: 'Urutkan dari yang terkecil: 85, 72, 91, 68, 79, 74', o: ['68, 74, 72, 79, 85, 91', '68, 72, 74, 79, 85, 91', '91, 85, 79, 74, 72, 68', '68, 72, 74, 85, 79, 91'], a: 1 },
 ];
 let questions = null, setCode = (Q.get('set') || '').toUpperCase().replace(/[^A-Z0-9]/g, ''), setTitle = '';
 let answerMode = 1; // 1 jawab di game, 0 catat di kertas
-let perPaper = 1;  // jumlah soal per kertas (diatur guru)
+let perPaper = setCode || ROOM ? 1 : 2;  // jumlah soal per kertas (diatur guru); demo: 2
 function loadSet(code) {
   return fetch('/api/set/' + code).then((r) => (r.ok ? r.json() : Promise.reject(r.status))).then((d) => {
     const qs = (Array.isArray(d.questions) ? d.questions : []).filter((q) => q && typeof q.q === 'string' && Array.isArray(q.o) && q.o.length >= 2 && q.a >= 0 && q.a < q.o.length);
@@ -219,6 +232,16 @@ let camManual = 0;
 
 /* ---------------- interaksi kertas ---------------- */
 let near = null, openP = null, playing = false, startAt = 0, timeLeft = 0, score = 0, right = 0, wrong = 0, found = 0;
+function targetPaper() { let best = null, bd = 1e9; for (const p of papers) { if (p.found) continue; const d = Math.hypot(p.g.position.x - P.x, p.g.position.z - P.z); if (d < bd) { bd = d; best = p; } } return best ? { p: best, d: bd } : null; }
+function updateCompass() {
+  const t = targetPaper(), el = $('compass'); if (!t) { el.classList.add('hidden'); return; }
+  el.classList.remove('hidden');
+  const ang = Math.atan2(t.p.g.position.x - P.x, t.p.g.position.z - P.z); // arah dunia
+  const rel = ang - (P.camYaw + Math.PI); // relatif arah pandang kamera
+  el.querySelector('.ndl').style.transform = 'rotate(' + (-rel) + 'rad)';
+  const d = t.d, lbl = d < 6 ? '🔥 Panas!' : d < 15 ? '♨️ Hangat' : d < 30 ? '🌤️ Sejuk' : '❄️ Dingin';
+  el.querySelector('.tx').textContent = lbl; el.style.setProperty('--h', d < 6 ? '#ff5d5d' : d < 15 ? '#ff9f43' : d < 30 ? '#ffd23f' : '#4aa8ff');
+}
 function nearestPaper() { let best = null, bd = 2.0; for (const p of papers) { if (p.found) continue; const d = Math.hypot(p.g.position.x - P.x, p.g.position.z - P.z); if (d < bd) { bd = d; best = p; } } return best; }
 function act() { if (!playing || !near) return; openPaper(near); }
 function openPaper(p) {
@@ -300,7 +323,7 @@ function begin(durationMs, name) {
 }
 function endGame(all) {
   if (!playing) return; playing = false; clearInterval(posT); Sfx.music(false); closePaper();
-  ['instr', 'act'].forEach((id) => $(id).classList.add('hidden'));
+  ['instr', 'act', 'compass'].forEach((id) => $(id).classList.add('hidden'));
   if (ROOM) return; // papan akhir ditangani Ruang
   $('rTitle').textContent = all ? 'Semua ketemu! 🎉' : 'Waktu habis! ⏱';
   $('rSub').textContent = answerMode === 0 ? 'Serahkan catatanmu ke guru untuk dikoreksi.' : 'Hebat sudah menjelajahi sekolah!';
@@ -352,7 +375,7 @@ function frame(t) {
     // kamera pelan-pelan kembali ke belakang pemain bila tidak diputar manual
     camManual = Math.max(0, camManual - dt);
     if (moving && camManual <= 0) { let d = (P.yaw + Math.PI) - P.camYaw; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2; P.camYaw += d * Math.min(1, dt * 1.6); }
-    near = nearestPaper();
+    near = nearestPaper(); updateCompass();
     const a = $('act'); a.classList.toggle('dim', !near); a.textContent = near ? '📄 Buka kertas ' + (near.i + 1) : 'Cari kertas…';
     setInstr(near ? 'Ketemu kertas! Tekan Buka.' : (found >= papers.length ? 'Semua kertas sudah ditemukan! 🎉' : 'Sisa ' + (papers.length - found) + ' kertas. Telusuri sekolah dengan teliti…'));
   }
