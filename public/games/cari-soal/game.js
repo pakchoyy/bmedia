@@ -45,6 +45,7 @@ function loadSet(code) {
     questions = qs.slice(0, 60); setTitle = d.title || '';
     const o = d.opts || {}; if (!ROOM) { if (o.mode === 0 || o.mode === 1) answerMode = o.mode; if (o.per) perPaper = Math.max(1, Math.min(5, o.per)); if (o.menit) playMinutes = o.menit; }
     lockOpts();
+    return d;
   });
 }
 
@@ -307,7 +308,8 @@ function syncPos() {
       d.players.forEach((pl) => { const i = all.indexOf(pl.name);
         seen.add(pl.id);
         let o = others.get(pl.id);
-        if (!o) { const k = makeKid(COLORS[i % COLORS.length], defaultChar(i), pl.name + ' · ' + (pl.f || 0)); o = { k, tx: pl.x, tz: pl.z, tr: pl.r, f: pl.f }; o.k.g.position.set(pl.x, 0, pl.z); others.set(pl.id, o); }
+        if (!o) { const k = makeKid(COLORS[i % COLORS.length], defaultChar(i), pl.name + ' · ' + (pl.f || 0)); o = { k, tx: pl.x, tz: pl.z, tr: pl.r, f: pl.f, vx: 0, vz: 0, t: performance.now() }; o.k.g.position.set(pl.x, 0, pl.z); others.set(pl.id, o); }
+        { const now = performance.now(), dt = Math.max(0.15, (now - o.t) / 1000); o.vx = (pl.x - o.px0) / dt || 0; o.vz = (pl.z - o.pz0) / dt || 0; if (o.px0 === undefined) { o.vx = 0; o.vz = 0; } o.px0 = pl.x; o.pz0 = pl.z; o.t = now; }
         o.tx = pl.x; o.tz = pl.z; o.tr = pl.r;
         if (o.f !== pl.f) { o.f = pl.f; o.k.g.remove(o.k.r.label); const lb = nameSprite(pl.name + ' · ' + pl.f, '#ffffff'); lb.position.set(0, 3.3, 0); lb.scale.set(2.2, 0.55, 1); o.k.g.add(lb); o.k.r.label = lb; }
       });
@@ -331,7 +333,7 @@ function begin(durationMs, name) {
   playing = true; hud(); Sfx.go(); Sfx.music(true);
   const msg = answerMode === 0 ? 'Cari ' + papers.length + ' kertas soal. Catat soalnya di bukumu!' : 'Cari ' + papers.length + ' kertas soal di sekolah, lalu jawab!';
   setInstr(msg); SAY(msg);
-  if (ROOM) { clearInterval(posT); posT = setInterval(syncPos, 800); }
+  if (ROOM) { clearInterval(posT); posT = setInterval(syncPos, 350); }
 }
 function endGame(all) {
   if (!playing) return; playing = false; clearInterval(posT); Sfx.music(false); closePaper();
@@ -410,7 +412,7 @@ function frame(t) {
     setInstr(near ? 'Ketemu kertas! Tekan Buka.' : (found >= papers.length ? 'Semua kertas sudah ditemukan! 🎉' : 'Sisa ' + (papers.length - found) + ' kertas. Telusuri sekolah dengan teliti…'));
   }
   if (me) { me.g.position.set(P.x, 0, P.z); me.g.rotation.y = P.yaw + Math.PI; animKid(me, moving, dt, t); }
-  others.forEach((o) => { const g = o.k.g, mv = Math.hypot(o.tx - g.position.x, o.tz - g.position.z) > 0.05; g.position.x += (o.tx - g.position.x) * Math.min(1, dt * 6); g.position.z += (o.tz - g.position.z) * Math.min(1, dt * 6); let d = (o.tr + Math.PI) - g.rotation.y; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2; g.rotation.y += d * Math.min(1, dt * 8); animKid(o.k, mv, dt, t); });
+  others.forEach((o) => { const g = o.k.g, ag = Math.min(0.6, (performance.now() - o.t) / 1000), ex = o.tx + (o.vx || 0) * ag, ez = o.tz + (o.vz || 0) * ag, mv = Math.hypot(ex - g.position.x, ez - g.position.z) > 0.05 || Math.hypot(o.vx || 0, o.vz || 0) > 0.3; g.position.x += (ex - g.position.x) * Math.min(1, dt * 10); g.position.z += (ez - g.position.z) * Math.min(1, dt * 10); let d = (o.tr + Math.PI) - g.rotation.y; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2; g.rotation.y += d * Math.min(1, dt * 8); animKid(o.k, mv, dt, t); });
   papers.forEach((p) => { if (!p.flat) p.m.rotation.z = Math.sin(t / 500 + p.ph) * 0.06; const d = Math.hypot(p.g.position.x - P.x, p.g.position.z - P.z); p.glow.material.opacity = p.found ? 0 : Math.max(0, 1 - d / 3) * (0.5 + 0.5 * Math.sin(t / 200)); });
   if (scene.userData.flag) scene.userData.flag.children.forEach((c, i) => { c.rotation.y = Math.sin(t / 260 + i) * 0.3; });
   // kamera orang ketiga
@@ -440,7 +442,10 @@ if (ROOM) {
   });
 } else if (setCode) {
   const info = $('setinfo'); info.classList.remove('hidden'); info.textContent = '⏳ Memuat soal dari guru...';
-  loadSet(setCode).then(() => { info.textContent = '📚 Soal guru: ' + setTitle + ' · ' + Math.ceil(questions.length / perPaper) + ' kertas' + (answerMode === 0 ? ' · tulis di kertas' : ''); info.className = 'setinfo ok'; })
+  const goRoom = (rc) => { info.textContent = '👥 Guru membuka ruang Mabar ' + rc + '. Masuk ruang...'; info.className = 'setinfo ok'; (window.top || window).location.href = '/ruang/' + rc; };
+  const cekRuang = () => fetch('/api/set/' + setCode + '?cek=1', { cache: 'no-store' }).then((r) => r.json()).then((d) => { if (d.room && !playing) goRoom(d.room); }).catch(() => {});
+  setInterval(cekRuang, 4000);
+  loadSet(setCode).then((d) => { if (d && d.room) return goRoom(d.room); info.textContent = '📚 Soal guru: ' + setTitle + ' · ' + Math.ceil(questions.length / perPaper) + ' kertas' + (answerMode === 0 ? ' · tulis di kertas' : ''); info.className = 'setinfo ok'; })
     .catch(() => { info.textContent = '⚠️ Kode soal tidak ditemukan. Memakai soal contoh.'; info.className = 'setinfo err'; });
 }
 window.__cs = { state: () => ({ playing, found, n: papers.length, score, pos: [P.x, P.z], papers: papers.map((p) => ({ x: p.g.position.x, z: p.g.position.z, f: p.found, a: p.q.a })) }), tp: (x, z) => { P.x = x; P.z = z; }, open: () => near && openPaper(near), answer: (k) => { const b = $('pOpts').children[k]; b && b.click(); } };
