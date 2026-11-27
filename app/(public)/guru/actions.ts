@@ -110,8 +110,7 @@ export async function saveCariOpts(id: string, form: FormData): Promise<void> {
   if (!guru) redirect("/guru/masuk");
   const mode = form.get("mode") === "0" ? 0 : 1;
   const per = Math.max(1, Math.min(5, Number(form.get("per")) || 1));
-  const menit = [5, 10, 15, 20].includes(Number(form.get("menit"))) ? Number(form.get("menit")) : 10;
-  await sql`UPDATE question_sets SET opts = ${JSON.stringify({ mode, per, menit })}::jsonb, updated_at = now()
+  await sql`UPDATE question_sets SET opts = ${JSON.stringify({ mode, per })}::jsonb, updated_at = now()
     WHERE id = ${id} AND teacher_id = ${guru.guruId}`;
   revalidatePath(`/guru/set/${id}`);
 }
