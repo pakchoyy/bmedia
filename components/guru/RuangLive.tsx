@@ -17,7 +17,7 @@ export default function RuangLive({ roomId, code, setId, title, game = "kupu-kup
   const [tick, setTick] = useState(0);
   const [qr, setQr] = useState("");
   const cari = game === "cari-soal";
-  const [duration, setDuration] = useState(cari ? (opts?.menit || 10) * 60 : 90);
+  const [duration, setDuration] = useState(cari ? 14400 : 90); // Cari Soal Yuk: tanpa batas waktu, guru yang menghentikan
   const [quizEvery, setQuizEvery] = useState(cari ? (opts?.mode === 0 ? 0 : 1) : 3);
   const [perPaper, setPerPaper] = useState(opts?.per || 1);
   const [err, setErr] = useState("");
@@ -73,7 +73,7 @@ export default function RuangLive({ roomId, code, setId, title, game = "kupu-kup
           <h1 className="font-display text-2xl sm:text-3xl font-bold text-nb-ink dark:text-white">{title}</h1>
         </div>
         <span className={`nb-sm rounded-full px-3 py-1 text-sm font-extrabold text-nb-ink ${status === "lobby" ? "bg-nb-yellow" : status === "playing" ? "bg-nb-mint" : "bg-nb-pink"}`}>
-          {status === "lobby" ? "Menunggu murid" : status === "playing" ? (toStart > 0 ? `Mulai ${toStart}…` : remain > 0 ? `Berlangsung · ${remain} dtk` : "Menghitung hasil…") : "Selesai"}
+          {status === "lobby" ? "Menunggu murid" : status === "playing" ? (toStart > 0 ? `Mulai ${toStart}…` : remain > 0 ? (cari ? "Berlangsung · tekan Hentikan bila selesai" : `Berlangsung · ${remain} dtk`) : "Menghitung hasil…") : "Selesai"}
         </span>
       </div>
 
@@ -87,11 +87,11 @@ export default function RuangLive({ roomId, code, setId, title, game = "kupu-kup
 
           {status === "lobby" && (
             <div className="mt-4 space-y-3 text-left">
-              <label className="block text-xs font-bold">Lama bermain
+              {!cari && <label className="block text-xs font-bold">Lama bermain
                 <select value={duration} onChange={(e) => setDuration(Number(e.target.value))} className="nb-flat w-full mt-1 px-3 py-2 rounded-lg bg-white dark:bg-slate-950 text-sm">
                   {(cari ? [300, 600, 900, 1200] : [60, 90, 120, 180]).map((d) => <option key={d} value={d}>{d >= 300 ? `${d / 60} menit` : `${d} detik`}</option>)}
                 </select>
-              </label>
+              </label>}
               {cari ? (
                 <label className="block text-xs font-bold">Cara menjawab
                   <select value={quizEvery} onChange={(e) => setQuizEvery(Number(e.target.value))} className="nb-flat w-full mt-1 px-3 py-2 rounded-lg bg-white dark:bg-slate-950 text-sm">

@@ -432,6 +432,7 @@ if (ROOM) {
   if (setCode) loadSet(setCode).then(() => { ready = true; }).catch(() => { questions = DEMO.slice(); ready = true; }); else { questions = DEMO.slice(); ready = true; }
   $('start').onclick = (e) => { e.stopImmediatePropagation(); $('menu').classList.add('hidden'); Sfx.click(); startRuang(); };
   const startRuang = () => Ruang.init({
+    noTimer: true,
     ready: () => ready,
     onStart: (ms, name) => begin(ms, name),
     getStats: () => ({ score, caught: found, quizRight: right, quizWrong: wrong }),
