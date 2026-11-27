@@ -13,7 +13,7 @@ export async function GET(_req: Request, { params }: { params: { code: string } 
   const rows = await sql`
     UPDATE question_sets SET plays = plays + 1
     WHERE code = ${code}
-    RETURNING title, subject, grade, questions, game
+    RETURNING title, subject, grade, questions, game, opts
   `;
   const set = rows[0];
   if (!set) return NextResponse.json({ error: "Kode tidak ditemukan." }, { status: 404 });

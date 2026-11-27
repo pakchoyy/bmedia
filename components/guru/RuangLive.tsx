@@ -11,15 +11,15 @@ interface Live {
   serverNow: number; startsAt: number | null; endsAt: number | null; players: Player[];
 }
 
-export default function RuangLive({ roomId, code, setId, title, game = "kupu-kupu" }: { game?: string; roomId: string; code: string; setId: string; title: string }) {
+export default function RuangLive({ roomId, code, setId, title, game = "kupu-kupu", opts }: { opts?: Record<string, number>; game?: string; roomId: string; code: string; setId: string; title: string }) {
   const [live, setLive] = useState<Live | null>(null);
   const [offset, setOffset] = useState(0);
   const [tick, setTick] = useState(0);
   const [qr, setQr] = useState("");
   const cari = game === "cari-soal";
-  const [duration, setDuration] = useState(cari ? 600 : 90);
-  const [quizEvery, setQuizEvery] = useState(cari ? 1 : 3);
-  const [perPaper, setPerPaper] = useState(1);
+  const [duration, setDuration] = useState(cari ? (opts?.menit || 10) * 60 : 90);
+  const [quizEvery, setQuizEvery] = useState(cari ? (opts?.mode === 0 ? 0 : 1) : 3);
+  const [perPaper, setPerPaper] = useState(opts?.per || 1);
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
   const joinRef = useRef("");
@@ -89,7 +89,7 @@ export default function RuangLive({ roomId, code, setId, title, game = "kupu-kup
             <div className="mt-4 space-y-3 text-left">
               <label className="block text-xs font-bold">Lama bermain
                 <select value={duration} onChange={(e) => setDuration(Number(e.target.value))} className="nb-flat w-full mt-1 px-3 py-2 rounded-lg bg-white dark:bg-slate-950 text-sm">
-                  {(cari ? [300, 600, 900] : [60, 90, 120, 180]).map((d) => <option key={d} value={d}>{d >= 300 ? `${d / 60} menit` : `${d} detik`}</option>)}
+                  {(cari ? [300, 600, 900, 1200] : [60, 90, 120, 180]).map((d) => <option key={d} value={d}>{d >= 300 ? `${d / 60} menit` : `${d} detik`}</option>)}
                 </select>
               </label>
               {cari ? (

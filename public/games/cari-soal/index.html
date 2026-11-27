@@ -78,6 +78,18 @@
   .seg { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; }
   .seg button { min-height:44px; min-width:44px; padding:8px 12px; border-radius:12px; font-weight:900; font-size:15px; background:#fff; }
   .seg button.on { background:var(--yellow); }
+  .chars { display:grid; grid-template-columns:repeat(6, 1fr); gap:6px; margin-top:10px; }
+  .chars .ch { border-radius:14px; background:#fff; padding:6px 2px; display:flex; flex-direction:column; align-items:center; gap:2px; min-height:64px; }
+  .chars .ch span { font-size:28px; line-height:1; } .chars .ch small { font-size:10px; font-weight:900; line-height:1.1; }
+  .chars .ch.on { background:var(--yellow); outline:3px solid var(--orange); }
+  @media (max-width:520px) { .chars { grid-template-columns:repeat(3, 1fr); } }
+  .paper { max-height:calc(100vh - 24px); overflow:auto; }
+  .q.list { font-size:clamp(15px, 2.2vh, 18px); margin:8px 0 10px; display:grid; gap:10px; white-space:normal; }
+  .q.list .qi { background:#fff; border:2px solid #c9d8ee; border-radius:12px; padding:8px 10px; }
+  .q.list .qt { font-weight:900; margin-bottom:6px; }
+  .q.list .qo { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:4px 12px; font-weight:800; }
+  .q.list .qo b { display:inline-grid; place-items:center; width:22px; height:22px; border-radius:50%; background:var(--yellow); border:2px solid var(--ink); margin-right:6px; font-size:12px; }
+  @media (max-width:520px) { .q.list .qo { grid-template-columns:1fr; } }
 </style>
 <link rel="stylesheet" href="/games/_shared/theme.css">
 </head>
@@ -90,9 +102,10 @@
     <div class="sub">Kertas soal tersebar di sekolah: di pohon, dinding, dan mading. Jelajahi sekolah, temukan, lalu kerjakan!</div>
     <div class="setinfo hidden" id="setinfo"></div>
     <input id="name" maxlength="30" placeholder="Tulis namamu" autocomplete="off">
-    <div class="row"><span class="lbl">Cara jawab</span>
+    <div class="chars" id="chars" aria-label="Pilih karakter"></div>
+    <div class="row" id="rowMode"><span class="lbl">Cara jawab</span>
       <div class="seg" id="segMode"><button class="nb-sm press" data-n="1">🖱️ Jawab di game</button><button class="nb-sm press" data-n="0">✍️ Tulis di kertas</button></div></div>
-    <div class="row"><span class="lbl">Soal / kertas</span>
+    <div class="row" id="rowPer"><span class="lbl">Soal / kertas</span>
       <div class="seg" id="segPer"><button class="nb-sm press" data-n="1">1</button><button class="nb-sm press" data-n="2">2</button><button class="nb-sm press" data-n="3">3</button><button class="nb-sm press" data-n="4">4</button><button class="nb-sm press" data-n="5">5</button></div></div>
     <div class="how">
       <div>🚶 Jalan: <b>WASD / panah</b> di laptop, <b>joystick</b> di HP</div>
