@@ -6,7 +6,11 @@
   function pickVoice() {
     if (!synth) return;
     var vs = synth.getVoices() || [];
-    voice = vs.filter(function (v) { return /^id/i.test(v.lang); })[0] || vs.filter(function (v) { return /indonesia/i.test(v.name); })[0] || null;
+    var ids = vs.filter(function (v) { return /^id/i.test(v.lang) || /indonesia/i.test(v.name); });
+    // utamakan suara perempuan yang jernih; hindari suara pria (mis. "Andika" di Windows)
+    function rank(v) { var n = v.name; return /Gadis|Damayanti|Female|Wanita/i.test(n) ? 0 : /Natural|Online/i.test(n) && !/Ardi|Andika|Male/i.test(n) ? 1 : /Google/i.test(n) ? 2 : /Andika|Ardi|Male/i.test(n) ? 9 : 5; }
+    ids.sort(function (a, b) { return rank(a) - rank(b); });
+    voice = ids[0] || null;
   }
   if (synth) { pickVoice(); synth.onvoiceschanged = pickVoice; }
   function enabled() { try { return localStorage.getItem('bgy_tts') === '1'; } catch (e) { return false; } }
@@ -18,14 +22,28 @@
       .replace(/(\d+)\s*%/g, '$1 persen').replace(/=\s*\?/g, 'sama dengan berapa?').replace(/…/g, ' berapa ')
       .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, ' ').replace(/\s+/g, ' ').trim();
   }
-  function say(t) {
-    if (!synth || !t) return;
+  // Suara AI (ElevenLabs lewat /api/suara) bila tersedia; kalau gagal, pakai suara perangkat
+  var audio = null, ai = true;
+  function stopAudio() { if (audio) { try { audio.pause(); } catch (e) {} audio = null; } }
+  if (synth) { var c0 = synth.cancel.bind(synth); synth.cancel = function () { stopAudio(); c0(); }; }
+  function sayDevice(t) {
+    if (!synth) return;
     try {
       synth.cancel();
       var u = new SpeechSynthesisUtterance(words(t));
       u.lang = 'id-ID'; if (voice) u.voice = voice; u.rate = 0.95; u.pitch = 1.1;
       synth.speak(u);
     } catch (e) {}
+  }
+  function say(t) {
+    if (!t) return;
+    var w = words(t); if (!w) return;
+    if (synth) synth.cancel(); else stopAudio();
+    if (!ai || w.length > 300) return sayDevice(t);
+    var a = new Audio('/api/suara?t=' + encodeURIComponent(w)); audio = a;
+    var fell = false, fb = function () { if (fell || audio !== a) return; fell = true; ai = false; audio = null; sayDevice(t); };
+    a.onerror = fb;
+    var p = a.play(); if (p && p.catch) p.catch(function (e) { if (e && e.name === 'NotAllowedError') return; fb(); });
   }
   global.Suara = {
     supported: !!synth,
