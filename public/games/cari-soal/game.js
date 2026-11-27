@@ -36,12 +36,15 @@ const DEMO = [
 ];
 let questions = null, setCode = (Q.get('set') || '').toUpperCase().replace(/[^A-Z0-9]/g, ''), setTitle = '';
 let answerMode = 1; // 1 jawab di game, 0 catat di kertas
+let playMinutes = 10;
 let perPaper = setCode || ROOM ? 1 : 2;  // jumlah soal per kertas (diatur guru); demo: 2
 function loadSet(code) {
   return fetch('/api/set/' + code).then((r) => (r.ok ? r.json() : Promise.reject(r.status))).then((d) => {
     const qs = (Array.isArray(d.questions) ? d.questions : []).filter((q) => q && typeof q.q === 'string' && Array.isArray(q.o) && q.o.length >= 2 && q.a >= 0 && q.a < q.o.length);
     if (!qs.length) throw new Error('kosong');
     questions = qs.slice(0, 60); setTitle = d.title || '';
+    const o = d.opts || {}; if (!ROOM) { if (o.mode === 0 || o.mode === 1) answerMode = o.mode; if (o.per) perPaper = Math.max(1, Math.min(5, o.per)); if (o.menit) playMinutes = o.menit; }
+    lockOpts();
   });
 }
 
@@ -187,7 +190,7 @@ function placePapers(seed) {
 function markPaper(p) { p.found = true; p.m.material.map = paperTex(p.i + 1, true); p.m.material.emissiveIntensity = 0.1; p.m.material.needsUpdate = true; }
 
 /* ---------------- pemain & murid lain ---------------- */
-function charOf() { try { return JSON.parse(localStorage.getItem('bgy_char_0') || 'null') || defaultChar(0); } catch (e) { return defaultChar(0); } }
+function charOf() { return CHARS[charIdx] || defaultChar(0); }
 function makeKid(color, ch, name) {
   const r = makeRider(new THREE.Color(color), ch);
   r.group.remove(r.group.children[0]); // tanpa sepeda
@@ -248,7 +251,16 @@ function openPaper(p) {
   openP = p; Sfx.pop();
   p.q = p.qs[p.qi];
   $('pNo').textContent = 'Kertas ' + (p.i + 1) + ' · ditemukan di ' + p.kind + (p.qs.length > 1 && answerMode === 1 ? ' · soal ' + (p.qi + 1) + '/' + p.qs.length : '');
-  $('pQ').textContent = answerMode === 0 && p.qs.length > 1 ? p.qs.map((x, k) => (k + 1) + '. ' + x.q + '\n   ' + x.o.map((o, j) => 'ABCDE'[j] + '. ' + o).join('   ')).join('\n\n') : p.q.q;
+  if (answerMode === 0) {
+    const qd = $('pQ'); qd.textContent = ''; qd.classList.add('list');
+    p.qs.forEach((x, k) => {
+      const it = document.createElement('div'); it.className = 'qi';
+      const h = document.createElement('div'); h.className = 'qt'; h.textContent = (p.qs.length > 1 ? (k + 1) + '. ' : '') + x.q; it.appendChild(h);
+      const ol = document.createElement('div'); ol.className = 'qo';
+      x.o.forEach((o, j) => { const c = document.createElement('span'); c.innerHTML = '<b>' + 'ABCDE'[j] + '</b>'; c.append(o); ol.appendChild(c); });
+      it.appendChild(ol); qd.appendChild(it);
+    });
+  } else { $('pQ').classList.remove('list'); $('pQ').textContent = p.q.q; }
   const box = $('pOpts'); box.innerHTML = '';
   $('pNoteBtns').classList.toggle('hidden', answerMode !== 0);
   box.classList.toggle('hidden', answerMode === 0);
@@ -331,21 +343,32 @@ function endGame(all) {
   $('result').classList.remove('hidden'); if (all) { Sfx.win(); Fx.win(); }
   if (window.Koin && score) Koin.add(score / 20, 'Cari Soal Yuk');
 }
-$('again').addEventListener('click', () => begin(10 * 60 * 1000));
+$('again').addEventListener('click', () => begin(playMinutes * 60 * 1000));
 $('bExit').addEventListener('click', () => Dialog.ask('Selesai bermain sekarang?', () => endGame(false)));
 $('bMute').addEventListener('click', function () { try { localStorage.setItem('bgy_muted', Sfx.muted() ? '0' : '1'); } catch (e) {} this.textContent = Sfx.muted() ? '🔇' : '🔊'; Sfx.music(!Sfx.muted() && playing); });
 $('bMute').textContent = Sfx.muted() ? '🔇' : '🔊';
 $('act').addEventListener('click', act);
 $('start').addEventListener('click', () => {
+  if (ROOM) return;
   const nm = $('name').value.trim(); if (!nm) { $('name').focus(); $('name').placeholder = 'Tulis namamu dulu ya'; return; }
   try { localStorage.setItem('bgy_name', nm); } catch (e) {}
   if (!questions) questions = DEMO.slice();
-  begin(10 * 60 * 1000, nm);
+  try { localStorage.setItem('bgy_char_0', JSON.stringify(CHARS[charIdx])); } catch (e) {}
+  begin(playMinutes * 60 * 1000, nm);
 });
 try { $('name').value = localStorage.getItem('bgy_name') || ''; } catch (e) {}
 // pilihan cara menjawab & soal per kertas (main tanpa ruang); ?mode=catat&per=2 juga bisa
 if (Q.get('mode') === 'catat') answerMode = 0;
 if (+Q.get('per') >= 1) perPaper = Math.min(5, +Q.get('per'));
+function lockOpts() { ['rowMode', 'rowPer'].forEach((id) => { const el = $(id); if (el) el.classList.add('hidden'); }); }
+// pilih karakter (dipakai juga di game lain)
+const CHARS = [{ gender: 'l', skin: '#f6d3b3', head: 'pendek', seragam: 'sd' }, { gender: 'p', skin: '#e9b98f', head: 'jilbab', seragam: 'sd' }, { gender: 'p', skin: '#f6d3b3', head: 'kuncir', seragam: 'sd' }, { gender: 'l', skin: '#c98d63', head: 'peci', seragam: 'sd' }, { gender: 'p', skin: '#c98d63', head: 'panjang', seragam: 'sd' }, { gender: 'l', skin: '#8d5a3b', head: 'topi', seragam: 'sd' }];
+let charIdx = 0; try { charIdx = +localStorage.getItem('cs_char') || 0; } catch (e) {}
+(function () {
+  const box = $('chars'), names = ['Rambut pendek', 'Jilbab', 'Kuncir', 'Peci', 'Rambut panjang', 'Topi'], ic = ['👦', '🧕', '👧', '🧒🏽', '👩🏽', '👦🏿'];
+  CHARS.forEach((c, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'nb-sm press ch'; b.innerHTML = '<span>' + ic[i] + '</span><small>' + names[i] + '</small>'; b.onclick = () => { charIdx = i; try { localStorage.setItem('cs_char', i); } catch (e) {} mark(); Sfx.click(); }; box.appendChild(b); });
+  const mark = () => [...box.children].forEach((b, i) => b.classList.toggle('on', i === charIdx)); mark();
+})();
 function seg(id, get, set) { const el = $(id); const mark = () => [...el.children].forEach((b) => b.classList.toggle('on', +b.dataset.n === get())); el.addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; set(+b.dataset.n); mark(); Sfx.click(); }); mark(); }
 seg('segMode', () => answerMode, (n) => { answerMode = n; });
 seg('segPer', () => perPaper, (n) => { perPaper = n; });
@@ -401,11 +424,13 @@ cam.position.set(0, 18, 34); cam.lookAt(0, 0, 0);
 
 /* ---------------- awal: set guru / ruang ---------------- */
 if (ROOM) {
-  $('menu').classList.add('hidden');
+  lockOpts(); $('name').classList.add('hidden'); document.querySelector('.how').classList.add('hidden');
+  $('start').textContent = '▶ SIAP, MASUK RUANG';
   let ready = false;
   fetch('/api/ruang/' + ROOM.code + '/status?pid=' + encodeURIComponent(ROOM.pid) + '&tok=' + encodeURIComponent(ROOM.tok)).then((r) => r.json()).then((d) => { const qe = Number(d.quizEvery) || 0; answerMode = qe % 10 === 0 ? 0 : 1; perPaper = Math.max(1, Math.min(5, Math.floor(qe / 10) || 1)); }).catch(() => {});
   if (setCode) loadSet(setCode).then(() => { ready = true; }).catch(() => { questions = DEMO.slice(); ready = true; }); else { questions = DEMO.slice(); ready = true; }
-  Ruang.init({
+  $('start').onclick = (e) => { e.stopImmediatePropagation(); $('menu').classList.add('hidden'); Sfx.click(); startRuang(); };
+  const startRuang = () => Ruang.init({
     ready: () => ready,
     onStart: (ms, name) => begin(ms, name),
     getStats: () => ({ score, caught: found, quizRight: right, quizWrong: wrong }),
@@ -413,7 +438,7 @@ if (ROOM) {
   });
 } else if (setCode) {
   const info = $('setinfo'); info.classList.remove('hidden'); info.textContent = '⏳ Memuat soal dari guru...';
-  loadSet(setCode).then(() => { info.textContent = '📚 Soal guru: ' + setTitle + ' (' + questions.length + ' kertas)'; info.className = 'setinfo ok'; })
+  loadSet(setCode).then(() => { info.textContent = '📚 Soal guru: ' + setTitle + ' · ' + Math.ceil(questions.length / perPaper) + ' kertas' + (answerMode === 0 ? ' · tulis di kertas' : ''); info.className = 'setinfo ok'; })
     .catch(() => { info.textContent = '⚠️ Kode soal tidak ditemukan. Memakai soal contoh.'; info.className = 'setinfo err'; });
 }
 window.__cs = { state: () => ({ playing, found, n: papers.length, score, pos: [P.x, P.z], papers: papers.map((p) => ({ x: p.g.position.x, z: p.g.position.z, f: p.found, a: p.q.a })) }), tp: (x, z) => { P.x = x; P.z = z; }, open: () => near && openPaper(near), answer: (k) => { const b = $('pOpts').children[k]; b && b.click(); } };

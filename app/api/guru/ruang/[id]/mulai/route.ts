@@ -11,7 +11,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   if (!guru) return NextResponse.json({ error: "Silakan masuk." }, { status: 401 });
   if (!UUID.test(params.id)) return NextResponse.json({ error: "Tidak ditemukan." }, { status: 404 });
   const b = await req.json().catch(() => ({}));
-  const duration = [60, 90, 120, 180, 300, 600, 900].includes(Number(b.duration)) ? Number(b.duration) : 90;
+  const duration = [60, 90, 120, 180, 300, 600, 900, 1200].includes(Number(b.duration)) ? Number(b.duration) : 90;
   // Cari Soal Yuk memakai 0 (catat di kertas) / 1 (jawab di game)
   // Cari Soal Yuk: puluhan = soal per kertas (1–5), satuan = 1 jawab di game / 0 catat
   const qe = Number(b.quizEvery);
