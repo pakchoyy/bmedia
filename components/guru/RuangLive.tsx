@@ -1,5 +1,6 @@
 "use client";
 
+import PetaMurid from "./PetaMurid";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import QRCode from "qrcode";
@@ -15,8 +16,9 @@ export default function RuangLive({ roomId, code, setId, title, game = "kupu-kup
   const [offset, setOffset] = useState(0);
   const [tick, setTick] = useState(0);
   const [qr, setQr] = useState("");
-  const [duration, setDuration] = useState(90);
-  const [quizEvery, setQuizEvery] = useState(3);
+  const cari = game === "cari-soal";
+  const [duration, setDuration] = useState(cari ? 600 : 90);
+  const [quizEvery, setQuizEvery] = useState(cari ? 1 : 3);
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
   const joinRef = useRef("");
@@ -86,20 +88,30 @@ export default function RuangLive({ roomId, code, setId, title, game = "kupu-kup
             <div className="mt-4 space-y-3 text-left">
               <label className="block text-xs font-bold">Lama bermain
                 <select value={duration} onChange={(e) => setDuration(Number(e.target.value))} className="nb-flat w-full mt-1 px-3 py-2 rounded-lg bg-white dark:bg-slate-950 text-sm">
-                  {[60, 90, 120, 180].map((d) => <option key={d} value={d}>{d} detik</option>)}
+                  {(cari ? [300, 600, 900] : [60, 90, 120, 180]).map((d) => <option key={d} value={d}>{d >= 300 ? `${d / 60} menit` : `${d} detik`}</option>)}
                 </select>
               </label>
+              {cari ? (
+                <label className="block text-xs font-bold">Cara menjawab
+                  <select value={quizEvery} onChange={(e) => setQuizEvery(Number(e.target.value))} className="nb-flat w-full mt-1 px-3 py-2 rounded-lg bg-white dark:bg-slate-950 text-sm">
+                    <option value={1}>Jawab langsung di game (dikoreksi otomatis)</option>
+                    <option value={0}>Murid mencatat di kertas, guru mengoreksi</option>
+                  </select>
+                </label>
+              ) : (
               <label className="block text-xs font-bold">Soal muncul tiap
                 <select value={quizEvery} onChange={(e) => setQuizEvery(Number(e.target.value))} className="nb-flat w-full mt-1 px-3 py-2 rounded-lg bg-white dark:bg-slate-950 text-sm">
                   {[2, 3, 5].map((d) => <option key={d} value={d}>{d} tangkapan</option>)}
                 </select>
               </label>
+              )}
               <button disabled={busy || players.length === 0} onClick={() => post("mulai", { duration, quizEvery })}
                 className="w-full nb nb-press bg-nb-orange text-nb-ink rounded-xl py-3 font-extrabold disabled:opacity-50">
                 ▶ Mulai ({players.length} murid)
               </button>
             </div>
           )}
+          {status === "playing" && cari && <PetaMurid code={code} />}
           {status === "playing" && (
             <button disabled={busy} onClick={() => confirm("Hentikan permainan sekarang?") && post("selesai")}
               className="w-full mt-4 nb-sm nb-press bg-white text-nb-ink rounded-xl py-2.5 font-extrabold">⏹ Hentikan sekarang</button>
@@ -141,7 +153,7 @@ export default function RuangLive({ roomId, code, setId, title, game = "kupu-kup
                   <div className="relative flex items-center gap-3 px-3 py-2 text-nb-ink dark:text-white">
                     <span className="font-extrabold w-6">{["🥇", "🥈", "🥉"][i] ?? i + 1}</span>
                     <span className="font-bold flex-1 truncate">{p.name}</span>
-                    <span className="text-xs hidden sm:inline">{p.caught} {game === "kupu-kupu" ? "kupu" : "benar"} · kuis {p.quiz_right}/{p.quiz_right + p.quiz_wrong}</span>
+                    <span className="text-xs hidden sm:inline">{p.caught} {game === "kupu-kupu" ? "kupu" : game === "cari-soal" ? "kertas" : "benar"} · kuis {p.quiz_right}/{p.quiz_right + p.quiz_wrong}</span>
                     <span className="font-extrabold tabular-nums w-14 text-right">{p.score}</span>
                   </div>
                 </li>
