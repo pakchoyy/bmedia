@@ -23,11 +23,12 @@ const DEMO = [
 ];
 let questions = null, setCode = (Q.get('set') || '').toUpperCase().replace(/[^A-Z0-9]/g, ''), setTitle = '';
 let answerMode = 1; // 1 jawab di game, 0 catat di kertas
+let perPaper = 1;  // jumlah soal per kertas (diatur guru)
 function loadSet(code) {
   return fetch('/api/set/' + code).then((r) => (r.ok ? r.json() : Promise.reject(r.status))).then((d) => {
     const qs = (Array.isArray(d.questions) ? d.questions : []).filter((q) => q && typeof q.q === 'string' && Array.isArray(q.o) && q.o.length >= 2 && q.a >= 0 && q.a < q.o.length);
     if (!qs.length) throw new Error('kosong');
-    questions = qs.slice(0, 20); setTitle = d.title || '';
+    questions = qs.slice(0, 60); setTitle = d.title || '';
   });
 }
 
@@ -38,7 +39,7 @@ const renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: !lite });
 renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.shadowMap.enabled = !lite; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x9fdcff); scene.fog = new THREE.Fog(0x9fdcff, 45, 110);
+scene.background = new THREE.Color(0x9fdcff); scene.fog = new THREE.Fog(0x9fdcff, 40, 130);
 const cam = new THREE.PerspectiveCamera(58, 1, 0.2, 260);
 scene.add(new THREE.HemisphereLight(0xeaf6ff, 0x6a9a50, 1.2));
 const sun = new THREE.DirectionalLight(0xfff1d6, 1.6); sun.castShadow = true; sun.shadow.mapSize.set(1024, 1024);
@@ -52,7 +53,7 @@ const colliders = []; // kotak sejajar sumbu {x0,x1,z0,z1}
 function solid(x, z, w, d) { colliders.push({ x0: x - w / 2, x1: x + w / 2, z0: z - d / 2, z1: z + d / 2 }); }
 const circles = []; // pohon {x,z,r}
 const SPOTS = []; // tempat kertas {pos, normal(yaw)}
-const B = { x0: -44, x1: 44, z0: -34, z1: 34 };
+const B = { x0: -74, x1: 74, z0: -58, z1: 58 };
 
 function classWallTex(label, color) {
   return canvasTex(512, 128, (x) => {
@@ -76,7 +77,7 @@ function building(x, z, w, d, rot, label, color, roofC) {
 }
 function buildWorld() {
   const grass = canvasTex(128, 128, (x, w, h) => { x.fillStyle = '#74c25a'; x.fillRect(0, 0, w, h); for (let i = 0; i < 700; i++) { x.fillStyle = Math.random() < .5 ? '#66b34c' : '#86d06a'; x.fillRect(Math.random() * w, Math.random() * h, 2, 3); } }, [40, 40]);
-  const ground = new THREE.Mesh(new THREE.PlaneGeometry(220, 220), new THREE.MeshStandardMaterial({ map: grass, roughness: 0.95 })); ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(320, 320), new THREE.MeshStandardMaterial({ map: grass, roughness: 0.95 })); ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
   // lapangan upacara (paving) + garis
   const pav = canvasTex(64, 64, (x) => { x.fillStyle = '#d8d0bf'; x.fillRect(0, 0, 64, 64); x.strokeStyle = '#bfb6a2'; x.lineWidth = 2; x.strokeRect(0, 0, 64, 64); x.beginPath(); x.moveTo(32, 0); x.lineTo(32, 64); x.stroke(); }, [16, 10]);
   const yard = new THREE.Mesh(new THREE.PlaneGeometry(40, 26), new THREE.MeshStandardMaterial({ map: pav, roughness: 0.9 })); yard.rotation.x = -Math.PI / 2; yard.position.set(0, 0.03, 2); yard.receiveShadow = true; scene.add(yard);
@@ -91,11 +92,25 @@ function buildWorld() {
   building(35, 0, 22, 7, -Math.PI / 2, 'PERPUSTAKAAN', '#22a06b', 0x22a06b);
   building(-22, 26, 14, 6, Math.PI, 'KANTIN', '#ff8a1f', 0xff8a1f);
   building(22, 26, 14, 6, Math.PI, 'UKS & GURU', '#8c7ae6', 0x8c7ae6);
+  building(-55, -40, 18, 7, 0, 'LAB KOMPUTER', '#0ea5e9', 0x0ea5e9);
+  building(55, -40, 18, 7, 0, 'MUSHOLA', '#16a34a', 0x16a34a);
+  building(-55, 45, 16, 6, Math.PI, 'GUDANG', '#a16207', 0xa16207);
+  building(55, 45, 16, 6, Math.PI, 'RUANG SENI', '#db2777', 0xdb2777);
+  // lapangan olahraga (garis) & kebun sekolah
+  const field = new THREE.Mesh(new THREE.PlaneGeometry(36, 22), new THREE.MeshStandardMaterial({ map: canvasTex(256, 160, (x) => { x.fillStyle = '#58b947'; x.fillRect(0, 0, 256, 160); x.strokeStyle = '#fff'; x.lineWidth = 4; x.strokeRect(8, 8, 240, 144); x.beginPath(); x.moveTo(128, 8); x.lineTo(128, 152); x.stroke(); x.beginPath(); x.arc(128, 80, 26, 0, 7); x.stroke(); }) }));
+  field.rotation.x = -Math.PI / 2; field.position.set(0, 0.03, 44); field.receiveShadow = true; scene.add(field);
+  [-1, 1].forEach((sg) => { box(0.2, 2.4, 0.2, 0xffffff, sg * 17, 1.2, 40); box(0.2, 2.4, 0.2, 0xffffff, sg * 17, 1.2, 48); box(0.2, 0.2, 8.2, 0xffffff, sg * 17, 2.4, 44); });
+  for (let k = 0; k < 6; k++) { const bx = -66 + (k % 3) * 6, bz = -6 + Math.floor(k / 3) * 7; box(4, 0.4, 5, 0x7a4a2b, bx, 0.2, bz); for (let r = 0; r < 4; r++) { const pl = new THREE.Mesh(new THREE.ConeGeometry(0.35, 0.9, 6), M(0x2f9e44, { flatShading: true })); pl.position.set(bx - 1.4 + r * 0.95, 0.85, bz); scene.add(pl); } SPOTS.push({ p: new THREE.Vector3(bx, 0.45, bz + 2.6), yaw: 0, kind: 'kebun', flat: true }); }
+  // tong sampah & pot bunga (tempat kertas tersembunyi)
+  [[-48, 10], [48, 10], [-10, -36], [10, -36], [-40, 34], [40, 34], [0, 30], [62, 0], [-62, 20]].forEach(([x, z], i) => {
+    const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.45, 0.9, 10), M(i % 2 ? 0xc0532f : 0x2f7de0)); pot.position.set(x, 0.45, z); pot.castShadow = true; scene.add(pot); solid(x, z, 1.2, 1.2);
+    SPOTS.push({ p: new THREE.Vector3(x, 0.55, z + 0.62), yaw: 0, kind: i % 2 ? 'pot bunga' : 'tong sampah' });
+  });
   // pagar keliling
   const fenceM = M(0xf1e2b8);
-  [[0, B.z0 - 1, 92, 0.4], [0, B.z1 + 1, 92, 0.4], [B.x0 - 1, 0, 0.4, 72], [B.x1 + 1, 0, 0.4, 72]].forEach(([x, z, w, d]) => { box(w, 1.4, d, fenceM, x, 0.7, z); solid(x, z, w, d); });
+  [[0, B.z0 - 1, 152, 0.4], [0, B.z1 + 1, 152, 0.4], [B.x0 - 1, 0, 0.4, 120], [B.x1 + 1, 0, 0.4, 120]].forEach(([x, z, w, d]) => { box(w, 1.4, d, fenceM, x, 0.7, z); solid(x, z, w, d); });
   // pagar dalam: tempat kertas di pagar
-  for (const x of [-30, -10, 10, 30]) SPOTS.push({ p: new THREE.Vector3(x, 0.9, B.z1 + 0.75), yaw: Math.PI, kind: 'pagar' });
+  for (const x of [-60, -30, 0, 30, 60]) SPOTS.push({ p: new THREE.Vector3(x, 0.9, B.z1 + 0.75), yaw: Math.PI, kind: 'pagar' });
   // mading (papan pengumuman) di tepi lapangan
   const madingT = canvasTex(256, 128, (x) => { x.fillStyle = '#c68e5a'; x.fillRect(0, 0, 256, 128); x.fillStyle = '#7a4a2b'; x.fillRect(0, 0, 256, 10); x.fillStyle = '#fff'; x.font = '700 22px Fredoka, sans-serif'; x.textAlign = 'center'; x.fillText('MADING', 128, 30); ['#ffd23f', '#9fd8ff', '#ffb3c6'].forEach((c, i) => { x.fillStyle = c; x.fillRect(20 + i * 78, 44, 60, 60); }); });
   [[-16, 16, 0], [16, 16, 0]].forEach(([x, z, r]) => {
@@ -110,7 +125,7 @@ function buildWorld() {
     SPOTS.push({ p: new THREE.Vector3(x, 0.72, z), yaw: 0, kind: 'bangku', flat: true });
   });
   // pohon (rindang & kelapa)
-  const trees = [[-22, -8], [22, -8], [-24, 8], [24, 8], [-40, -28], [40, -28], [-40, 26], [40, 26], [-12, -16], [12, -16], [-6, 28], [6, 28], [-30, 20], [30, 20], [0, 18]];
+  const trees = [[-60, -20], [60, -20], [-66, 30], [66, 30], [-30, -48], [30, -48], [-30, 52], [30, 52], [-50, 0], [50, 0], [-22, -8], [22, -8], [-24, 8], [24, 8], [-40, -28], [40, -28], [-40, 26], [40, 26], [-12, -16], [12, -16], [-6, 28], [6, 28], [-30, 20], [30, 20], [0, 18]];
   const trunkM = M(0x8a5a3b), leafM = M(0x2f9e44, { flatShading: true });
   trees.forEach(([x, z], i) => {
     const s = 0.9 + (i % 3) * 0.15;
@@ -143,15 +158,17 @@ function placePapers(seed) {
   papers.forEach((p) => scene.remove(p.g)); papers = [];
   const rnd = seeded(seed), spots = SPOTS.slice();
   for (let i = spots.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [spots[i], spots[j]] = [spots[j], spots[i]]; }
-  questions.forEach((q, i) => {
+  const groups = []; for (let k = 0; k < questions.length; k += perPaper) groups.push(questions.slice(k, k + perPaper));
+  groups.forEach((qs, i) => {
+    const q = qs[0];
     const sp = spots[i % spots.length];
     const g = new THREE.Group(); g.position.copy(sp.p); scene.add(g);
-    const m = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 1.25), new THREE.MeshStandardMaterial({ map: paperTex(i + 1, false), side: THREE.DoubleSide, emissive: 0xffe08a, emissiveIntensity: 0.25 }));
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 0.78), new THREE.MeshStandardMaterial({ map: paperTex(i + 1, false), side: THREE.DoubleSide, emissive: 0xffe08a, emissiveIntensity: 0 }));
     if (sp.flat) { m.rotation.x = -Math.PI / 2; m.rotation.z = rnd() * 6; m.position.y = 0.02; } else g.rotation.y = sp.yaw;
     m.castShadow = true; g.add(m);
     const glow = new THREE.Mesh(new THREE.RingGeometry(0.5, 0.75, 24), new THREE.MeshBasicMaterial({ color: 0xffd23f, transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false }));
     if (sp.flat) glow.rotation.x = -Math.PI / 2; g.add(glow);
-    papers.push({ i, q, g, m, glow, kind: sp.kind, found: false, flat: !!sp.flat, ph: rnd() * 6, tries: 0 });
+    papers.push({ i, q, qs, qi: 0, g, m, glow, kind: sp.kind, found: false, flat: !!sp.flat, ph: rnd() * 6, tries: 0 });
   });
 }
 function markPaper(p) { p.found = true; p.m.material.map = paperTex(p.i + 1, true); p.m.material.emissiveIntensity = 0.1; p.m.material.needsUpdate = true; }
@@ -202,12 +219,13 @@ let camManual = 0;
 
 /* ---------------- interaksi kertas ---------------- */
 let near = null, openP = null, playing = false, startAt = 0, timeLeft = 0, score = 0, right = 0, wrong = 0, found = 0;
-function nearestPaper() { let best = null, bd = 2.4; for (const p of papers) { if (p.found) continue; const d = Math.hypot(p.g.position.x - P.x, p.g.position.z - P.z); if (d < bd) { bd = d; best = p; } } return best; }
+function nearestPaper() { let best = null, bd = 2.0; for (const p of papers) { if (p.found) continue; const d = Math.hypot(p.g.position.x - P.x, p.g.position.z - P.z); if (d < bd) { bd = d; best = p; } } return best; }
 function act() { if (!playing || !near) return; openPaper(near); }
 function openPaper(p) {
   openP = p; Sfx.pop();
-  $('pNo').textContent = 'Kertas ' + (p.i + 1) + ' · ditemukan di ' + p.kind;
-  $('pQ').textContent = p.q.q;
+  p.q = p.qs[p.qi];
+  $('pNo').textContent = 'Kertas ' + (p.i + 1) + ' · ditemukan di ' + p.kind + (p.qs.length > 1 && answerMode === 1 ? ' · soal ' + (p.qi + 1) + '/' + p.qs.length : '');
+  $('pQ').textContent = answerMode === 0 && p.qs.length > 1 ? p.qs.map((x, k) => (k + 1) + '. ' + x.q + '\n   ' + x.o.map((o, j) => 'ABCDE'[j] + '. ' + o).join('   ')).join('\n\n') : p.q.q;
   const box = $('pOpts'); box.innerHTML = '';
   $('pNoteBtns').classList.toggle('hidden', answerMode !== 0);
   box.classList.toggle('hidden', answerMode === 0);
@@ -222,8 +240,11 @@ function closePaper() { $('paper').classList.add('hidden'); openP = null; }
 function answer(p, k, btn) {
   if (p.found) return;
   if (k === p.q.a) {
-    btn.classList.add('good'); right++; found++; const gain = Math.max(40, 100 - p.tries * 30); score += gain;
-    markPaper(p); Sfx.good(); toast('✅ Benar! +' + gain, 'good'); setTimeout(closePaper, 650); hud(); checkDone();
+    btn.classList.add('good'); right++; const gain = Math.max(40, 100 - p.tries * 30); score += gain; p.tries = 0; p.qi++;
+    Sfx.good(); toast('✅ Benar! +' + gain, 'good');
+    if (p.qi >= p.qs.length) { found++; markPaper(p); setTimeout(closePaper, 650); checkDone(); }
+    else setTimeout(() => openPaper(p), 650);
+    hud();
   } else {
     btn.classList.add('bad'); btn.disabled = true; wrong++; p.tries++; Sfx.bad(); toast('❌ Belum tepat. Coba pilihan lain.', 'bad'); hud();
   }
@@ -333,11 +354,11 @@ function frame(t) {
     if (moving && camManual <= 0) { let d = (P.yaw + Math.PI) - P.camYaw; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2; P.camYaw += d * Math.min(1, dt * 1.6); }
     near = nearestPaper();
     const a = $('act'); a.classList.toggle('dim', !near); a.textContent = near ? '📄 Buka kertas ' + (near.i + 1) : 'Cari kertas…';
-    setInstr(near ? 'Ada kertas di ' + near.kind + '! Tekan Buka.' : (found >= papers.length ? 'Semua kertas sudah ditemukan! 🎉' : 'Sisa ' + (papers.length - found) + ' kertas. Cari di pohon, dinding, mading, bangku…'));
+    setInstr(near ? 'Ketemu kertas! Tekan Buka.' : (found >= papers.length ? 'Semua kertas sudah ditemukan! 🎉' : 'Sisa ' + (papers.length - found) + ' kertas. Telusuri sekolah dengan teliti…'));
   }
-  if (me) { me.g.position.set(P.x, 0, P.z); me.g.rotation.y = P.yaw; animKid(me, moving, dt, t); }
-  others.forEach((o) => { const g = o.k.g, mv = Math.hypot(o.tx - g.position.x, o.tz - g.position.z) > 0.05; g.position.x += (o.tx - g.position.x) * Math.min(1, dt * 6); g.position.z += (o.tz - g.position.z) * Math.min(1, dt * 6); let d = o.tr - g.rotation.y; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2; g.rotation.y += d * Math.min(1, dt * 8); animKid(o.k, mv, dt, t); });
-  papers.forEach((p) => { if (!p.flat) p.m.rotation.z = Math.sin(t / 500 + p.ph) * 0.06; const d = Math.hypot(p.g.position.x - P.x, p.g.position.z - P.z); p.glow.material.opacity = p.found ? 0 : Math.max(0, 1 - d / 6) * (0.5 + 0.5 * Math.sin(t / 200)); });
+  if (me) { me.g.position.set(P.x, 0, P.z); me.g.rotation.y = P.yaw + Math.PI; animKid(me, moving, dt, t); }
+  others.forEach((o) => { const g = o.k.g, mv = Math.hypot(o.tx - g.position.x, o.tz - g.position.z) > 0.05; g.position.x += (o.tx - g.position.x) * Math.min(1, dt * 6); g.position.z += (o.tz - g.position.z) * Math.min(1, dt * 6); let d = (o.tr + Math.PI) - g.rotation.y; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2; g.rotation.y += d * Math.min(1, dt * 8); animKid(o.k, mv, dt, t); });
+  papers.forEach((p) => { if (!p.flat) p.m.rotation.z = Math.sin(t / 500 + p.ph) * 0.06; const d = Math.hypot(p.g.position.x - P.x, p.g.position.z - P.z); p.glow.material.opacity = p.found ? 0 : Math.max(0, 1 - d / 3) * (0.5 + 0.5 * Math.sin(t / 200)); });
   if (scene.userData.flag) scene.userData.flag.children.forEach((c, i) => { c.rotation.y = Math.sin(t / 260 + i) * 0.3; });
   // kamera orang ketiga
   const dist = cam.aspect < 1 ? 9.5 : 8.5, h = cam.aspect < 1 ? 7.5 : 6.6;
@@ -353,7 +374,7 @@ cam.position.set(0, 18, 34); cam.lookAt(0, 0, 0);
 if (ROOM) {
   $('menu').classList.add('hidden');
   let ready = false;
-  fetch('/api/ruang/' + ROOM.code + '/status?pid=' + encodeURIComponent(ROOM.pid) + '&tok=' + encodeURIComponent(ROOM.tok)).then((r) => r.json()).then((d) => { answerMode = d.quizEvery === 0 ? 0 : 1; }).catch(() => {});
+  fetch('/api/ruang/' + ROOM.code + '/status?pid=' + encodeURIComponent(ROOM.pid) + '&tok=' + encodeURIComponent(ROOM.tok)).then((r) => r.json()).then((d) => { const qe = Number(d.quizEvery) || 0; answerMode = qe % 10 === 0 ? 0 : 1; perPaper = Math.max(1, Math.min(5, Math.floor(qe / 10) || 1)); }).catch(() => {});
   if (setCode) loadSet(setCode).then(() => { ready = true; }).catch(() => { questions = DEMO.slice(); ready = true; }); else { questions = DEMO.slice(); ready = true; }
   Ruang.init({
     ready: () => ready,

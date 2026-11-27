@@ -19,6 +19,7 @@ export default function RuangLive({ roomId, code, setId, title, game = "kupu-kup
   const cari = game === "cari-soal";
   const [duration, setDuration] = useState(cari ? 600 : 90);
   const [quizEvery, setQuizEvery] = useState(cari ? 1 : 3);
+  const [perPaper, setPerPaper] = useState(1);
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
   const joinRef = useRef("");
@@ -98,6 +99,13 @@ export default function RuangLive({ roomId, code, setId, title, game = "kupu-kup
                     <option value={0}>Murid mencatat di kertas, guru mengoreksi</option>
                   </select>
                 </label>
+              ) : null}
+              {cari ? (
+                <label className="block text-xs font-bold">Soal per kertas
+                  <select value={perPaper} onChange={(e) => setPerPaper(Number(e.target.value))} className="nb-flat w-full mt-1 px-3 py-2 rounded-lg bg-white dark:bg-slate-950 text-sm">
+                    {[1, 2, 3, 4, 5].map((n) => <option key={n} value={n}>{n} soal di setiap kertas</option>)}
+                  </select>
+                </label>
               ) : (
               <label className="block text-xs font-bold">Soal muncul tiap
                 <select value={quizEvery} onChange={(e) => setQuizEvery(Number(e.target.value))} className="nb-flat w-full mt-1 px-3 py-2 rounded-lg bg-white dark:bg-slate-950 text-sm">
@@ -105,7 +113,7 @@ export default function RuangLive({ roomId, code, setId, title, game = "kupu-kup
                 </select>
               </label>
               )}
-              <button disabled={busy || players.length === 0} onClick={() => post("mulai", { duration, quizEvery })}
+              <button disabled={busy || players.length === 0} onClick={() => post("mulai", { duration, quizEvery: cari ? perPaper * 10 + quizEvery : quizEvery })}
                 className="w-full nb nb-press bg-nb-orange text-nb-ink rounded-xl py-3 font-extrabold disabled:opacity-50">
                 ▶ Mulai ({players.length} murid)
               </button>
