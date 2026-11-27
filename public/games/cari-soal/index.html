@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Cari Soal Yuk · Main-yuk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#1b1a3a; --cream:#fff6dc; --yellow:#ffd23f; --orange:#ff7a1a; --pink:#ff5d8f; --green:#22c55e; --blue:#4aa8ff; }
+  * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+  html, body { width:100%; height:100%; overflow:hidden; background:#8fd3ff; color:var(--ink); font-family:Nunito, sans-serif; overscroll-behavior:none; -webkit-user-select:none; user-select:none; }
+  button { font:inherit; color:inherit; cursor:pointer; border:0; background:none; }
+  .hidden { display:none !important; }
+  .nb { border:3px solid var(--ink); box-shadow:4px 4px 0 var(--ink); }
+  .nb-sm { border:2px solid var(--ink); box-shadow:2px 2px 0 var(--ink); }
+  .press:active { transform:translate(3px,3px); box-shadow:1px 1px 0 var(--ink); }
+  #cv { position:fixed; inset:0; width:100%; height:100%; display:block; touch-action:none; }
+
+  .screen { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; padding:12px; overflow:auto; z-index:20; }
+  #menu { background:linear-gradient(160deg, rgba(74,168,255,.55), rgba(255,210,63,.45)); }
+  .card { background:#fff; border-radius:22px; padding:16px 20px; width:min(100%, 600px); text-align:center; margin:auto; position:relative; }
+  .card h1 { font:700 clamp(28px, 6vh, 44px)/1.05 Fredoka, sans-serif; }
+  .card h1 span { color:var(--orange); }
+  .sub { font-size:15px; font-weight:700; opacity:.8; margin-top:6px; line-height:1.4; }
+  .setinfo { margin-top:10px; font-size:13px; font-weight:800; background:#fff3c4; border:2px solid var(--ink); border-radius:10px; padding:4px 10px; display:inline-block; }
+  .setinfo.ok { background:#c8f7dc; } .setinfo.err { background:#ffd6d6; }
+  #name { margin-top:12px; width:100%; min-height:48px; font:inherit; font-weight:800; font-size:17px; border:2px solid var(--ink); border-radius:12px; padding:8px 12px; -webkit-user-select:text; user-select:text; }
+  .go { margin-top:12px; width:100%; min-height:54px; border-radius:16px; background:var(--orange); font:700 22px Fredoka, sans-serif; color:#fff; text-shadow:2px 2px 0 var(--ink); }
+  .how { margin-top:12px; text-align:left; display:grid; gap:6px; font-weight:800; font-size:14px; }
+  .how div { background:var(--cream); border-radius:12px; padding:6px 10px; }
+
+  /* HUD */
+  .hud { position:fixed; top:8px; left:8px; right:8px; z-index:5; display:flex; gap:6px; align-items:center; pointer-events:none; }
+  .pill { background:#fff; border:2px solid var(--ink); box-shadow:2px 2px 0 var(--ink); border-radius:99px; padding:4px 12px; font:800 15px Nunito, sans-serif; white-space:nowrap; pointer-events:auto; }
+  .hud .sp { flex:1; }
+  .hud button { pointer-events:auto; background:#fff; border:2px solid var(--ink); box-shadow:2px 2px 0 var(--ink); border-radius:12px; width:40px; height:40px; font-size:17px; }
+  #instr { position:fixed; left:50%; top:58px; transform:translateX(-50%); z-index:6; background:#fff; border:3px solid var(--ink); box-shadow:3px 3px 0 var(--ink); border-radius:99px; padding:6px 16px; font-weight:900; font-size:clamp(14px, 2.3vh, 18px); max-width:calc(100% - 24px); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; pointer-events:none; }
+  #act { position:fixed; right:18px; bottom:22px; z-index:6; min-width:140px; min-height:72px; padding:8px 16px; border-radius:20px; background:var(--yellow); font:900 18px Nunito, sans-serif; }
+  #act.dim { background:#e6e6ea; color:#888; border-color:#999; box-shadow:2px 2px 0 #999; }
+  #joy { position:fixed; left:18px; bottom:18px; width:140px; height:140px; border-radius:50%; background:rgba(255,255,255,.35); border:3px solid rgba(27,26,58,.5); z-index:6; touch-action:none; }
+  #joy i { position:absolute; left:50%; top:50%; width:62px; height:62px; margin:-31px 0 0 -31px; border-radius:50%; background:#fff; border:3px solid var(--ink); box-shadow:2px 2px 0 var(--ink); }
+  .keys { position:fixed; left:12px; bottom:12px; z-index:5; background:rgba(255,255,255,.9); border:2px solid var(--ink); border-radius:12px; padding:4px 10px; font-weight:800; font-size:12px; }
+  @media (pointer:fine) { #joy { display:none !important; } }
+  @media (pointer:coarse) { .keys { display:none !important; } }
+  .toast { position:fixed; left:50%; top:104px; transform:translateX(-50%); z-index:30; background:#fff; border:3px solid var(--ink); box-shadow:4px 4px 0 var(--ink); border-radius:16px; padding:8px 14px; font-weight:900; font-size:clamp(14px, 2.3vh, 18px); max-width:min(92%, 560px); text-align:center; animation:tin .2s ease; }
+  .toast.good { background:#c8f7dc; } .toast.bad { background:#ffe0e6; }
+  @keyframes tin { from { opacity:0; transform:translate(-50%,-8px); } }
+
+  /* kertas soal */
+  #paper { background:rgba(27,26,58,.55); z-index:25; }
+  .paper { background:#fffdf4; border:3px solid var(--ink); box-shadow:6px 6px 0 var(--ink); border-radius:10px; width:min(100%, 560px); padding:18px 20px 16px; position:relative; background-image:repeating-linear-gradient(#fffdf4 0 30px, #d6e6ff 30px 31px); }
+  .paper .pin { position:absolute; left:50%; top:-14px; transform:translateX(-50%); width:26px; height:26px; border-radius:50%; background:var(--pink); border:3px solid var(--ink); }
+  .paper .no { font:700 15px Fredoka, sans-serif; color:#c0392b; }
+  .paper .q { font:800 clamp(18px, 3vh, 24px)/1.35 Nunito, sans-serif; margin:8px 0 14px; white-space:pre-wrap; }
+  .opts { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .opts button { min-height:56px; border-radius:14px; background:#fff; font-weight:900; font-size:16px; padding:6px 10px; text-align:left; }
+  .opts button b { display:inline-grid; place-items:center; width:28px; height:28px; border-radius:50%; background:var(--yellow); border:2px solid var(--ink); margin-right:6px; }
+  .opts button.good { background:#c8f7dc; } .opts button.bad { background:#ffd6d6; }
+  @media (max-width:520px) { .opts { grid-template-columns:1fr; } }
+  .pbtns { display:flex; gap:8px; margin-top:12px; }
+  .pbtns button { flex:1; min-height:50px; border-radius:14px; font-weight:900; font-size:16px; }
+  .px { position:absolute; right:8px; top:8px; width:40px; height:40px; border-radius:50%; background:#ff5d5d; color:#fff; border:2px solid var(--ink); font-weight:900; }
+
+  #result { background:rgba(27,26,58,.6); }
+  .stat { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px; }
+  .stat div { background:var(--cream); border-radius:12px; padding:6px 2px; font:700 24px Fredoka, sans-serif; }
+  .stat small { display:block; font:800 12px Nunito, sans-serif; opacity:.75; }
+</style>
+<link rel="stylesheet" href="/games/_shared/theme.css">
+</head>
+<body>
+<canvas id="cv"></canvas>
+
+<div id="menu" class="screen">
+  <div class="card nb">
+    <h1>Cari <span>Soal</span> Yuk 🔍</h1>
+    <div class="sub">Kertas soal tersebar di sekolah: di pohon, dinding, dan mading. Jelajahi sekolah, temukan, lalu kerjakan!</div>
+    <div class="setinfo hidden" id="setinfo"></div>
+    <input id="name" maxlength="30" placeholder="Tulis namamu" autocomplete="off">
+    <div class="how">
+      <div>🚶 Jalan: <b>WASD / panah</b> di laptop, <b>joystick</b> di HP</div>
+      <div>📄 Dekati kertas, tekan <b>Buka</b> (atau Spasi)</div>
+      <div>🎯 Temukan semua kertas sebelum waktu habis</div>
+    </div>
+    <button id="start" class="go nb press">▶ MULAI MENCARI</button>
+  </div>
+</div>
+
+<div class="hud hidden" id="hud">
+  <span class="pill" id="hFound">📄 0/0</span>
+  <span class="pill" id="hScore">⭐ 0</span>
+  <span class="pill" id="hTime">⏱ 10:00</span>
+  <span class="sp"></span>
+  <button id="bMute" aria-label="Suara">🔊</button>
+  <button id="bExit" aria-label="Selesai">✖</button>
+</div>
+<div id="instr" class="hidden"></div>
+<div id="joy" class="hidden" aria-hidden="true"><i></i></div>
+<button id="act" class="nb press hidden">Cari kertas…</button>
+<div class="keys hidden" id="keys">⌨ WASD / panah: jalan · Spasi: buka kertas · seret mouse: putar kamera</div>
+
+<div id="paper" class="screen hidden">
+  <div class="paper">
+    <span class="pin"></span>
+    <button class="px" id="pClose" aria-label="Tutup">✕</button>
+    <div class="no" id="pNo">Kertas 1</div>
+    <div class="q" id="pQ"></div>
+    <div class="opts" id="pOpts"></div>
+    <div class="pbtns" id="pNoteBtns"><button class="nb press" id="pNoted" style="background:var(--green);color:#fff">✍️ Sudah aku catat</button></div>
+  </div>
+</div>
+
+<div id="result" class="screen hidden">
+  <div class="card nb">
+    <h1 id="rTitle">Selesai! 🎉</h1>
+    <div class="sub" id="rSub"></div>
+    <div class="stat"><div><span id="rFound">0</span><small>📄 Ditemukan</small></div><div><span id="rRight">0</span><small>✅ Benar</small></div><div><span id="rScore">0</span><small>⭐ Skor</small></div></div>
+    <button class="go nb press" id="again" style="background:var(--blue)">🔄 Main lagi</button>
+  </div>
+</div>
+
+<script src="/games/_shared/sfx.js"></script>
+<script src="/games/_shared/dialog.js"></script>
+<script src="/games/_shared/suara.js"></script>
+<script src="/games/_shared/koin.js"></script>
+<script src="/games/_shared/fx.js"></script>
+<script src="/games/_shared/ruang.js"></script>
+<script type="module" src="game.js"></script>
+<script src="/games/_shared/twemoji.min.js"></script>
+<script src="/games/_shared/emoji.js"></script>
+<script src="/games/_shared/menu-btn.js"></script>
+<script src="/games/_shared/ulasan.js"></script>
+</body>
+</html>

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { sql } from "@/lib/db";
 import { requireGuru } from "@/lib/guru";
-import { createSet } from "./actions";
 import LogoutButton from "@/components/guru/LogoutButton";
 
 export const metadata: Metadata = { title: "Ruang Guru" };
@@ -41,7 +40,7 @@ export default async function GuruDashboard() {
       <div className="nb rounded-2xl bg-nb-blue text-white p-5 mb-6">
         <h2 className="font-display font-bold text-xl">Cara pakai</h2>
         <ol className="text-sm mt-2 space-y-1 opacity-95 list-decimal list-inside">
-          <li>Buat set soal (tulis manual atau impor dari Excel/CSV).</li>
+          <li>Pilih game, lalu buat set soal (tulis, tempel, atau impor Word/PDF/CSV).</li>
           <li>Bagikan <b>kode kelas</b> atau QR ke murid.</li>
           <li>Murid buka <b>Mabar Yuk</b>, ketik kode, lalu bermain dengan soal Anda.</li>
         </ol>
@@ -49,11 +48,9 @@ export default async function GuruDashboard() {
 
       <div className="flex items-center justify-between mb-3">
         <h2 className="font-display font-bold text-xl text-nb-ink dark:text-slate-100">Set Soal Saya</h2>
-        <form action={createSet.bind(null, "")}>
-          <button className="nb-sm nb-press bg-nb-orange text-nb-ink font-bold px-4 py-2.5 rounded-lg text-sm">
-            + Buat Set Soal
-          </button>
-        </form>
+        <Link href="/guru/baru" className="nb-sm nb-press bg-nb-orange text-nb-ink font-bold px-4 py-2.5 rounded-lg text-sm">
+          + Buat Set Soal
+        </Link>
       </div>
 
       {sets.length === 0 ? (

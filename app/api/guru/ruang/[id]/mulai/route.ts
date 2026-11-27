@@ -11,8 +11,9 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   if (!guru) return NextResponse.json({ error: "Silakan masuk." }, { status: 401 });
   if (!UUID.test(params.id)) return NextResponse.json({ error: "Tidak ditemukan." }, { status: 404 });
   const b = await req.json().catch(() => ({}));
-  const duration = [60, 90, 120, 180].includes(Number(b.duration)) ? Number(b.duration) : 90;
-  const quizEvery = [2, 3, 5].includes(Number(b.quizEvery)) ? Number(b.quizEvery) : 3;
+  const duration = [60, 90, 120, 180, 300, 600, 900].includes(Number(b.duration)) ? Number(b.duration) : 90;
+  // Cari Soal Yuk memakai 0 (catat di kertas) / 1 (jawab di game)
+  const quizEvery = [0, 1, 2, 3, 5].includes(Number(b.quizEvery)) ? Number(b.quizEvery) : 3;
   const rows = await sql`
     UPDATE rooms SET status = 'playing', duration_s = ${duration}, quiz_every = ${quizEvery},
       starts_at = now() + make_interval(secs => ${START_DELAY_S}),

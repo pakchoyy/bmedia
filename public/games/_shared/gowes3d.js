@@ -83,7 +83,7 @@ function faceMat(skin) {
   const m = new THREE.MeshStandardMaterial({ map: t, roughness: 0.65 }); mats.set(key, m); return m;
 }
 
-function nameSprite(text, bg) {
+export function nameSprite(text, bg) {
   const t = canvasTex(256, 64, (x) => {
     x.font = '800 30px Nunito, Fredoka, sans-serif';
     const w = Math.min(250, x.measureText(text).width + 34);
