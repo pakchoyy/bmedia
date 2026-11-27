@@ -63,11 +63,11 @@
     started = true; clearInterval(poll); hideOverlay();
     endsAt = d.endsAt;
     document.body.classList.add('ruang-on');
-    hud = el('<div id="ruang-hud"><span class="t">⏱ --:--</span><span class="rank">🏆 –</span></div>'); document.body.appendChild(hud);
+    hud = el('<div id="ruang-hud">' + (opt.noTimer ? '' : '<span class="t">⏱ --:--</span>') + '<span class="rank">🏆 –</span></div>'); document.body.appendChild(hud);
     opt.onStart(endsAt - now(), myName);
     tickT = setInterval(function () {
       var left = endsAt - now();
-      hud.querySelector('.t').textContent = '⏱ ' + fmt(left);
+      if (!opt.noTimer) hud.querySelector('.t').textContent = '⏱ ' + fmt(left);
       if (left <= 0) finish();
     }, 250);
     sendT = setInterval(function () { send(false); }, 2500);
