@@ -343,6 +343,12 @@ $('start').addEventListener('click', () => {
   begin(10 * 60 * 1000, nm);
 });
 try { $('name').value = localStorage.getItem('bgy_name') || ''; } catch (e) {}
+// pilihan cara menjawab & soal per kertas (main tanpa ruang); ?mode=catat&per=2 juga bisa
+if (Q.get('mode') === 'catat') answerMode = 0;
+if (+Q.get('per') >= 1) perPaper = Math.min(5, +Q.get('per'));
+function seg(id, get, set) { const el = $(id); const mark = () => [...el.children].forEach((b) => b.classList.toggle('on', +b.dataset.n === get())); el.addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; set(+b.dataset.n); mark(); Sfx.click(); }); mark(); }
+seg('segMode', () => answerMode, (n) => { answerMode = n; });
+seg('segPer', () => perPaper, (n) => { perPaper = n; });
 
 /* ---------------- loop ---------------- */
 const tmp = new THREE.Vector3(), camT = new THREE.Vector3();
