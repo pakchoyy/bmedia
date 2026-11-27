@@ -291,7 +291,7 @@ function checkDone() { if (found >= papers.length) { toast('🎉 Semua kertas di
 /* ---------------- HUD ---------------- */
 function toast(t, k) { const o = document.querySelector('.toast'); if (o) o.remove(); const d = document.createElement('div'); d.className = 'toast ' + (k || ''); d.textContent = t; document.body.appendChild(d); clearTimeout(toast.t); toast.t = setTimeout(() => d.remove(), 2200); }
 function fmt(s) { s = Math.max(0, Math.ceil(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
-function hud() { $('hFound').textContent = '📄 ' + found + '/' + papers.length; $('hScore').textContent = '⭐ ' + score; if (!ROOM) $('hTime').textContent = '⏱ ' + fmt(timeLeft); }
+function hud() { $('hFound').textContent = '📄 ' + found + '/' + papers.length; $('hScore').textContent = '⭐ ' + score;  }
 function setInstr(t) { const el = $('instr'); if (el.textContent !== t) el.textContent = t; }
 
 /* ---------------- Mabar: kirim posisi, terima murid lain ---------------- */
@@ -327,7 +327,7 @@ function begin(durationMs, name) {
   timeLeft = durationMs / 1000; startAt = performance.now();
   ['menu', 'result'].forEach((id) => $(id).classList.add('hidden'));
   ['hud', 'instr', 'act', 'keys'].forEach((id) => $(id).classList.remove('hidden'));
-  $('joy').classList.remove('hidden'); $('hTime').classList.toggle('hidden', !!ROOM);
+  $('joy').classList.remove('hidden'); $('hTime').classList.add('hidden');
   playing = true; hud(); Sfx.go(); Sfx.music(true);
   const msg = answerMode === 0 ? 'Cari ' + papers.length + ' kertas soal. Catat soalnya di bukumu!' : 'Cari ' + papers.length + ' kertas soal di sekolah, lalu jawab!';
   setInstr(msg); SAY(msg);
@@ -370,6 +370,7 @@ let charIdx = 0; try { charIdx = +localStorage.getItem('cs_char') || 0; } catch 
   const mark = () => [...box.children].forEach((b, i) => b.classList.toggle('on', i === charIdx)); mark();
 })();
 function seg(id, get, set) { const el = $(id); const mark = () => [...el.children].forEach((b) => b.classList.toggle('on', +b.dataset.n === get())); el.addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; set(+b.dataset.n); mark(); Sfx.click(); }); mark(); }
+lockOpts(); // cara jawab & soal per kertas hanya diatur guru
 seg('segMode', () => answerMode, (n) => { answerMode = n; });
 seg('segPer', () => perPaper, (n) => { perPaper = n; });
 
@@ -387,7 +388,7 @@ function frame(t) {
   const dt = Math.min(0.05, (t - (last || t)) / 1000); last = t;
   let moving = false;
   if (playing && $('paper').classList.contains('hidden')) {
-    if (!ROOM) { timeLeft -= dt; if (Math.floor(timeLeft + dt) !== Math.floor(timeLeft)) hud(); if (timeLeft <= 0) endGame(false); }
+    // tanpa batas waktu (kecuali Mabar yang diatur guru)
     let fx = 0, fz = 0;
     const kf = (keys.w || keys.arrowup ? 1 : 0) - (keys.s || keys.arrowdown ? 1 : 0), ks = (keys.d || keys.arrowright ? 1 : 0) - (keys.a || keys.arrowleft ? 1 : 0);
     const f = kf - joy.y, s = ks + joy.x;
